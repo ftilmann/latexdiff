@@ -1,0 +1,90 @@
+\documentclass[11pt]{article}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL move-equation-old.tex   Sun Nov 11 21:19:29 2012
+%DIF ADD move-equation-new.tex   Sun Nov 11 21:19:29 2012
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+
+The decidability analysis provided in \DIFdelbegin \DIFdel{section~\ref{sec:decidability}
+will }\DIFdelend \DIFaddbegin \DIFadd{Section~\ref{sec:decidability}
+must }\DIFaddend consider all future actions.
+In order to track \emph{all} flows, we also need to track \DIFdelbegin \DIFdel{past actions.
+The information on past actions are all }\DIFdelend \DIFaddbegin \DIFadd{actual past
+information flows.
+Thus we track:
+}\begin{description}
+\item[$didFlow(l_1,l_2)$:] \DIFadd{the set of labels which could have
+  actually flowed across $mayFlow(l_1,l_2)$.
+}\end{description}
+\DIFadd{The set $didFlow(l_1,l_2)$ is updated  every time a process first
+reads $l_1$ and then writes $l_2$. 
+Let $flowed(l)=$
+$ \bigcup_{l' \in \mbox{\scriptsize system}}$
+$didFlow(l',l) \cup \{l\}$.
+ Then:
+}\[\DIFadd{
+    didFlow(l_1,l_2) \leftarrow didFlow(l_1,l_2) \cup flowed(l_1)
+}\]
+
+\DIFadd{We also track past administrative approvals  }\DIFaddend relative to the
+flows over a defined \(mayFlow(l_1,l_2)\) \DIFdelbegin \DIFdel{and are }\DIFdelend as follows:
+\begin{description}
+\item[$confidentialityFlow(l_1,l_2)$:] the set of predecessor labels
+  which have approved the possible increase in readership due to a flow of that
+  label using $mayFlow(l_1,l_2)$.
+  A necessary condition for $l\in confidentialityFlow(l_1,l_2)$
+  is that after the time of approval it was possible that
+  $r(l_2) \not\subseteq r(l)$.
+\item[$integrityFlow(l_1,l_2)$:] the set of successor labels
+  whose integrity is not greater than or equal to $l_1$
+  and which have approved a flow over $mayFlow(l_1,l_2)$.
+  A necessary condition for \DIFdelbegin \DIFdel{$l\in integrityFlow(l_1,l_2)$
+  }\DIFdelend \DIFaddbegin \DIFadd{$l \in integrityFlow(l_1,l_2)$
+  }\DIFaddend is that after the time of approval $r(l_1) \not\succeq r(l)$.
+\item[$didFlow(l_1,l_2)$:] the set of labels which could have
+  actually flowed across $mayFlow(l_1,l_2)$.
+\end{description}
+\DIFdelbegin \DIFdel{The first two track security property approvals.
+}\DIFdelend While these play no role in the decidability of
+our system, they reduce the amount of clutter that
+an administrator needs to deal with, \DIFdelbegin \DIFdel{thus ensuring
+that each edge is }\DIFdelend \DIFaddbegin \DIFadd{by allowing
+ each edge to be  }\DIFaddend approved by a given label's administrators
+at most once.
+\DIFdelbegin %DIFDELCMD < 
+
+%DIFDELCMD < %%%
+\DIFdel{The set \(didFlow(l_1,l_2)\) tracks the actual flows,
+and is updated  every time a process first reads $l_1$ and then writes $l_2$.
+Let $flowed(l)=$
+$ \bigcup_{l' \in \mbox{\scriptsize system}}$
+$didFlow(l',l) \cup \{l\}$.
+ Then:
+}\begin{displaymath}\DIFdel{
+    didFlow(l_1,l_2) \leftarrow didFlow(l_1,l_2) \cup flowed(l_1)
+}\end{displaymath}
+%DIFAUXCMD
+\DIFdelend 
+
+\end{document}
+
+

@@ -1,0 +1,139 @@
+\documentclass[11pt]{article}
+%\usepackage[germanb]{babel}
+\usepackage{epsf}
+\input{mylatex.sty}
+\input{myepsf.sty}
+\setlength{\topmargin}{-0.2in}
+\setlength{\textheight}{9.5in}
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0.0in}
+%\setlength{\topmargin}{1.0in}
+\renewcommand{\baselinestretch}{1.8}
+
+\newcommand{\ea}{{\it et al.}}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+
+\newenvironment{reflist}{\begin{list}{}{\setlength{\itemindent}{-\leftmargin}} \small }
+                           {\end{list}}
+
+\providecommand{\remark}[1]{{ \bf [ \em #1 ]}}
+
+
+%\def\rf{\vskip 5pt\par\hang\noindent}
+\def\rf{\item}
+
+\newcommand{\jgr}{J. Geophys. Res.}
+\newcommand{\refer}[6]{{#1, #2, #3, {\it #4} {\bf #5}, {#6}.}}
+% \refer{authors}{year}{title}{Journal}{Volume}{page}
+\newcommand{\refartbook}[7]{{#1, #2, #3. In: {\it #4}, ed. by #5, #6, #7.}}
+% \refartbook{authors}{year}{article title}{book-title}{editor}{publisher}{pages}
+\newcommand{\refbook}[5]{{#1, #2, {\it #3}, #4.}}
+% \refbook{authors}{year}{book-title}{publisher}{page}
+% Note: currently output of page is suppressed
+\newcommand{\refreport}[5]{{#1, #2, {\it #3}, #4, #5.}}
+% \refreport{authors}{year}{report-title}{Report Number}{Publisher}
+
+
+\title{DRAFT - A different kind of discrimination: a trigger algorithm for detecting natural seismicity in the presence of artificial sources}
+\author{Frederik J. Tilmann}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+ABSTRACT
+\end{abstract}
+
+\section[Introduction]{Introduction}
+
+\mbox{An old mbox}
+The use of automatic triggers in order to detect earthquake activity
+is routine in both temporary and permanent networks.   After suitable pre-processing of
+the data, e.g. frequency filtering for noise suppresion, the
+triggering algorithm generally proceeds in two stages
+(Figure~\ref{fig:flowchart}).  In the first stage, each trace is considered
+individually, and the trigger algorithms marks the times, at which
+signals or arrivals are recorded, usually by comparing the short-term
+average with the long-term average of the signal (STA/LTA method), and
+triggering when this ratio exceeds a certain threshold.  This
+algorithm results in many spurious triggers due to noise bursts or
+cultural or electronic noise, unless the station is very quiet.  For
+this reason, a second stage compares the trigger times of all stations
+of the network and only declares a valid trigger if more than a
+specified number of stations have declared a trigger at almost the
+same time (network triggering), excluding thus noise bursts at single stations.  
+\begin{verbatim}
+some ticky text
+\end{verbatim}
+However, this type of algorithm is unable to distinguish artificial
+sources that are strong enough to be recorded at all stations from
+natural seismicity. For example, during deployments of networks of ocean bottom
+seismometers and hydrophones, often active shooting is carried out
+contemporaneously with surveys of microearthquake activity, such that
+the continuous recordings of earthquake activity are `contaminated' with artificial signals.
+% either
+%directly above the network in order to better locate the network
+%stations and characterise crustal structure beneath them, or simply
+%nearby, because collaborating groups carry out reflection
+%or wide-angle surveys.   
+Unfortunately, the frequency content of
+airgun shots and many other marine sources is not sufficiently removed from the typical frequency
+content of local earthquakes such that suppression of the shots by
+pre-filtering is not possible.    Nevertheless, shots are immediately
+apparent on plots of continuous data (Figure~\ref{fig:data})
+simply because of their regularity; marine shooting is nearly always
+carried out at regular intervals, with shot intervals between
+$\sim$10 and 120~s.   This fact led to the idea to develop
+an algorithm that can automatically discriminate shots from
+earthquakes based on the regularity of triggers.  This algorithm will
+be described in the following.  It is operating between station-wise STA/LTA
+triggering and network triggering, detecting and removing shots from
+the station-wise trigger lists.   Earthquakes occuring between shots
+will in most cases be triggering correctly.
+
+A sentence with *** stars*in*my*eyes.
+
+  As the shot times are known it would, of course, also be possible to
+  exclude the times of active shooting 
+from the trigger algorithm, or even to selectively block the
+triggers that coincide with expected arrival times of the shots at the
+various stations.  However, this would be tedious and would require
+good communication between the different groups, in particular if the
+instruments are deployed and recovered on different cruises.
+Excluding times of shooting completely would also result in valid
+earthquakes that occurred between shots to be excluded
+unneccessarily.  Blocking triggers selectively based on {\it a priori}
+knowledge of the exact shooting times and locations would require theoretical travel times
+from each shot point to all stations of the network and puts even
+higher demands on the quality of communication.
+
+
+\section{Algorithm}
+
+\section{Data examples}
+
+\section{Discussion}
+
+\section*{References}
+
+\begin{figure}
+\caption{Flow chart (a) Network triggering (b) Shot removal stage}
+\label{fig:flowchart}
+\end{figure}
+
+\begin{figure}
+\caption{Trace including shots and earthquakes (a) Data high-pass filtered to remove microseismic noise (corner 5.0 Hz) (b) Trigger trace causes triggers at both events and shots \protect\remark{from GERSHWIN data}}
+\label{fig:data}
+\end{figure}
+
+\begin{figure}
+\caption{Histogram of distances to neighbouring trigger times.  The
+  peak near zero comes about because often the coda of an event
+  triggers repeatedly (because of different phases or multiples). The
+  peaks at multiples of .. s are due to regular shot intervals.}
+\label{fig:histograms}
+\end{figure}
+
+
+\end{document}

@@ -1,0 +1,580 @@
+.rn '' }`
+''' $RCSfile$$Revision$$Date$
+'''
+''' $Log$
+'''
+.de Sh
+.br
+.if t .Sp
+.ne 5
+.PP
+\fB\\$1\fR
+.PP
+..
+.de Sp
+.if t .sp .5v
+.if n .sp
+..
+.de Ip
+.br
+.ie \\n(.$>=3 .ne \\$3
+.el .ne 3
+.IP "\\$1" \\$2
+..
+.de Vb
+.ft CW
+.nf
+.ne \\$1
+..
+.de Ve
+.ft R
+
+.fi
+..
+'''
+'''
+'''     Set up \*(-- to give an unbreakable dash;
+'''     string Tr holds user defined translation string.
+'''     Bell System Logo is used as a dummy character.
+'''
+.tr \(*W-|\(bv\*(Tr
+.ie n \{\
+.ds -- \(*W-
+.ds PI pi
+.if (\n(.H=4u)&(1m=24u) .ds -- \(*W\h'-12u'\(*W\h'-12u'-\" diablo 10 pitch
+.if (\n(.H=4u)&(1m=20u) .ds -- \(*W\h'-12u'\(*W\h'-8u'-\" diablo 12 pitch
+.ds L" ""
+.ds R" ""
+'''   \*(M", \*(S", \*(N" and \*(T" are the equivalent of
+'''   \*(L" and \*(R", except that they are used on ".xx" lines,
+'''   such as .IP and .SH, which do another additional levels of
+'''   double-quote interpretation
+.ds M" """
+.ds S" """
+.ds N" """""
+.ds T" """""
+.ds L' '
+.ds R' '
+.ds M' '
+.ds S' '
+.ds N' '
+.ds T' '
+'br\}
+.el\{\
+.ds -- \(em\|
+.tr \*(Tr
+.ds L" ``
+.ds R" ''
+.ds M" ``
+.ds S" ''
+.ds N" ``
+.ds T" ''
+.ds L' `
+.ds R' '
+.ds M' `
+.ds S' '
+.ds N' `
+.ds T' '
+.ds PI \(*p
+'br\}
+.\"	If the F register is turned on, we'll generate
+.\"	index entries out stderr for the following things:
+.\"		TH	Title 
+.\"		SH	Header
+.\"		Sh	Subsection 
+.\"		Ip	Item
+.\"		X<>	Xref  (embedded
+.\"	Of course, you have to process the output yourself
+.\"	in some meaninful fashion.
+.if \nF \{
+.de IX
+.tm Index:\\$1\t\\n%\t"\\$2"
+..
+.nr % 0
+.rr F
+.\}
+.TH LATEXDIFF 1 "perl 5.005, patch 03" "21/Jul/2004" " "
+.UC
+.if n .hy 0
+.if n .na
+.ds C+ C\v'-.1v'\h'-1p'\s-2+\h'-1p'+\s0\v'.1v'\h'-1p'
+.de CQ          \" put $1 in typewriter font
+.ft CW
+'if n "\c
+'if t \\&\\$1\c
+'if n \\&\\$1\c
+'if n \&"
+\\&\\$2 \\$3 \\$4 \\$5 \\$6 \\$7
+'.ft R
+..
+.\" @(#)ms.acc 1.5 88/02/08 SMI; from UCB 4.2
+.	\" AM - accent mark definitions
+.bd B 3
+.	\" fudge factors for nroff and troff
+.if n \{\
+.	ds #H 0
+.	ds #V .8m
+.	ds #F .3m
+.	ds #[ \f1
+.	ds #] \fP
+.\}
+.if t \{\
+.	ds #H ((1u-(\\\\n(.fu%2u))*.13m)
+.	ds #V .6m
+.	ds #F 0
+.	ds #[ \&
+.	ds #] \&
+.\}
+.	\" simple accents for nroff and troff
+.if n \{\
+.	ds ' \&
+.	ds ` \&
+.	ds ^ \&
+.	ds , \&
+.	ds ~ ~
+.	ds ? ?
+.	ds ! !
+.	ds /
+.	ds q
+.\}
+.if t \{\
+.	ds ' \\k:\h'-(\\n(.wu*8/10-\*(#H)'\'\h"|\\n:u"
+.	ds ` \\k:\h'-(\\n(.wu*8/10-\*(#H)'\`\h'|\\n:u'
+.	ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'^\h'|\\n:u'
+.	ds , \\k:\h'-(\\n(.wu*8/10)',\h'|\\n:u'
+.	ds ~ \\k:\h'-(\\n(.wu-\*(#H-.1m)'~\h'|\\n:u'
+.	ds ? \s-2c\h'-\w'c'u*7/10'\u\h'\*(#H'\zi\d\s+2\h'\w'c'u*8/10'
+.	ds ! \s-2\(or\s+2\h'-\w'\(or'u'\v'-.8m'.\v'.8m'
+.	ds / \\k:\h'-(\\n(.wu*8/10-\*(#H)'\z\(sl\h'|\\n:u'
+.	ds q o\h'-\w'o'u*8/10'\s-4\v'.4m'\z\(*i\v'-.4m'\s+4\h'\w'o'u*8/10'
+.\}
+.	\" troff and (daisy-wheel) nroff accents
+.ds : \\k:\h'-(\\n(.wu*8/10-\*(#H+.1m+\*(#F)'\v'-\*(#V'\z.\h'.2m+\*(#F'.\h'|\\n:u'\v'\*(#V'
+.ds 8 \h'\*(#H'\(*b\h'-\*(#H'
+.ds v \\k:\h'-(\\n(.wu*9/10-\*(#H)'\v'-\*(#V'\*(#[\s-4v\s0\v'\*(#V'\h'|\\n:u'\*(#]
+.ds _ \\k:\h'-(\\n(.wu*9/10-\*(#H+(\*(#F*2/3))'\v'-.4m'\z\(hy\v'.4m'\h'|\\n:u'
+.ds . \\k:\h'-(\\n(.wu*8/10)'\v'\*(#V*4/10'\z.\v'-\*(#V*4/10'\h'|\\n:u'
+.ds 3 \*(#[\v'.2m'\s-2\&3\s0\v'-.2m'\*(#]
+.ds o \\k:\h'-(\\n(.wu+\w'\(de'u-\*(#H)/2u'\v'-.3n'\*(#[\z\(de\v'.3n'\h'|\\n:u'\*(#]
+.ds d- \h'\*(#H'\(pd\h'-\w'~'u'\v'-.25m'\f2\(hy\fP\v'.25m'\h'-\*(#H'
+.ds D- D\\k:\h'-\w'D'u'\v'-.11m'\z\(hy\v'.11m'\h'|\\n:u'
+.ds th \*(#[\v'.3m'\s+1I\s-1\v'-.3m'\h'-(\w'I'u*2/3)'\s-1o\s+1\*(#]
+.ds Th \*(#[\s+2I\s-2\h'-\w'I'u*3/5'\v'-.3m'o\v'.3m'\*(#]
+.ds ae a\h'-(\w'a'u*4/10)'e
+.ds Ae A\h'-(\w'A'u*4/10)'E
+.ds oe o\h'-(\w'o'u*4/10)'e
+.ds Oe O\h'-(\w'O'u*4/10)'E
+.	\" corrections for vroff
+.if v .ds ~ \\k:\h'-(\\n(.wu*9/10-\*(#H)'\s-2\u~\d\s+2\h'|\\n:u'
+.if v .ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'\v'-.4m'^\v'.4m'\h'|\\n:u'
+.	\" for low resolution devices (crt and lpr)
+.if \n(.H>23 .if \n(.V>19 \
+\{\
+.	ds : e
+.	ds 8 ss
+.	ds v \h'-1'\o'\(aa\(ga'
+.	ds _ \h'-1'^
+.	ds . \h'-1'.
+.	ds 3 3
+.	ds o a
+.	ds d- d\h'-1'\(ga
+.	ds D- D\h'-1'\(hy
+.	ds th \o'bp'
+.	ds Th \o'LP'
+.	ds ae ae
+.	ds Ae AE
+.	ds oe oe
+.	ds Oe OE
+.\}
+.rm #[ #] #H #V #F C
+.SH "NAME"
+latexdiff \- determine and markup differences between two latex files
+.SH "SYNOPSIS"
+\fBlatexdiff\fR [ \fBOPTIONS\fR ] \fIold.tex\fR \fInew.tex\fR > \fIdiff.tex\fR
+.SH "DESCRIPTION"
+Briefly, \fIlatexdiff\fR is a utility program to aid in the management of
+revisions of latex documents. It compares two valid latex files, here
+called \f(CWold.tex\fR and \f(CWnew.tex\fR, finds significant differences
+between them (i.e., ignoring the number of white spaces and position
+of line breaks), and adds special commands to highlight the
+differences.  Where visual highlighting is not possible, e.g. for changes
+in the formatting, the differences are
+nevertheless marked up in the source.
+.PP
+The program treats the preamble differently from the main document.
+Differences between the preambles are found using line-based
+differencing (similarly to the Unix diff command, but ignoring white
+spaces).  A comments, \*(L"\f(CW%DIF >\fR\*(R" is appended to each added line, i.e. a 
+line present in \f(CWnew.tex\fR but not in \f(CWold.tex\fR.  Discarded lines 
+ are deactivated by prepending \*(L"\f(CW%DIF <\fR\*(R". Changed blocks are preceded  by
+comment lines giving information about line numbers in the original files.  Where there are insignificant
+differences, the resulting file \f(CWdiff.tex\fR will be similar to
+\f(CWnew.tex\fR.  At the end of the preamble, the definitions for \fIlatexdiff\fR markup commands are inserted.
+In differencing the main body of the text, \fIlatexdiff\fR attempts to
+satisfy the following guidelines (in order of priority):
+.Ip "1." 3
+If both \f(CWold.tex\fR and \f(CWnew.tex\fR are valid LaTeX, then the resulting
+\f(CWdiff.tex\fR should also be valid LateX. (\s-1NB\s0 If a few plain TeX commands
+are used within \f(CWold.tex\fR or \f(CWnew.tex\fR then \f(CWdiff.tex\fR is not
+guaranteed to work but usually will).
+.Ip "2." 3
+Significant differences are determined on the level of
+individual words. All significant differences, including differences
+between comments should be clearly marked in the resulting source code
+\f(CWdiff.tex\fR.
+.Ip "3." 3
+If a changed passage contains text or text-producing commands, then
+running \f(CWdiff.tex\fR through LateX should produce output where added
+and discarded passages are highlighted.
+.Ip "4. " 3
+Where there are insignificant differences, e.g. in the positioning of
+line breaks, \f(CWdiff.tex\fR should follow the formatting of \f(CWnew.tex\fR
+.PP
+For differencing the same algorithm as \fIdiff\fR is used but words
+instead of lines words are compared.  An attempt is made to recognize
+blocks which are completely changed such that they can be marked up as unit
+(otherwise readibility is reduced because common words such as \*(L"the\*(R" and \*(L"and\*(R" which can be found both in the discarded and added block are considered to be identical text parts and thus not marked up, and added and discarded
+text parts are interspersed between these common words).
+Comments are differenced line by line
+but the number of spaces within comments is ignored. Commands including
+all their arguments are generally compared as one unit, i.e., no mark-up
+is inserted into the arguments of commands.  However, for a selected
+number of commands (for example, \f(CW\ecaption\fR and all sectioning
+commands) the last argument is known to be text. This text is
+split into words and differenced just as ordinary text (use options to
+show and change the list of text commands, see below). As the
+algorithm has no detailed knowledge of LaTeX, it assumes all pairs of
+curly braces immediately following a command (i.e. a sequence of
+letters beginning with a backslash) are arguments for that command.
+As a restriction to condition 1 above it is thus necessary to surround
+all arguments with curly braces, and to not insert
+extraneous spaces.  For example, write 
+.PP
+.Vb 1
+\&  \esection{\etextem{This is an emphasized section title}}
+.Ve
+and not
+.PP
+.Vb 1
+\&  \esection {\etextem{This is an emphasized section title}}
+.Ve
+or
+.PP
+.Vb 1
+\&  \esection\etextem{This is an emphasized section title}
+.Ve
+even though all varieties are the same to LaTeX.  
+.PP
+For environments whose content does not conform to standard LaTeX  or
+where graphical markup does not make sense all markup commands can be
+removed by setting the \s-1PICTUREENV\s0 configuration variable (set by default to 
+\f(CWpicture\fR environments; (see \fB--config\fR option).
+.PP
+It is also possible to difference files which do not have a preamble. 
+ In this case, the file is processed in the main document
+mode, but the definitions of the markup commands are not inserted.
+.PP
+All markup commands inserted by \fIlatexdiff\fR begin with \*(L"\f(CW\eDIF\fR\*(R".  Added
+blocks containing words, commands or comments which are in \f(CWnew.tex\fR
+but not in \f(CWold.tex\fR are marked by \f(CW\eDIFaddbegin\fR and \f(CW\eDIFaddend\fR.
+Discarded blocks are marked by \f(CW\eDIFdelbegin\fR and \f(CW\eDIFdelend\fR.
+Within added blocks all text is highlighted with \f(CW\eDIFadd\fR like this:
+\f(CW\eDIFadd{Added text block}\fR
+Selected `safe\*(R' commands can be contained in these text blocks as well
+(use options to show and change the list of safe commands, see below).
+All other commands as well as braces \*(L"{\*(R" and \*(L"}\*(R" are never put within
+the scope of \f(CW\eDIFadd\fR.  Added comments are marked by prepending
+\*(L"\f(CW%DIF > \fR\*(R".
+.PP
+Within deleted blocks text is highlighted with \f(CW\eDIFdel\fR.  Deleted
+comments are marked by prepending \*(L"\f(CW%DIF < \fR\*(R".  Non-safe command
+and curly braces within deleted blocks are commented out with 
+\*(L"\f(CW%DIFDELCMD < \fR\*(R".
+.SH "OPTIONS"
+.Sh "Preamble"
+The following options determine the visual markup style by adding the appropriate
+command definitions to the preamble. See the end of this section for a description of 
+available styles.
+.Ip "\fB--type=markupstyle\fR or \fB\-t markupstyle\fR" 4
+Add code to preamble for selected markup style. This option defines
+\f(CW\eDIFadd\fR and \f(CW\eDIFdel\fR commands.
+Available styles: 
+.Sp
+\f(CWUNDERLINE CTRADITIONAL TRADITIONAL CFONT INVISIBLE 
+CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR\fR
+.Sp
+[ Default: \f(CWUNDERLINE\fR ]
+.Ip "\fB--subtype=markstyle\fR or \fB\-s markstyle\fR " 4
+Add code to preamble for selected style for bracketing
+commands (e.g. to mark changes in  margin). This option defines
+\f(CW\eDIFaddbegin\fR, \f(CW\eDIFaddend\fR, \f(CW\eDIFdelbegin\fR and \f(CW\eDIFdelend\fR commands.
+Available styles: \f(CWSAFE MARGINAL COLOR\fR
+.Sp
+[ Default: \f(CWSAFE\fR ]
+.Ip "\fB--floattype=markstyle\fR or \fB\-f markstyle\fR" 4
+Add code to preamble for selected style which 
+replace standard marking and markup commands within floats
+(e.g., marginal remarks cause an error within floats
+so marginal marking can be disabled thus). This option defines all 
+\f(CW\eDIF...FL\fR commands.
+Available styles: \f(CWFLOATSAFE IDENTICAL\fR
+.Sp
+[ Default: \f(CWFLOATSAFE\fR ]
+.Ip "\fB--preamble=file\fR or \fB\-p file\fR" 4
+Insert file at end of preamble instead of generating
+preamble.  The preamble must define the following commands
+\f(CW\eDIFaddbegin, \eDIFaddend, \eDIFadd{..},
+\eDIFdelbegin,\eDIFdelend,\eDIFdel{..},\fR
+and varieties for use within floats
+\f(CW\eDIFaddbeginFL, \eDIFaddendFL, \eDIFaddFL{..},
+\eDIFdelbeginFL, \eDIFdelendFL, \eDIFdelFL{..}\fR
+(If this option is set \fB\-t\fR, \fB\-s\fR, and \fB\-f\fR options
+are ignored.)
+.Ip "\fB--show-preamble\fR" 4
+Print generated or included preamble commands to stdout.
+.Sh "Configuration"
+.Ip "\fB--exclude-safecmd=exclude-file\fR or \fB\-A exclude-file\fR" 4
+.Ip "\fB--replace-safecmd=replace-file\fR" 4
+.Ip "\fB--append-safecmd=append-file\fR or  \fB\-a append-file\fR" 4
+Exclude from, replace or append to the list of regular expressions (RegEx)
+matching commands which are safe to use within the 
+scope of a \f(CW\eDIFadd\fR or \f(CW\eDIFdel\fR command.  The file must contain
+one \s-1PERL\s0\-RegEx per line (Comment lines beginning with # or % are
+ignored).  Note that the RegEx needs to match the whole of 
+the token, i.e., /^regex$/ is implied and that the initial
+\*(L"\e\*(R" of the command is not included. The \fB--exclude-safecmd\fR
+option can be combined with either of the other two.
+.Ip "\fB--exclude-textcmd=exclude-file\fR or \fB\-X exclude-file\fR" 4
+.Ip "\fB--replace-textcmd=replace-file\fR" 4
+.Ip "\fB--append-textcmd=append-file\fR or  \fB\-x append-file \fR" 4
+Exclude from, replace or append to the list of regular expressions
+matching commands whose last argument is text.  See
+entry for \fB--exclude-safecmd\fR directly above for further details.
+.Ip "\fB--config var1=val1,var2=val2,...\fR or \fB\-c var1=val1,..\fR" 4
+.Ip "\fB\-c configfile\fR" 4
+Set configuration variables.
+Available variables (see below for further explanations): 
+    
+\f(CWMINWORDSBLOCK\fR (integer)
+                          
+\f(CWFLOATENV\fR (RegEx)
+.Sp
+\f(CWPICTUREENV\fR (RegEx)
+.Ip "\fB--show-safecmd\fR" 4
+Print list of RegEx matching and excluding safe commands.
+.Ip "\fB--show-textcmd\fR" 4
+Print list of RegEx matching and excluding commands with text argument.
+.Ip "\fB--show-config\fR" 4
+Show values of configuration variables
+.Sp
+\s-1NB\s0 For all --show commands, no \f(CWold.tex\fR or \f(CWnew.tex\fR file needs to be specified, and no 
+differencing takes place.
+.Sh "Miscellaneous"
+.Ip "\fB--verbose\fR or \fB\-V\fR" 4
+Output various status information to stderr during processing.
+Default is to work silently.
+.Ip "\fB--help\fR or \fB\-h\fR" 4
+Show help text
+.Ip "\fB--version\fR" 4
+Show version number
+.Sh "Predefined styles "
+.Sh "Major types"
+The major type determine the markup of plain text and some selected latex commands outside floats by defining the markup commands \f(CW\eDIFadd{...}\fR and \f(CW\eDIFdel{...}\fR .
+.Ip "\f(CWUNDERLINE\fR" 10
+Added text is underlined and blue, discarded text is struck out and red
+(Requires color and ulem packages).
+.Ip "\f(CWCTRADITIONAL\fR" 10
+Added text is blue and set in sans-serif, and a red footnote is created for each discarded 
+piece of text. (Requires color package)
+.Ip "\f(CWTRADITIONAL\fR" 10
+Like \f(CWCTRADITIONAL\fR but without the use of color.
+.Ip "\f(CWCFONT\fR" 10
+Added text is blue and set in sans-serif, and discarded text is red and very small size.
+.Ip "\f(CWCCHANGEBAR\fR" 10
+Added text is blue, and discarded text is red.  Additionally, the changed text is marked with a bar in the margin (Requires color and changebar packages).
+.Ip "\f(CWCFONTCHBAR\fR" 10
+Like \f(CWCFONT\fR but with additional changebars (Requires color and changebar packages).
+.Ip "\f(CWCULINECHBAR\fR" 10
+Like \f(CWUNDERLINE\fR but with additional changebars (Requires color, ulem and changebar packages).
+.Ip "\f(CWCHANGEBAR\fR" 10
+No mark up of text, but mark margins with changebars (Requires changebar package).
+.Ip "\f(CWINVISIBLE\fR" 10
+No visible markup (but generic markup commands will still be inserted.
+.Sh "Subtypes"
+The subtype defines the commands that are inserted at the begin and end of added or discarded blocks, irrespectively of whether these blocks contain text or commands (Defined commands: \f(CW\eDIFaddbegin, \eDIFaddend, \eDIFdelbegin, \eDIFdelend\fR) 
+.Ip "\f(CWSAFE\fR" 10
+No additional markup (Recommended choice)
+.Ip "\f(CWMARGIN\fR" 10
+Mark beginning and end of changed blocks with symbols in the margin nearby (using
+the standard \f(CW\emarginpar\fR command \- note that this sometimes moves somewhat
+from the intended position.
+.Ip "\f(CWCOLOR\fR" 10
+An alternative way of marking added passages in blue, and deleted ones in red. Note
+that \f(CWCOLOR\fR subtype creates fatal overflow errors with a number of dvi converters, 
+and its use is thus discouraged (use instead the main types to effect colored markup).
+.Sh "Float Types"
+Some of the markup used in the main text might cause problems when used within 
+floats (e.g. figures or tables).  For this reason alternative versions of all
+markup commands are used within floats. The float type defines these alternative commands.
+.Ip "\f(CWFLOATSAFE\fR" 10
+Use identical markup for text as in the main body, but set all commands marking the begin and end of changed blocks to null-commands.  You have to choose this float type if your subtype is \f(CWMARGIN\fR as \f(CW\emarginpar\fR does not work properly within floats.
+.Ip "\f(CWIDENTICAL\fR" 10
+Make no difference between the main text and floats.
+.Sh "Configuration Variables"
+.Ip "\f(CWMINWORDSBLOCK\fR" 10
+Minimum number of tokens required to form an independent block. This value is
+used in the algorithm to detect changes of complete blocks by merging identical text parts of less than \f(CWMINWORDSBLOCK\fR to the preceding added and discarded parts.
+.Sp
+[ Default: 3 ]
+.Ip "\f(CWFLOATENV\fR" 10
+Environments whose name matches the regular expression in \f(CWFLOATENV\fR are 
+considered floats.  Within these environments, the \fIlatexdiff\fR markup commands
+are replaced by their \s-1FL\s0 variaties.
+.Sp
+[ Default: S<\f(CWfigure|table|plate)[\ew\ed*@]*\fR ]
+.Ip "\f(CWPICTUREENV\fR" 10
+Within environments whose name matches the regular expression in \f(CWPICTUREENV\fR
+all latexdiff markup is removed (in pathologic cases this might lead to
+ inconsistent markup but this condition should be rare).
+.Sp
+[ Default: S<\f(CWpicture)[\ew\ed*@]*\fR ]
+.SH "BUGS"
+The current version is a beta version which has not yet been
+extensively tested, but worked fine locally.  Please send bug reports
+to \fItilmann@esc.cam.ac.uk\fR.  Include the serial number of \fIlatexdiff\fR
+(from comments at the top of the source or use \fB--version\fR).  If you come across latex
+files that are error-free and conform to the specifications set out
+above, and whose differencing still does not result in error-free
+latex, please send me those files, ideally edited to only contain the
+offending passage as long as that still reproduces the problem. 
+.SH "SEE ALSO"
+the \fIlatexrevise\fR manpage
+.SH "PORTABILITY"
+\fIlatexdiff\fR does not make use of external commands and thus should run
+on any platform  supporting PERL v5 or higher.  The standard version of
+\fIlatexdiff\fR requires installation of the PERL package
+\f(CWAlgorithm::Diff\fR (available from \fIwww.cpan.org\fR \- 
+\fIhttp://search.cpan.org/~nedkonz/Algorithm-Diff-1.15\fR) but a stand-alone
+version, \fIlatexdiff-so\fR, which has this package inlined, is available, too.
+.SH "AUTHOR"
+Copyright (C) 2004 Frederik Tilmann
+.PP
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License Version 2
+
+.rn }` ''
+.IX Title "LATEXDIFF 1"
+.IX Name "latexdiff - determine and markup differences between two latex files"
+
+.IX Header "NAME"
+
+.IX Header "SYNOPSIS"
+
+.IX Header "DESCRIPTION"
+
+.IX Item "1."
+
+.IX Item "2."
+
+.IX Item "3."
+
+.IX Item "4. "
+
+.IX Header "OPTIONS"
+
+.IX Subsection "Preamble"
+
+.IX Item "\fB--type=markupstyle\fR or \fB\-t markupstyle\fR"
+
+.IX Item "\fB--subtype=markstyle\fR or \fB\-s markstyle\fR "
+
+.IX Item "\fB--floattype=markstyle\fR or \fB\-f markstyle\fR"
+
+.IX Item "\fB--preamble=file\fR or \fB\-p file\fR"
+
+.IX Item "\fB--show-preamble\fR"
+
+.IX Subsection "Configuration"
+
+.IX Item "\fB--exclude-safecmd=exclude-file\fR or \fB\-A exclude-file\fR"
+
+.IX Item "\fB--replace-safecmd=replace-file\fR"
+
+.IX Item "\fB--append-safecmd=append-file\fR or  \fB\-a append-file\fR"
+
+.IX Item "\fB--exclude-textcmd=exclude-file\fR or \fB\-X exclude-file\fR"
+
+.IX Item "\fB--replace-textcmd=replace-file\fR"
+
+.IX Item "\fB--append-textcmd=append-file\fR or  \fB\-x append-file \fR"
+
+.IX Item "\fB--config var1=val1,var2=val2,...\fR or \fB\-c var1=val1,..\fR"
+
+.IX Item "\fB\-c configfile\fR"
+
+.IX Item "\fB--show-safecmd\fR"
+
+.IX Item "\fB--show-textcmd\fR"
+
+.IX Item "\fB--show-config\fR"
+
+.IX Subsection "Miscellaneous"
+
+.IX Item "\fB--verbose\fR or \fB\-V\fR"
+
+.IX Item "\fB--help\fR or \fB\-h\fR"
+
+.IX Item "\fB--version\fR"
+
+.IX Subsection "Predefined styles "
+
+.IX Subsection "Major types"
+
+.IX Item "\f(CWUNDERLINE\fR"
+
+.IX Item "\f(CWCTRADITIONAL\fR"
+
+.IX Item "\f(CWTRADITIONAL\fR"
+
+.IX Item "\f(CWCFONT\fR"
+
+.IX Item "\f(CWCCHANGEBAR\fR"
+
+.IX Item "\f(CWCFONTCHBAR\fR"
+
+.IX Item "\f(CWCULINECHBAR\fR"
+
+.IX Item "\f(CWCHANGEBAR\fR"
+
+.IX Item "\f(CWINVISIBLE\fR"
+
+.IX Subsection "Subtypes"
+
+.IX Item "\f(CWSAFE\fR"
+
+.IX Item "\f(CWMARGIN\fR"
+
+.IX Item "\f(CWCOLOR\fR"
+
+.IX Subsection "Float Types"
+
+.IX Item "\f(CWFLOATSAFE\fR"
+
+.IX Item "\f(CWIDENTICAL\fR"
+
+.IX Subsection "Configuration Variables"
+
+.IX Item "\f(CWMINWORDSBLOCK\fR"
+
+.IX Item "\f(CWFLOATENV\fR"
+
+.IX Item "\f(CWPICTUREENV\fR"
+
+.IX Header "BUGS"
+
+.IX Header "SEE ALSO"
+
+.IX Header "PORTABILITY"
+
+.IX Header "AUTHOR"
+

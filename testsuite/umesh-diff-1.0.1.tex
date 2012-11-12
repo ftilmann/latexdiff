@@ -1,0 +1,63 @@
+\documentclass{article}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL umesh-old.tex   Sun Nov 11 21:19:29 2012
+%DIF ADD umesh-new.tex   Sun Nov 11 21:19:29 2012
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+
+\title{Welcome to \DIFdelbegin \DIFdel{api}\DIFdelend \DIFaddbegin \DIFadd{API}\DIFaddend }
+\author{Umesh Vishwakarma}
+
+\maketitle
+
+\section{Section 1}
+
+Some text
+
+\DIFaddbegin \begin{figure}
+\caption{\DIFaddFL{This is a test for figurecaption.
+Multiple lines}}
+
+\end{figure}
+
+\DIFaddend More words follow\DIFaddbegin \DIFadd{.
+}\DIFaddend 
+
+\section{Section 2}
+\DIFdelbegin %DIFDELCMD < 
+
+%DIFDELCMD < \begin{figure}
+%DIFDELCMD < %%%
+%DIFDELCMD < \caption{%
+{%DIFAUXCMD
+\DIFdel{This is a test for figurecaption. 
+Multiple lines}}
+%DIFAUXCMD
+%DIFDELCMD < \end{figure}
+%DIFDELCMD < %%%
+\DIFdelend 
+
+The end
+
+
+
+\end{document}

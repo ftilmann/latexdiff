@@ -1,0 +1,10 @@
+\begin{figure*}
+
+\centering
+My figure
+   \caption{My caption}
+\label{fig}
+
+\end{figure*}
+\efloatseparator
+ 

@@ -1,0 +1,1068 @@
+\documentclass[12pt]{article}  
+\usepackage{agums}
+\usepackage{mylatex}
+
+\renewcommand{\chg}[1]{{\bf #1}}
+\renewcommand{\remove}[1]{}
+
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\rom}[1]{\uppercase\expandafter{\romannumeral#1}}
+\newcommand{\de}[2]{ {{\partial #1}\over{\partial #2}} }
+%\renewcommand{\arraystretch}{1.25}
+%\renewcommand{\arraystretch}{0.75} for approximate single spacing
+
+\lefthead{RAPINE ET AL.}
+\righthead{CRUSTAL STRUCTURE OF TIBET}
+\received{}
+\revised{}
+\accepted{}
+\journalid{JGR}{}
+\articleid{}{}
+\paperid{}
+\ccc{}
+\cpright{}{}
+
+\authoraddr{Richard Rapine, Frederik Tilmann, Michael West and James Ni, Department
+of Physics, New Mexico State University, Las Cruces, NM 88003. 
+(email: rrapine@nmsu.edu; ftilmann@geomar.de; west@nmsu.edu; jni@nmsu.edu)}
+
+\authoraddr{Arthur Rodgers, Lawrence Livermore National Laboratory, L-205,
+P.O. Box 808, Livermore, CA 94551. (email: rodgers@s34.llnl.gov)}
+
+\begin{document}
+
+\title{Crustal Structure of Northern and Southern Tibet from  Surface Wave
+Dispersion Analysis}
+
+\author{Richard Rapine, Frederik Tilmann\footnote{Now at
+GEOMAR, Christian Albrechts-Universit\"at, Kiel, Germany.},
+Michael West and James Ni}
+\affil{Department of Physics, New Mexico State University, Las Cruces, NM 
+88003, USA}
+
+\author{Arthur Rodgers}
+\affil{Lawrence Livermore National Laboratory, Livermore, CA 94551, USA}
+
+\begin{abstract} 
+
+Group and phase velocities of fundamental mode Rayleigh waves, in the period range of 10 to 70 s, are 
+obtained for southern and northern Tibet. Significant variations in crustal velocity structure are found. 
+The group velocity minimum for Tibet occurs at $\sim$33 s and the minimum is $\sim$0.12 km/s lower for 
+southern Tibet than for northern Tibet.  At periods greater than 50 s, however, group velocities are up to 
+0.2 km/s faster in southern Tibet.  The group and phase velocities are inverted for layered S wave models.  
+The dispersion observations in southern Tibet can only be fit with a low-velocity layer in the middle 
+crust.  In contrast, the velocity models for northern Tibet do not require any low-velocity zone in the 
+crust.  The S wave velocity of the lower crust of southern Tibet is $\sim$0.2 km/s faster than the lower 
+crust of northern Tibet.   
+In southern Tibet the sub-Moho velocity increases with a positive gradient that is similar to a shield, 
+while there is no velocity gradient beneath northern Tibet.  The high-velocity lower crust of southern 
+Tibet is consistent with the underthrusting of Indian continental
+lithosphere. The most plausible explanation of the mid-crustal 
+low velocity zone is the presence of crustal melt resulting from H$_2$O-saturated melting of the interplate 
+shear zone between the underthrusting Indian crust and overflowing
+Asian crust.  The lack of a pronounced 
+crustal low-velocity zone in northern Tibet is an indication of a relatively dry crust.  The low S wave 
+velocity in the lower crust of northern Tibet is interpreted to be
+due to a combination of compositional differences, high temperatures, presumably caused by a high mantle heat flux,
+and possibly small amounts of partial melt.
+Combined with all available observations in Tibet, the new surface wave results are consistent with
+a hot and weak upper mantle beneath northern Tibet.  \end{abstract} 
+
+\section{Introduction} 
+
+The Himalayas and Tibetan Plateau are created by the continent-continent collision between India and Asia 
+and are the subject of intense study largely owing to the fact that continental collision is an important 
+process in the evolution of continents.  Early  surface wave dispersion 
+studies used seismic data recorded outside the Tibetan Plateau and
+thus could only report an average Tibetan 
+crustal and uppermost mantle structure [e.g., {\it Gupta and Narain}, 1967; {\it Bird}, 1976; 
+{\it Bird and Toks\"oz}, 1977; 
+{\it Chun and Yoshii}, 1977; {\it Romanowicz}, 1982; {\it Chun and McEvilly}, 1986;  {\it Brandon and 
+Romanowicz}, 1986].  During the past two decades, considerable effort has been made to acquire seismic data 
+within and immediately adjacent to the plateau with the goal of elucidating the nature of crustal 
+thickening and lithospheric structure within the collision zone.  These recent studies have revealed 
+significant variations in the crustal and upper mantle properties between southern and northern Tibet 
+[e.g., {\it Molnar}, 1988; {\it Huang et al.}, 2000; {\it Zhao et al.}, 2001].  In particular, strong 
+attenuation of Sn waves and low upper mantle P and S wave velocities were reported in north-central Tibet 
+while fast shield-like uppermost mantle velocities were reported in southern Tibet [e.g., {\it Chen and 
+Molnar}, 1981; {\it Ni and Barazangi}, 1983; {\it Brandon and Romanowicz}, 1986; {\it Lyon-Caen}, 1986; 
+{\it Holt and Wallace}, 1990; {\it McNamara et al.}, 1995; {\it Wittlinger et al.}, 1996; 
+{\it Rapine et al.}, 1997; {\it Rodgers and Schwartz}, 1997, 1998]. 
+
+The transition in mantle properties occurs near the Banggong-Nujiang Suture (BNS), which was formed during 
+the late Jurassic-early Cretaceous as a consequence of the collision between the Lhasa and Qiangtang 
+terranes, with the latter comprising the southern margin of Asia just prior to the continental collision 
+[e.g., {\it Dewey et al.}, 1989].  A recent study on SKS shear wave splitting found that horizontal 
+anisotropy is strong beneath northern Tibet (2 s delay time with approximately E-W fast direction) whereas 
+it is weak or absent beneath southern Tibet [{\it Sandvol et al.}, 1997; {\it Huang et al.}, 2000].  These 
+observations have been interpreted as evidence for the underthrusting of cold Indian continental 
+lithosphere beneath southern Tibet [e.g., {\it Ni and Barazangi}, 1983, 1984; {\it Holt and Wallace}, 1990; 
+{\it Rodgers and Schwartz}, 1997; {\it Huang et al.}, 2000].  High velocities in the upper mantle beneath 
+the Western Himalayas and Karakoram were interpreted as being due to downwelling continental lithosphere 
+[{\it Molnar}, 1988; {\it Pandey et al.}, 1991; {\it Molnar et al.}, 1993; {\it Zhou et al.}, 1996].  The 
+absence of a mantle lithospheric lid suggested by {\it Brandon and Romanowicz} [1986] and the low 
+velocities found beneath the Qiangtang terrane by {\it Wittlinger et al.} [1996] were used to support 
+models of mantle lithospheric delamination [e.g., {\it Bird}, 1978] and convective instability [{\it 
+Houseman et al.}, 1981; {\it Molnar et al.}, 1993], respectively.  Clearly, there needs to be a firm 
+understanding of the properties and composition of the crust and mantle in various regions of Tibet to 
+confirm these or other suggested models. 
+
+The temporary broadband seismic array of the International Deep Profiling of Tibet and the Himalayas III 
+(INDEPTH III) in central Tibet provides a unique opportunity to determine the shear wave velocities of the 
+crust and uppermost mantle of southern and northern Tibet. We determine phase and group velocities for 
+fundamental mode Rayleigh waves across southern Tibet (Lhasa terrane) and northern Tibet (Qiangtang 
+terrane).  The group and phase velocities are inverted for the shear wave velocity structure beneath these 
+regions. The difference in the seismic structure between them is compared to previous results and discussed 
+in light of their tectonic significance. 
+
+\section{Previous Surface Wave Studies} 
+
+The first study to estimate crustal thickness using surface wave dispersion in the Tibetan Plateau and 
+Himalayas was by {\it Gupta and Narain} [1967].  For paths crossing the Tibetan
+plateau they observed the continental Airy phase of Rayleigh surface
+waves at $\sim$33~s, which is at a much longer period than normally
+observed and indicates an average crustal thickness of 65--70 km beneath
+the Tibet and the Himalayas.  These data were extremely limited in period ranges and were derived from 
+paths which had only a small percentage of the total path within Tibet. However, subsequent surface wave 
+investigations by {\it Bird} [1976], {\it Bird and Toks\"oz} [1977], {\it Chun and Yoshii} [1977], {\it 
+Romanowicz} [1982], and {\it Chun and McEvilly} [1986] obtained similar crustal thickness estimates. 
+
+With Love and Rayleigh group velocities in a wide period range of 7 to 100 s, {\it Chun and Yoshii} [1977] and {\it Chun and McEvilly} [1986] 
+developed a number of crustal models for the Tibetan Plateau.  Their data  consisted of 17 individual paths with a large percentage 
+of the total path length ($>$ 60\%) within Tibet. Both studies require a
+mid-crustal low velocity zone at depths 12-38 km and 24-36 km, respectively 
+{\it Chun and McEvilly} [1986] observed an S wave velocity of $\sim$ 3.9 km/s in the lower crust, implying
+relatively cool temperatures ($\sim 650 \dg$C) near the crust-mantle boundary. 
+
+{\it Bird and Toks\"oz} [1977] investigated the attenuation of Rayleigh waves in Tibet and observed a 
+strong attenuating layer centered at a depth of 70 km.  From an analysis of
+  6 earthquakes along 14 
+different ray paths across Tibet, {\it Bird and Toks\"oz} [1977] reported a strong reduction in the 
+amplitude of long period Rayleigh waves.  They concluded that the 
+lowermost part of the crust is partially molten and further suggested that the partial melt in the lower crust 
+results from the asthenosphere extending to the lower crust beneath Tibet.  
+
+{\it Romanowicz} [1982] studied phase velocities of Love and Rayleigh waves across Tibet using the 
+two-event method.    Inversion of their phase velocities in the period range of 30 to 
+90 s produced a best-fitting model with a 65 km thick crust, low average crustal velocities, and a high sub-Moho 
+shear velocity of 4.7 km/s.  Later surface wave studies showed that the crustal thickness varied from 
+being very thick beneath southern Tibet ($\sim$70 km) to much thinner beneath the Qiangtang terrane (50-60 
+km) [{\it Brandon and Romanowicz}, 1986].  {\it Brandon and Romanowicz} [1986] argue for the presence of a 
+no-lid zone beneath the Qiangtang terrane based on pure path phase velocities of fundamental mode Rayleigh 
+waves in the period range of 30 to 80 s.  A mantle S wave velocity of 4.4 km/s  is 
+required beneath northern Tibet to accomodate the low phase velocities at periods longer than 60 s.  {\it Brandon and Romanowicz} 
+[1986] believe that these data indicate a possible upwelling of asthenospheric material which agrees with 
+the occurrence of basaltic volcanism and inefficient transmission of Sn
+waves observed by {\it Ni and Barazangi} [1983].  {\it Cotte et al.} [1999] measured surface waves recorded by 
+temporary broadband stations of the INDEPTH~II array located within southern Tibet.  They found a low-velocity layer in the middle 
+to lower crust of southern Tibet from inversions of phase velocity dispersion curves with periods between 
+20 and 60 s.  A mid-crustal low-velocity zone in southern Tibet was also reported by Wu [1995] from INDEPTH II 
+data. Figure 1 provides a summary of some of the various shear wave velocity models developed for the 
+Tibetan Plateau from previous surface wave studies. 
+
+\section{Data and Method} 
+
+The INDEPTH III consortium was established to perform a multidisciplinary investigation of the structure of 
+the crust and mantle lithosphere beneath the Tibetan Plateau,
+including magnetotelluric [{\it Unsworth et al.}, 2000] and active
+seismic experiments [{\it Zhao et al., 2001}], and geologic
+investigations [{\it Hacker et al.}, 2000].
+The passive seismic component of INDEPTH III [e.g., {\it Huang
+et al.}, 2000], 
+which operated from July, 1998, to June, 1999, consisted of 37 broadband
+stations (34 Streckeisen STS-2, 3 G\"uralp 
+CMG-3T), 10 intermediate band (G\"uralp CMG-40T) and 15 short-period (Marks Product 1 Hz L4) stations.  The 
+stations were arranged in a NNW-SSE trending linear array, which crossed the BNS around 32.2$^\circ$N, 
+89.4$^\circ$E, and was supplemented by a few stations east and west of the main array along the Lumpola 
+valley.   The events used for group velocity measurements were selected based on two criteria.  The events had to be as close 
+to or within the Lhasa and Qiangtang terranes and they had to be large enough in magnitude to have good 
+signal-to-noise ratios. Earthquakes in or near the two terranes in Tibet were chosen so that the 
+propagations paths did not cross many different geologic features. Stations north of the BNS were used only 
+for events which occurred near the Kunlun mountains and stations south of the BNS for events which occurred 
+in the Himalayas.   Table 1 provides the event parameters for the earthquakes used to determine group 
+velocities.  Only broadband and intermediate period data recorded continuously at 20 samples/s were used in 
+this study.  During preprocessing, the instrument response was removed and the data were decimated to 1 
+sample/s.  The two horizontal components (N-S, E-W) were rotated to produce radial and tangential 
+components.  
+We inspected Love and Rayleigh waves for all events considered,
+however, the signal-to-noise ratio of the transverse components was generally insufficient 
+to obtain reliable Love wave group dispersion measurements, therefore we consider only Rayleigh
+waves in the following.
+Figure 2(a) depicts the group velocity propagation paths studied and the stations used.  
+Analysis of Rayleigh wave particle motion shows that the propagation direction does not deviate much 
+($<3^\circ$) from the theoretical radial direction. 
+
+Because of the short path lengths and moderate magnitudes of usable earthquakes (Table 1) no reliable 
+measurements could be carried out at long periods, such that we obtained group dispersion measurements 
+only for periods 10-70 s.  Fundamental mode Rayleigh waves were measured on the vertical component. Previous 
+studies used moving window and multiple filter analysis to study surface waves in Tibet.  In this work, 
+group and phase velocities are measured with the frequency-time analysis (FTAN) of {\it Levshin et al.} 
+[1992].  This technique filters the data with a set of narrowband
+Gaussian filters, with the important difference to conventional
+multiple filter techniques that the instanteneous phase (rather than
+the central frequency of the narrowband filters) is used to
+determine the frequency of group arrival picks.  Benefits of this 
+method include that it corrects for the fall-off of the event amplitude spectrum at low frequencies [{\it 
+Shapiro and Singh}, 1999] and that measurements are less biased by
+spectral holes.  A detailed description of FTAN is given by {\it Levshin et al.} [1992].  Figure 
+3(a) shows an example vertical seismogram for event 98/07/18 and Figure 3(b) shows the FTAN-diagram of the 
+seismogram.  In order to be able to compare and average curves
+from different station-event pairs group velocities at defined
+frequencies (here: periods of multiples of 5~s) are derived from group 
+velocities at arbitrary frequencies by spline interpolation, which can 
+be considered implicit `smoothing', e.g., of spectral holes.
+
+Systematic errors in the group velocity measurement can be caused by event mislocations and origin time 
+errors.  Assuming the quoted errors for the epicentral coordinates and
+origin time of the CMT solution (references in Table 1), the 
+resulting error for the group velocity would be $\sim1\%$, i.e., about 0.03 km/s, smaller than the scatter 
+of group velocity measurements due to noise.  Actual mislocation errors are
+likely to be somewhat larger; e.g., if we consider the difference
+between PDE and CMT locations and origin times, group velocity errors
+of up to $\sim$0.1~km/s would be implied.  However, substantial mislocation of an event in time or 
+space would be expected to cause systematic variations of the group velocity estimate with station-event 
+distance, and no such systematic variations have been observed for any of the events analyzed.  
+Multipathing and refraction are not thought to present a problem for this data set because propagation 
+occurs predominantly within one geological province without major structural boundaries. Although in 
+theory, source radiation patterns can affect group velocity measurements, this effect is unimportant for 
+periods less than 75 s [{\it Levshin et al.}, 1999]. 
+
+The paths used for the group dispersion measurements (Figure 2(a)) are all
+  approximately oriented EW. Hence, there is a concern that results might be
+  biased by the presence of horizontal anisotropy.  Based on the surface wave
+  data presented here alone, it is impossible to quantify the amount of
+  anisotropy and hence the amount of bias.  In Southern Tibet (Lhasa terrane)
+little or no  SKS splitting was observed [e.g., {\it McNamara et
+    al.}, 1994; {\it Sandvol et    al.}, 1997; {\it Huang et    al.}, 2000],
+  such that horizontal anisotropy is not thought to present a problem there.  In
+  Northern Tibet (Qiantang terrane) large SKS splitting occurs, however, the direction of
+  anisotropy varies over short length scales (100-200~km) [{\it Huang et
+    al.}, 2000], such that the lateral averaging effect of surface waves already
+  reduces the expected effective anisotropy.  Overall, some bias from anisotropy
+  is still likely but will not be much larger than 1\% (of the
+phase or group
+velocity, i.e., $\sim$0.03 km/s) at any one frequency.
+
+Inter-station phase velocities were measured with an extension of the two-station method [e.g., {\it Aki 
+and Richards}, 1980]. The data are first corrected for instrument response\remove{ and timing errors}. The phase at 
+a station $i$, $\phi_i$, is measured as the instanteneous phase at the group arrival times $t^{\rm 
+group}_i(\omega)$ as determined by frequency-time analysis, following {\it Levshin et al.}'s [1992] 
+proposal.  The phase values are then corrected for the fact that measurements are taken at different times, 
+and unwrapped,
+ \begin{displaymath} 
+\phi_i'(\omega)=\phi_i(\omega)-\omega t^{\rm group}_i(\omega)+2\pi N \ \ \ \ ,
+\end{displaymath} 
+where $N$ is chosen to avoid large phase jumps between either close frequencies at 
+the same station or between nearby stations at the same frequency, and
+is additionally adjusted such that a
+reasonable phase velocity is obtained at some low frequency.  When plotting the corrected phase 
+$\phi_i'(\omega)$ as a function of epicentral distance $r_i$ approximately a straight line results.  The 
+slope of this line, $\frac{d\phi'}{dr}$, gives directly the phase velocity according to \begin{displaymath} 
+\frac{d\phi'}{dr}=\frac{\omega}{c} \end{displaymath} (cf. equation 6 of {\it Levshin et al.} [1992]). The 
+formal error of the slope in the straight line fit then gives an estimate of the phase velocity error due 
+to uncorrelated noise between the stations.  Finally, the phase velocity estimates for different events are 
+combined into a joint phase dispersion curve by weighted averaging of the individual measurements.  No 
+explicit smoothing is applied to the phase velocity curve, and no starting model is required (other than 
+the very approximate estimate of phase velocity at some low frequency to fix $N$, the correct multiple of 
+$2\pi$). 
+
+The method assumes that propagation occurs close to the great circle path, that locally the Earth is 
+laterally homogeneous, and that the contribution of the source and the propagation path up to the closest 
+station is the same for all stations.  The first condition was checked by verifying that particle motion 
+was close to the one expected for Rayleigh waves.  The second condition can only be met approximately; here 
+we only compare phase measurements at stations within the same terrane (Lhasa or Qiantang).  Lastly, the 
+influence of structure outside the array was minimized by using only stations and events for which the 
+deviation between inter-station great circle and station-event great circle did not exceed 5\dg; source 
+mechanisms were screened for large phase shifts near the azimuth to the INDEPTH array. 
+
+We carried out synthetic tests that showed that the method just described can correctly retrieve phase 
+velocities at well-constrained frequencies, and that unconstrained frequencies, where either the 
+signal-to-noise ratio is low or the inter-station distance is insufficient, stand out because formal errors 
+are large and the dispersion curve appears rough in the unconstrained parts. 
+
+A total of 10 events fulfilled the criteria set out above and yielded good signals (Table 2).  6 events had 
+inter-station paths solely in the Lhasa terrane, and 3 events had inter-station paths solely in the 
+Qiantang terrane.  For all these events the phase at station NYMA was compared to the phases measured at 
+one or more stations of the linear array. (Unfortunately, station NYMA ceased to operate after a few months 
+so few events were available for the phase analysis in spite of a station geometry allowing a wide range of 
+backazimuths to be analyzed.)  One event (1998, July 17) had a backazimuth close to the average azimuth of 
+the linear array; it has path segments in both terranes and most stations of the linear array have 
+contributed to the phase measurements.  Figure 2(b) shows the propagation directions within the array for 
+all events used.  We also measured phase velocities for selected pairs using the tranfer function approach 
+of {\it Gomberg et al.} [1988], which can be more robust in the presence of noise but is highly susceptible 
+to the starting model and the weight of the smoothing conditions for marginally constrained frequencies, and does not provide objective error estimates.  
+Both methods agreed reasonably well for constrained frequencies; the results reported in
+the following section were determined with FTAN. 
+
+ Unfortunately, the fact that we did not obtain sufficient Love
+wave measurements means that we have no way of testing for the presence
+  of anisotropy with vertical symmetry axis (transverse isotropy), which
+ appears as a discrepancy between the isotropic models required to explain Love and
+ Rayleigh dispersion.  The velocity models derived in the following should thus
+ be strictly treated as representative of the velocity of sub-vertically
+ polarised shear waves, i.e. the velocity to which Rayleigh waves are most
+ sensitive to.
+
+Likewise, solely based on our data we cannot ascertain the validity of the
+  ``pure-path assumption'' that the
+  velocity structure does not differ significantly within one terrane, and
+  indeed we do not claim that the structures we obtain are representative of any
+  one point within each terrane, they merely present lateral averages.  The
+  assignment of the phase data to the two terranes makes sense for two reasons.
+First, many previous seismological studies have pointed to a change in mantle
+  properties near the BNS.  This and the
+  fact that the BNS represents a geological boundary between two once disjoint
+  regions with different histories makes similar crustal
+  structures appear likely; crustal models based on wide-angle data collected with the INDEPTH
+  III linear array indeed show the strongest lateral change near the BNS [{\it
+    Zhao et al.}, 2001].  Second, the dispersion measurements for different paths within the same terrane
+  were observed to differ less from each other than from the paths
+  in the other terrane.
+
+
+\section{Dispersion Results} 
+
+Fundamental mode Rayleigh group velocities were measured for event paths which sampled the western and 
+central portions of the Tibetan Plateau. Because of the lack of data in eastern Tibet, the velocity 
+structure determined from group velocities is representative of western and central Tibet (west of 
+89-90$^\circ$).  Individual group velocity measurements are averaged for all propagation 
+paths within one terrane, whereas some smoothing is implicit in
+the FTAN method [{\it Levshin et al.}, 1992].   The average group dispersion curves for southern and northern Tibet along with 
+two standard deviation error bars are shown in Figure 4.  Note that
+errors at
+neighbouring points are not necessarily independent because of the way
+indivual measurements are obtained. Also, these error bars represent only the formal error resulting from the averaging procedure, i.e. they do take account of random noise but do not include systematic errors such as mislocation or bias caused by anisotropic structures.  The Rayleigh wave group velocity minimum, which 
+corresponds to the continental Airy phase, occurs at a period of 33 s in Tibet.  This is a shift from the 
+20 s minimum found in average continental crust due to the extreme thickness of the Tibetan crust.  {\it 
+Chun and Yoshii} [1977] measured a similar group minimum at the same period in their study. The group 
+velocity minimum for southern Tibet is lower than the minimum for northern Tibet by approximately 0.12 
+km/s.  The Rayleigh group velocity also rises more steeply after the group minimum in southern Tibet than 
+in northern Tibet.  These two factors indicate that there is a significant difference in the shear wave 
+structure between southern and northern Tibet. 
+
+Rayleigh phase velocities are well constrained for periods $\sim$25--65~s (Lhasa terrane) and 
+$\sim$30--60~s (Qiantang terrane) (Figure 4).  At many frequencies the differences between the single event 
+estimates are somewhat higher (2--3 standard deviations) than could be expected from formal uncertainties, suggesting that either 
+systematic errors have occurred, e.g. due to multipathing, or propagation away from the great-circle path, 
+or that phase dispersion varies as function of propagation direction because of horizontal anisotropy. The 
+data are not sufficient to distinguish between these possibilities.  However, most of the systematic errors 
+just mentioned should be uncorrelated between events at significantly different locations, and the range in 
+backazimuths provides a limited degree of averaging of horizontal anisotropy, such that the measured phase 
+curves are thought to represent a valid estimate of laterally and directionally averaged phase velocities 
+in the two terranes.  The two standard deviation error bars shown 
+in Figure 4 were determined as the average formal error of the estimates at all frequencies of interest.  However, as less events contributed to this estimate than would be necessary for a robust statistical estimate, the error bars are given as a rough indication only, and should not be considered a reliable estimate of the actual error.
+
+The phase velocities are monotonically increasing and the velocities in southern Tibet are generally higher 
+than the velocities in northern Tibet, particularly at longer periods.  This observation indicates that 
+crustal and uppermost mantle velocities in southern Tibet are on average faster than in northern Tibet.  In 
+the next section we explore the implications of these differences. 
+
+\section{Shear Velocity Models} 
+
+Joint inversions of group and phase velocity are performed independently for southern and northern Tibet 
+using surface wave periods between 10 and 70 s.   The object of the inversions is to obtain the most likely 
+crustal and upper mantle shear velocity structure.  Surface waves are strongly dependent on shear 
+velocity but they also show a weak dependence on compressional wave velocity and density.  Compressional 
+velocity in this study is tied to shear velocity using a Poisson's ratio of 0.27.  This value is the best 
+averaged estimate for Tibet [{\it Zhao et al.}, 2001].  Densities are assigned to be 2500 kg/m$^3$ in the upper 
+5 km of the crust, 2800 kg/m$^3$ from 5-70 km depth, and 3300 kg/m$^3$ below 70 km.  We consider errors 
+introduced by the Poisson ratio {\it a posteriori}; the density
+assumption only marginally affects the results.  The crust and upper mantle is 
+treated as a layered 1-D structure with two 5 km layers in the shallow earth, underlain by 10 km layers to 
+120 km depth above a half space. 
+
+Using an arbitrary starting model, a damped least squares inversion is performed iteratively until the model converges to a 
+solution [{\it Herrmann}, 1987].  Although the process converges quickly, the solution shows some dependence on the starting model.  
+To account for this non-uniqueness, we independently invert 250 randomly generated starting models.  A single master model 
+was created to fit the average velocities observed in previous studies.  We set sedimentary layer 
+velocities according to the wide-angle models {\it 
+Makovsky and Klemperer} [1999] and {\it Zhao et 
+al.} [2001].  No explicit Moho is forced on the master model.  Individual starting models are then created 
+by randomly perturbing each layer of the master model by $\pm$0.4 km/s.  This range is required to span the 
+shear velocities observed in previous studies (Figure 1).
+
+Due to the non-uniqueness of the problem, each starting model results in a slightly different shear 
+velocity structure.  The standard deviation of the family of the final models is 0.02-0.1 km/s depending on 
+depth (Figure 5).  The largest variance is observed in the top 10 km.  The frequencies associated with 
+these depths are too high to be well-constrained by the 10-70 surface waves examined here. The Moho discontinuity (70-80 km depth) is smeared in both models. 
+
+Group and phase velocities are calculated for each initial and final model.  While the surface wave 
+velocities of the initial models vary wildly, they collapse to essentially the same curves after inversion. 
+Both group and phase velocities are fit to the degree expected from the error
+  estimates (Figure 5).   The slightly worse fit of the Qiantang phase data
+  compared to the rest of the data might be the result of a small bias due to
+  anisotropy since the phase data are averages over a range of azimuths whereas the
+  group velocity data sample paths predominantly in EW direction. 
+The assumption of a constant Poisson ratio of 0.27 allows us to treat all compressional wave velocities in 
+terms of shear velocity, reducing the number of parameters by half. This is done because surface wave 
+velocities are significantly more dependent on shear velocity than compressional velocity.  Our tests show 
+this to be a reasonable assumption.  The results obtained using a constant ratio of 0.25 or 0.29 instead, 
+resulted in shear velocity models which differed by $\pm$0.03 km/s.  This is far smaller than the differences 
+associated with the choice of starting model (Figure 5).  Even if the Poisson ratio is assumed to vary as a 
+function of depth, these perturbations would not change the dominant features of the 
+velocity profiles interpreted here. 
+
+>From a wide variety of initial models, a consistent shear velocity structure is identified for southern 
+Tibet and northern Tibet. In particular, three features that distinguish the shear wave models of the Lhasa and Qiantang terrane appear in all final models.  
+In the Lhasa terrane, the upper mantle velocity has a positive gradient of $\sim$0.2~km/s per 10 km depth, 
+similar to the compressional velocity gradient found by {\it Holt and Wallace [1990]}.  In the Qiantang terrane, 
+the upper mantle velocity remains nearly constant at $\sim$4~km/s up to a depth of 110 km. The lower crustal 
+velocity of the Qiangtang terrane has an average value of $\sim$3.5 km/s, which is 0.2 km/s lower than in 
+southern Tibet.  Since no Moho was forced on the models, these velocity differences are       unlikely to be the 
+result of poor assumptions about the crustal thickness (for further
+discussion see below).  In addition, recent studies have shown only small variations 
+in crustal thickness across the Tibetan plateau [e.g., {\it Rodgers and Schwartz}, 1998]
+
+In the crust, the southern Tibet profile has a low velocity zone at 20--30 km depth (Figure 5). 
+Velocities at this depth are reduced by 0.2-0.3 km/s, resulting in $v_s=\sim$3.2 km/s.  Given the scatter in final 
+models and the 10 km model layering, the upper and lower bounds on this low velocity zone could vary by 
+5-10 km. However, it extends no deeper than about 40 km. This result
+is quite different from the result of {\it Cotte et al.} [1999] for
+the INDEPTH II area who inferred the low velocity zone to extend to 70
+km depth.  However, a shallow low velocity zone agrees with a recent
+receiver function study in the southern Lhasa terrane by {\it Yuan et 
+al.} [1997] who require a mid-crustal low velocity zone, similar to the one found here, to fit their data.  In contrast, we observe no pronounced low velocity zone (Figure 6) in northern Tibet where the shear 
+velocity is nearly constant in the upper crust and increases gradually below 40 km depth.  
+
+As spurious structure can be introduced by a wrong choice of the
+Moho depth the models shown in Figure 5 are based on initial models
+without any Moho.  However, we also ran inversions with families of
+initial models which were based on random perturbations of master
+models with Moho depths of 60 and 70~km.  In no case did the final
+modle have a different Moho depth from the initial model, i.e., the
+data are insufficient to resolve crustal thickness differences of
+5-10~km.  The models with the Moho at 60 and 70~km and also the models
+without an explicit Moho differ only marginally above 40~km such that
+our inferences regarding the low velocity zone are unaffected.  The
+velocities within $\sim$20~km of the Moho change by up to 0.15~km/s.
+Lower crustal velocities in the Qiantang would be $\sim$0.35 km/s
+slower than in Lhase, if crustal thickness in the Qiangtang were 10 km
+less than in the Lhasa terrane, or only 0.1 km/s slower if it were the
+other way round, i.e. if the the crust were 10 km thinner in the Lhasa
+terrane than in the Qiantang (a highly unlikely scenario in view of
+previous refraction and receiver function results).  In any case, the
+qualitative observation of lower crustal velocities in Northern Tibet
+compared to Southern Tibet appears regardless what (reasonable) Moho
+depth or type (present in starting model or not) has been assumed.  Likewise, the different gradients of upper mantle velocities similarly irrespective of assumed crustal thickness.
+
+\section{Discussion} 
+
+The surface wave dispersion analysis reveals significant differences in the crustal structure between 
+southern and northern Tibet.   
+An extensive low-velocity layer is present in the mid-crust in southern Tibet.  
+Such low velocities in the mid-crust occur in the presence of partial
+melt.   We argue in the following that
+although at first sight
+counter-intuitive (the uppermost mantle beneath Southern Tibet is
+faster and less attenuating, and thus likely to be cooler than the
+mantle beneath Northern Tibet [{\it Ni and Barazangi}, 1983]), the
+presence of melt in the Lhasa crust is not surprising.  
+ The crust in southern Tibet is thought to have an unusually 
+high H$_2$O content, and thus a low solidus temperature ($\sim$650$^\circ$C) [{\it Boettcher and Wyllie}, 
+1968] because of the 
+underthrusting of fore-arc sedimentary and meta-sedimentary rocks in the Indian crust.
+Extremely high heat flow measurements up to 150 mW/m$^2$ have been
+obtained in southern Tibet [{\it Francheteau et al.}, 1984; {\it
+Shen}, 1985] but they are difficult to interpret
+because of the potential influence of hydrothermal systems.  Allowing
+for advective effects as much as possible and considering sites
+unlikely to be affected by advection, {\it Hochstein and
+Regenauer-Lieb} [1998] infer ``deep'' heat-flow values of
+65--110~mW/m$^2$ for the Lhasa terrane, still significantly higher than average 
+continental values. Temperatures in the Tibetan crust are elevated in spite of the cold
+mantle below because of 
+increased radiogenic heating in the thickened Asian crust [{\it Nelson
+et al.}, 1996] and heating by plastic deformation [{\it Hochstein 
+and Regenauer-Lieb}, 1998].  Using an average heat flow value of
+90~mW/m$^2$ and a thermal conductivity of 3~W\,K$^{-1}$m$^{-1}$, we
+obtain a thermal gradient of 30\dg C/km which implies the wet-granite
+solidus is reached at a depth of $\sim$22~km.  
+ Our 
+velocity model for the Lhasa terrane places the melt between 20 and 30
+km ($\pm$10 km) depth.  It is this approximate co-incidence of
+the depth of the low velocity zone and the depth at which partial melt
+could be expected that is strongly suggestive of a partial melt origin
+of the low velocity zone. 
+To summarise, it is the combination of the high H$_2$O content and
+high crustal heat production that is likely to result 
+in H$_2$O-saturated melting.
+
+Additional factors such as aqueous fluids can also lower seismic velcocities.
+{\it Makovsky and Klemperer} [1999] used amplitude variation with
+offset (AVO) modelling to show that
+the bright spots observed in INDEPTH II reflection data in
+Southern Tibet are much more likely related to aqueous fluids than to
+partial melt.  This result is still consistent with the
+interpretation of `our' low velocity zone as being due to partial
+melt because such a layer of free aqueous fluid can form on top of a
+cooling partial melt body [{\it Makovsky and Klemperer}, 1999].  The
+relative importance of aqueous fluids and partial melt in contributing 
+to the observed low velocity zone depends on the geothermal gradient,
+i.e., the depth at which the granite solidus is reached.
+Both mid-crustal partial melts and
+aqueous fluids can cause the middle crust to act as a low viscosity
+layer, decoupling the deformation of the upper  
+crust, which is visible in the surface geology, from the movement of
+the lower crust and Indian lithosphere beneath [{\it 
+Nelson et al.}, 1996; {\it Kind et al.}, 1996; {\it Royden et al.}, 1997]. 
+
+Our observation of a mid-crustal low-velocity layer is consistent with previous 
+studies in Southern Tibet.    These include the MT observations that the crust 
+below the INDEPTH II transect is electrically conductive and that the high conductivity appears to be 
+confined to the mid-crust [{\it Chen et al.}, 1996; {\it Unsworth et al.}, 2000], the passive seismic 
+observation of a broad mid-crustal low-velocity zone [{\it Kind et al.}, 1996], the observation of highly 
+attenuated crustal Lg waves and coda Q [{\it Reese et al.}, 1999], and the CMP/wide-angle observation of 
+seismic bright spots coincident with the top of the mid-crustal low-velocity layer [{\it Brown et al.}, 
+1996; {\it Makovsky et al.}, 1996].  Recent magnetotelluric work in Eastern Tibet [{\it personal communication, 
+Martyn Unsworth and Alan Jones}, 2002] also shows a high conductivity zone starting at a similar depth as 
+the low-velocity zone inferred from the surface waves.  
+Another indirect evidence for partial melt in the 
+middle crust are the granitic bodies  
+found in the High Himalaya and North Himalaya, which are
+interpreted to be the frozen extension of the mid-crustal partial-melt 
+zone. They have been brought to the surface  in the  High Himalayan Crystalline thrust
+sheet, which is being displaced southward and upward relative to
+underthrusting India [{\it Nelson et al.}, 1996].  
+What the
+surface wave data presented here show is that the zone of anomalously
+low velocities first discovered in the INDEPTH II data is
+pervasive throughout most of the Lhasa terrane west of the INDEPTH III
+linear array, since it is apparent in the surface wave data in spite
+of the lateral averaging implied by the ``pure-path assumption''.
+
+The surface wave data for northern Tibet do not require a low-velocity zone in the crust.  The lack of a 
+pronounced mid-crustal low-velocity zone is probably due to the low average H$_2$O content in the northern 
+Tibetan crust, such that the solidus temperature is much higher [{\it Hacker et al.}, 2000] and crustal 
+melting will be more limited than in southern Tibet in spite of the higher temperature of the lower crust 
+and the mantle beneath.  This interpretation is supported by the analysis of xenoliths collected in 
+northern Tibet, which has revealed that the lower crust includes anhydrous metasedimentary 
+granulite-facies rocks [{\it Hacker et al.}, 2000]. 
+
+In the lower crust we found that the shear wave velocity 
+ is by $\sim$5\% lower in northern Tibet ($\sim$3.5 km/s) than in
+southern Tibet ($\sim$3.7 km/s).  
+ Studies of Pn and Sn propagation, surface waves and regional waveforms all 
+indicate low S wave velocities and high attenuation in the mantle beneath northern Tibet [{\it Ni and 
+Barazangi}, 1983; {\it Brandon and Romanowicz}, 1986; {\it Rodgers and Schwartz}, 1998; {\it Reese et al.}, 
+1999].  These observations suggest that the temperature is higher in the mantle beneath northern Tibet than 
+southern Tibet.  Although the source of this temperature difference - a mantle diapir [{\it Wittlinger et al.}, 
+1996], strain heating [{\it Kincaid and Silver}, 1996], and lithospheric delamination [{\it Molnar et al.}, 
+1993] have been proposed - remains the subject of debate, the result will be an increased transfer of heat from the mantle 
+into the lower crust in northern Tibet. 
+Data on the temperature dependence of the shear velocity in
+lower-crustal
+rocks are hard to come by. {\it Nataf and Ricard} [1996] use
+$\de{\ln V_s}{T}=-1\times 10^{-4}$, which would imply a temperature
+contrast of 500~K between the lower crust of North and South Tibet if
+the contrast were caused by temperature effects alone.
+It seems difficult to maintain such a large temperature contrast,
+therefore either compositional differences have to contribute to the
+velocity contrast,  or  some melt is also required (a small proportion of melt ($<1$\%)
+would be sufficient, if the melt accumulates along grain boundaries
+[{\it Schmeling}, 1983]).
+Compositional differences are likely because 
+of the different histories experienced by the two terranes.
+Geological observations indicate that Southern Tibet is underlain by
+mafic rocks (gabro, amphibolites) (as could be expected from
+underthrusting of the Tibetan crust) whereas in Northern Tibet an
+extended flysch complex was found [{\it Yin and Harrison}, 2000].
+Reconstructions of the thermal history of xenoliths found in Northern
+Tibet indeed point to several magmatic injection events in the lower
+crust [{\it Hacker et al.}, 2000].
+Furthermore, partial melt derived from lithospheric mantle beneath the Qiangtang terrane has been extruded 
+in late Cenozoic basalt flows [{\it Turner et al.}, 1993, 1996].  Given that the basalt flows on the 
+surface mapped by geologists are not that extensive, it is quite feasible that a proportion of the 
+melt has pounded at the base of the crust and been intruded into the lower crust as dikes and sills, 
+thereby also making the transfer of heat from the mantle into the crust much more efficient compared to thermal 
+conduction alone. 
+The observed contrast is thus likely to be due to
+a combination of compositional differences, and higher temperature and the presence of small quantitities
+of basaltic melt in the lower crust of Northern Tibet, although a
+purely compositional and temperature effect, without the presence of
+melt, cannot be ruled out based on the surface wave results alone.
+
+ The observation that there exists a positive gradient in the mantle
+beneath southern Tibet but not beneath northern Tibet can be
+understood by considering that such a gradient is observed in
+continental shields but not in tectonically active areas.  This
+observation is thus consistent with the notion that Indian lithosphere
+has underthrust southern but not northern Tibet [e.g., {\it Jin and
+McNutt}, 1996]. 
+
+\section{Conclusion} 
+
+The inversion of Rayleigh wave dispersion measurements has identified the existence of a mid-crustal 
+low-velocity layer in southern Tibet, whereas such an extended layer is not required to fit the dispersion 
+curves in northern Tibet.  The presence of a pervasive mid-crustal low-velocity layer in southern Tibet is 
+interpreted to be due to partial melt which in turn results from the high H$_2$O content of the crustal rocks there in combination with 
+anomalously high intra-crustal heat production (radiogenic, shear heating).   The lack of H$_2$O in crustal 
+rocks in northern Tibet inhibits extensive H$_2$O saturated melting of the crust there.  The velocity of the 
+lower crust in southern Tibet is $\sim$3.7 km/s.  In northern Tibet, lower crustal velocities are significantly 
+lower at $\sim$3.5 km/s.  The differences in the shear wave velocities of the lower crust as well as the different velocity structures  of the underlying mantle (positive gradient vs. almost constant) are 
+indicative of differences in temperature, in turn likely to be related to the fact that Indian continental lithosphere has underthrust southern Tibet but not Northern Tibet.
+
+
+\section{Acknowledgements} 
+
+Project INDEPTH III was supported by the Ministry of Land and Resources of People's Republic of China, U.S. 
+National Science Foundation Continental Dynamics Program (grant EAR 9614616), and the Deutsche 
+Forschungsgemeinschaft and GeoForschungsZentrum Potsdam (GFZ), Germany.  The Alexander-von-Humboldt 
+Foundation partially supported one of us (F. Tilmann) during the course of this work.  This work was 
+performed in part under the auspices of the US Department of Energy by Lawrence Livermore National 
+Laboratory under Contract W-7405-Eng-48.  The instruments were provided by the IRIS-PASSCAL and GFZ Potsdam 
+geophysical instrument pool.  We thank our Chinese colleagues and Tibetan workers for their help in the 
+field.  Thanks to Doug Nelson, Brad Hacker, and Rainer Kind for discussions on various aspects of physical 
+parameters that would affect the Asian crust and mantle.  Constructive comments by three anonymous reviewers and the 
+Associate editor are most appreciated. 
+
+\begin{references}
+
+\reference
+Aki, K., and P.G. Richards, {\it Quantitative Seismology}, {\it Vol. 1},
+Freeman, San Francisco, 1980.
+
+\reference
+Bird, P., Thermal and mechanical evolution of continental convergence 
+zones; Zagros and Himalays, Ph.D. thesis, 423 pp., Mass. Inst. of Technol., 
+Cambridge, 1976.  
+
+\reference
+Bird, P., and M.N. Toks\"oz, Strong attenuation of Rayleigh waves in
+Tibet. {\it Nature,} {\it 266}, 161-163, 1977.
+
+\reference
+Bird, P., Initiation of intracontinental subduction in the Himalaya,
+{\it J. Geophys. Res.,} {\it 83}, 4975-4987, 1978.
+
+\reference
+Brandon, G.B., and B.A. Romanowicz, A "no-lid" zone in the central
+Chan-Thang platform of Tibet: evidence from pure path phase velocity of
+long period Rayleigh waves, \jgr, {\it 91}, 6547-6564, 1986.
+
+\reference
+Boettcher, A.L., and P. J. Wyllie, Melting of granite with excess water to 
+30 kilobars pressure, {\it J. of Geol.,} {\it 76}, 235-224, 1968 
+
+\reference
+Brown, L.D., W. Zhao, K.D. Nelson, M. Hauck, D. Alsdorf, A. Ross, M. Cogan,
+M. Clark, X. Liu, and J. Che, Bright spots, structure, and magmatism
+in southern Tibet from INDEPTH seismic reflection profiling. {\it Science,}
+{\it 274}, 1688-1690, 1996.
+
+\reference
+Chen, L., J.R. Booker, A.G. Jones, N. Wu, M.J. Unsworth, W. Wei, and 
+H. Tan, Electrically conductive crust in southern Tibet from
+INDEPTH magnetotelluric surveying, {\it Science,} {\it 274}, 1694-1696, 1996.
+
+\reference
+Chen, W.-P., and P. Molnar, Constraints on the seismic wave velocity
+structure beneath the Tibetan Plateau and their tectonic implications,
+{\it J. Geophys. Res.,} {\it 86}, 5937-5962, 1981.
+
+\reference
+Chun, K. -Y., and T. Yoshii, Crustal structure of the Tibet Plateau: a
+surface wave study by a moving window analysis, \bssa, 
+{\it 67}, 735-750, 1977.
+
+\reference
+Chun, K. -Y., and T. V. McEvilly, Crustal structure in Tibet: High seismic 
+velocity in the lower crust. {\it J. Geophys. Res.,} 
+{\it 91}, 10,405-10,411, 1986. 
+   
+
+\reference
+Cotte, N., H. Pedersen, M. Campillo, J. Mars, J.F. Ni, R. Kind, E. Sandvol,
+and W. Zhao, Determination of the crustal structure in southern
+Tibet by dispersion and amplitude analysis of Rayleigh waves, {\it Geophys.
+J. Int.,} {\it 138}, 809-819, 1999.
+
+\reference
+Dewey, J.F., S. Cande, and W.C. Pitman, Tectonic evolution of the India/Eurasia
+collision zone, {\it Eclogae Geol. Helv.}, {\it 82}, 717-734, 1989.
+
+
+\reference
+Dziewonski, A. M., G. Ekstr\"om, and N.N. Maternosvskaya,
+Centroid-momemnt tensor solutions for January-March 1997, {\it
+Phys. Earth Planet. Int.}, {\it 106}, 171-179, 1998a.
+
+\reference
+Dziewonski, A. M., G. Ekstr\"om, and N.N. Maternosvskaya,
+Centroid-momemnt tensor solutions for October-December 1997, {\it
+Phys. Earth Planet. Int.}, {\it 109}, 93-105, 1998b.
+
+\reference
+Dziewonski, A. M., G. Ekstr\"om, and N.N. Maternosvskaya,
+Centroid-momemnt tensor solutions for July-September 1998, {\it
+Phys. Earth Planet. Int.}, {\it 114}, 99-107, 1999.
+
+\reference
+Dziewonski, A. M., G. Ekstr\"om, and N.N. Maternosvskaya,
+Centroid-momemnt tensor solutions for January-March 1999, {\it
+Phys. Earth Planet. Int.}, {\it 118}, 1-11, 2000.
+
+
+
+\reference
+Francheteau, J., C. Jaupart, X. J. Shen, W. H. Kang, D. L. Lee,
+J. C. Bai, H. P. Wei, and H. Y. Deng, High heat flow in southern
+Tibet, {\it Nature}, {\it 307}, 32-36, 1984.
+
+\reference
+Gomberg, J.S., K. Priestley, T.G. Masters, and J. Brune, The structure of the crust 
+and upper mantle of northern
+Mexico, {\it Geophys. J. R. Astr. Soc.}, {\it 94}, 1-20, 1988.
+
+\reference
+Gupta, H.K., and H. Narain, Crustal structure of the Himalayan and
+the Tibetan Plateau regions from surface wave dispersion, {\it Bull. Seismol.
+Soc. Am.,} {\it 57}, 235-248, 1967.
+
+\reference
+Hacker, B.R., E. Gnos, L. Ratschbacher, M. Grove, M. McWilliams, S.V. Sobolev,
+J. Wan, and W. Zhenhan, Hot and Dry Deep Crustal Xenoliths from Tibet,
+{\it Science,} {\it 287}, 2463-2466, 2000.
+
+\reference
+Herrmann, R.B., Computer programs in seismology, Vol. 4: 
+{\it Surface wave inversion}, Saint Louis University, Missouri, 1987.
+
+\reference
+Hochstein, M. P., and K. Regenauer-Lieb, Heat generation associated
+with collision of two plates: The Himalayan Geothermal belt, {\it
+J. Volcanol. Geotherm. Res.}, {\it 83}, 75-92, 1998.
+
+\reference
+Holt, W., and T. Wallace, Crustal thickness and upper mantle velocities
+in the Tibetan Plateau region from the inversion of Pnl waveforms: Evidence
+for a thick upper mantle lid beneath southern Tibet, {\it J. Geophys. Res.,} 
+{\it 95}, 12,499-12,525, 1990.
+
+\reference
+Houseman, G.A., D.P. McKenzie, and P. Molnar, Convective instability
+of a thickened boundary layer and its relevance for the thermal evolution of
+continental convergent belts, {\it J. Geophys. Res.,} {\it 86}, 6115-6132, 1981.
+
+\reference
+Huang, W., J.F. Ni, F. Tilmann, D. Nelson, J.Guo, W. Zhao, J. Mechie,
+R. Kind, J. Saul, R. Rapine, and T. Hearn, Seismic Polarization 
+Anisotropy Beneath the Central Tibetan Plateau, {\it J. Geophys. Res.},
+{\it 105}, 27,979-27,989, 2000.
+
+\reference
+Jin, Y., M. K. McNutt, and Y. Zhu, Mapping the descent of Indian and
+Eurasian plates beneath the Tibetan Plateau from gravity anomalies,
+\jgr, {\it 101}, 11,275-11,290, 1996
+
+\reference 
+Kincaid, C., and P. Silver, The role of viscous dissipation in the orogenic
+process, {\it Earth Planet. Sci. Let.}, {\it 142}, 271-288, 1996.
+
+\reference
+Kind, R., J. Ni, W. Zhao, J. Wu, X. Yuan, L. Zhao, E. Sandvol, C. Reese,
+J. Nabelek, and T. Hearn, Evidence from earthquake data for a partially
+molten crustal layer in southern Tibet, {\it Science,} {\it 274}, 1692-1694,
+1996.
+
+\reference
+Levshin, A., L. Ratnikova, and J. Berger, 1992. Peculiarities of surface-
+wave propagation across central Eurasia, {\it Bull. Seismol. Soc. Am.,}
+{\it 82}, 2464-2493, 1992.
+
+\reference
+Levshin, A.L., M.H. Ritzwoller, and J.S. Resovsky, Source effects on
+surface wave group travel times and group velocity maps, {\it Phys.
+Earth Planet. Int.}, {\it 115}, 293-312, 1999.
+
+\reference
+Lyon-Caen, H., Comparison of the upper mantle shear wave velocity
+structure of the Indian Shield and the Tibetan Plateau and tectonic
+implication, {\it Geophys. J. R. Astron. Soc.,} {\it 86}, 727-749, 1986.
+
+\reference
+Makovsky, Y., S.L. Klemperer, L. Ratschbacher, L.D. Brown, M. Li, W. Zhao,
+and F. Meng, INDEPTH wide-angle reflection observation of P-wave-to-
+S-wave conversion from crustal bright spots in Tibet, {\it Science,} {\it 274},
+1690-1691, 1996.
+
+\reference
+Makovsky, Y., and S.L. Klemperer, Measuring the seismic properties
+of Tibetan bright spots: evidence for free aqueous fluids in the Tibetan
+middle crust, {\it J. Geophys. Res.,} {\it 104}, 10,795-10,825, 1999.
+
+\reference
+McNamara, D., T. Owens, P. Silver, and F. Wu, Shear wave
+anisotropy beneath the Tibetan
+Plateau, \jgr, {\it 99}, 13,655-13,665, 1994.
+
+\reference
+McNamara, D., T. Owens, and W. Walter, Observations of 
+regional phase propagation across the Tibetan Plateau, {\it J. Geophys. Res.,}
+{\it 100}, 22,215-22,229, 1995.
+
+\reference
+Molnar, P., A review of geophysical constraints on the deep structure
+of the Tibetan Plateau, the Himalaya and the Karakoram, and their tectonic
+interpretation, {\it Philos. Trans. R. Soc. London, Ser. A,} {\it 326}, 33-88,
+1988.
+
+\reference
+Molnar, P., P. England, and J. Martinod, Mantle dynamics, uplift of the 
+Tibetan Plateau, and the Indian Monsoon, {\it Rev. Geophys., 31}, 357-396, 1993.
+
+\reference
+Nataf, H.-C., and Y. Ricard, {3SMAC: an a priori tomographic
+model of the upper mantle based on geophysical modeling}, {\it
+Phys. Earth Planet. Int.},{\it 95}, {101-122}, 1996.
+
+\reference
+Nelson, K.D., W. Zhao, L.D. Brown, J. Kuo, J. Che, X. Liu, S.L. Klemperer,
+Y. Makovsky, R. Meissner, J. Mechie, R. Kind, F. Wenzel, J. Ni, J. Nabelek,
+C. Leshou, H. Tan, W. Wei, A.G. Jones, J. Booker, M. Unsworth, W.S.F. Kidd,
+M. Hauck, D. Alsdorf, A. Ross, M. Cogan, C. Wu, E. Sandvol, and M. Edwards,
+Partially molten middle crust beneath southern Tibet: synthesis of
+project INDEPTH results, {\it Science,} {\it 274}, 1684-1688, 1996.
+
+\reference
+Ni, J., and M. Barazangi, Velocities and propagation characteristics
+of Pn, Pg, Sn and Lg seismic waves beneath the Indian shield, Himalayan arc,
+Tibetan plateau, and surrounding regions: high uppermost mantle velocities
+and efficient Sn propagation beneath Tibet, {\it Geophys. J. R. Astr. Soc.,}
+{\it 72}, 665-689, 1983.
+
+\reference
+Ni, J., and M. Barazangi, Seismotectonics of the Himalayan collision zone:
+geometry of the underthrusting Indian plate beneath the Himalaya, {\it J. 
+Geophys. Res.}, {\it 89}, 1147-1163, 1984.
+
+\reference
+Pandey, M., S. Roecker, and P. Molnar, P wave residuals at stations in
+Nepal: Evidence for a high velocity region beneath the Karakoram, {\it Geophys.
+Res. Lett.,} {\it 18}, 1909-1912, 1991.
+
+
+
+\reference
+Rapine, R.R., J.F. Ni, and T.M. Hearn, Regional wave propagation in China
+and its surrounding regions, {\it Bull. Seismol. Soc. Am.,} {\it 87},
+1622-1636, 1997.
+
+\reference
+Reese, C.C., R.R. Rapine, and J.F. Ni, Lateral Variation of Pn and Lg
+Attenuation at the CDSN Station LSA, {\it Bull. Seismol. Soc. Am.,} {\it 89},
+325-330, 1999.
+
+\reference
+Rodgers, A.J., and S.Y. Schwartz, Low crustal velocities and mantle
+lithospheric variations in southern Tibet from regional Pnl waveforms,
+{\it Geophys. Res. Lett.,} {\it 24}, 9-12, 1997.
+
+\reference
+Rodgers, A.J., and S.Y. Schwartz, Lithospheric structure of the
+Qiangtang terrane, northern Tibetan Plateau, from complete waveform 
+modeling: evidence for partial melt, {\it J. Geophys. Res.,} {\it 103}, 
+7137-7152, 1998.
+
+\reference
+Romanowicz, B.A., Constraints on the structure of the Tibet Plateau
+from pure path phase velocities of Love and Rayleigh waves. {\it J. Geophys.
+Res.,} {\it 87}, 6865-6883, 1982.
+
+\reference
+Royden, L.H., B.C. Burchfiel, R.W. King, Z. Chen, F. Shen, and Y. Liu,
+Surface deformation and lower crustal flow in eastern Tibet, {\it Science,}
+{\it 276}, 788-790, 1997.
+
+\reference
+Sandvol, E., J. Ni, R. Kind, and W. Zhao, Seismic anisotropy
+beneath the southern Himalayas-Tibet collision zone, {\it J. Geophys. Res.,}
+{\it 102}, 813-823, 1997.
+
+\reference
+Schmeling, H., Numerical models of the influence of patial melt on
+elastic, anelastic and electric properties of rocks. Part I:
+ealsticity and anelasticity. {\it Phys. Earth Planet. Int.}, {\it 41}, 
+34-57, 1983
+
+\reference
+Shapiro, N.M., and S.K. Singh, A systematic error in estimating
+surface-wave group-velocity dispersion curves and a procedure for its
+correction, {\it Bull. Seismol. Soc. Am.,} {\it 89}, 1138-1142, 1999.
+
+\reference
+Shen, X., Crust and upper mantle thermal structure of Xizang(Tibet)
+inferred from the mechanism of high heat flow observed in South
+Xizang, {\it Acta Gephys. Sinica}, {\it 28}(Suppl. 1), 93-107, 1985.
+\reference
+Turner, S., J. Hawksworth, N. Rogers, N. Harris, S. Kelley, and P. van 
+Clasteren, Timing of the Tibetan uplift constrained
+by analysis of volcanic rocks, {\it Nature,} {\it 364}, 50-54, 1993.
+
+\reference
+Turner, S., N. Arnaud, J. Liu, N. Rogers, N. Harris, S. Kelley, P. van
+Clasteren, and W. Deng, Post-collisional, shoshonitic volcanism
+on the Tibetan Plateau: Implications for convective thinning of the
+lithosphere and the source of ocean island basalts, {\it J. Petrol.,}
+{\it 37}, 45-71, 1996.
+
+\reference
+Unsworth, M.J., W. Wei, H. Tan, A.G. Jones, S. Li, J.R. Booker, K.D. Solon,
+and D. Nelson, Crustal and Mantle Structure of Northern Tibet imaged by
+magnetotelluric data, {\it Eos Trans. AGU}, {\it 81}(48), F1082, 2000.
+
+\reference
+Wittlinger, G., F. Masson, G. Poupinet, P. Taponnier, J. Mei, G. Herquel,
+J. Guilbert, U. Archauer, X. Guanqi, S. Danian, and Lithoscope Kunlun Team,
+Seismic tomography of northern Tibet and Kunlun: Evidence for crustal blocks
+and mantle velocity contrasts, {\it Earth Planet. Sci. Lett.,} {\it 139},
+263-279, 1996.
+
+\reference
+Wu, J., Seismic Inversion and Event Identification, Ph.D Thesis, 92 pp.,
+New Mexico State University, Las Cruces, NM, 1995.
+
+\reference
+Yin, A., and T.M. Harrison, Geological evolution of the 
+Himalayan-Tibetab oregon, {\it Annu. Rev. Earth Planet. Sci.}, {\it 28}, 211-280, 
+2000. 
+
+\reference
+Yuan, X., J. Ni, R. Kind, J. Mechie, and E. Sandvol, Lithospheric
+and upper mantle structure of southern Tibet from a seismological passive
+source experiment, \jgr, {\it 102}, 27,491-27,500, 1997.
+
+\reference
+Zhao, W., J. Mechie, L. Brown, J. Guo, S. Haines, T. Hearn, S. Klemperer,
+Y. Ma, R. Meissner, D. Nelson, A. Ross, R. Rapine, P. Pananont, and J. Saul,
+Crustal Structure of Central Tibet as Derived from Wide-Angle
+Seismic Data, {\it Geophys. J. Int.}, {\it 145}, 486-498, 2001.
+
+\reference
+Zhou, R., S. Grand, F. Tajima, and X. Ding, High-velocity zone 
+beneath the southern Tibetan Plateau from P wave differential travel time data,
+{\it Geophys. Res. Lett.,} {\it 23}, 25-28, 1996.
+
+\end{references}
+
+\clearpage
+
+
+\setcounter{section}{0}
+\setcounter{table}{0}
+\begin{table}[htbp]
+
+\renewcommand{\baselinestretch}{1} \small 
+\caption{Pure Path Regional Earthquakes Used for Group Velocity
+Measurements. (CMT solutions)}
+\tablenotetext{1}{Epicentral distances were calculated using ST20 as reference station.}
+\tablenotetext{2}{No CMT solution was available for this
+event, so the PDE solution is given.}
+\tablenotetext{3}{No surface wave magnitude was available for this
+event, so $m_b$ is used.}
+\tablenotetext{}{References: CMT: \markcite{{\it Dziewonski et al.}
+[1998a, 1998b, 1999, 2000]}; PDE:  USGS NEIC (http://usgsneic.cr.usgs.gov)}
+\begin{tabular}{ccrrccl}
+\tableline
+Date & Time & Lat($^\circ$N) & Lon($^\circ$E) & Depth & $M_s$ &
+$\Delta$ (km)\tablenotemark{1}\\ \tableline
+94/07/17\tablenotemark{2} & 17:40:48.3 & 29.15 & 81.37 & 29 & 5.0\tablenotemark{3} & 882 \\
+97/01/05 & 08:47:31.6$\pm$0.4 & 29.43$\pm$0.04 & 80.29$\pm$0.04 & 33 & 5.3 & 1027 \\
+97/10/15 & 20:30:58.5$\pm$0.8 & 35.75$\pm$0.08 & 80.02$\pm$0.08 & 33 & 5.0 & 802  \\
+98/07/18\tablenotemark{2} & 06:21:17.0 & 35.36 & 78.38 & 33 & 4.8\tablenotemark{3} & 979 \\
+99/03/28 & 19:05:18.1$\pm$0.1 & 30.58$\pm$0.02 & 79.21$\pm$0.01 & 15 & 6.6 & 1020 \\[4pt]
+\tableline
+ & & & & & & \\[12pt]
+\end{tabular}
+\end{table}
+
+
+\vspace{0.5in}
+
+\begin{table}[htbp]
+
+\renewcommand{\baselinestretch}{1} \small 
+\caption{Earthquakes Used for Phase Velocity Measurements.}
+\tablenotetext{1}{Backazimuths and epicentral distances were
+calculated using ST20 as reference station.}
+\tablenotetext{2}{No surface wave magnitude was available for this
+event, so $m_b$ is used.}
+
+\begin{tabular}{ccrrccrrccl}
+\multicolumn{11}{l}{(a) Lhasa} \\[1.5\baselineskip]
+\tableline
+Date      & Time       & Lat   & Lon    &Depth&$M_s$& BAZ\tablenotemark{1} & $\Delta$\tablenotemark{1} & \#& Max spac.& Stations \\
+        &   & ($^\circ$N) &($^\circ$E)&(km)& &($^\circ$)&($^\circ$)& Sta. & (km) \\ \tableline
+ 98/07/17 & 22:03:52.4 & -5.13 & 102.83 & 42 & 5.1 & 158 & 39 & 13 & 203 & ST00-20 \\
+ 98/08/22 & 22:58:28.5 & 15.81 & 119.22 & 15 & 4.7 & 114 & 32 & 3 & 281 & NYMA,ST01,04\\ 
+ 98/08/23 & 05:36:12.9 & 14.69 & 119.88 & 45 & 6.1\tablenotemark{2} & 115 & 33 & 3 & 280 & NYMA,ST01,04 \\
+ 98/08/31 & 19:16:20.9 & 15.06 & 119.97 & 51 & 4.7 & 114 & 33 & 4 & 281 & NYMA,ST01-04 \\
+ 98/09/06 & 00:32:57.8 & 14.37 & 117.25 & 15 & 4.3 & 118 & 31 & 2 & 290 & NYMA,ST01 \\
+ 98/09/08 & 09:10:03.0 & 13.15 & 144.10 & 143 & 5.8\tablenotemark{2} & 98 & 54 & 4 & 236 & NYMA,ST08-12 \\ 
+ 98/09/22 & 01:16:55.5 & 11.67 & 143.21 & 15 & 5.8 & 100 & 54 & 2 & 236 & NYMA,ST12 \\[4pt]
+\tableline
+ & & & & & & & & & & \\[10pt]
+\multicolumn{11}{l}{(b) Qiantang} \\[1.5\baselineskip]
+\tableline
+Date      & Time       & Lat   & Lon    &Depth&$M_s$& BAZ\tablenotemark{1} & $\Delta$\tablenotemark{1} & \#& Max spac. & Stations \\
+        &   & ($^\circ$N) &($^\circ$E)&(km)& &($^\circ$)&($^\circ$)& Sta. & (km) \\ \tableline
+ 98/07/17 & 22:03:52.4 & -5.13 & 102.83 & 42 & 5.1 & 158 & 39 & 8 & 153 & ST24-39  \\
+ 98/08/30 & 14:34:43.3 & 53.57 & 162.33 & 38 & 5.2 & 44 & 55 & 5 & 203 & NYMA,ST28-31 \\ 
+ 98/09/03 & 07:58:21.1 & 39.91 & 140.77 & 15 & 5.7 & 64 & 42 & 4 & 178 & NYMA,ST22-24 \\ 
+ 98/09/14 & 23:16:46.8 & 51.57 & -172.92& 20 & 6.0 & 41 & 70 & 5 & 222 & NYMA,ST30-34 \\ 
+\tableline
+ & & & & & & & & & & \\[12pt]
+\end{tabular}
+
+\end{table}
+
+\clearpage
+
+\noindent
+{\bf Figure 1}. Average shear wave velocity models for Tibet from previous
+surface wave studies.  The {\it Chun and Yoshii} [1977] model is their model
+TP-4, the {\it Romanowicz} [1982] model is her model 45, and the {\it Brandon
+and Romanowicz} [1986] model is their model D2.
+
+\noindent
+{\bf Figure 2}. (a) Locations of earthquakes for which surface wave group
+velocities were measured.  Event paths are depicted by dashed lines.
+Open triangles represent INDEPTH III stations, open squares represent
+INDEPTH II stations (BB08, BB10), and the filled triangle represents
+the permanent CDSN station LSA.  BNS - Banggong-Nujiang Suture; IYS -
+Indus-Yarlung Suture. (b) Propagation directions for events for which
+Rayleigh wave phase velocities were measured. Dark gray lines indicate propagation directions for events which were used to determine phase velocities in the Qiantang terrane, light gray lines indicate propagation directions for the Lhasa terrane. The inset shows the corresponding event locations on an azimuthal equidistant map. 
+
+\noindent
+{\bf Figure 3}. (a) Sample group velocity seismogram for event 98/07/18
+with its corresponding FTAN-diagram in (b).
+
+\noindent
+{\bf Figure 4}. Average group and phase velocities for northern (gray) and southern (black) Tibet. Two standard deviation error 
+bars are inferred from the variance of measurements for all
+propagation paths within one terrane (group dispersion: 9  in
+northern Tibet, 12 in
+southern Tibet; phase dispersion: 3--4 events in northern Tibet,
+depending on period, 7 events in southern Tibet, periods 25--30~s, and
+4--5 events in southern Tibet, periods 30--65~s).
+
+
+\noindent
+{\bf Figure 5}. Velocity models for southern and northern Tibet. (Top panels) Shaded areas show the range 
+of 250 randomly selected starting models which were independently inverted for shear velocity structure. 
+The mean final models are marked with the continuous black line. The 2 standard deviation interval for the population of final 
+models are shown with dashed lines. (Bottom panels) Observed phase and group velocities are marked with circles and triangles, respectively. Error bars are 2 standard deviations. Thin gray lines show the 
+velocities of each starting model (for clarity, only 50 out of 250 are shown). Black lines mark the 
+post-inversion fit (all 250 are shown). Note how the wide range of starting models collapse to essentially 
+a single fit.
+
+\noindent
+{\bf Figure 6}. A comparision between southern and northern Tibet. The black line 
+is the velocity model of southern Tibet, while the gray line is the velocity model of 
+northern Tibet. The shear wave velocity for the lower crust of southern Tibet is 
+~0.2 km/s faster than the lower crust of northern Tibet. A low-velocity layer in 
+the middle crust is found for southern Tibet. 
+
+
+\end{document}
+

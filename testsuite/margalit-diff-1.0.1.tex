@@ -1,0 +1,42 @@
+\documentclass[11pt]{article}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL margalit-old.tex   Sun Nov 11 21:41:32 2012
+%DIF ADD margalit-new.tex   Sun Nov 11 21:41:32 2012
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+
+Finally \DIFdelbegin \DIFdel{, we have the }\DIFdelend \DIFaddbegin \DIFadd{we have Burkhardt's }\DIFaddend $g-1$ factor swaps.  These are \DIFdelbegin \DIFdel{easily visualized as ``handle swaps,''}\DIFdelend \DIFaddbegin \DIFadd{obtained as the 
+$\Psi$-images of handle swaps.  The $i{\rm th}$ }{\em \DIFadd{handle 
+swap}}\DIFaddend \index{handle swap} \DIFaddbegin \DIFadd{$h_i$ for $1\leq i\leq g-1$ is easily visualized 
+(see Figure~\ref{figure:burkhardt}), }\DIFaddend but we can also write \DIFdelbegin \DIFdel{them as products }\DIFdelend \DIFaddbegin \DIFadd{it as a product 
+}\DIFaddend of Dehn twists\DIFdelbegin \DIFdel{, for example: 
+}\[\DIFdel{ (T_{a_2}T_{b_2} T_{a_2+b_1} T_{a_1} T_{b_1})^3, }\]
+%DIFAUXCMD
+\DIFdel{where $a_2+b_1$ }\DIFdelend \DIFaddbegin \DIFadd{: 
+}
+
+$$\DIFadd{h_i=(T_{a_{i+1}}T_{b_{i+1}} T_{d_i}T_{a_i}T_{b_i})^3}$$ 
+\DIFadd{where $d_i$ }\DIFaddend is a simple closed curve \DIFdelbegin \DIFdel{representing $[a_2]+[b_1]$, or in general $(T_{a_{i+1}}T_{b_{i+1}} T_{a_{i+1}+b_i}T_{a_i}T_{b_i})^3$, where 
+$a_{i+1}+b_i$ represents }\DIFdelend \DIFaddbegin \DIFadd{that in the homology class 
+}\DIFaddend $[a_{i+1}]+[b_i]$\DIFdelbegin \DIFdel{and $1 \leq i \leq g-1$}\DIFdelend .
+
+\end{document}

@@ -1,0 +1,41 @@
+\documentclass{report}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage[usenames]{color}
+\usepackage{longtable}
+\usepackage{ifthen}
+\usepackage{soul}
+\usepackage{float} % <- gives the H positioning option to figure
+\usepackage{array} % <- gives newcolumntype
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}} % centered fixed with column
+
+\title{Diff Test} 
+\author{Mikael Brännström}
+\date{13 January 2010} % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\chapter{Main}
+
+\begin{center}
+\begin{longtable}{|p{165pt}|p{45pt}|C{25pt}|C{25pt}|C{25pt}|}
+\caption{Message overview.} \\
+\hline
+\em{Message} & \em{Class} & \em{All?} & \em{Read-only?} & \em{Snap\-shot-only?} \\
+\hline \hline
+\endhead
+
+Trade\-Capture\-Report  & Trade & send recv & recv & recv  \\*
+    
+Trade\-Capture\-Report\-Ack  & Trade & recv & recv &  \\*
+    
+Trade\-Capture\-Report\-Request\-Ack  & Trade & recv & recv & recv  \\*
+    \hline
+\end{longtable}
+\end{center}
+
+\end{document}

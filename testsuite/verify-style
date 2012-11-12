@@ -1,0 +1,48 @@
+#!/bin/csh
+#alias latexdiff ../latexdiff
+set sample = example
+# NOT including -t option
+set options="-V -s SAFE -f FLOATSAFE"
+
+set pdftypes=( UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE ) 
+set dvitypes=( CCHANGEBAR CFONTCHBAR CULINECHBAR CHANGEBAR )
+
+set failed 
+set pdfout
+set psout
+foreach type ( $pdftypes )
+  echo "========================================="
+  echo "Differencing ${sample}-old.tex ${sample}-new.tex with type $type"
+  latexdiff $options -t$type ${sample}-old.tex ${sample}-new.tex > ${sample}-diff-t$type.tex
+  pdflatex --interaction=batchmode ${sample}-diff-t$type.tex
+  if ($status || ! -e ${sample}-diff-t$type.pdf ) then 
+   echo "Compilation of ${sample}-diff-t$type.tex did not complete as expected."
+   set failed=($failed ${sample}-diff-t$type.tex)
+  else
+   set pdfout=($pdfout ${sample}-diff-t$type.pdf )
+  endif
+end
+
+foreach type ( $dvitypes )
+  echo "========================================="
+  echo "Differencing ${sample}-old.tex ${sample}-new.tex with type $type"
+  latexdiff $options -t$type ${sample}-old.tex ${sample}-new.tex > ${sample}-diff-t$type.tex
+  latex --interaction=batchmode ${sample}-diff-t$type.tex
+  if ($status || ! -e ${sample}-diff-t$type.dvi ) then 
+   echo "Compilation of ${sample}-diff-t$type.tex did not complete as expected."
+   set failed=($failed ${sample}-diff-t$type.tex)
+  else
+   set psout=($psout ${sample}-diff-t$type.ps )
+  endif
+  dvips -o${sample}-diff-t$type.ps ${sample}-diff-t$type.dvi 
+end
+
+
+foreach out ( $pdfout )
+  echo "acroread $out"
+end
+foreach out ( $psout )
+  echo "gv $out"
+end
+echo "The compilation of the following programs resulted in problems:"
+echo $failed

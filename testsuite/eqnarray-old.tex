@@ -1,0 +1,36 @@
+\documentclass{article}
+
+\begin{document}
+
+
+The VM(BB) system models the coupling between energetic particles and the wave modes they excite.
+The formulation here is a fully nonlinear self-consistent model for the particle distribution $f(x,v,t)$ and the electric field $E(x,t)$; it is based on the one-dimensional electrostatic bump-on-tail model with particle distribution relaxation and background electric field damping. We cast the model as follows:
+
+\begin{equation}
+\label{MVE}
+	\frac{\partial f}{\partial t} + v \frac{\partial f}{\partial x} + E \frac{\partial f}{\partial v} =
+		- \nu_a \left( f - F_0 \right)
+\end{equation}
+
+\begin{equation}
+\label{MDCE}
+	\frac{\partial E}{\partial t} + \int v \left( f - f_0 \right) dv = - \gamma_d E
+\end{equation}
+
+Here $F_0$ denotes the combined particle source and loss function, $\nu_a$ the particle relaxation rate, $\gamma_d$ the combined effect of all background damping mechanisms that act on the electric field, and $f_0$ the spatial mean of $f$.
+Spatial lengths are normalised to the Debye length $\lambda_D$, times to the inverse plasma frequency $\omega_p$, velocities to the thermal speed $v_{\rm th}$ and $E$ to $(m/q) v_{\rm th} \omega_p$. Since the underlying waves in this model are plasma waves, this means that times, frequencies and growth rates are normalised in terms of the underlying wave frequency. This normalisation of time and frequency will be used later for comparison with an experimental observation.
+
+\[
+\label{MVE}
+	\frac{\partial f}{\partial t} + v \frac{\partial f}{\partial x} + E \frac{\partial f}{\partial v} =
+		- \nu_a \left( f - F_0 \right)
+\]
+
+\[
+\label{MDCE}
+	\frac{\partial E}{\partial t} + \int v \left( f - f_0 \right) dv = - \gamma_d E
+\]
+
+
+
+\end{document}

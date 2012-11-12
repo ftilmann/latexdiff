@@ -1,0 +1,60 @@
+\documentclass[12pt,a4paper]{article}
+
+\setlength{\topmargin}{-0.2in}
+\setlength{\textheight}{9.5in}
+\setlength{\oddsidemargin}{0.0in}
+
+\setlength{\textwidth}{6in}
+
+\title{latexdiff Example - Revised version}
+\author{F Tilmann}
+% Note how in the preamble visual markup is never used (even
+% if some preamble might eventually end up as visible text.)
+
+\begin{document}
+\maketitle
+
+\section*{Introduction}
+
+This is an extremely simple document that showcases some of the latexdiff features.
+Type
+\begin{verbatim}
+latexdiff -t UNDERLINE example-draft.tex example-rev.tex > example-diff.tex
+\end{verbatim}
+to create the difference file.  You can inspect this file directly. Then run either 
+\begin{verbatim}
+pdflatex example-diff.tex
+xpdf example-diff.pdf
+\end{verbatim}
+or
+\begin{verbatim}
+latex example-diff.tex
+dvips -o example-diff.ps example-diff.dvi
+gv example-diff.ps
+\end{verbatim}
+to display the markup.
+
+\section*{Yet another section title}
+
+ More things could be said were it not for the constraints of time and space.
+
+A paragraph with a line only in the revised document.  More things could be 
+said were it not for the constraints of time and space.
+
+And here is a typo. 
+
+Here is a table:
+
+\begin{tabular}{ll}
+Name & Description \\
+\hline
+Gandalf & White \\
+Saruman & Evil
+\end{tabular}
+
+And now for something completely different, with not a paragraph in sight.
+No change, 
+no markup!
+\end{document}
+
+

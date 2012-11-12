@@ -1,0 +1,90 @@
+\documentclass{article}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL eqnarray-old.tex   Sun Nov 11 21:19:29 2012
+%DIF ADD eqnarray-new.tex   Sun Nov 11 21:19:29 2012
+%\usepackage{bm} %DIF > 
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+
+The VM(BB) system models the coupling between energetic particles and the wave modes they excite.
+The formulation here is a fully nonlinear self-consistent model for the particle distribution $f(x,v,t)$ and the electric field $E(x,t)$; it is based on the one-dimensional electrostatic bump-on-tail model with particle distribution relaxation and background electric field damping\DIFdelbegin \DIFdel{. We cast the model as follows}\DIFdelend :
+
+\DIFdelbegin \begin{displaymath}\DIFdel{
+\label{MVE}
+	\frac{\partial f}{\partial t} + v \frac{\partial f}{\partial x} + E \frac{\partial f}{\partial v} =
+		- \nu_a \left( f - F_0 \right)
+}\end{displaymath}
+%DIFAUXCMD
+%DIFDELCMD < 
+
+%DIFDELCMD < %%%
+\begin{displaymath}\DIFdel{
+\label{MDCE}
+	\frac{\partial E}{\partial t} + \int v \left( f - f_0 \right) dv = - \gamma_d E
+}\end{displaymath}
+%DIFAUXCMD
+%DIFDELCMD < 
+
+%DIFDELCMD < %%%
+\DIFdel{Here $F_0$ denotes the combined particle source and loss function, $\nu_a$ the particle }\DIFdelend \DIFaddbegin \begin{eqnarray}\DIFadd{
+\label{MVE2}
+	\frac{\partial f}{\partial t} + v \frac{\partial f}{\partial x} + E \frac{\partial f}{\partial v} }& \DIFadd{= }&
+		\DIFadd{Q(v) - \nu_a \left( f - F_{\rm bulk} \right) }\\
+		& \DIFadd{= }& \DIFadd{- \nu_a \left( f - F_0 \right)         }\\
+\DIFadd{\label{MDCE2}
+	\frac{\partial E}{\partial t} + \int v \left( f - f_0 \right) dv }& \DIFadd{= }& \DIFadd{- \gamma_d E
+}\end{eqnarray}
+%DIF > 
+\DIFadd{Here $\nu_a$ denotes the particle }\DIFaddend relaxation rate, $\gamma_d$ the combined effect of all background damping mechanisms that act on the electric field, and $f_0$ the spatial mean of $f$\DIFdelbegin \DIFdel{.
+Spatial lengths are normalised to the Debye length $\lambda_D$, times to the inverse plasma frequency $\omega_p$, velocities to the thermal speed $v_{\rm th}$ and $E$ to $(m/q) v_{\rm th} \omega_p$.
+Since the underlying waves in this model are plasma waves, this means that times, frequencies and growth rates are normalised in terms of the underlying wave frequency.
+This normalisation of time and frequency will be used later for comparison with an experimental observation.
+}\DIFdelend \DIFaddbegin \DIFadd{; $Q$ represents the source of EPs and $F_{\rm bulk}$ the thermalised distribution driven to by collisions; the bump-on-tail distribution $F_0 = Q / \nu_a + F_{\rm bulk}$.
+We note that $E = 0$, $f = F_0$ is a steady-state spatially uniform solution.
+}\DIFaddend 
+
+\DIFdelbegin \[\DIFdel{
+\label{MVE}
+	\frac{\partial f}{\partial t} + v \frac{\partial f}{\partial x} + E \frac{\partial f}{\partial v} =
+		- \nu_a \left( f - F_0 \right)
+}\]
+%DIFAUXCMD
+%DIFDELCMD < 
+
+%DIFDELCMD < %%%
+\[\DIFdel{
+\label{MDCE}
+	\frac{\partial E}{\partial t} + \int v \left( f - f_0 \right) dv = - \gamma_d E
+}\]
+%DIFAUXCMD
+\DIFdelend \DIFaddbegin \begin{eqnarray}\DIFadd{
+\label{MVE2}
+	\frac{\partial f}{\partial t} + v \frac{\partial f}{\partial x} + E \frac{\partial f}{\partial v} }& \DIFadd{= }&
+		\DIFadd{Q(v) - \nu_a \left( f - F_{\rm bulk} \right) }\\
+		& \DIFadd{= }& \DIFadd{- \nu_a \left( f - F_0 \right)         }\\
+\DIFadd{\label{MDCE2}
+	\frac{\partial E}{\partial t} + \int v \left( f - f_0 \right) dv }& \DIFadd{= }& \DIFadd{- \gamma_d E
+}\end{eqnarray}
+%DIF > 
+\DIFaddend 
+
+\end{document}

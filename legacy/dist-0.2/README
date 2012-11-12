@@ -1,0 +1,66 @@
+
+INTRODUCTION
+
+latexdiff is a Perl script, which compares two latex files and marks
+up significant differences between them (i.e. a diff for latex files).
+  Various options are available for visual markup using standard latex 
+packages such as "color.sty". Changes not directly affecting visible 
+text, for example in formatting commands, are still marked in 
+the latex source.
+ 
+A rudimentary revision facilility is provided by another Perl script,
+latexrevise, which accepts or rejects all changes.  Manual
+editing of the difference file can be used to override this default
+behaviour and accept or reject selected changes only.  
+
+REQUIREMENTS
+
+Perl 5.6 or higher must be installed (5.8 if different encodings are used).
+  The standard latexdiff script
+requires installation of the Perl package Algorithm::Diff (available 
+from www.cpan.org - for current version try
+http://search.cpan.org/~nedkonz/Algorithm-Diff-1.15) but an alternative
+script, latexdiff-so, which does not require external installation of
+this package, is provided, too.
+For those with very date perl installations, the stand-along obsolete 
+version 0.1 of latexdiff is provided as latexdiff-0.1.
+
+INSTALLATION UNIX/LINUX
+
+The basic installation procedure is almost trivial:
+
+1. Copy latexdiff and latexrevise into a directory which is in the
+   search path and make them executable.  If the Algorithm::Diff
+   package is not installed, use latexdiff-so instead of latexdiff.
+
+2. Copy latexdiff.1 and latexrevise.1 into the correct man directory
+
+The attached Makefile contains example commands to carry out above 
+steps as root for a typical UNIX installation. Type 
+
+  make install
+
+to get it rolling.  After installation you can type
+
+  make test
+
+to test it on a brief example.
+
+
+DOCUMENTATION:
+
+Usage instructions are in the manual latexdiff-man.pdf as well as the 
+man pages.
+
+LICENSE
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License Version 2 as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details (file LICENSE in the
+distribution).
+

@@ -1,0 +1,231 @@
+#!/usr/bin/perl -w
+# latexdiff-cvs - wrapper script for applying latexdiff to cvs managed files
+#                 and for automatised creation of postscript or pdf from difference file
+#
+#   Copyright (C) 2004  F J Tilmann (tilmann@esc.cam.ac.uk)
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License Version 2 as published by
+#    the Free Software Foundation.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# Detailed usage information at the end of the file
+#
+
+use Getopt::Long ;
+use Pod::Usage qw/pod2usage/ ;
+use File::Temp qw/tempfile/ ;
+use strict ;
+
+# Option names
+my ($version,$help,$postscript,$pdf,$force,@revs);
+# Variables
+my ($file1,$file2,$diff,$diffbase,$answer,$options,$infile);
+my (@tmpfiles);
+
+Getopt::Long::Configure('pass_through','bundling');
+
+GetOptions('revision|r=s' => \@revs,
+           'postscript|ps' => \$postscript,
+           'pdf' => \$pdf,
+           'force' => \$force,
+           'version' => \$version,
+	   'help|h' => \$help);
+
+if ( $help ) {
+  pod2usage(1) ;
+}
+
+if ( $version ) {
+  die "This is LATEXDIFF-CVS 0.1 (a beta-release)\n" ;
+}
+
+$file2=pop @ARGV;
+( defined($file2) && $file2 =~ /\.tex$/ ) or pod2usage("Must specify at least one tex file");
+
+if ( scalar(@revs) == 0 ) {
+  $file1=pop @ARGV;
+  if ( defined($file1) && $file1 =~ /\.tex$/ ) {
+    #  compare two files
+    $diffbase=$file2 ;
+    $diffbase =~ s/\.tex$/-diff/ ;
+  }
+  else {
+    push @ARGV, $file1 if defined($file1);
+    # compare file with most recent version
+    undef $file1;
+  }
+}
+if ( ! defined($diffbase) ) {
+  # compare two previous version
+  $infile=$file2 ;
+  # make both files
+  $file1 = $infile; 
+  $file1 =~ s/\.tex/-oldtmp-$$.tex/ ;
+  @tmpfiles=($file1);
+  $diffbase=$infile ;
+  if ( scalar(@revs) == 2 ) {
+    $file2 =~ s/\.tex/-newtmp-$$.tex/ ;
+    push @tmpfiles,$file2;
+    system("cvs diff -r$revs[1] -u $infile | patch -R -o$file2");
+    $diffbase =~ s/\.tex$/-diff$revs[0]-$revs[1]/ ;
+  }
+  else {
+    $diffbase =~ s/\.tex$/-diff$revs[0]/ ;
+  }
+  system("cvs diff -r$revs[0] -u $infile | patch -R -o$file1");
+}
+$diff="$diffbase.tex";
+
+# Remaining options are based to latexdiff
+$options = join(" ",@ARGV);
+
+if ( -e $diff && ! $force ) {
+  print STDERR "OK to overwrite existing file $diff (y/n)? ";
+  $answer = <STDIN> ;
+  unless ($answer =~ /^y/i ) {
+    unlink @tmpfiles;
+    die "Abort ... " ;
+  }
+}
+
+system("latexdiff $options $file1 $file2 > $diff");
+
+if (( $postscript || $pdf ) && system("grep -q \'^[^%]*\\\\bibliography\' $diff") == 0 ) { 
+  my ($bibarg)="$diffbase";;
+  system("latex --interaction=batchmode $diff; bibtex $bibarg");
+  push @tmpfiles, "$diffbase.bbl","$diffbase.bbl"
+}
+
+if ( $postscript ) {
+  my $dvi="$diffbase.dvi";
+  my $ps="$diffbase.ps";
+
+  system("latex --interaction=batchmode $diff; latex $diff; dvips -o $ps $dvi");
+  push @tmpfiles, "$diffbase.aux","$diffbase.log",$dvi ;
+  print "Generated postscript file $diff\n";
+} 
+elsif ( $pdf ) {
+  system("pdflatex --interaction=batchmode $diff; pdflatex $diff");
+  push @tmpfiles, "$diffbase.aux","$diffbase.log";
+}
+
+print "Generated difference file $diff\n";
+
+unlink @tmpfiles;
+
+=head1 NAME
+
+latexdiff-cvs - wrapper script that calls latexdiff for different versions of a file under CVS management
+
+=head1 SYNOPSIS
+
+B<latexdiff-cvs> [ F<latexdiff-options> ] [ B<--postscript> | B<--pdf> ] [ B<--force> ] [B<-r> F<rev1>] [B<-r> F<rev2>]  F<file.tex> 
+
+ or
+
+B<latexdiff-cvs> [ F<latexdiff-options> ]  [ B<--postscript> | B<--pdf> ] [ B<--force> ] F<old.tex> F<new.tex>
+
+=head1 DESCRIPTION
+
+I<latexdiff-cvs> is a wrapper script that applies I<latexdiff> to a
+file under CVS control, and optionally runs the sequence of C<latex>
+and C<dvips> or C<pdflatex> commands necessary to produce pdf or
+postscript output of the difference tex file. It can also be used without CVS 
+to automatise the generation of difference file in postscript or pdf format.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-r> F<rev> or B<--revision=>F<rev>
+
+Choose revision (under CVS). Zero to two B<-r> options can be
+specified, resulting in different behaviour:
+
+=over 4
+
+=item B<latexdiff-cvs> F<file.tex>
+
+compares F<file.tex> with the most recent version checked into CVS.
+
+=item B<latexdiff-cvs> -r F<rev1> F<file.tex> 
+
+compares F<file.tex> with revision F<rev1>.
+
+=item B<latexdiff-cvs> -r F<rev1> -r F<rev2> F<file.tex> 
+
+compares revisions F<rev1> and F<rev2> of F<file.tex>.
+
+=item B<latexdiff-cvs>  F<old.tex> F<new.tex>
+
+compares two files.
+
+=back
+
+The name of the difference file is generated automatically and
+reported to stdout.
+
+=item B<--ps> or B<--postscript>
+
+Generate postscript output from difference file.  This will run the
+sequence C<latex; latex; dvips> on the difference file (do not use
+this option in the rare cases, where three C<latex> commands are
+required if you care about correct referencing).  If the difference
+file contains a C<\bibliography> tag, run the sequence C<latex;
+bibtex; latex; latex; dvips>.
+
+=item B<--pdf>
+
+Generate pdf output from difference file using C<pdflatex>. This will
+run the sequence C<pdflatex; pdflatex> on the difference file, or
+C<latex; bibtex; pdflatex; pdflatex> for files requiring bibtex.
+
+=item B<--force>
+
+Overwrite existing diff files without asking for confirmation. Default 
+behaviour is to ask for confirmation before overwriting an existing difference
+file.
+
+=item B<--help> or
+B<-h>
+
+Show help text
+
+=item B<--version>
+
+Show version number
+
+=back
+
+All other options are passed on to C<latexdiff>.
+
+=head1 SEE ALSO
+
+L<latexdiff>
+
+=head1 PORTABILITY
+
+I<latexdiff-cvs> uses external commands and is therefore
+limited to Unix-like systems. It also requires the CVS version control
+system and latex to be installed on the system.  Modules from Perl 5.8
+or higher are required.
+
+
+=head1 AUTHOR
+
+Copyright (C) 2005 Frederik Tilmann
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License Version 2
+
+=cut
+

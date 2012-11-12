@@ -1,0 +1,50 @@
+\documentclass{article}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL doubledollar-old.tex   Sun Nov 11 21:19:29 2012
+%DIF ADD doubledollar-new.tex   Sun Nov 11 21:19:29 2012
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+A simple equation \DIFdelbegin %DIFDELCMD < \verb|\frac{2 a}{3 b}|
+%DIFDELCMD < %%%
+\begin{displaymath}\DIFdel{
+\frac{2a}{3b}
+}\end{displaymath}
+%DIFAUXCMD
+\DIFdelend \DIFaddbegin \verb|\frac{a}{b}|
+\begin{displaymath}\DIFadd{
+\frac{a}{b}
+}\end{displaymath}
+\DIFaddend A simple equation with additional space \DIFdelbegin %DIFDELCMD < \verb|\frac{2 a} {3 b}|
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin \verb|\frac{a} {b}|
+\DIFaddend $$\DIFdelbegin \DIFdel{
+\frac{2 a}{3 b}
+}\DIFdelend \DIFaddbegin \DIFadd{
+\frac{a}{b}
+}\DIFaddend $$
+
+\section [Section without space]{A \DIFaddbegin \DIFadd{new }\DIFaddend section title without space}
+
+\section [Section with space] {A \DIFaddbegin \DIFadd{new }\DIFaddend section title with space}
+
+\end{document}
+

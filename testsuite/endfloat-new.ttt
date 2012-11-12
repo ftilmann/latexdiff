@@ -1,0 +1,12 @@
+\begin{table*}
+
+   \caption{My caption}
+\begin{tabular}{c}
+data
+\end{tabular}
+
+some comment for under the table
+
+\end{table*}
+\efloatseparator
+ 

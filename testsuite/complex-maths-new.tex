@@ -1,0 +1,55 @@
+\documentclass[10pt, pagebackref, a4paper, oneside]{amsart}
+
+
+
+
+\newtheorem{prop}{Proposition}
+\newtheorem{lem}{Lemma}
+
+\begin{document}
+
+
+
+\begin{prop}
+Let $\delta\in (0,1/4)$. There exists $C>0$ such that, for any $x\in
+X$ and any $t\geq 0$,
+  \begin{equation}
+  \label{eqVdeltaWu}
+  \frac{1}{\mu_u(W^u_{1/100}(x))}\int_{W^u_{1/100}(x)} V_\delta( g_t y) d\mu_u(y)
+  \leq C e^{-(1-2\delta) t} V_\delta(x)+C,
+  \end{equation}
+where $V_\delta(x)=\max(1/sys(x)^{1+\delta}, 1)$. Moreover, the
+function $\log V_\delta$ is $(1+\delta)$-Lipschitz for the Finsler
+norm of the previous section.
+\end{prop}
+
+We will use the following lemma, which is due to Eskin-Masur
+\cite{eskin_masur} and Athreya \cite{athreya}.
+\begin{lem}
+For every $\delta>0$, there exists $C>0$ such that, for all $t>0$,
+there exist a function $V^{(t)}_\delta : T \to [1,\infty)$ and a
+scalar $b(t)>0$ satisfying the following property. For all $x\in
+T_1$,
+  \begin{equation}
+  \label{good_vdelta}
+  \int_0^{2\pi} V_\delta^{(t)}(g_t r_\theta x) d \theta
+  \leq C e^{-(1-\delta)t} V_\delta^{(t)}(x) + b.
+  \end{equation}
+Moreover,
+  \begin{equation}
+  \label{Vdeltasmooth}
+  V_\delta^{(t)}(g x) \leq C V_\delta^{(t)}(x)
+  \end{equation}
+for all $x\in T$ and all $g\in SL$ in any fixed neighborhood of the
+identity. Finally, there exists a constant $C_{\delta,t}$ such that
+$V_\delta^{(t)}/ V_\delta\in [C_{\delta,t}^{-1}, C_{\delta,t}]$.
+\end{lem}
+The order of quantifiers in our statement corrects a mistake in
+Athreya's Lemma 2.10.
+
+In the next lemma, we transfer the previous estimate on circle
+averages to estimates on horocycle averages.
+
+
+
+\end{document}

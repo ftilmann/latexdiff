@@ -1,0 +1,57 @@
+Version 0.3 August 2005
+==========================
+
+- fixed bug where a deleted displayed equation would result in math mode commands 
+  being processed in text mode (the "! Missing $ inserted" error). 
+ 
+- Improved parsing in math mode: Superscript and subscript and \left,\right are now parsed correctly
+
+- shell script for providing CVS support
+
+Minor:
+
+- fixed a bug in utf8 mode that resulted in many warning messages and
+  failure to parse properly words with national characters
+
+- Now works with the latest version of Algorithm::Diff (version 1.19)
+
+- new options "--allow-spaces" and "--ignore-warnings"
+
+- Better wording and enhanced context for warning messages 
+
+- '|' character is now recognised as valid math mode character
+
+- Fixed a bug whereby \begin{document} and \end{document} in comments are nevertheless treated as real begin and end points
+
+- add \protect in front of \nogroupcolor command in DVIPSCOL subtype (old version broke sometimes according to bug reports although I could not replicate the problem)
+
+- replace \uline by \uwave in CUNDERLINE style, such that added and deleted text parts look different even in math mode
+
+- Markup within DIFnomarkup enviroment is removed by latexdiff. This can be used to protect parts
+  for which latexdiff has trouble creating proper latex code. 
+
+- no markup type FONTSTRIKE
+
+
+Version 0.2  September 2004
+===========================
+
+- introduced subtype DVIPSCOL (coloring changed blocks for dvips converter)
+
+- support for utf8 and other encodings 
+
+Minor:
+
+- removed buggy COLOR subtype
+
+- Usage information no longer printed automatically after certain syntactic error messages
+
+- short options -a, -A, -x, -X now really do what is claimed in the manual
+
+- bug in failback splitting of input was fixed
+
+- options --exclude-textcmd, --append-textcmd, --exclude-safecmd, and --append-safecmd
+  can now take comma-separated list as well as a file as argument.
+
+
+

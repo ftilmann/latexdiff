@@ -1,0 +1,100 @@
+Version 0.42 November 2006
+==========================
+
+- the auxiliary commands put in to bring latexdiff into and out of 
+  math mode correctly would sometimes not be consistent. This is no longer the 
+  case
+
+- If a comment was put between two commands within a deleted block, the 
+  latter command would not be disabled by a DIFDELCMD
+
+
+
+Version 0.4 January 2006
+========================
+
+- $$ $$ usually accepted for displayed equations (but less robust than \[ \] or displaymath environment)
+
+- For commands which are in textcmd list but not in safecmd list (e.g. \footnote and \section commands) the content is now marked up if they are added or deleted. (Thanks to S. Utcke for alerting me to this shortcoming of previous versions).  The downside of this change is that deleted section heads are now shown, messing up the section numbering
+
+- added RCS and SVN support to latexdiff-vc (previous name latexdiff-cvs)
+
+- a fast version (latexdiff-fast) uses the UNIX diff command to speed up the differencing phases.
+
+Minor bug fixes:
+
+- Improved parsing of textcmd and safecmd lists, some clarification in manual (Thanks to V. Kuhlmann for fix)
+
+- All \color commands now \protect'ed (V. Kuhlmann)
+
+- Picture environment within floats now is cleared up properly (Thanks to V. Kuhlmann for fix)
+
+- non-matching textcommands right before \end{document} are now parsed correctly
+
+- updates to textcmd (emph, text..) and safecmd lists (emph)
+
+- fixed \par bug.  Previously, this bug resulted new paragraphs to be merged with the following paragraph.
+
+- better error checking in latexdiff-vc
+
+- can specify arbitrary number of files in latexdiff-vc
+
+- can choose output directory in latexdiff-vc
+
+Version 0.3 August 2005
+==========================
+
+- fixed bug where a deleted displayed equation would result in math mode commands 
+  being processed in text mode (the "! Missing $ inserted" error). 
+ 
+- Improved parsing in math mode: Superscript and subscript and \left,\right are now parsed correctly
+
+- shell script for providing CVS support
+
+Minor:
+
+- fixed a bug in utf8 mode that resulted in many warning messages and
+  failure to parse properly words with national characters
+
+- Now works with the latest version of Algorithm::Diff (version 1.19)
+
+- new options "--allow-spaces" and "--ignore-warnings"
+
+- Better wording and enhanced context for warning messages 
+
+- '|' character is now recognised as valid math mode character
+
+- Fixed a bug whereby \begin{document} and \end{document} in comments are nevertheless treated as real begin and end points
+
+- add \protect in front of \nogroupcolor command in DVIPSCOL subtype (old version broke sometimes according to bug reports although I could not replicate the problem) 
+
+- replace \uline by \uwave in CUNDERLINE style, such that added and deleted text parts look different even in math mode
+
+- Markup within DIFnomarkup enviroment is removed by latexdiff. This can be used to protect parts
+  for which latexdiff has trouble creating proper latex code. 
+
+- new markup type FONTSTRIKE
+
+
+Version 0.2  September 2004
+===========================
+
+- introduced subtype DVIPSCOL (coloring changed blocks for dvips converter)
+
+- support for utf8 and other encodings 
+
+Minor:
+
+- removed buggy COLOR subtype
+
+- Usage information no longer printed automatically after certain syntactic error messages
+
+- short options -a, -A, -x, -X now really do what is claimed in the manual
+
+- bug in failback splitting of input was fixed
+
+- options --exclude-textcmd, --append-textcmd, --exclude-safecmd, and --append-safecmd
+  can now take comma-separated list as well as a file as argument.
+
+
+

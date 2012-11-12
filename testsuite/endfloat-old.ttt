@@ -1,0 +1,9 @@
+\begin{table*}
+
+   \caption{My caption}
+\begin{tabular}{c}
+data
+\end{tabular}
+\end{table*}
+\efloatseparator
+ 

@@ -1,0 +1,2344 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL island_obs2004-old.tex   Sun Nov 11 21:19:29 2012
+%DIF ADD island_obs2004-new.tex   Sun Nov 11 21:19:29 2012
+% draft OBS experiment Iceland 2002, manuscript
+% ueberareitet 21. sept. 2003
+%DIF 4a4
+%   latest changes FJT 27/2/2004 %DIF > 
+%DIF -------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\documentclass[extra,mreferee]{gji}
+\documentclass{article}
+\usepackage{graphicx}
+%DIF 8c9
+%DIF < %\usepackage{timet}
+%DIF -------
+\usepackage{pslatex} %DIF > 
+%DIF -------
+
+\providecommand{\chg}[1]{{\sf #1}}
+\providecommand{\del}[1]{{[...]\footnote{\footnotesize removed: \sf #1}}}
+%DIF 12c13-14
+%DIF < \providecommand{\remark}[1]{{[\bf #1]}}
+%DIF -------
+\providecommand{\remark}[1]{{\typeout{REMARK (p.\arabic{page}): #1}[\bf #1]}} %DIF > 
+%\renewcommand{\remark}[1]{{[\bf #1]}} %DIF > 
+%DIF -------
+
+\renewcommand{\includegraphics}[2][1]{{\sf Figure: {\tt #1}}}
+\providecommand{\dg}{\ensuremath{^\circ}}
+
+%---------------------------------------------------------
+% \del und chg loeschen durch c-programm dechg
+% siehe macro/dechg 
+%
+%\remark's werden nicht automatisch entfernt.  Du kannst
+%im Code
+%
+%char gapstr[]="\\gap";
+%
+%durch
+%
+%char gapstr[]="\\remark";
+%
+%ersetzen, und neu kompilieren, dann geht das auch.
+% Frederik
+%-----------------------------------------------------------
+
+
+\usepackage{a4,makeidx,natbib}
+\citestyle{tectonophysics}
+
+%\input{../../macro/format}       % macros, formate etc
+%\input{../../macro/defin}
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+
+%\maketitle
+%---------------------
+\begin{center}
+{\Large\bf 
+%DIF < Quantity, quality and predictability of 
+\DIFdelbegin \DIFdel{Ocean Bottom Seismic Noise }\DIFdelend \DIFaddbegin \DIFadd{Seismic broadband ocean bottom data and noise observed with
+free-fall stations:
+experiences from long-term deployments }\DIFaddend in the North Atlantic and \DIFdelbegin \DIFdel{at other oceanic sites, 
+and its relation to local and distant water gravity wave amplitudes
+}%DIFDELCMD < \remark{
+%DIFDELCMD < Seismic broadband ocean bottom data and noise observed with
+%DIFDELCMD < free-fall stations:
+%DIFDELCMD < experiences from long-term deployments in the North Atlantic and Tyrrhenian Sea
+%DIFDELCMD < }
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin \DIFadd{Tyrrhenian Sea
+}\DIFaddend }
+\end{center}
+%---------------------
+{\bf T. Dahm, F. Tilmann, J.P. Morgan}
+
+%---------------------
+\section*{Abstract}
+%---------------------
+\DIFdelbegin %DIFDELCMD < \remark{noch zu ueberabeiten}
+%DIFDELCMD < %%%
+\DIFdel{Seismic noise on the ocean floor is mainly characterized by 
+oceanic gravity-wave generated microseisms and cannot be avoided 
+by moving a station some kilometres apart.
+}\DIFdelend In a comparative study of two long-term deployments 
+we \DIFdelbegin \DIFdel{are able to characterize the noise situation }\DIFdelend \DIFaddbegin \DIFadd{characterize the seismic 
+noise }\DIFaddend on the seafloor in the North Atlantic  south of Iceland 
+and in the Tyrrhenian Sea north of Sicily.
+We estimate \DIFaddbegin \DIFadd{the teleseismic }\DIFaddend body-wave detection \DIFdelbegin \DIFdel{thresholds  at both sites and compare them 
+to sites in the Pacific and to waveheights of oceanic gravity waves.
+By means of a correlation technique between }\DIFdelend \DIFaddbegin \DIFadd{threshold to be
+approximately at magnitude 5.5 at frequencies below the microseismic band ($f<0.1$
+Hz) at the quietest sites in both regions. In the microseismic band
+(0.1 Hz$<f<$<0.3 Hz), the minimum magnitudes for events to be recorded most of the
+time are $M_W=6.0$ for the Tyrrhenian Sea deployment, and $M_W=7.5$
+for the North Atlantic deployment.
+By correlating }\DIFaddend seismic noise and 
+oceanic \DIFdelbegin \DIFdel{waveheights }\DIFdelend \DIFaddbegin \DIFadd{waveheight amplitudes }\DIFaddend we are able to find the major generation 
+areas of microseismic noise in the North Atlantic.
+While the high noise of secondary microseisms at 0.24 $Hz$ is 
+generated far away from the ocean bottom stations 
+at three near-coastal \DIFdelbegin \DIFdel{sites}\DIFdelend \DIFaddbegin \DIFadd{regions}\DIFaddend , 
+the microseismic noise at about 1 $Hz$ is generated directly at the stations.
+We present a technique to estimate the noise generation areas prior 
+to \DIFaddbegin \DIFadd{future }\DIFaddend deployment by using noise at nearby land-stations.
+\\
+The ambient low-frequency noise \DIFaddbegin \DIFadd{at }\DIFaddend 0.1 $Hz$ occurs mainly on horizontal 
+components and is \DIFaddbegin \DIFadd{probably }\DIFaddend induced by seafloor-current induced tilt.
+The  \DIFdelbegin \DIFdel{variability of the current-induced }\DIFdelend power spectral density \DIFdelbegin \DIFdel{noise
+varies }\DIFdelend \DIFaddbegin \DIFadd{of this noise
+varies by }\DIFaddend a factor of \DIFaddbegin \DIFadd{up to }\DIFaddend 10000 between different stations and deployment sites, 
+indicating in some cases wobbling deployments, 
+possible problems of frame weakness\DIFaddbegin \DIFadd{, }\DIFaddend and 
+a possible higher noise-sensitivity of external packs to 
+seafloor currents.
+\DIFdelbegin \DIFdel{We identify that cross-coupling }\DIFdelend \DIFaddbegin \DIFadd{Cross-coupling }\DIFaddend between horizontal and vertical channel
+noise is strong at some of our stations, 
+demonstrating that the levelling mechanics can be further 
+improved to reduce vertical channel noise.
+
+%DIF < ---------------------
+%DIF < \begin{keywords}  
+%DIF <   keywords text
+%DIF < \end{keywords}  
+{{\bf keywords:}
+ocean bottom seismology, seafloor seismic noise,
+ocean water waves
+%---------------------
+
+\DIFaddbegin \remark{General point on units: there is no consistency whether to say 1~Hz or
+1$Hz$.  I checked a random article in BSSA, and there it appears to be
+1~Hz.  I have not corrected this anywhere, though.}
+
+\remark{On a similar note: we might want to say OBS instead of obs. I
+leave it to you to decide. In
+the text I sometimes made the opposite correction for consistency reasons.}
+
+
+\DIFaddend %---------------------
+\section{Introduction}
+%---------------------
+%DIF <  Most of the known hot-spots and postulated mantle plumes are in oceanic 
+%DIF <  regions.
+%DIF <  The majority of active plate boundaries  are in regions covered by 
+%DIF <  water. 
+%DIF <  The systems of mid-ocean ridges can be considered as an elongated, 
+%DIF <  about 70.000 km long volcano 
+%DIF <  \chg{whose} eruption style and dynamics \chg{are still not known in detail}.
+%DIF <  At submarine subduction zones a 
+%DIF <  complex hierarchy of physical and chemical processes
+%DIF <  is responsible for the continuous growth of the continental crust, 
+%DIF <  as well as hazardous earthquakes and volcanic eruptions.  
+%DIF <  This listing immediately shows that we cannot avoid to conduct geophysical 
+%DIF <  experiments and measurements on the seafloor, when seriously 
+%DIF <  aiming to gain a better
+%DIF <  understanding of the geodynamic, tectonic, volcanic and chemical processes
+%DIF <  on our Earth.
+%DIF <  \remark{ABOVE PARAGRAPH READS MORE LIKE A PROPOSAL INTRO FOR RELATIVE LAY PEOPLE AND COULD BE SHORTENED TO ONE OR TWO SENTENCES FOR A PAPER IN A SPECIALIST JOURNAL (E.G. FOR BSSA)}
+%DIF <  
+The number of temporal deployments of broadband seismological arrays on the 
+ocean bottom 
+will rapidly increase in the near future, since 
+the \DIFdelbegin \DIFdel{technique of such deployments }\DIFdelend \DIFaddbegin \DIFadd{technology  }\DIFaddend is already available and 
+\DIFdelbegin \DIFdel{ocean bottom stations (obs) play a key-role 
+for the understanding of different current questions, as:
+How is oceanic crust formed and
+subducted and how is 
+material transport at these zones ?
+How deep is the root of
+mantle plumes or do they exist at all? 
+For }\DIFdelend \DIFaddbegin \DIFadd{because the key processes of plate-formation at mid-ocean ridges and
+plate-destruction at subduction zones occur wholly or partly
+underneath the oceans. 
+As another }\DIFaddend example, \cite{ritsema:03} 
+point out that large aperture passive ocean bottom \DIFaddbegin \DIFadd{seismometer (obs)
+}\DIFaddend experiments are necessary to give conclusive evidence 
+for or against the existence of
+whole mantle plumes\DIFaddbegin \DIFadd{, currently a point of strong controversy}\DIFaddend . 
+Array apertures of at least 1000 km
+are needed to resolve structures below 400 km depth.
+Using a seismological array with an aperture of 300-500 km only, 
+e.g. a land based array on Iceland, 
+it is difficult to discriminate plumes from small-scale upper mantle
+convection or normal thermal fluctuations.  
+Islands associated with other oceanic hotspots are generally even smaller
+than e.g. Iceland, resulting in even lower resolvable maximum depths there.
+\DIFdelbegin %DIFDELCMD < \remark{evtl. andere aktuelle Initiativen f\"ur OBS Grossarrays erwaehnen, max 1 Satz}
+%DIFDELCMD < %%%
+\DIFdelend 
+
+In spite of the obvious need for long-term seafloor 
+deployments \DIFdelbegin \DIFdel{of seismic broadband arrays and 
+the availability of the required technology for a number of years,
+ }\DIFdelend so far these experiments 
+have only rarely been carried out.
+There are many reasons: 
+first, a large technical and logistical effort is necessary 
+to collect ocean bottom broadband data. 
+Second, a large number of suitable 
+ocean bottom stations is simply not available for the majority of 
+seismologists.
+A third point \DIFdelbegin \DIFdel{, however, }\DIFdelend is that the seismic noise on the seafloor is
+often much larger than on land\DIFdelbegin \DIFdel{, and experiments are thus more difficult}\DIFdelend .
+A magnitude 7 earthquake recorded at about $70^{\circ}$ epicentral 
+distance may easily be hidden in the noise of a seafloor station,  
+while it usually generates beautiful seismograms on a permanent 
+land station at the same distance \DIFdelbegin \DIFdel{.
+For example, \mbox{%DIFAUXCMD
+\cite{hedlin:89}
+}%DIFAUXCMD
+made a comparative study of island, seafloor and sub-seafloor ambient noise
+in the frequency range between 0.1 and 10 Hz.
+They showed that the microseismic peak at the seafloor at about 
+$0.25\, Hz$ appears to be 
+as bad as on the poorest land stations which happen to be on small islands.
+}\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\cite{webb:98}
+}%DIFAUXCMD
+.
+}\DIFaddend 
+
+The general reasons for seafloor noise are well understood.
+Since the early days of quantitative seismology a hundred years ago 
+it has been suggested that oceanic gravity waves generate strong
+noise signals,  
+on the seafloor but also 
+at inland stations hundred of kilometers from the coastlines. 
+\DIFdelbegin \DIFdel{This type of seafloor noise typically shows two amplitude peaks 
+at periods of about 0.1~Hz (}\DIFdelend \DIFaddbegin \remark{I have changed this sentence because we don't actually seem to
+observe the two peaks}
+\DIFadd{The }\DIFaddend primary microseismic peak \DIFdelbegin \DIFdel{) and 
+in the range 0.2 - 0.4~Hz (secondary microseismic peak).
+While the primary microseismic peak, }\DIFdelend \DIFaddbegin \DIFadd{at 0.1~Hz is not always visible, and,
+}\DIFaddend although not well understood, 
+is assumed to
+be related to the interaction of oceanic waves and the coastlines\DIFdelbegin \DIFdel{, 
+the secondary peak }\DIFdelend \DIFaddbegin \DIFadd{.
+We only observe the secondary microseismic peak at 0.2--0.4 Hz, which }\DIFaddend is
+thought to be generated by a nonlinear 
+frequency doubling effect occurring  \DIFdelbegin \DIFdel{only when ocean }\DIFdelend \DIFaddbegin \DIFadd{when oceanic `swell' }\DIFaddend waves cross 
+and standing waves develop 
+\DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+\cite[e.g.][]{longuet-higgins:50,hasselmann:63,webb:98,essen:03}
+}%DIFAUXCMD
+.
+This nonlinear effect is effective also in the deep sea, 
+and it has been postulated that secondary microseisms may be generated 
+during storms and possibly far from the coastlines}\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\cite[e.g.,][]{longuet-higgins:50,hasselmann:63,webb:98,essen:03}
+}%DIFAUXCMD
+.
+}\remark{Removed sentence because Webb, 1998, says that secondary
+microseisms also preferentially generated in coastal areas because
+only there you get crossing swell}
+\DIFadd{Microseismic noise at higher frequencies is thought to be related to
+crossing wind-driven waves \mbox{%DIFAUXCMD
+\cite[e.g.,][]{webb:98}
+}%DIFAUXCMD
+}\DIFaddend .
+
+
+It is of great interest to know the noise 
+conditions of a region prior to planning an expensive ocean 
+bottom experiment.   
+For example, the experiment has to be planned for a sufficiently
+long deployment period to obtain the required event
+coverage. Alternatively, suitable targets or deployment periods with
+low expected noise levels might be selected according to predicted
+noise levels. In certain cases, a better knowledge of noise sources and
+generation mechanisms might allow enhancement of the
+signal-to-noise-ratio by processing, or guide the development of new
+deployment strategies, e.g., by burying the sensor \DIFdelbegin \DIFdel{.
+}%DIFDELCMD < \\
+%DIFDELCMD < %%%
+\DIFdel{For instance, 
+\mbox{%DIFAUXCMD
+\cite{collins:01}
+}%DIFAUXCMD
+summarize the findings from the 
+Ocean Seismic Network Pilot Experiment, which was carried out 
+over a period of about four months at a site 225 km southwest 
+of Ohahu, Hawaii.
+Their results demonstrate that the location of the seismometer, whether 
+it be on the seafloor, superficially buried within the sea-bed, 
+or in a deep borehole - has a profound effect on data quality.
+At long-periods ($< 0.1\, Hz$), data quality was highest 
+for a seismometer buried just below the seafloor, while at 
+short-periods ($>0.1 \, Hz$), data quality was best for a seismometer
+deployed 242 $m$ below the seafloor in a borehole.  
+}%DIFDELCMD < \\
+%DIFDELCMD < %%%
+\DIFdel{\mbox{%DIFAUXCMD
+\cite{crawford:00}
+}%DIFAUXCMD
+have deployed a long-period ($<0.1\, $Hz)
+gravimeter and an STS2 sensor for a period of 14 days 
+at the outer edge of the California continental border edge,
+in 1~km distance to each other. 
+Both station carried an additional differential pressure gauge.
+They show that the low frequency noise ($<0.1\, $Hz) 
+can be reduced by subtracting the part of the vertical seismogram 
+coherent with the pressure records and the horizontal records. The
+noise coherent with pressure is related to seafloor
+compliance in response to waves between different layers in the water
+column \mbox{%DIFAUXCMD
+\cite[][]{webb:99}
+}%DIFAUXCMD
+, the noise coherent with the horizontal channels 
+is related to instrument tilt \mbox{%DIFAUXCMD
+\cite[e.g.][]{crawford:00}
+}%DIFAUXCMD
+.
+}\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\cite[e.g.,][]{collins:01}
+}%DIFAUXCMD
+.
+}\DIFaddend 
+
+In the following, we will 
+give examples of \DIFdelbegin \DIFdel{wide-band OBS-recordings }\DIFdelend \DIFaddbegin \DIFadd{broad-band obs-recordings }\DIFaddend of teleseismic 
+earthquakes measured at different sites 
+during \DIFaddbegin \DIFadd{two }\DIFaddend different deployments.
+Data are from free-fall \DIFdelbegin \DIFdel{OBS-ses }\DIFdelend \DIFaddbegin \DIFadd{obs }\DIFaddend from GEOMAR and Hamburg University.
+A systematic comparison 
+of  \DIFdelbegin \DIFdel{long-term }\DIFdelend noise-measurements reveals problems \DIFdelbegin \DIFdel{of the stations }\DIFdelend \DIFaddbegin \DIFadd{with the station }\DIFaddend design of some of our
+\DIFdelbegin \DIFdel{OBS-ses}\DIFdelend \DIFaddbegin \DIFadd{obs}\DIFaddend , and helps to quantify detection thresholds for body- and surface waves.
+Some of the deployed stations had strong noise 
+\DIFdelbegin \DIFdel{on the vertical seismometer component 
+}\DIFdelend at frequencies below 0.1 $Hz$, which could be attributed to
+tilt-induced noise\DIFdelbegin \DIFdel{and 
+could be corrected for.
+We find that, in }\DIFdelend \DIFaddbegin \DIFadd{. This noise could partly be removed from the
+vertical component using the horizontal components (see below).
+In }\DIFaddend an extreme case, the sensor apparently has been 
+tilted 
+from the horizontal by about $7^{\circ}$ \DIFdelbegin \DIFdel{. 
+}\DIFdelend \DIFaddbegin \DIFadd{or, less certain, even
+$34^{\circ}$. }\remark{according to table 1}
+\DIFaddend By using the correlation between seismic and ocean wave data we
+confirm that microseismic noise at
+frequencies at about 1~Hz is generated by oceanic wave action near the
+station, whereas lower-frequency micro-seismic noise
+($\sim$0.25~Hz) is correlated to wave action in few relatively narrow generation
+areas, i.e. 
+off-shore the North-West coast of
+Scotland / Ireland, on the Reykjanes Ridge south of Iceland and in a band 
+between North-Iceland and West-Norway.
+The generation areas are dominant presumably because the
+sub-marine topography and the preferential wind-wave directions 
+are particularly favourable towards
+conversion of oceanic wave energy into secondary microseismic energy.
+
+%-----------------------------------------------
+\section{Recordings of teleseismic earthquakes 
+\DIFdelbegin \DIFdel{an }\DIFdelend \DIFaddbegin \DIFadd{and }\DIFaddend tilt-induced noise
+}
+%-----------------------------------------------
+Between April and July 2002 
+GEOMAR, Kiel, and the Institute of Geophysics, University of Hamburg, 
+have installed a passive seismological network
+in the North Atlantic south of Iceland
+for three and a half months.
+Ten free-fall stations were deployed, from which nine have been successfully recovered.
+Four were 
+Hamburg-type wide-band stations
+(three component \DIFdelbegin \DIFdel{PMD }\DIFdelend \DIFaddbegin \DIFadd{PMD-113 }\DIFaddend seismic sensor and a piezoelectric 
+hydrophone,
+ob20, ob21, ob26, ob28),
+the others GEOMAR-type stations, of which there were 
+three four-component, (PMD seismometer and Differential Pressure
+Gauge, DPG (ob24), PMD seismometer and 
+ hydrophone (ob29), Spahr-Webb seismometer and
+DPG (ob23)),
+ and four 
+one-component stations equipped  with a DPG (ob25\DIFdelbegin \DIFdel{.}\DIFdelend \DIFaddbegin \DIFadd{, }\DIFaddend ob29) or hydrophone
+(ob22, ob27) only. 
+Station design and configuration are described in more detail in 
+\cite{dahm:02} and
+\cite{flueh:99}.  \DIFdelbegin %DIFDELCMD < \\
+%DIFDELCMD < %%%
+\DIFdel{The }\DIFdelend \DIFaddbegin \DIFadd{The Spahr-Webb has a flat acceleration response and is thus less sensitive 
+at low frequencies than the PMD sensor which has a flat velocity
+response up to 0.02 Hz.
+}
+
+\DIFadd{The }\DIFaddend station depth varied between 540 meter at the youngest sample point 
+beneath the Reykjanes Ridge (ob24) to  
+2780 meter depth at the oldest point of the European plate (ob21).
+The network was designed as a large aperture array of about 500 kilometres
+and with a station-station 
+distance of about 150 or more kilometres (Fig.~\ref{station_map}).
+The goal was to test such a configuration as a pilot study for a
+possible future
+large tomographic study beneath the Iceland hotspot.
+Body waves from earthquakes in the \DIFdelbegin \DIFdel{Aleutean}\DIFdelend \DIFaddbegin \DIFadd{Aleutian}\DIFaddend , Kamchatka  
+or Japan region sample the depth range of about 500 $km$ beneath 
+the Iceland hotspot before being recorded at the OBS station
+\\
+
+
+%DIF < Stations ob28, ob29 and ob20 were planned as a tripartite configuration 
+%DIF < \cite[three stations at the edges of a equal-sided triangle, see][
+%DIF < Fig.~\ref{station_map}]{gutenberg:47}. 
+%DIF < A tripartite station allows an estimate of the back-azimuth of 
+%DIF < plane waves stemming e.g. from regional or teleseismic generation 
+%DIF < areas of microseisms, and may thus help to 
+%DIF < separate earthquake signals 
+%DIF < from microseismic noise.
+%DIF < However, since ob20 could not be recovered for unknown reasons, 
+%DIF < and ob29 functioned only for about 2 days, the mini-array could not be used 
+%DIF < for signal enhancement.
+%DIF < \\
+\DIFdelbegin %DIFDELCMD < 
+
+%DIFDELCMD < %%%
+\DIFdelend Fig~\ref{kamchatka_M7.3}
+shows the \DIFaddbegin \DIFadd{bandpass-filtered }\DIFaddend waveforms for a teleseismic M=7.3 earthquake in 
+Kamchatka at a depth of $566\, km$ 
+and epicentral distances of 72-74$^\circ$.
+Seven stations were \DIFdelbegin \DIFdel{functional }\DIFdelend \DIFaddbegin \DIFadd{operational }\DIFaddend and recorded the body and surface waves\DIFdelbegin \DIFdel{with varying quality}\DIFdelend .
+Station ob21 has \DIFdelbegin \DIFdel{, as in general, }\DIFdelend a fairly good signal-to-noise ratio
+(SNR) on both, hydrophone and seismometer, 
+and recorded a seismogram \DIFdelbegin \DIFdel{quite }\DIFdelend comparable to the seismogram from the 
+broadband land station in Reykjavik (BORG).
+ \DIFdelbegin \DIFdel{At }\DIFdelend \DIFaddbegin \DIFadd{The vertical channels of the  }\DIFaddend other Hamburg-type stations (ob26,
+ob28) \DIFdelbegin \DIFdel{, the vertical channel }\DIFdelend \DIFaddbegin \DIFadd{are noisier }\DIFaddend below $0.1\, Hz$\DIFdelbegin \DIFdel{is more noisy compared to ob21}\DIFdelend .
+A large portion of this low-frequency noise was tilt-induced and could be 
+corrected for, as discussed below.
+%DIF < All three Hamburg-type stations were of identical design and sensors. 
+%DIF < However, station ob21 and ob26  
+%DIF < had a relatively stiff frame made from 
+%DIF < aluminum, while the frame of ob28 was more compliant and built from
+%DIF < glass-fiber reinforced plastic (GRP or GFK).
+%DIF < The noisy low-frequency record on the vertical channel of ob28 may partly
+%DIF < stem from the compliant frame. 
+The different noise observed on hydrophone channels at Hamburg-type 
+OBS most likely reflects site effects.
+\remark{kann man sagen, dass noise auf hydrophonen von Wassertiefe
+abhaengt}
+\DIFaddbegin \remark{Es sieht zwar so aus, allerdings hat man eigentlich nur drei
+Datenpunkte.  Fuer die Infra-gravity waves wuerde man zwar solch einen
+Trend erwarten, allerdings ist die Corner-Frequency fuer Infra-Gravity
+noise zwisch 0.015 und 0.02 Hz, also weit unterhalb unserer
+Beobachtung, ich wuerde mich da lieber nicht zuweit aus dem Fenster
+lehnen}
+\DIFaddend \\
+Only ob23 of the GEOMAR stations recorded 4 channels for this event; 
+the vertical channel has a comparable SNR  as Hamburg-type stations 
+in this example.
+The DPG records, which are sensitive at frequencies below 0.03 $Hz$, 
+show large low-frequency noise apparently related to infragravity waves.
+The GEOMAR hydrophones (ob22, ob27) \DIFdelbegin \DIFdel{do not recover 
+earthquake signals for this event, for unknown reasons}\DIFdelend \DIFaddbegin \DIFadd{only recovered
+earthquake signals at high frequencies above the corner frequency of
+the bandpass filter used in the preparation of Figure~\ref{kamchatka_M7.3}}\DIFaddend .
+
+During a six month period from December 2000 to May 2001 
+the same \DIFdelbegin \DIFdel{type }\DIFdelend \DIFaddbegin \DIFadd{types }\DIFaddend of stations have been deployed in a pilot study 
+in the Tyrrhenian Sea
+\DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+\cite[e.g.][]{dahm:02}
+}%DIFAUXCMD
+}\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\cite[e.g.,][]{dahm:02}
+}%DIFAUXCMD
+}\DIFaddend .
+The OBS-array consisted of 14 stations with an aperture of about 
+150 km and inter-station distances of about 25 kilometres.
+The oceanic waveheight, and thus the microseismic noise peak, is much smaller
+in the Tyrrhenian Sea than in the North Atlantic. 
+As expected, the waveforms collected during this pilot study 
+have a better SNR and the detection threshold for teleseismic body-waves
+was much lower there.
+
+Fig~\ref{quake_tysea}
+shows a waveform example for a $M=6.7$ shallow earthquake at
+$84^{\circ}$ epicentral distance.
+\DIFdelbegin \DIFdel{All three seismometer components are plotted for a GEOMAR- (}\DIFdelend \DIFaddbegin \DIFadd{GEOMAR-type station }\DIFaddend ob05 \DIFdelbegin \DIFdel{) and 
+two Hamburg-type stations.
+Station ob05 was equipped similar to ob23 in the North Atlantic 
+with a
+different type of sensor
+(}\DIFdelend \DIFaddbegin \DIFadd{was equipped with a
+}\DIFaddend Spahr-Webb \DIFdelbegin \DIFdel{), which 
+has a flat acceleration response and is thus less sensitive 
+at frequencies below
+0.07~$Hz$ than the PMD113 sensor of the }\DIFdelend \DIFaddbegin \DIFadd{sensor, and }\DIFaddend Hamburg-type stations \DIFdelbegin \DIFdel{. 
+However, at least at }\DIFdelend ob10 and ob11 \DIFaddbegin \DIFadd{were
+equipped with PMD sensors.
+At least on ob10 and ob11}\DIFaddend , even horizontal channels 
+recorded acceptable seismograms\DIFdelbegin \DIFdel{for this event, and }\DIFdelend \DIFaddbegin \DIFadd{, which }\DIFaddend are suitable for analysis of SKS shear-wave splitting 
+(R\"umpker, pers. communication)
+and receiver functions \cite[and pers. communication]{thorwart:04}.
+\DIFaddbegin \remark{reference thorwart:04 does not exist}
+\DIFaddend 
+
+%---------------------------
+% new: tilt removal section
+%---------------------------
+It is well known that a bad levelling of seismic sensors generates
+cross-coupling between horizontal and vertical channels.
+On the seafloor\DIFaddbegin \DIFadd{, }\DIFaddend the noise on the horizontal channels below 0.1 $Hz$ is 
+often a factor of ten or more higher than on the vertical.
+It is probably induced 
+by seafloor current-induced 
+\DIFdelbegin \DIFdel{displacement and }\DIFdelend tilt.
+For a \DIFdelbegin \DIFdel{bad-levelled }\DIFdelend \DIFaddbegin \DIFadd{poorly levelled }\DIFaddend sensor the horizontal noise is transferred to the z-component\DIFdelbegin \DIFdel{and potentially masking earthquake signals there}\DIFdelend .
+Then, the correlation and the coherency between noise measured on 
+the vertical and horizontal channels is high.
+\cite{crawford:00} and \cite{stutzmann:01} have demonstrated that the tilt-noise on the 
+vertical channel below \DIFdelbegin \DIFdel{$0.1\, Hz$ }\DIFdelend can 
+be quite efficiently reduced \DIFdelbegin \DIFdel{when 
+}\DIFdelend \DIFaddbegin \DIFadd{by 
+}\DIFaddend subtracting the cross-over signal predicted from 
+the horizontal recordings. 
+Their technique  \DIFdelbegin \DIFdel{is expected to work properly }\DIFdelend \DIFaddbegin \DIFadd{works well  }\DIFaddend when 
+horizontal components are recording 
+mainly current-induced noise (tilt noise).
+As a by-product it \DIFdelbegin \DIFdel{reveals }\DIFdelend \DIFaddbegin \DIFadd{provides }\DIFaddend an estimate of the actual tilt angle of the 
+sensor on the seafloor.
+In Appendix A we briefly describe \DIFdelbegin \DIFdel{the }\DIFdelend \DIFaddbegin \DIFadd{their }\DIFaddend technique as implemented \DIFdelbegin \DIFdel{in our cases.
+When applying the method of \mbox{%DIFAUXCMD
+\cite{crawford:00}
+}%DIFAUXCMD
+and 
+\mbox{%DIFAUXCMD
+\cite{webb:99}
+}%DIFAUXCMD
+we 
+assume that all three seismometer channels 
+have an identical instrument sensitivity and worked 
+properly. 
+Another assumption is that the relative large noise on the 
+horizontal channels is dominated by current-induced tilt.
+At low frequencies it should be uncorrelated  to 
+a precisely levelled vertical channel.
+}\DIFdelend \DIFaddbegin \DIFadd{here.
+}\DIFaddend 
+
+\DIFaddbegin \remark{I have removed the list of assumptions because a. We don't
+need to assume that horizontal noise is dominated by tilt, the
+analysis will tell us whether it is b. We know the gain of the Hamburg stations.  Difference between
+horizontal and vertical gain seems to be of the order of 10\% or so,
+resulting in a similar error in our tilt estimate.  This is less than
+the error we quote so we can ignore the issue of gain. }
+
+
+\DIFaddend Inspection of the recordings 
+at ob28 for a magnitude 6.5 earthquake show the
+strong improvement affected by the tilt correction
+(Fig.~\ref{fig:tilt-correction2}a,b).  No arrivals are visible on the
+uncorrected record, but $P$, $PP$, $S$, $SS$, further phases, and
+surface waves are clearly visible on the corrected trace.
+At ob28, 
+\DIFdelbegin \DIFdel{Power }\DIFdelend \DIFaddbegin \DIFadd{power }\DIFaddend spectral density (PSD) SNRs 
+averaged over a number of earthquakes are improved by factors of
+10-100 for the vertical channel but they still fall slightly short of
+the signal quality achieved by station ob21  
+(Fig.~\ref{fig:tilt-correction2}\DIFdelbegin \DIFdel{d). }\DIFdelend \DIFaddbegin \DIFadd{c). \mbox{%DIFAUXCMD
+\citet{webb:99}
+}%DIFAUXCMD
+have introduced an
+equivalent technique, henceforth called pressure correction, for removing correlated noise on the pressure and
+vertical component.
+}\DIFaddend However, the pressure
+correction did not even result in a marginal improvement of the SNR,
+because the pressure-vertical transfer function is of the same order
+of magnitude for both noise and seismic arrivals such
+that the noise correction also tends to reduce signal amplitudes.
+Pressure-vertical noise coherence is also expected to be high at
+frequencies well below the micro-seismic band because of seafloor 
+compliance induced by infra-gravity
+waves \citep{webb:99}. 
+At station ob28 at a water depth of 2268 m, the
+infra-gravity noise corner frequency
+is expected at 0.015~Hz . 
+%DIF < \remark{CALCULATE AFTER WEBB AND
+%DIF <   CRAWFORD, 1999: $t_{\mbox{corner}}=\frac{3}{2}\sqrt{g/h} / 2 \pi$
+%DIF < WITH $h$ THE WATER DEPTH AND $\frac{3}{2}$ BEING A FUDGE FACTOR TO GET
+%DIF < THE SAME CORNER AS WEBB\&CRAWFORD} 
+The pressure sensor of this instrument
+only has a very small sensitivity at this frequency.  The same is true
+for 
+the other stations equipped with a PMD sensor 
+(ob10, ob11, ob21, ob26 and ob29).  
+Ob23, ob05 and ob06 were equipped with a DPG 
+with larger sensitivity at $0.015\, Hz$ but their
+seismometer sensitivity is low at low frequencies.  
+
+\DIFaddbegin \DIFadd{For the following we applied the correction to stations  only 
+for which an improvement in SNR was achieved 
+(ob06, ob08, ob23, ob26, ob28, ob29), 
+and discarded the pressure correction because it was 
+never successful.
+At the other stations (ob05, ob10, ob11, ob21)
+we continued to use the uncorrected signals.  
+}
+
+
+\DIFaddend %------------------------- table 1 --------------------------------
+\begin{table}
+\begin{center}
+\caption{
+a) The Tyrrhenian Sea deployment 2000/2001. 
+The apparent tilt-angle $\Theta$ between ${\bf g}$ and the 
+vertical sensitivity axis of the sensor 
+and the azimuth angle $\varphi$ between the tilt and the y-axis of the 
+sensor \DIFaddbeginFL \DIFaddFL{($0<\varphi<90\dg$)}\DIFaddendFL . \DIFaddbeginFL \remark{or did you look at the sign as
+well, and they just all happened to be less than 90\dg}\DIFaddFL{.
+}\DIFaddendFL Both angles have been averaged from the ''flat'' 
+part of the transfer functions $X/Z$, $Y/Z$ between
+$0.025 \, Hz \, < \, f \, < \, 0.08 \, Hz$.
+}
+\vskip0.5cm
+\label{tilt_table}
+\begin{tabular}{|l||l|l|l|l|l|}
+\hline
+% &\multicolumn{6}{|c|}{Hamburg-type, integrated} & \multicolumn{4}{|c|}{Geomar-type, external pack}\\
+% & ob08 & ob10 & ob11 & ob21 & ob26 & ob28 & ob05 & ob06 & ob23 & ob29 \\
+& ob05 & ob06 & ob08 & ob10 & ob11 \\
+\hline
+$\Theta$ (deg) &  
+ $0.3  \pm 0.6$ &
+ $34  \pm 7.1  $ &
+ $2.1  \pm 0.2 $ &
+ $1.2  \pm 0.7 $ &
+ $1.3  \pm 0.3 $ 
+\\
+\hline
+$\varphi$ (deg) &  
+ $7 \pm  4$ &
+ $62 \pm  4 $ &
+ $15  \pm  1 $ &
+ $47 \pm 13 $ &
+ $31 \pm  8 $ 
+\\
+\hline
+\end{tabular}
+\\
+\vskip0.5cm
+b) the same for the North Atlantic deployment 2002
+\DIFaddbeginFL 
+
+\remark{ob29: as the exchange of components is rather a trivial
+mistake I would rather report 4\dg as the tilt, and then one should
+also get more reasonable values for the tilt error and $\varphi$.}
+
+\DIFaddendFL \vskip0.5cm
+\begin{tabular}{|l||l|l|l|l|l|}
+\hline
+% &\multicolumn{6}{|c|}{Hamburg-type, integrated} & \multicolumn{4}{|c|}{Geomar-type, external pack}\\
+% & ob08 & ob10 & ob11 & ob21 & ob26 & ob28 & ob05 & ob06 & ob23 & ob29 \\
+& ob21 & ob23 & ob26 & ob28 & ob29 \\
+\hline
+$\Theta$ (deg) &  
+ $0.3 \pm 0.2  $ &
+ $0.7 \pm 0.6 $ &
+ $0.8 \pm 0.2 $ &
+ $7.1  \pm  0.7 $ &
+ $86 \pm  72  $ 
+\\
+\hline
+$\varphi$ (deg) &  
+ $36 \pm  8 $ &
+ $51 \pm  6 $ &
+ $67\pm 12$ &
+ $64 \pm  2 $ &
+ $0 \pm 0 $ 
+\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+% name      tilt     error     av-strike    error 
+% ob05 0.29029  0.0646617 6.68699  4.30555   KOHAERENZ ZU KLEIN
+% ob06 34.2118  7.11796   62.1155  3.81081
+% ob08 2.14166  0.156842  14.962   0.827603
+% ob10 1.22455  0.736119  47.3335 12.8416
+% ob11 1.28882  0.278866  30.8946  7.71436
+% ob21 0.300755 0.22498   35.7357  8.46431   Kohaerenz zu klein
+% ob23 0.692174 0.567905  50.5514  5.92123
+% ob26 0.767391 0.181256  66.9169 11.5758
+% ob28 7.1288   0.682464  63.6499  1.84883
+% ob29 86.4385  72.2217   0.143846 0.010359
+%--------------------------------------------------------------------
+Table~\ref{tilt_table} summarizes the estimated sensor 
+tilt on the seafloor for the stations deployed in the 
+Tyrrhenian Sea and the North Atlantic.
+An apparent  station tilt of $\Theta < 0.3^{\circ}$
+was found to be small enough to avoid significant cross-over noise.
+Coherency between vertical and horizontal channel was then 
+typically \DIFdelbegin \DIFdel{much }\DIFdelend \DIFaddbegin \DIFadd{well }\DIFaddend below 0.5. \DIFdelbegin \DIFdel{It was estimated }\DIFdelend \DIFaddbegin \DIFadd{This was the case
+}\DIFaddend for only two of the 
+ten \DIFdelbegin \DIFdel{functional four-channel station of two deployments.
+This already }\DIFdelend \DIFaddbegin \DIFadd{fully operational four-component stations of the two deployments, which
+ }\DIFaddend indicates that the levelling mechanism or the 
+deployment technique 
+is not satisfactory for \DIFdelbegin \DIFdel{both types of stations}\DIFdelend \DIFaddbegin \DIFadd{either type of station}\DIFaddend .
+Hamburg-type stations have passive gimbal system where the 
+seismic sensor is put in a highly viscous oil 
+($10^5$\DIFaddbegin \DIFadd{Pa$\,$s (at $20^{\circ}\, C$) }\DIFaddend for the Tyrrhenian Sea and $10^6 \, Pa\,s$ \DIFdelbegin \DIFdel{at $20^{\circ}\, C$ for North Atlantic}\DIFdelend \DIFaddbegin \DIFadd{for the North Atlantic)}\DIFaddend .
+Assuming that the internal sensitivity axis of the PMD sensors are 
+aligned \DIFdelbegin \DIFdel{in }\DIFdelend \DIFaddbegin \DIFadd{at }\DIFaddend high precision, 
+the observed mis-levelling of up to $7^{\circ}$ at ob28 
+may have resulted from 
+an \DIFdelbegin \DIFdel{non-precise }\DIFdelend \DIFaddbegin \DIFadd{imprecise }\DIFaddend weight balancing of the sensors in
+the pendulum mechanics. 
+GEOMAR-type sensors (Spahr Webb at ob05, ob06, ob23) 
+have been actively gimbaled by a system developed \DIFdelbegin \DIFdel{from }\DIFdelend \DIFaddbegin \DIFadd{by }\DIFaddend Scripps.
+The small tilt angle of $0.3^{\circ}$
+and $0.7^{\circ}$ at ob05 and ob23, respectively, indicates
+the in-situ precision of the mechanics when the external pack 
+is properly placed on the seafloor.
+In contrast, the \DIFdelbegin \DIFdel{extreme }\DIFdelend \DIFaddbegin \DIFadd{extremely }\DIFaddend large value
+of e.g. $34^{\circ}$ at \DIFdelbegin \DIFdel{ob26 }\DIFdelend \DIFaddbegin \DIFadd{ob06 }\DIFaddend might be due to a strongly 
+tilted external pack; a problem that has been observed also 
+at other deployments with GEOMAR-type stations using an 
+autonomously deploying external pack. \DIFdelbegin \DIFdel{The large angle of $86^{\circ}$ at ob29
+(PMD sensor, passively gimbaled in viscous oil) 
+showed us that the sensor connectors had been flipped and 
+horizontal (x, channel 3) and vertical (z, channel 2 ) 
+had been interchanged.
+The correct tilt angle was about 4$^{\circ}$.
+In the following we re-attributed the correct channels
+to ob29.
+The large tilt }\DIFdelend \DIFaddbegin \remark{The last statement could
+do with a reference, even if it is pers. comm.  Also I think, although I am
+not entirely sure, that the Webb gimbaling system works through a very
+large angle (more than 34\dg)-it might be worth checking this with
+Ernst or Joerg.  If so, the large angle must be due to a failure of
+the self-levelling or very funny gains}
+\remark{Removed paragraph does not need to be in paper (might be in
+report)- rather just report the correct angle (4deg)}
+
+\DIFadd{The large tilt }\DIFaddend angles and the large tilt-induced vertical channel 
+noise found at several of our free-fall stations \DIFdelbegin \DIFdel{shows  
+that our levelling mechanics has to be improved }\DIFdelend \DIFaddbegin \DIFadd{show
+that the levelling mechanics }\DIFaddend as well 
+as the deployment technique \DIFdelbegin \DIFdel{. 
+A video-controlled }\DIFdelend \DIFaddbegin \DIFadd{clearly have room for improvement. 
+A more controlled }\DIFaddend launching of stations \DIFaddbegin \DIFadd{aided by video images of the seafloor }\DIFaddend might be 
+preferential to the \DIFdelbegin \DIFdel{so-far }\DIFdelend \DIFaddbegin \DIFadd{commonly }\DIFaddend used 
+free-falling technique \DIFdelbegin \DIFdel{.
+}\DIFdelend \DIFaddbegin \DIFadd{in order to ensure a stable, approximately
+level placement of the stations on the seafloor.}\remark{I am still not
+entirely sure what you mean: Do you envision lowering the instrument
+to the seafloor on a cable and then slowly dragging it until the video
+image shows a good location?}
+\DIFaddend However, the problem of tilted sensors explains the 
+cross-over noise from the horizontal to the vertical 
+channel. It does not explain the high noise level on
+horizontal channels. 
+In the next section we compare noise levels
+on vertical and horizontal channels.
+
+
+
+
+
+
+\DIFdelbegin \DIFdel{For the following we applied the correction to stations  only 
+for which an improvement in SNR was achieved 
+(ob06, ob08, ob23, ob26, ob28, ob29), 
+and discarded the pressure correction because it was 
+never successful.
+At the other stations (ob05, ob10, ob11, ob21)
+we continued to use the uncorrected signals.  
+}%DIFDELCMD < 
+
+%DIFDELCMD < %%%
+\DIFdelend %---------------------
+\section{Comparison of noise measurements}
+%---------------------
+%--------------------------------------------
+% average noise measurements 
+%--------------------------------------------
+A standard procedure to quantify the fidelity of a seismic station
+is to compare average power spectral densities (PSD) 
+with those
+from good or poor permanent land stations all over the world, 
+as for \DIFdelbegin \DIFdel{instance }\DIFdelend \DIFaddbegin \DIFadd{example }\DIFaddend given in the low- and high-noise model 
+of \cite{peterson:93}.
+
+The average PSD of background noise at our stations 
+has been calculated by \DIFdelbegin \DIFdel{removing 
+a three hour time window from the continuous recordings after every global $M \geq 5.5$ earthquake before averaging. One hour time intervals have been averaged
+for the North Atlantic (April to July 2002) and the Tyrrhenian Sea deployment 
+(December 2000 to May 2001)
+and compared with }\DIFdelend \DIFaddbegin \DIFadd{averaging the PSD of one hour time intervals,
+but excluding three hours after every earthquake with $M \geq
+5.5$. Figure ~\ref{psd_comparison} compares the average PSD of the two deployments 
+to }\DIFaddend the noise models of \cite{peterson:93}\DIFdelbegin \DIFdel{(Fig.
+~\ref{psd_comparison}).
+}\DIFdelend \DIFaddbegin \DIFadd{.
+}\DIFaddend Below 0.1 $Hz$
+the tilt-induced noise has been reduced for
+ob08, ob23, ob26, ob28 and ob29 by the technique 
+described above.
+The PSD are characterized by three noise 
+intervals;
+the so-called ''low noise notch'' between 0.01 and 0.1 $Hz$ 
+\DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+\cite[e.g.][]{webb:98}
+}%DIFAUXCMD
+}\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\cite[e.g.,][]{webb:98}
+}%DIFAUXCMD
+}\DIFaddend , 
+the microseismic noise between 0.1 and about 1 $Hz$ and 
+the \DIFaddbegin \DIFadd{high frequency  }\DIFaddend noise above 1 $Hz$.
+The stations with the lowest noise-levels in the frequency range between 
+0.01 and 0.1 $Hz$ have $10^{-15} \, m^2 / s^4 / Hz$ and are close to
+quiet stations of the low noise model of \cite{peterson:93}.
+
+%possibly related to the passive 
+%gimbaling system used, although a contribution of an 
+%increased electronic noise of the sensor is expected too.
+We believe that the $10^{-15} \, m^2 / s^4 / Hz$ noise level at 
+0.05 $Hz$ is nearly the optimum for the used free-fall 
+stations and is apparently independent of the region. 
+
+The microseismic noise peak at 0.24 $Hz$ 
+has a maximum of  
+about $10^{-9} \, m^2 / s^4 / Hz$ in the North Atlantic and 
+about $10^{-11} \, m^2 / s^4 / Hz$ in the Tyrrhenian Sea. 
+It is in both cases the most dominant signal below 5 $Hz$.
+The differences between the two deployments reflects 
+differences in strength of the noise source and, 
+may be to a larger part, differences in 
+source-station distances. 
+The microseismic noise measured in the North Atlantic is 
+partly above the level of noisy oceanic island stations of
+Petersons 
+high noise model.
+
+%As discussed below the deep seafloor noise at about $1\, Hz$ is correlated
+%to oceanic wave-height directly above the station 
+%and thus probably ocean-wave induced.
+Noise and noise peaks above 2 $Hz$ are interpreted as 
+local site resonances and shear-wave resonances as proposed by 
+e.g.  \cite{godin:99}.
+Since local and regional earthquakes have not been systematically 
+deleted from the waveforms their signals 
+may have added to the noise level observed in 
+Fig.~\ref{psd_comparison}.
+
+%--------------------------------------------
+% psd horizontal traces
+%--------------------------------------------
+%------------------------- table 2 --------------------------------
+\begin{table}
+\begin{center}
+\caption{
+Average psd noise between $0.05 < f < 0.1\, Hz$ 
+on horizontal channels x and y in 
+$10^{-12} \, m^2/s^2 / Hz$ for the 
+Tyrrhenian Sea deployment 2000/2001.
+}
+\vskip0.5cm
+\label{hnoise_table}
+\begin{tabular}{|l||l|l|l|l|l|}
+\hline
+& ob05 & ob06 & ob08 & ob10 & ob11 \\
+\hline
+x  &  
+ $2162$ &
+ $1148$ &
+ $108 $ &
+ $2  $ &
+ $0.2   $ 
+\\
+\hline
+y &  
+ $2412$ &
+ $1300$ &
+ $1414$ &
+ $2   $ &
+ $0.3    $ 
+\\
+\hline
+\end{tabular}
+\\
+\vskip0.5cm
+b) the same for the North Atlantic deployment \DIFdelbeginFL \DIFdelFL{2002
+}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{2002. The large noise on the y-channel of ob29 is most likely not real but 
+related to an enhanced sensitivity of the y-channel, 
+}\DIFaddendFL \vskip0.5cm
+\begin{tabular}{|l||l|l|l|l|l|}
+\hline
+& ob21 & ob23 & ob26 & ob28 & ob29 \\
+\hline
+x &  
+ $2  $ &
+ $5\cdot 10^5 $ &
+ $194  $ &
+ $1668 $ &
+ $116  $ 
+\\
+\hline
+y &  
+ $3  $ &
+ $3\cdot 10^5$ &
+ $111 $ &
+ $335 $ &
+ $6\cdot 10^4$ 
+\\
+\hline
+\end{tabular}
+\end{center}
+\DIFaddbeginFL \remark{Value for ob23 and ob29 seems not likely.  Why is x component
+so different form y component for ob29}
+\DIFaddendFL \end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%psd noise innerhalb f1=0.05 (20 sec) und f2 = 0.1 Hz
+%
+%Spahr Webb wurde um nm Faktor (10E-18) und zusaetzlich emprisch
+%um Faktor 5E-4 verringert (5. Spalte falls zutreffend). 
+%Emprische Faktir durch visuelles
+%Angleichen des Mikroseismischen Peaks bei ob06 psd Plot
+%
+%ob05/psd_2_337_117.dat 0.05 0.10 3.38613e+11 1.69306e-10
+%ob05/psd_3_337_117.dat 0.05 0.10 4.32479e+12 2.1624e-09
+%ob05/psd_4_337_117.dat 0.05 0.10 4.82532e+12 2.41266e-09
+%
+%ob06/psd_2_337_117.dat 0.05 0.10 9.96149e+09 4.98075e-12
+%ob06/psd_3_337_117.dat 0.05 0.10 2.29625e+12 1.14812e-09
+%ob06/psd_4_337_117.dat 0.05 0.10 2.60053e+12 1.30026e-09
+%
+%ob08/psd_2_337_117.dat 0.05 0.10 7.98247e-14
+%ob08/psd_3_337_117.dat 0.05 0.10 1.08168e-10
+%ob08/psd_4_337_117.dat 0.05 0.10 1.41438e-09
+%
+%ob10/psd_2_337_117.dat 0.05 0.10 2.38762e-15
+%ob10/psd_3_337_117.dat 0.05 0.10 1.51226e-12
+%ob10/psd_4_337_117.dat 0.05 0.10 2.24375e-12
+%
+%ob11/psd_2_337_117.dat 0.05 0.10 1.19714e-15
+%ob11/psd_3_337_117.dat 0.05 0.10 1.21081e-13
+%ob11/psd_4_337_117.dat 0.05 0.10 2.91109e-13
+%
+%ob21/psd_2_104_189.dat 0.05 0.10 9.80502e-16
+%ob21/psd_3_104_189.dat 0.05 0.10 1.84611e-12
+%ob21/psd_4_104_189.dat 0.05 0.10 2.61009e-12
+%
+%ob23/psd_2_104_189.dat 0.05 0.10 2.21491e+12 1.10745e-09
+%ob23/psd_3_104_189.dat 0.05 0.10 1.00583e+15 5.02916e-07
+%ob23/psd_4_104_189.dat 0.05 0.10 6.36158e+14 3.18079e-07
+
+%ob26/psd_2_104_189.dat 0.05 0.10 2.48591e-14
+%ob26/psd_3_104_189.dat 0.05 0.10 1.94155e-10
+%ob26/psd_4_104_189.dat 0.05 0.10 1.11513e-10
+%
+%ob28/psd_2_104_189.dat 0.05 0.10 1.11646e-11
+%ob28/psd_3_104_189.dat 0.05 0.10 1.66882e-09
+%ob28/psd_4_104_189.dat 0.05 0.10 3.35145e-10
+%
+%ob29/psd_2_103_117.dat 0.05 0.10 1.16639e-10  vertauscht: z = x
+%ob29/psd_3_103_117.dat 0.05 0.10 8.62627e-14  vertauscht: x = z
+%ob29/psd_4_103_117.dat 0.05 0.10 6.23365e-08
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+%--------------------------------------------------------------------
+Table~\ref{hnoise_table} gives 
+measured average noise-levels on horizontal channels in the 
+frequency band from $0.03 - 0.1\, Hz$. \DIFdelbegin \DIFdel{Examples of }\DIFdelend \DIFaddbegin \remark{Table caption lower frequency bound of 0.05 Hz is in
+contradiction to text where it says 0.03 Hz}
+\DIFadd{Examples of frequency-dependent }\DIFaddend psd on horizontal channels are given in 
+Fig.~\ref{fig:tilt-correction1}\DIFdelbegin \DIFdel{in Appendix A}\DIFdelend . 
+The lowest level is at about $10^{-13}\, m^2/s^2 / Hz$
+and thus a factor of 100 larger than the lowest level on 
+vertical channels (factor of 10 in amplitudes). 
+%DIF < -------------
+\DIFaddbegin 
+
+\DIFaddend The higher low-frequency noise level on horizontal channels is  
+commonly observed on the seafloor and associated with 
+current-induced tilt-transients experienced by the sensor. 
+\DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+\cite{duennebier:95,crawford:00}
+}%DIFAUXCMD
+gives among others 
+formulas to estimate  the tilt-effect on }\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\cite{duennebier:95}
+}%DIFAUXCMD
+and \mbox{%DIFAUXCMD
+\cite{crawford:00}
+}%DIFAUXCMD
+give the equations
+to estimate  }\DIFaddend vertical and horizontal \DIFdelbegin \DIFdel{channels
+as a function of an }\DIFdelend \DIFaddbegin \DIFadd{channel noise resulting from 
+a }\DIFaddend harmonic tilt excitation with amplitude $\epsilon$,
+frequency $\omega$\DIFdelbegin \DIFdel{and of station parameters 
+as the 
+}\DIFdelend \DIFaddbegin \DIFadd{,  and the station parameters 
+}\DIFaddend distance $L$ of the sensor to the center of rotation\DIFdelbegin \DIFdel{.
+The }\DIFdelend \DIFaddbegin \DIFadd{, and various angles.
+At low frequencies, the }\DIFaddend tilt amplitude on the horizontal channels is \DIFdelbegin \DIFdel{at low frequencies }\DIFdelend to
+first order proportional to $\epsilon$. 
+If the center of rotation is far from the sensor, an additional 
+term proportional to \DIFdelbegin \DIFdel{$L$ will add}\DIFdelend \DIFaddbegin \DIFadd{$\epsilon \omega^2 L$ becomes important at high frequencies}\DIFaddend .
+A station or an instrument pack with a larger flow resistance torque
+will \DIFdelbegin \DIFdel{thus generate larger current-induce }\DIFdelend \DIFaddbegin \DIFadd{generate larger current-induced }\DIFaddend tilt.
+Further, the anchor of the station (instrument pack) 
+will be important, since 
+it has to couple on ground without wobbling 
+and needs ground contact points spread \DIFdelbegin \DIFdel{a larger distance }\DIFdelend \DIFaddbegin \DIFadd{over as large distance as possible }\DIFaddend compared to 
+station or package height. 
+%-------------
+\DIFdelbegin \DIFdel{An interesting questions }\DIFdelend \DIFaddbegin 
+
+\DIFadd{An interesting question }\DIFaddend is how variable the noise 
+on horizontal channels is and whether \DIFaddbegin \DIFadd{a }\DIFaddend systematic 
+effect can be seen depending in the station type,
+i.e. external pack (GEOMAR-type) compared to 
+station-integrated sensor (Hamburg-type). 
+In general, stations with the smallest noise on horizontal channels 
+were the stations characterised with the highest fidelity 
+for the vertical channel (ob10, ob11, ob21).
+The problematic stations (ob08, ob28) were the stations with
+\DIFdelbegin \DIFdel{an increased 
+}\DIFdelend horizontal noise level \DIFdelbegin \DIFdel{of }\DIFdelend more than a factor of 1000 \DIFaddbegin \DIFadd{higher }\DIFaddend compared to
+high-fidelity stations. 
+Ob28 had a compliant frame built from GRP, that might have added to
+an enhanced tilt-signal at this stations.
+Otherwise, the increased tilt-noise on horizontal channels 
+is most likely related to a very soft seafloor site or 
+an \DIFdelbegin \DIFdel{unlucky deployment situation }\DIFdelend \DIFaddbegin \DIFadd{`unlucky' deployment }\DIFaddend with a wobbling station. \DIFdelbegin \DIFdel{Stations with external pack were }\DIFdelend \DIFaddbegin \DIFadd{There appears to be a
+tendency for Geomar-type
+stations with external packs (}\DIFaddend ob05, ob06, ob23 and ob29\DIFdelbegin \DIFdel{.
+The large noise on the y-channel of ob29 is most likely not real but 
+related to an enhanced sensitivity of the y-channel, 
+}\DIFdelend \DIFaddbegin \DIFadd{) to have
+larger noise-levels than Hamburg-type stations with integrated sensors.
+}\DIFaddend although data look ok on y.
+Ob05, ob06 and ob23 have a horizontal noise level a factor 
+of 1000 or more larger than our high fidelity stations.
+This might indicate that the external pack was at low frequencies 
+more sensitive to bottom currents that the other stations, 
+although an unlucky, wobbling deployment site is a second 
+possible explanation.
+%A final recommendation for or against an external pack is thus difficult.
+
+%--------------------------------------------
+% psd versus time
+%--------------------------------------------
+To quantify the noise level for the whole deployment period
+the power spectral density (PSD) of seismic records has been analysed
+as a function of time.
+For a 3$h$ sampling interval and \DIFdelbegin \DIFdel{a }\DIFdelend 6$h$ overlapping \DIFdelbegin \DIFdel{time-window}\DIFdelend \DIFaddbegin \DIFadd{time-windows}\DIFaddend ,
+traces have been mean-removed, deconvolved to velocity 
+and bandpass-filtered 
+with Gaussian filters centered at $f_0=0.06, 0.12, 0.24, 0.48,
+0.96$, and 1.92~Hz
+and with  a one-octave bandwidth.
+Then, power spectral  density has been calculated and  was 
+lowpass filtered and re-sampled before plotting 
+in decibel (db).
+% $db$, i.e.  $10log\, a^2$) 
+For detailed analysis, three 
+center frequencies have been selected for three Hamburg-type stations deployed in 
+the 
+Tyrrhenian Sea (Fig.~\ref{powerenvelope1})
+and the
+North Atlantic (Fig.~\ref{powerenvelope2}).
+The PSD for $f_0 = 0.06\, Hz$ represents the low-noise notch
+below the microseismic noise peak, 
+$f_0 = 0.24\, Hz$ samples the oceanic wave generated microseismic noise, 
+and 
+$f_0 = 1.92\, Hz$ lies above the classical microseismic peak.
+For teleseismic seismological studies often 
+the frequency range 
+from 0.01~Hz to 2~Hz is of interest.
+
+The two lower traces in the low noise notch passband 
+in Fig.~\ref{powerenvelope1}a (Tyrrhenian sea deployment, 
+ob10 and ob11 at $0.06$ Hz)
+show the expected behaviour; 
+the background noise level is relatively small and clearly exceeded
+by signals of teleseismic earthquakes (narrow peaks). 
+The earthquake peaks can be associated with surface wave energy.
+Thus,  Fig.~\ref{powerenvelope1}a gives 
+the possibility to quantify and compare detection 
+thresholds for surface waves. 
+$M \geq 7$ events exceed the noise level about nearly 50 db, 
+and 
+$M \geq 5.8$ events still about 20 db.
+\DIFdelbegin %DIFDELCMD < \remark{THE DIFFERENCE BETWEEN
+%DIFDELCMD < M=7 AND M=6 EVENTS SHOULD BE 20 DB FROM DEFINITION OF THE MAGNITUDE
+%DIFDELCMD < SCALE.  SO PROBABLY THESE NUMBERS HAVE UNCERTAINTY OF 10 DB}
+%DIFDELCMD < %%%
+\DIFdelend (measured in amplitude of ground velocity, the SNR is 
+300 and 10, respectively). 
+\\
+Station ob08
+was characterized by relatively large long-period noise on the 
+horizontal components. 
+Although the traces have been tilt-corrected by the technique described 
+above, the vertical background noise is still enhanced at ob08
+(upper trace in Fig.~\ref{powerenvelope1}a).
+We believe that most of this low-frequency noise was current-induced.
+Since ob08 was 
+\DIFdelbegin \DIFdel{technical }\DIFdelend \DIFaddbegin \DIFadd{technically }\DIFaddend identical to ob10 and ob11, 
+the enhanced noise at ob08 
+indicates local current variations 
+or an unlucky falling site of the station.
+
+In the passband $0.24\, Hz$  
+the microseismic noise is the 
+dominant signal for all three stations
+(Fig.~\ref{powerenvelope1}b, 
+\DIFdelbegin \DIFdel{PSD }\DIFdelend \DIFaddbegin \DIFadd{the PSD is }\DIFaddend a factor of \DIFaddbegin \DIFadd{approximately }\DIFaddend 4 larger \DIFaddbegin \DIFadd{than for 0.06 Hz}\DIFaddend ). 
+Single, isolated noise events are visible as broad peaks and can be associated 
+with single \DIFdelbegin \DIFdel{''}\DIFdelend \DIFaddbegin \DIFadd{``}\DIFaddend storms'' or \DIFdelbegin \DIFdel{''}\DIFdelend \DIFaddbegin \DIFadd{``}\DIFaddend high swell events'' in the 
+Mediterranean Sea or the Atlantic.
+A noise peak may cover \DIFaddbegin \DIFadd{the }\DIFaddend range of 40 $db$ on the vertical channels.
+Since the absolute noise level is increased compared to the low noise notch, 
+signals from $M \geq 7$ earthquakes are detectable in \DIFdelbegin \DIFdel{few cases
+only }\DIFdelend \DIFaddbegin \DIFadd{only a few cases
+ }\DIFaddend (e.g. No 1, No 6).
+The microseismic noise is very similar and  
+correlated between the stations that were 30 and 
+40 km apart.
+
+
+In the 1.92 $Hz$ passband  
+(Fig.~\ref{powerenvelope1}c)
+the background noise is  \DIFdelbegin \DIFdel{again smaller }\DIFdelend \DIFaddbegin \DIFadd{smaller again (by a factor of 0.1
+}\remark{????} \DIFadd{compared to the 0.06 Hz noise)}\DIFaddend .
+Nevertheless,
+signals from teleseismic earthquakes are 
+often not detectable because of attenuation
+along their travel path 
+and because
+large earthquake have 
+limits on the radiation of high frequency energy.
+However, regional and local earthquake signals are apparent 
+in Fig.~\ref{powerenvelope1}c as correlated narrow peaks.
+The noise levels follow a clear 
+pattern,
+and appear to be correlated between the three stations, which are 30 and 40 km apart.
+The nearly continuous occurrence and the \DIFdelbegin \DIFdel{''}\DIFdelend several-days width
+\DIFdelbegin \DIFdel{'' 
+}\DIFdelend of noise peaks indicate that the noise
+is ocean wave generated. 
+However, the noise peaks at 1.92 $Hz$ do not correlate with the 
+microseismic noise peaks 
+at 0.24 $Hz$ and must therefore have different generation areas.
+We demonstrate below that the noise at about $1\, Hz$ 
+is generated by local oceanic waves above the stations, 
+while the larger noise at 
+0.24 $Hz$ \DIFdelbegin \DIFdel{may stem }\DIFdelend \DIFaddbegin \DIFadd{stems }\DIFaddend from regional or even teleseismic source areas.
+
+Fig.~\ref{powerenvelope2} shows the same analysis for the North Atlantic and 
+the deployment in 2002.
+The three Hamburg-type stations have \DIFdelbegin \DIFdel{still }\DIFdelend an identical design and identical
+sensors \DIFdelbegin \DIFdel{. 
+However, the frame holding the sensor sphere of ob28 
+was built from GRP and was therefore more compliant than 
+the original aluminum frame of ob21 and ob26}\DIFdelend \DIFaddbegin \DIFadd{to the Tyrrhenian Sea experiment}\DIFaddend . 
+In Fig.~\ref{powerenvelope2}a only 
+the data of ob21 are of comparable quality to those recorded
+in the Tyrrhenian \DIFdelbegin \DIFdel{sea}\DIFdelend \DIFaddbegin \DIFadd{Sea}\DIFaddend . 
+Signals from $M\geq 6$ earthquakes are well detected in 
+the low noise frequency band at $0.06\, Hz$. \DIFdelbegin \DIFdel{The }\DIFdelend \DIFaddbegin \DIFadd{As discussed above,
+the }\DIFaddend enhanced noise level for station ob26 and ob28 
+again reflects current-induced noise together 
+with sensor misalignment.
+\DIFdelbegin \DIFdel{Additionally at ob28, 
+we assume that the compliant GPR frame 
+was more sensitive to current transients 
+enhancing the noise there
+}\DIFdelend \DIFaddbegin \remark{Point about GRP was already mentioned on the previous page}
+\DIFaddend 
+
+The microseismic noise levels (Fig.~\ref{powerenvelope2}b)
+appear again highly correlated, although the stations have been 
+up to 400 \, km apart.
+In contrast to the observation in the Tyrrhenian Sea the 
+storm peaks are not isolated and strong microseismic 
+noise seems to be continuously excited.
+The absolute noise level is also higher than in the 
+Tyrrhenian Sea, so that 
+even the earthquake M=7.3 event is barely
+visible in this frequency range.
+This \DIFdelbegin \DIFdel{result is already indicated in 
+}\DIFdelend \DIFaddbegin \DIFadd{observation is confirmed by
+}\DIFaddend Fig~\ref{fig:tilt-correction1}c
+\DIFdelbegin \DIFdel{showing }\DIFdelend \DIFaddbegin \DIFadd{which shows }\DIFaddend that the 
+SNR of earthquake data has been about 1 in the North Atlantic 
+for frequencies above 0.1 $Hz$.  
+
+The absolute noise level in the North Atlantic at 
+$1.92\, Hz$
+is comparable to that in the Tyrrhenian Sea.
+Only 
+few local and regional \DIFdelbegin \DIFdel{''}\DIFdelend \DIFaddbegin \DIFadd{``}\DIFaddend earthquake peaks'' show up
+in Fig.~\ref{powerenvelope2}c.
+The noise levels are not correlated to the noise at $0.24\, Hz$.
+However, in contrast to the Tyrrhenian Sea the 
+$1.92\,Hz$ noise levels are also  not correlated between  the 
+stations. 
+This indicates \DIFdelbegin \DIFdel{that the 
+}\DIFdelend \DIFaddbegin \DIFadd{different 
+}\DIFaddend local generation areas \DIFdelbegin \DIFdel{are in this frequency range 
+not correlated and have a smaller extend }\DIFdelend \DIFaddbegin \DIFadd{for each station with an extent less }\DIFaddend than the
+smallest \DIFdelbegin \DIFdel{distance between the stations 
+}\DIFdelend \DIFaddbegin \DIFadd{inter-station distance
+}\DIFaddend ($\approx 150 \, km$). 
+
+
+%--------------------------------------------
+% detection thresholds
+%--------------------------------------------
+\DIFdelbegin \DIFdel{A question  of interest is }\DIFdelend \DIFaddbegin \DIFadd{We now address the  question  }\DIFaddend whether a brief transient signal, e.g. \DIFdelbegin \DIFdel{the }\DIFdelend \DIFaddbegin \DIFadd{a
+}\DIFaddend P-wave \DIFaddbegin \DIFadd{arrival}\DIFaddend , 
+can be detected in a narrow frequency band against a background of continuous 
+noise.
+Since the P-wave has a finite energy and hence zero power when 
+averaged over all time, 
+we compare the root mean square noise in a given frequency band 
+($\sqrt{psd} \Delta f$, where $\Delta f$ is one-octave band) 
+with model amplitudes of P-waves in that band
+(Fig.~\ref{high_and_low}).
+The three noise curves \DIFdelbegin \DIFdel{belong to the one }\DIFdelend \DIFaddbegin \DIFadd{represent the first }\DIFaddend quartile, median and \DIFdelbegin \DIFdel{three 
+}\DIFdelend \DIFaddbegin \DIFadd{third
+}\DIFaddend quartile as estimated from the whole deployment period 
+(earthquakes removed) and the high fidelity stations (ob10 and ob21).
+To calculate model amplitudes of body waves in teleseismic distances we 
+follow the procedure described in 
+the appendix of \cite{webb:98}, where 
+a shallow earthquake in $70^{\circ}$ epicentral distance and 
+an attenuation time of \DIFdelbegin \DIFdel{$t^{\star} = 1\, sec$ }\DIFdelend \DIFaddbegin \DIFadd{$t^{\star} = 1\, s$ }\DIFaddend has been assumed.
+Higher values of
+$t^{\star}$ would attenuate amplitudes at higher frequencies
+\cite[see][for comparison and discussion]{webb:98}.
+For tomography \DIFdelbegin \DIFdel{and other studies one would 
+in principle 
+}\DIFdelend \DIFaddbegin \DIFadd{one would 
+}\DIFaddend like to analyse the teleseismic
+body-waves at frequencies as high as possible.
+However, a typical range is between 
+0.02 and 2 $Hz$.
+Body-wave arrivals can most likely be detected when 
+their signal \DIFaddbegin \DIFadd{amplitude }\DIFaddend exceeds the noise \DIFaddbegin \DIFadd{amplitude }\DIFaddend by a factor of about 6 
+(16 $db$).
+\DIFdelbegin \DIFdel{Surface waves, which are not discussed, have larger 
+amplitudes than body waves and thus lower detection thresholds
+\mbox{%DIFAUXCMD
+\cite[see also][]{webb:98}
+}%DIFAUXCMD
+.
+}\DIFdelend 
+
+Assuming that the several month deployments are representative for a whole 
+year, detection probabilities can be 
+derived from Fig.~\ref{high_and_low} and are 
+discussed for distinct frequencies. 
+At 0.1 $Hz$ and for the best stations, 
+the body-wave \DIFdelbegin \DIFdel{of }\DIFdelend \DIFaddbegin \DIFadd{from }\DIFaddend a $M_W = 5$ event in about $70^{\circ}$ 
+can be detected with a probability of about 75\% for both \DIFdelbegin \DIFdel{, }\DIFdelend the North Atlantic 
+and the Tyrrhenian Sea.
+Large differences occur at 0.25 $Hz$. 
+In the North Atlantic, the probability to see a  
+$M_W = 7.5$, 7.0 and 6.8  event is 75\%, 50\% and 25\%. \DIFaddbegin \remark{This
+is not the same as what appears in the figure where the difference
+between first and third quartile appears to correspond to less than
+0.5 magnitude units and also seems
+small when compared to figures 6,7 }
+\DIFaddend In the Tyrrhenian Sea the 
+$M_W = 6.0$ event would be detected in 75\% of the cases
+and a 5.5 with 50\% probability. 
+At 1 $Hz$ the North Atlantic is apparently preferential to the Tyrrhenian 
+Sea, because high-frequency microseismic noise is relatively large 
+in the Tyrrhenian Sea.
+So, a 
+$M_W = 6.0$ event is detected during 
+about 50\% of the deployment days.
+However, the prediction error of earthquake amplitudes is relatively 
+large at 1 $Hz$ so that estimates are more uncertain.
+The detection threshold at frequencies above 1 $Hz$ is even 
+more difficult to estimate since body-wave amplitudes are more variable there 
+depending on $t^{\star}$ and other factors.  \DIFaddbegin \DIFadd{Assuming that a
+signal-to-noise ratio of 20 db is required for analysis of surface
+wave dispersion, the threshold for surface waves to be observed 75%DIF >  of
+the time is $M_W=$... at 0.02 Hz and $M_W=$... at 0.05 Hz on vertical
+component measurements.  
+}\remark{fill in numbers after putting surface wave lines on figure} 
+\DIFaddend 
+
+The noise level measured at sites on the East Pacific Rise 
+\cite[see][figure 2]{webb:98}
+is slightly higher than that observed in the North Atlantic.
+
+\DIFdelbegin \DIFdel{Since hydrophones measure the omnidirectional pressure, the 
+pressure noise is typically larger than the noise on 
+vertical seismometer channels. 
+}\DIFdelend In Fig.~\ref{high_and_low_hyd} the pressure noise is 
+compared to body-wave model amplitudes. 
+The amplitudes of the theoretical pressure signals in the water 
+have been  calculated by multiplying the vertical particle
+velocity with $1000 \, kg/m^3 \, \cdot \, 1500\, m/s$.
+In the North Atlantic, the probability to detect a 
+$M_W = 7.5$ event ($70^{\circ}$) with a hydrophone 
+at frequencies above 0.2 $Hz$ is clearly less than 25\%.
+The high-frequency boundary for the 25\%  probability is 
+shifted to about 1 $Hz$ in the Tyrrhenian Sea.
+\DIFaddbegin \remark{Surface wave thresholds for hydrophone
+data probably don't make sense in our case, as the sensitivity of the hydrophones is
+low in the surface wave frequency band (except for the DPG)}
+\DIFaddend 
+
+The estimates of 
+Fig.~\ref{high_and_low} and
+Fig.~\ref{high_and_low_hyd} 
+agree well with our experience when looking at the data
+and  \DIFdelbegin \DIFdel{to }\DIFdelend the general picture derived from  
+\DIFdelbegin \DIFdel{figs}\DIFdelend \DIFaddbegin \DIFadd{Figs}\DIFaddend . \ref{powerenvelope1} and \ref{powerenvelope2}.  \DIFaddbegin \DIFadd{However, the
+detection threshold at low frequencies can be increased by
+unfavorable site conditions by up to one magnitude step (for corrected
+vertical components). }\remark{KANN MAN DAS SO SAGEN?}
+\DIFaddend 
+
+
+%---------------------
+\section{Oceanic gravity waves and noise generation}
+%---------------------
+Microseismic noise between $0.1$ and $1\, Hz$ is generated by 
+oceanic gravity waves coupling parts of their energy in the 
+seafloor and thereby exciting elastic waves.  \DIFdelbegin \DIFdel{It has been observed that most energy of microseismic noise at land stations is traveling as Rayleigh waves.
+It is also well accepted that the larger peak in the 
+microseismic noise spectra, the secondary peak at about 0.25 $Hz$, 
+is generated by a nonlinear frequency doubling effect from 
+standing oceanic gravity waves pressurizing the seafloor. 
+This 
+excitation mechanism is efficient in shallow as well as deep water and may 
+therefore occur far from the coastlines.
+However, several studies indicate that the generation areas of secondary microseismic noise in the North Atlantic is concentrated 
+to few coastal regions off-shore Norway, Ireland and Scotland
+\mbox{%DIFAUXCMD
+\cite[e.g.][]{essen:03}
+}%DIFAUXCMD
+.
+}\DIFdelend \DIFaddbegin \DIFadd{Microseismic noise on
+land stations travels predominantly  as Rayleigh wave and can be
+observed far from its generation areas \mbox{%DIFAUXCMD
+\citep{essen:03}
+}%DIFAUXCMD
+.
+}\remark{Paragraph removed because it largely repeats information from
+the introduction}
+\DIFaddend 
+
+Fig.~\ref{worldaverage_20_rot} 
+shows the average annual waveheight of oceanic gravity waves in 
+\DIFdelbegin \DIFdel{2002.
+The average waveheights have been }\DIFdelend \DIFaddbegin \DIFadd{2002 }\DIFaddend calculated from 
+global oceanic wave models \cite[WAM, e.g.][]{komen:94} \DIFdelbegin \DIFdel{sampling }\DIFdelend \DIFaddbegin \DIFadd{which sample }\DIFaddend the sea waveheight in 
+six hour intervals and $1^{\circ}$ grid points.
+The largest oceanic waves, and thus the largest microseismic noise, can be expected
+south of $45^{\circ}$ latitude.
+Noise conditions should be optimal in the equatorial regions.
+In the North Atlantic and North Pacific  the noise level is expected
+to be significantly lower during the summer, since 
+the average height of oceanic waves is lower during the summer.
+The figure shows that the expected noise is much lower at the
+Galapagos hotspot, the Seychelles or Cape Verdes compared to
+Iceland or off-shore South Chile.
+The Mediterranean Sea and especially the Agean Sea should have one
+of the lowest microseismic noise levels.
+
+The observed noise and the estimated 
+detection
+thresholds 
+in the North Atlantic and the Tyrrhenian Sea
+correlate well with the average oceanic waveheights
+in Fig.~\ref{worldaverage_20_rot}. 
+South of Iceland in the North Atlantic the average annual waveheight 
+is about three meters. It is only half a meter or less in the 
+Tyrrhenian Sea.
+Thus, a comparative approach can be used to 
+roughly predict 
+expected detection thresholds in other regions 
+of the \DIFdelbegin \DIFdel{worlds }\DIFdelend \DIFaddbegin \DIFadd{world's }\DIFaddend oceans;
+for example, latitudes below \DIFdelbegin \DIFdel{the }\DIFdelend $42^{\circ}$S have the largest
+average waveheights of four  meters and more, and are thus expected
+to have the worst microseismic noise.
+
+\DIFaddbegin \DIFadd{The WAM model waveheights  of the North Atlantic were calculated by
+the Deutsche Wetterdienst in Offenbach, Germany, and have been 
+sampled at three hour intervals and 
+$0.75^{\circ}$ grid points. 
+}\DIFaddend In order to locate the generation areas of microseismic noise in the 
+North Atlantic we correlate the \DIFaddbegin \DIFadd{WAM }\DIFaddend oceanic waveheight 
+with the square-root of
+PSD time series for different passbands. 
+as plotted in 
+\DIFdelbegin \DIFdel{figs}\DIFdelend \DIFaddbegin \DIFadd{Figs}\DIFaddend .  \ref{powerenvelope1} and \ref{powerenvelope2}.
+\DIFdelbegin \DIFdel{The WAM model waveheights  of the North Atlantic have been 
+sampled at three hour intervals and 
+$0.75^{\circ}$ grid points. 
+They were calculated by the Deutsche Wetterdienst in Offenbach, Germany.
+Fig.~\ref{wheightcomp} 
+}\DIFdelend For example, the 1 $Hz$ vertical channel 
+noise at ob21 and the waveheight directly above this station 
+correlates well with the sea waveheights above the station
+(Fig.~\ref{wheightcomp}), 
+whereas the noise at $0.24\, Hz$ does not, even though it is $\sim$100 times stronger.
+We assume that a good correlation of oceanic waveheights and noise 
+psd, more precisely its square root, 
+over the recording period of three and a half months
+indicates a major noise generation area.
+This assumption is justified when the major noise generation areas for seismic noise at a given station remain the same throughout
+the experiment.
+Thus, 
+Fig.~\ref{wheightcomp} indicates 
+that the secondary microseismic noise at ob21 
+is not generated locally.
+
+To estimate the major generation areas of noise at ob21 we
+calculated and plotted linear correlation coefficients between the 
+measured noise on the vertical channel and 
+sea waveheights (Fig.~\ref{wavecorr1}).
+% A coefficient of zero and one indicates no and perfect correlation, respectively.
+This correlation technique has been applied successfully 
+on land stations 
+to estimate generation areas of secondary microseismic noise
+in North Europe
+\cite[][]{essen:03}.
+We find that the secondary microseismic noise at ob21 
+has been mainly generated off-coast of Ireland an Scotland
+(Fig.~\ref{wavecorr1}a), while the 
+noise at 1 $Hz$ was indeed generated by oceanic waves above the station.
+This observation is of interest since  it predicts that a large portion
+of the noise signals at 0.24 $Hz$ are likely to 
+arrive as plane waves at the station 
+and may therefore be attenuated by applying array methods.
+
+Applying the same analysis to the other deployed stations 
+showed partly similar patterns but also revealed further
+generation areas.
+For instance, ob24 has the highest 
+correlation coefficient to a source region on the Mid-Atlantic Ridge 
+(MAR) 
+off-coast South Iceland, while oceanic waves off the coast of Ireland 
+seem to have a minor influence.
+To estimate all source regions of secondary microseismic noise 
+relevant for the complete OBS-array we calculated an average 
+noise PSD time series before correlating with oceanic 
+waveheights.
+Fig.~\ref{wavecorr2}a indicates that altogether three major
+noise generation areas are effective, 
+one off-coast West Ireland, the other off-coast South Iceland on the MAR,
+and the third in a band NE of Iceland.
+The correlation coefficient is largest for the region 
+off-coast Ireland indicating that this  
+is the strongest generation area among the three.
+\remark{diese Abbildung zu gmeinsamen Generation Areas 
+muss ich nochmal rechnen da Freuenzbereich
+nicht genau vergleichbar -- allerdings hab ich im Moment Problme da
+programm nicht mehr so laufen will wie voher}
+
+Knowing the major generation areas of noise before a deployment 
+can help to optimize the array and network design. 
+Fig.~\ref{wavecorr2}b shows that the major generation areas
+can be roughly estimated when averaging PSD noise-curves from 
+inland stations and correlation with WAM waveheights.
+In our case station BORG on Iceland and 
+ESK on Scotland have been used for averaging.
+More stations may be added, although our tests showed that adding stations 
+will not significantly change the 
+pattern in Fig.\ref{wavecorr2}b.
+
+%---------------------
+\section{Discussion and conclusion}
+%---------------------
+Longterm deployments in the Tyrrhenian Sea and in the North Atlantic 
+have been analysed to characterize the 
+seafloor broadband noise and the differences between two types
+of free-fall ocean-bottom stations.
+Free-fall broadband OBS have been proposed to be 
+used for several large-scale 
+passive seismological experiments.
+Therefore, our results and analysis is of interest to 
+better plan these future experiments and deployments, to 
+improve the station design, the array configuration and 
+the deployment technique.
+
+%-------------------------------------
+\subsubsection*{The role of the station design and current-induced noise}
+%-------------------------------------
+
+\DIFdelbegin \DIFdel{Similar }\DIFdelend \DIFaddbegin \DIFadd{Similarly }\DIFaddend to observations with other broadband \DIFdelbegin \DIFdel{obs-es 
+}\DIFdelend \DIFaddbegin \DIFadd{OBS
+}\DIFaddend our free-fall stations experience lowest noise 
+in the low noise notch below 0.1 $Hz$.
+The low noise notch is bounded by 
+the microseismic noise at high frequencies\DIFdelbegin \DIFdel{and }\DIFdelend \DIFaddbegin \DIFadd{,
+and by
+noise from infra-gravity waves }\DIFaddend at low frequencies, 
+depending on the water depth\DIFdelbegin \DIFdel{,
+noise from infra-gravity waves}\DIFdelend . 
+The low noise notch is of interest for 
+surface wave and teleseismic long-period body wave studies.
+It is likely that the 
+noise level in the low noise notch is 
+determined by current-induced tilt.
+The ocean seismic network pilot experiment (OSNP) and MOISE experiment
+ confirms this
+view \cite[][]{collins:01,stephen:03,stutzmann:01}.
+Three broadband seismographs have been deployed 
+close to the ODP Hole 843B at 4400 m depth
+located about 225 km southwest of Oahu, Hawaii.
+One was deployed in a borehole 240 m beneath the seafloor,
+a second was buried just below and a third on the seafloor.
+Below 0.1 $Hz$ the sensor buried under the seafloor 
+was 10's of $dB$ less than the the one sitting on the seafloor.
+The noise level of the station sitting on the seafloor
+was correlated with current speed and 
+increased with current speed 
+by about 8 $dB / cm/s$ on the horizontal component.
+
+For our high fidelity  stations the 
+average noise level in the low-noise notch at 0.08 $Hz$ was about
+$10^{-15}$ and 
+$10^{-13}\, m^2/s^4 / Hz$ on vertical and horizontal 
+seismometer channels, respectively,
+and thus comparable or slightly worse than 
+''quiet day'' measurements of the broadband seafloor station of the OSNP 
+experiment, which showed 
+values at this frequency of about
+$10^{-16}$ and 
+$10^{-13.5}\, m^2/s^4 / Hz$.
+\cite[see][]{stephen:03}.
+The current-induced noise depends strongly on the deployment site, e.g. whether the 
+station is deployed on a steep slope or in a sea-bottom bathymetric valley. 
+However,  \DIFdelbegin \DIFdel{we think that the large }\DIFdelend \DIFaddbegin \DIFadd{the differences in noise level by a }\DIFaddend factor up to
+10000\DIFaddbegin \remark{on page 7 (old manuscript) the factor is 1000. I guess
+the 10000 refers to GEOMAR stations where we are unsure about the gain
+so it might be better to say ``factor of 1000 and more'' here} \DIFaddend in noise level at the different 
+stations may also indicate \DIFdelbegin \DIFdel{feasible and less feasible current sensitivities of stations
+or wobbling stations}\DIFdelend \DIFaddbegin \DIFadd{differences in station design that
+determine susceptibility to currents or promote `wobbling'}\DIFaddend .
+For instance, the deployment of an external pack is recommended  by many 
+seismologists to reduce noise from a possible vibration of the station frame.
+However, from the long-term deployments with different stations types we can conclude that 
+stations with external packs have never achieved a lower horizontal low-frequency 
+noise level than those with \DIFaddbegin \DIFadd{a }\DIFaddend frame-integrated sensor. \DIFdelbegin \DIFdel{The }\DIFdelend \DIFaddbegin \DIFadd{At the same
+time, the }\DIFaddend frame-integrated stations are \DIFdelbegin \DIFdel{, however, more easy }\DIFdelend \DIFaddbegin \DIFadd{easier }\DIFaddend to handle and less sensitive to mechanical
+malfunction.
+Another noise problem \DIFaddbegin \DIFadd{we }\DIFaddend identified is the wobbling of single stations for unlucky
+\DIFdelbegin \DIFdel{when possibly fallen to difficult deployment sites }\DIFdelend \DIFaddbegin \DIFadd{station sites due to the uncontrolled nature of free-fall deployments}\DIFaddend .
+This suggests that a \DIFdelbegin \DIFdel{video-controlled launching of obs-ses }\DIFdelend \DIFaddbegin \DIFadd{more controlled launching with video support }\DIFaddend has the potential to further 
+reduce the current-induced noise.
+
+The current-induced tilt noise is 
+mainly felt by horizontal sensors.
+However, if the sensor is badly levelled the horizontal 
+tilt-noise is transferred to the vertical channel.
+We have estimated misalignments of several degrees (\DIFaddbegin \DIFadd{possibly }\DIFaddend $34^{\circ}$ in 
+one case \DIFdelbegin \DIFdel{?}\DIFdelend \DIFaddbegin \remark{Do we really believe this?}\DIFaddend ).
+In conclusion, a further improved leveling mechanics 
+\DIFdelbegin \DIFdel{of our obs-ses 
+}\DIFdelend will significantly reduce cross-coupling and thus low-frequency noise on \DIFaddbegin \DIFadd{the
+}\DIFaddend vertical channels.
+
+We further were able to demonstrate that tilt-induced noise \DIFaddbegin \DIFadd{on the
+vertical  }\DIFaddend can be 
+efficiently \DIFdelbegin \DIFdel{attenuated }\DIFdelend \DIFaddbegin \DIFadd{reduced }\DIFaddend when horizontal seismometer data are available.
+The increase in SNR for amplitudes was about a factor of 200 or more 
+at noisy stations, showing the importance to measure \DIFdelbegin \DIFdel{three channels}\DIFdelend \DIFaddbegin \DIFadd{with
+three-component seismometers}\DIFaddend .
+
+%-------------------------------------
+\subsubsection*{Character and generation of microseismic seafloor noise}
+%-------------------------------------
+
+Narrowband microseisms with a peak frequency at about 
+$0.24\, Hz$ \DIFdelbegin \DIFdel{is }\DIFdelend \DIFaddbegin \DIFadd{are }\DIFaddend the dominant  noise \DIFaddbegin \DIFadd{recorded on our free-fall obs.
+They are  strongly dependent }\DIFaddend on \DIFdelbegin \DIFdel{our OBS-ses.
+It is strongly depend on }\DIFdelend the experiment region.
+\DIFdelbegin \DIFdel{E.g.}\DIFdelend \DIFaddbegin \DIFadd{For example}\DIFaddend , in 
+the North Atlantic the microseismic noise-power
+is about a factor of at least 100 larger than in the Tyrrhenian Sea.
+The large amplitudes and the frequencies of the 
+microseismic noise can be explained by a nonlinear fluid-dynamic 
+effect in the oceanic layer, when 
+standing oceanic gravity waves pressurize the seafloor    
+at \DIFdelbegin \DIFdel{the double }\DIFdelend \DIFaddbegin \DIFadd{twice the }\DIFaddend frequency of the oceanic waves, which have 
+\DIFdelbegin \DIFdel{larger }\DIFdelend \DIFaddbegin \DIFadd{their largest }\DIFaddend amplitudes at about $0.12\, Hz$
+(the spectrum of water waves depends on different factors and waves are
+dispersive).
+By analyzing land stations, 
+\cite{essen:03} have shown that 
+the majority of secondary microseismic noise in the North Atlantic 
+is generated at \DIFaddbegin \DIFadd{a }\DIFaddend few sites near  \DIFdelbegin \DIFdel{to }\DIFdelend the coast of Norway, Scotland.
+This result is further confirmed and extended  by our study. 
+We identify additional generation areas of microseismic noise 
+for the North Atlantic 
+off-shore the \DIFdelbegin \DIFdel{North-West coast }\DIFdelend \DIFaddbegin \DIFadd{north-west coast of }\DIFaddend Ireland/Scotland, 
+on the Reykjanes Ridge south of Iceland,
+and in a band between North-Iceland and West-Norway.
+The generation areas are dominant presumably because 
+the submarine topography and the preferential wind-wave directions
+are particularly favourable towards conversion of oceanic wave energy 
+into secondary microseisms.
+
+\DIFdelbegin \DIFdel{We further were able to give estimates of these generation areas by means 
+of seismological land data and oceanic wave models. This is an important result because it allows to estimate the 
+ dominant noise strength and }\DIFdelend \DIFaddbegin \DIFadd{Using the same technique, similar generation areas were found for the
+microseismic noise on land stations near the experimental region (BORG
+and ESK). This means
+both the 
+ strength and dominant }\DIFaddend wave direction of \DIFdelbegin \DIFdel{noise }\DIFdelend \DIFaddbegin \DIFadd{microseismic noise can be
+ estimated  }\DIFaddend prior to an \DIFaddbegin \DIFadd{ocean bottom }\DIFaddend experiment.
+Better estimates \DIFdelbegin \DIFdel{of }\DIFdelend \DIFaddbegin \DIFadd{for required }\DIFaddend deployment times can be \DIFaddbegin \DIFadd{thus }\DIFaddend derived for temporary deployments and 
+the station configuration might be optimized to \DIFdelbegin \DIFdel{attenuate }\DIFdelend \DIFaddbegin \DIFadd{suppress }\DIFaddend microseismic noise
+by means of frequency-wavenumber filtering.
+
+A second finding is that microseismic noise at about $1\, Hz$, 
+which is smaller than the noise at 0.25 $Hz$,
+is generated by same nonlinear oceanic wave interaction 
+but locally above the station \DIFaddbegin \DIFadd{by wind-driven waves}\DIFaddend .
+This has been postulated before \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\citep[e.g.][]{babcock:94}
+}%DIFAUXCMD
+}\DIFaddend , but is evidenced here with 
+a new technique incorporating oceanic waveheights.
+\DIFdelbegin \DIFdel{E.g., 
+\mbox{%DIFAUXCMD
+\cite{babcock:94}
+}%DIFAUXCMD
+analyzed environmental data from ocean surface buoys and an ocean bottom 
+array deployed off-coast North Carolina in the North Atlantic. 
+They studied the relationship between meteorological surface conditions 
+and seismic noise on the seafloor. 
+They found that the microseismic single- ($\approx 0.01\, Hz$) and 
+double-frequency  peak ($0.16 - 0.3\, Hz$) 
+was highly variable during the time of the experiment, and is 
+probably generated at coastlines at teleseismic distances. 
+The small-energy high-frequency end of the microseismic noise was, however, 
+apparently generated by the interaction of local high-frequency oceanic waves.
+\mbox{%DIFAUXCMD
+\cite{webb:98}
+}%DIFAUXCMD
+reviewed the climatology of high-frequency microseismic noise
+and gave examples of good correlation of high-frequency microseismic noise 
+with local wind speed above the station.
+Wind-driven oceanic waveheights are included in the WAM models we used
+to derive frequency-dependent generation areas.
+}\DIFdelend \DIFaddbegin \remark{I removed the last paragraph because I think it contains too
+  much detail for conclusion section}
+\DIFaddend 
+
+
+%--------------------------------------
+\subsubsection*{Detection thresholds and 
+necessary deployment times}
+%--------------------------------------
+Due to the long deployment times we were able to 
+give estimates of the detection probabilities for 
+P-waves of teleseismic earthquakes.
+As a reference we choose events with different magnitudes \DIFdelbegin \DIFdel{in }\DIFdelend \DIFaddbegin \DIFadd{at
+}\DIFaddend $70^{\circ}$ \DIFdelbegin \DIFdel{and 
+two stations having }\DIFdelend \DIFaddbegin \DIFadd{epicentral distance and the 
+two stations with }\DIFaddend the best fidelity.
+Below the microseismic noise \DIFdelbegin \DIFdel{noise }\DIFdelend the detection thresholds 
+for both deployments \DIFdelbegin \DIFdel{was }\DIFdelend \DIFaddbegin \DIFadd{were }\DIFaddend similar; 
+75\% probability to detect a $M_W = 5.5$ event.
+
+Large differences were found in the microseismic frequency band.
+While we predict a detection probability of 
+75\% for an $M_W =7.5$ event in $70^{\circ}$ distance in the North 
+Atlantic, a   
+$M_W =6.0$ event is measured in the Tyrrhenian Sea with the same 
+probability.
+On the hydrophone, the 
+$M_W =7.5$ event can be recorded in less than 25\% of the time.
+The very low detection threshold on the hydrophone channel 
+in the microseismic band is in full agreement with our experience. 
+It demonstrates the importance \DIFdelbegin \DIFdel{to deploy full obs-se }\DIFdelend \DIFaddbegin \DIFadd{of deploying full obs }\DIFaddend with four channels 
+instead of \DIFdelbegin \DIFdel{hydrophones alone 
+}\DIFdelend \DIFaddbegin \DIFadd{only hydrophones 
+}\DIFaddend in the North Atlantic or at other noisy places.
+
+
+To summarize our experience with free-fall \DIFdelbegin \DIFdel{obs-ses we think 
+that improved and optimized stations that will be deployed by 
+a controlled launching system }\DIFdelend \DIFaddbegin \DIFadd{obs, 
+free-fall stations }\DIFaddend are usable for broadband seismological 
+purposes \DIFdelbegin \DIFdel{. }\DIFdelend \DIFaddbegin \DIFadd{although a more consistent quality could be achieved by
+a controlled launching system and improved station design . }\remark{Note that I changed the content of the previous
+  sentence somewhat - please check!} \DIFaddend A burial of sensors would most likely further 
+reduce 
+the noise level in the low noise notch, \DIFaddbegin \DIFadd{particularly for the
+horizontal components, }\DIFaddend but will not help in the 
+microseismic frequency band \DIFdelbegin \DIFdel{were largest noise occurs}\DIFdelend \DIFaddbegin \DIFadd{where the largest noise levels occur}\DIFaddend .
+However, since noise generation areas are far-distant in many cases 
+small-scale arrays to attenuate microseismic noise 
+would probably help.
+
+
+%----------------------------------------------------------
+%   Acknowledgements
+%\begin{acknowledgments}
+%\end{acknowledgments}
+\subsection*{Acknowledgements}
+The work was supported by DFG, the Leitstelle f\"ur Mittelgrosse
+Forschungsschiffe and the University of Hamburg.  We thank the crews
+of the FS Alexander-von-Humboldt and the Bjarni Saemundson for their
+professional work under difficult sea conditions.  Roger Sitko, J\"org
+Reinhardt, Martin Hensch, Andreas Wittwer, J\"org Petersen,
+and Viola Gaw helped with the cruises.  Ernst
+Fl\"uh and J\"org Bialas provided invaluable advice on technical
+aspects of the instrumentation, Rudi Widmer-Schniedrig provided the
+global WAM models and the DWD (Deutscher Wetterdienst) the WAMS in the North Atlantic.
+
+
+%----------------------------------------------------------
+%   Appendix
+%----------------------------------------------------------
+\section*{Appendix A}
+In order to calculate cross-coupling transfer functions, 
+we first selected a number of noise sequences which are free of
+larger events and recording artifacts such as spikes or clipped
+waveforms, in total between 18 and about 60~h worth of data. We then cut each
+noise sequence into windows of e.g. 164~s length with 50\% overlap between
+adjacent windows.  Each window is mean removed and 
+tapered with a Bartlett window to reduce spectral leakage \citep{press:92}.
+The transfer function between `source' component $s$ and `response'
+component $r$, $T_{rs}(\omega)$, is then calculated in the frequency domain:
+\begin{displaymath}
+T_{rs}(\omega)=\frac{<A_s^*(\omega)A_r(\omega)>}{<A_s^*(\omega)A_s(\omega)>}
+\end{displaymath}
+where $A_s(\omega)$ and $A_r(\omega)$ are the complex spectra of the
+source and response components, respectively, and $<\ldots>$
+implies averaging over all windows of all sequences (in the following
+equations the dependence on $\omega$ is assumed but not explicitly stated).
+The amplitude of the transfer function thus obtained is set to zero at
+those frequencies where coherency drops below 0.7\DIFdelbegin \DIFdel{and the }\DIFdelend \DIFaddbegin \DIFadd{. The }\DIFaddend coherency is defined as
+\begin{displaymath}
+\gamma_{rs}=\frac{|<A_r^*A_s>|}{\sqrt{<A_r^*A_r>}\sqrt{<A_s^*A_s>}}\ \ 
+{\bf .}
+\end{displaymath}
+In a small transition region near the threshold the amplitudes are reduced.  
+The predicted signal for component $r$ is then $T_{rs} A_s$, 
+\DIFdelbegin \DIFdel{i
+}\DIFdelend which is subtracted from the observed signal $A_r$ to obtain the corrected 
+\DIFdelbegin \DIFdel{i
+}\DIFdelend signal $A_{r'}$.  
+Following \citet{crawford:00}, we carry out the following steps to correct 
+the vertical component $z$ using the horizontal components $x$ and $y$.
+\begin{eqnarray*}
+1. & A_{z'}= & A_z-T_{zx}A_x \\
+   & A_{y'}= & A_y-T_{yx}A_x \\
+2. & A_{z''}= & A_{z'}-T\DIFdelbegin \DIFdel{_{z'x'}}\DIFdelend \DIFaddbegin \DIFadd{_{z'y'}}\DIFaddend A_{y'}
+\end{eqnarray*}
+An equivalent technique can be applied to correct noise correlated
+between the vertical and pressure component, $p$.
+\begin{eqnarray*}
+3. & A_{z'''}= & A_{z''}-T_{z''P}A_p
+\end{eqnarray*}
+where we assume that the pressure noise is not correlated with the
+horizontal components. 
+
+Figures~\ref{fig:tilt-correction1}
+and~\ref{fig:tilt-correction2} illustrate the application of the
+algorithm to ob28, the station where it was most effective. The
+coherence between horizontal  and vertical components is high
+below $\sim 0.12$Hz (Fig.~\ref{fig:tilt-correction1}b), and coherence
+between the pressure and vertical components is high in the
+microseismic band (0.15--0.3~Hz). The transfer function between the
+vertical and the $y$ component exhibits a relatively flat amplitude
+response and a nearly constant phase below 0.12~Hz (Fig.~\ref{fig:tilt-correction1}c), which implies that
+the noise on the vertical component has the same shape as that of the
+horizontal  components but smaller amplitudes (factor 0.11 for \DIFdelbegin \DIFdel{$z/x$
+}\DIFdelend \DIFaddbegin \DIFadd{$z/y$
+}\DIFaddend and -0.05 for \DIFdelbegin \DIFdel{$z/y$}\DIFdelend \DIFaddbegin \DIFadd{$z/x$}\DIFaddend , clearly visible in
+the time domain, too (Fig.~\ref{fig:tilt-correction2}a,b).
+\DIFdelbegin %DIFDELCMD < \remark{SHOULD CHANGE THIS TO Y COMPONENT TO BE ABLE TO DISCUSS LARGE
+%DIFDELCMD <   AMPLITUDE VALUES} 
+%DIFDELCMD < %%%
+\DIFdelend If interpreted purely as tilt and there is no
+difference between the gain for different channels, the amplitude of
+the transfer function is the tangent of the tilt angle, in this case
+implying a tilt angle of $7^{\circ}$. \DIFdelbegin %DIFDELCMD < 
+
+%DIFDELCMD < \remark{besser nicht so viel begruenden, es kann gut sein dass 
+%DIFDELCMD < ein Teil des Tilts wegen fehlenden Ausgleichsgewichten 
+%DIFDELCMD < und Kontrolle ! am Sensor entstanden sind}
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin \DIFadd{Tilts for the other stations are
+listed in Table~\ref{tilt_table}.
+}\DIFaddend Another potential source of coherent noise
+could be oscillations of the frame.  As mentioned above, it is hard to
+determine the cause of the coherent signal without additional
+information.  The transfer function above
+0.12~Hz is unreliable because the coherency is low, and it is not used
+for further processing.
+
+After subtracting the predicted, tilt-induced signal from 
+the vertical, 
+the noise PSD is reduced by a factor of 100-1000
+in the coherent band 
+(Fig.~\ref{fig:tilt-correction1}d) 
+but remains above the noise level for the
+quietest instrument, 
+ which was ob21 during the deployment in the 
+North Atlantic.  
+The microseismic noise psd is only
+marginally reduced by the pressure-based correction.
+
+ 
+%----------------------------------------------------------
+%   Bibliography
+%----------------------------------------------------------
+%\bibliographystyle{../../style/tectonophysics}
+%\bibliography{../../bib/bib}
+\begin{thebibliography}{}
+
+\bibitem[Babcock et~al., 1994]{babcock:94}
+Babcock, J., Kirkendall, B., and Orcutt, J., 1994.
+\newblock Relationship between ocean bottom noise and the environment.
+\newblock Bull. Seism. Soc. Am., 84:1991--2007.
+
+\bibitem[Collins et~al., 2001]{collins:01}
+Collins, J., Vernon, F., Orcutt, J., Stephen, R., Peal, K., Woodings, F.,
+  Spiess, F., and Hildebrand, J., 2001.
+\newblock Broadband seismology in the oceans: lessons from the {Ocean Seismic
+  Network Pilot Experiment}.
+\newblock JGR, 28:49--52.
+
+\bibitem[Crawford and Webb, 2000]{crawford:00}
+Crawford, W. and Webb, S., 2000.
+\newblock Identifying and removing tilt noise from low-frequency ($< 0.1\, hz$)
+  seafloor vertical seismic data.
+\newblock Bull. Seism. Soc. Am., 90:952--963.
+
+\bibitem[Dahm et~al., 2002]{dahm:02}
+Dahm, T., Thorwart, M., Flueh, E., Braun, T., Herber, R., Favali, P.,
+  Beranzoli, L., D'Anna, G., Frugoni, F., and Smirglio, G., 2002.
+\newblock Ocean bottom seismological instruments deployed in the {Tyrrhenian
+  Sea}.
+\newblock EOS Transaction, 83:309, 314.
+
+\bibitem[Duennebier and Sutton, 1995]{duennebier:95}
+Duennebier, F.~K. and Sutton, G., 1995.
+\newblock Fidelity of ocean bottom seismic observations.
+\newblock Marine Geophysical Researches, 17:535--555.
+
+\bibitem[Essen et~al., 2003]{essen:03}
+Essen, H.-H., Kr\"uger, F., Dahm, T., and Grevemeyer, I., 2003.
+\newblock On the generation of secondary microseisms observed in northern and
+  central {Europe}.
+\newblock J. Geophys. Res., 108:10.1029/2002JB0002338.
+
+\bibitem[Flueh and Bialas, 1999]{flueh:99}
+Flueh, E. and Bialas, J., 1999.
+\newblock Ocean bottom seismometers.
+\newblock Sea Technology, 40:41--46.
+
+\bibitem[Godin and Chapman, 1999]{godin:99}
+Godin, O. and Chapman, D., 1999.
+\newblock Shear-speed gradients and ocean seismo-acoustic noise resonances.
+\newblock J. Acoust. Soc. Am., 106:2367--2382.
+
+\bibitem[Hasselmann, 1963]{hasselmann:63}
+Hasselmann, K., 1963.
+\newblock A statistical analysis of the generation of microseisms.
+\newblock Rev. Geophys., 1:177--210.
+
+\bibitem[Hedlin and Orcutt, 1989]{hedlin:89}
+Hedlin, M. and Orcutt, J., 1989.
+\newblock A comparative study of island, seafloor, and subseafloor ambient
+  noise levels.
+\newblock Bull. Seism. Soc. Am., 79:172--179.
+
+\bibitem[Komen et~al., 1994]{komen:94}
+Komen, G., Cavaleri, L., Donelan, M., Hasselmann, K., Hasselmann, S., and
+  Janssen, P., 1994.
+\newblock Dynamics and modelling of \DIFdelbegin \DIFdel{ocan }\DIFdelend \DIFaddbegin \DIFadd{ocean }\DIFaddend waves.
+\newblock Cambridge Univ. Press, New York, pp. 1--532.
+
+\bibitem[Longuet-Higgins, 1950]{longuet-higgins:50}
+Longuet-Higgins, M., 1950.
+\newblock A theory of the origin of microseisms.
+\newblock Phil. Trans. Royal Soc. Lon. A, 243:2--36.
+
+\bibitem[Peterson, 1993]{peterson:93}
+Peterson, J., 1993.
+\newblock Observation and modelling of seismic background noise.
+\newblock USGS Open File Report, 93-322:1--49.
+
+\bibitem[Press et~al., 1992]{press:92}
+Press, W., Flannery, B., Teukolsky, S., and Vetterling, W., 1992.
+\newblock Numerical recipes, 2nd. edition.
+\newblock Cambridge University Press.
+
+\bibitem[Ritsema and Allen, 2003]{ritsema:03}
+Ritsema, J. and Allen, R.~M., 2003.
+\newblock The elusive mantle plume.
+\newblock Earth Planet. Sci. Lett., 207(1--4):1--12.
+
+\bibitem[Schreiner and Dorman, 1990]{schreiner:90}
+Schreiner, A. and Dorman, L., 1990.
+\newblock Coherency lengths of seafloor noise: effects of ocean bottom
+  structure.
+\newblock J. Acoust. Soc. Am., 88:1503--1514.
+
+\bibitem[Stephen et~al., 2003]{stephen:03}
+Stephen, R., Spiess, F., Collins, J., Hildebrand, J., Orcutt, J., Peal, K.,
+  Vernon, F., and Wooding, F., 2003.
+\newblock Ocean seismic network of pilot experiment.
+\newblock Geochemistry, Geophysics, Geosystems, 4:doi:10.1029/2002GC000485.
+
+\bibitem[Stutzmann et~al., 2001]{stutzmann:01}
+Stutzmann, E., Montagner, J.-P., Sebai, A., Crawford, W., Thirot, J.-L.,
+  Tarits, P., Stakes, D., Romanowicz, B., Karczewski, J.-F., Koenig, J.-C.,
+  Savary, J., Neuhauser, D., and Etchemedy, S., 2001.
+\newblock Moise: A prototype multiparameter ocean-bottom station.
+\newblock Bull. Seism. Soc. Am., 91:885--891.
+
+\bibitem[Webb, 1998]{webb:98}
+Webb, S., 1998.
+\newblock Broadband seismology and noise under the ocean.
+\newblock Rev. Geophys., 36:105--142.
+
+\bibitem[Webb and Crawford, 1999]{webb:99}
+Webb, S. and Crawford, W., 1999.
+\newblock Seafloor seismology and deformation under ocean waves.
+\newblock Bull. Seism. Soc. Am., 89:1535--1542.
+
+\end{thebibliography}
+%--------------------------------------------------------------------------
+
+%----------------------------------------------------------
+%   Figures
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+\centerline{\includegraphics[width=14cm]{island2.ps}}
+\caption{OBS stations deployed in the North Atlantic between 
+April and July 2002.
+The open circles indicate stations which had technical problems 
+with sensors and power consumption and 
+therefore operated for only a few days.
+The station 
+marked by the black circle
+was not recovered for unknown technical reasons.
+Stations 20, 21, 26 and 28 were of Hamburg-type, 
+the others of GEOMAR-type. 
+The isolines declare water depth in meter.
+Volcanic centres and fissure zone in Iceland are indicated by lines.
+See text for further explanations. 
+}
+\DIFaddbeginFL \remark{should really have (b) Tyrrhenian Sea deployment map.  But
+  Figure can be small with (a) and (b) next to each other}
+\DIFaddendFL \label{station_map}
+\end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+\centerline{\includegraphics[angle=-90.0,width=14cm]{fig2.ps}}
+\caption{Recordings 
+of the Kamchatka, 28 June 2002, M=7.3 event 
+at the OBS deployed in the 
+North Atlantic. 
+BORG is the vertical channel of the permanent broadband station in Reykjavik, Iceland,
+and is plotted for comparison.
+The traces show
+available vertical and hydrophone channels
+ indicated by $z$
+and $h$, respectively.
+Hamburg-type stations are indicated by HH, GEOMAR-type stations by GM.
+A bandpass filter with corner frequencies at 
+$0.025$ and $0.1 \, Hz$ has been 
+applied. 
+Additional, tilt-induced long-period noise has been removed for 
+ob26, ob28 and ob23.
+All traces are normalized to their own maxima.
+Station ob22 \DIFdelbeginFL \DIFdelFL{shows spurious signals of unknown origin, }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{recorded the P wave }\DIFaddendFL but \DIFaddbeginFL \DIFaddFL{the latter part of the wave train
+}\DIFaddendFL is \DIFdelbeginFL \DIFdelFL{included for 
+completeness}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{spoilt by spikes (resulting in spurious signal in the bandpass
+filtered record)}\DIFaddendFL .
+}
+\label{kamchatka_M7.3}
+\end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+\centerline{\includegraphics[angle=-90.0,width=14cm]{kodiak_10_6.7b1.ps}}
+\caption{Recordings 
+of the Kodiak Island, 10 January 2001, M=6.7 shallow event 
+at the OBS deployed in the 
+Tyrrhenian Sea. 
+The epicentral distance was $84^{\circ}$.
+The traces show three component seismograms recorded on a 
+GEOMAR-type station (ob05) and on two Hamburg-type stations 
+(ob10, ob11). 
+Horizontal seismograms have been rotated to 
+radial and
+transverse directions,
+and 
+traces are normalized to their own maxima.
+A lowpass filter with a corner frequency of
+0.05\, Hz has been applied.
+}
+\label{quake_tysea}
+\end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+%\begin{figure}
+%\centerline{\includegraphics[angle=-90.0,width=14cm]{tilt_improvement_ob28.ps}}
+%\caption{
+%Comparison of raw and tilt-corrected data on the vertical 
+%channel of ob28 and ob26 for the 
+%Kamchatka 2002 event. 
+%Both horizontal components are plotted for reference.
+%The numbers declare the maximum value of the traces in thousand counts.
+%}
+%\label{tilt_improvement}
+%\end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+\includegraphics[angle=-90,width=15cm]{ftilmann/wav-2002-06-22-02-ob28.ps}
+\includegraphics[width=9cm]{ftilmann/snr-ob28.ps}
+\caption{(a) Seismogram example for a magnitude 6.5 event in $50^{\circ}$
+epi-central distance. The top trace shows the \DIFdelbeginFL \DIFdelFL{uncorrected }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{corrected }\DIFaddendFL vertical \DIFaddbeginFL \DIFaddFL{component}\DIFaddendFL ,
+the \DIFdelbeginFL \DIFdelFL{middle traces }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{second from top trace shows }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{two horizontal components}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{tilt-corrected vertical component}\DIFaddendFL ,
+and the bottom \DIFdelbeginFL \DIFdelFL{trace
+}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{traces }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{tilt-corrected vertical component}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{two horizontal components}\DIFaddendFL . All traces are normalised to
+their own maximum.  Note that the uncorrected vertical and horizontal
+waveforms are very similar, but the amplitude of the latter is much
+higher. Letters next to the waveform indicate predicted arrival times
+of some seismic phases. (b)  Magnification of the P wave
+arrival for this event.  (c) Signal-to-noise ratios (SNR) for corrected and
+uncorrected vertical channels estimated from  five
+events 
+(\DIFaddbeginFL \DIFaddFL{at }\DIFaddendFL distances 
+\DIFaddbeginFL \DIFaddFL{of }\DIFaddendFL $14^{\circ}$,$49^{\circ}$,$60^{\circ}$,$72^{\circ}$, and $112^{\circ}$\DIFdelbeginFL \DIFdelFL{g}\DIFdelendFL ). 
+The SNR was
+estimated by calculating and comparing PSDs for a window
+immediately preceding the event, and a window encompassing the event
+(beginning with the P wave arrival and encompassing most of the
+surface wave train). The dashed line (tilt- and pressure-corected) and
+the dotted line lie on top of each other for most frequencies. The SNR
+for station ob21 is included for reference (gray line).}
+\label{fig:tilt-correction2}
+\end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+\centerline{
+%\includegraphics[width=7.3cm]{fig6a.ps}
+\includegraphics[width=7.3cm]{psd_comparison1-isla.ps}
+\hskip1cm
+%\includegraphics[width=7.3cm]{fig6b.ps}
+\includegraphics[width=7.3cm]{psd_comparison1-tysea.ps}
+}
+\caption{
+Average \DIFaddbeginFL \DIFaddFL{vertical }\DIFaddendFL power spectral density \DIFdelbeginFL \DIFdelFL{at three }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{of  }\DIFaddendFL Hamburg-type stations 
+deployed in the North Atlantic (a) and 
+Tyrrhenian Sea (b), 
+where a time window of 85 (julian day from 104 to 189)
+and 146 days (day 337 in 2000 to 117 in 2001) has been used.
+Teleseismic earthquake signals ($M > 6$)  have been removed 
+before averaging.
+Local earthquakes have not been removed and may \DIFdelbeginFL \DIFdelFL{have }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{make }\DIFaddendFL a small
+contribution to noise above 2 Hz.
+Sensors ob29 and ob06 had an unknown amplification factor and their 
+average psd curves 
+were therefore scaled down to fit the microseismic peaks of 
+nearby calibrated stations.
+The range between the USGS low and high noise model 
+(Petersson 1993) is indicated by gray shading.
+The deployment depth is indicated in meter.
+\DIFaddbeginFL \remark{You should state whether this are corrected or uncorrected
+  data - they look uncorrected but I wasn't sure}
+\DIFaddendFL }
+\label{psd_comparison}
+\end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+%\centerline{\includegraphics[width=14cm]{spectrowiggle_thy.ps}}
+\centerline{\includegraphics[width=14cm]{fig4.ps}}
+\caption{
+Ground velocity power 
+in 6 h overlapping time windows
+at three Hamburg-type stations 
+deployed in the 
+Tyrrhenian Sea
+(vertical seismometer channel, power spectral density plots in $db$, 
+$10\log\, \dot{u}^2$). 
+a) gives {\em psd} for the `noise notch' frequency band around $f_0 = 0.06\, Hz$, 
+b) for the microseismic frequency band centered at $f_0 = 0.24\, Hz$, 
+and c) \DIFdelbeginFL \DIFdelFL{chg}%DIFDELCMD < {%%%
+\DIFdelendFL for the high frequency microseismic noise band
+\DIFdelbeginFL %DIFDELCMD < }
+%DIFDELCMD < %%%
+\DIFdelendFL at $f_0 = 1.9\, Hz$. 
+The scale spans 50 $db$ for every trace. The power is 
+ \DIFdelbeginFL \DIFdelFL{a }\DIFdelendFL 20 db (a factor of 100)
+larger for the microseismic frequency band in b).\DIFaddbeginFL \remark{In the figure
+  itself a factor of x4 is written, so it is in the text.  Is this an
+  inconsistency. If not, I don't understand where the factor 100 is
+  coming from}
+\DIFaddendFL The deployment depth was 1550 $m$, 1893 $m$ and 2569 $m$ for 
+ob08, ob11, and ob10, respectively.
+Occurrence times of teleseismic earthquakes with $M >5.8$ are indicated by 
+marker lines
+in a), where numbers indicate earthquakes with $M \geq 7$
+}
+\label{powerenvelope1}
+\end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+%\centerline{\includegraphics[width=14cm]{spectrowiggle_0.06_0.24.ps}}
+\centerline{\includegraphics[width=14cm]{fig5.ps}}
+\caption{
+Ground velocity power at three Hamburg-type stations 
+deployed in the 
+North Atlantic.
+The station depths for stations ob21, ob26, and
+ob28 are 2780~m, 1389~m, and 2268~m, respectively. 
+The squared oceanic wave height at station ob21 is indicated as dotted 
+line in c).
+See Fig.~\ref{powerenvelope1} for further explanations.
+}
+\label{powerenvelope2}
+\end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+\centerline{
+%\includegraphics[width=8cm]{fig7a.ps}
+%\includegraphics[width=8cm]{fig7b.ps}
+\includegraphics[width=8cm]{psd_high_low_vera.ps}
+\includegraphics[width=8cm]{psd_high_low_verb.ps}
+}
+\caption{
+Models of  the \DIFdelbeginFL \DIFdelFL{amplitudes in }\DIFdelendFL vertical 
+acceleration  \DIFaddbeginFL \DIFaddFL{amplitudes }\DIFaddendFL in one-octave bands\DIFaddbeginFL \remark{Figure label says
+  there are 1/3 octave bands!} \DIFaddendFL of \DIFaddbeginFL \DIFaddFL{surface waves and of }\DIFaddendFL the P-wave 
+from earthquakes at a distance in $70^{\circ}$
+and an assumed frequency independent 
+attenuation time of $t^{\star} = 1 \, sec$
+\cite[see][for further description]{webb:98}.
+Also shown are the \DIFdelbeginFL \DIFdelFL{one }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{first }\DIFaddendFL quartile, median and \DIFdelbeginFL \DIFdelFL{three }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{third }\DIFaddendFL quartile 
+of vertical acceleration noise 
+($\sqrt{psd} \Delta f$) \DIFaddbeginFL \DIFaddFL{at the highest fidelity stations
+}\DIFaddendFL in the 
+North Atlantic (a, ob21) and 
+Tyrrhenian Sea (b, ob10).
+\DIFdelbeginFL \DIFdelFL{The stations with the highest fidelity are shown 
+(ob21 and ob10) and times of }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{Windows containing large }\DIFaddendFL earthquakes have been removed from 
+data streams.\DIFaddbeginFL \
+\DIFaddendFL }
+\label{high_and_low}
+\DIFaddbeginFL \remark{To add surface
+waves to the figure, after Webb,98, Fig. 7: draw straight lines in
+log-log plot:
+%\begin{flushleft}
+Units (Hz, m/s$^2$) 
+M$_W$=6 (1e-3,2e-10) - (0.7,1e-5);
+M$_W$=7 (1e-3,1.1e-8) - (0.25,1e-5);
+M$_W$=8 (1e-3,3.5e-7) - (0.07,1e-5);
+%\end{flushleft}
+(Numbers manually read off plot so not very accurate)
+Cut off lines at 0.05 Hz}
+
+\DIFaddendFL \end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+\centerline{
+\includegraphics[width=8cm]{psd_high_low_hyda.ps}
+\includegraphics[width=8cm]{psd_high_low_hydb.ps}
+}
+\caption{
+Models of the amplitudes in pressure 
+in one-octave bands of the teleseismic 
+P-waves  ($70^{\circ}$)
+are compared to one quartile, median and 
+three quartile of 
+pressure noise in the 
+North Atlantic (a, ob21) and Tyrrhenian Sea (b, ob10)
+See Fig.~\ref{high_and_low} for further description.
+}
+\label{high_and_low_hyd}
+\DIFaddbeginFL \remark{This figure has a problem with the period scale: 1 s period
+  seems to correspond to 2 Hz!}
+\DIFaddendFL \end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+\centerline{\includegraphics[angle=-90.,width=16cm]{worldaverage_20.ps}}
+\caption{Average oceanic waveheight in 2002.
+The frequency of occurence of wave heights is plotted for selected locations
+as histograms,
+where the upper histograms corresponds to the period from April to September,
+and the lower one from October to March, respectively.
+}
+\label{worldaverage_20_rot}
+\end{figure}
+%----------------------------------------------------------
+
+
+%----------------------------------------------------------
+\begin{figure}
+\centerline{
+\includegraphics[width=16cm]{wheightcomp_ob21.ps}
+}
+\caption{
+}
+\label{wheightcomp}
+Comparison of seismic seafloor noise (continuous line, square root of noise psd) and 
+oceanic waveheight (dashed line) at the position of ob21.
+A Gauss filter center-frequency of 0.24 and 0.96 $Hz$ has been 
+applied to \DIFaddbeginFL \DIFaddFL{the }\DIFaddendFL seismic data in (a) and (b), respectively.
+\end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+\centerline{
+\includegraphics[width=9.0cm]{correlation_ob21_0.24Hz.ps}
+\hskip-1cm
+\includegraphics[width=9.0cm]{correlation_ob21_0.96Hz.ps}
+}
+\caption{
+Linear correlation coefficient between the 
+oceanic waveheight field
+and the 
+power of 
+filtered vertical ground-velocity at station ob21 
+(black filled circle)
+bandpass filtered
+at $f_0 = 0.24\, Hz$ (a) 
+and
+$0.96\, Hz$ (b).
+}
+\label{wavecorr1}
+\end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+\centerline{
+\includegraphics[width=9.0cm]{correlation_obs_sum.ps}
+\hskip-1cm
+\includegraphics[width=9.0cm]{correlation_land_sum.ps}
+}
+\caption{
+Superposed 
+correlation coefficients from all OBS stations deployed (a)
+and from the two land stations BORG and ESK for comparison
+(b).
+The station locations are indicated by black filled circles.
+The bandpass filter had a center frequency at the 
+secondary microseismic noise peak 
+($f_0 = 0.24\, Hz$).
+}
+\label{wavecorr2}
+\end{figure}
+%----------------------------------------------------------
+
+%----------------------------------------------------------
+\begin{figure}
+\includegraphics[width=7.2cm]{ftilmann/psd-ob28.ps}\hfill\includegraphics[width=7.2cm]{ftilmann/coh-ob28.ps}
+\includegraphics[width=7.2cm]{ftilmann/trans-ob28.ps}\hfill\includegraphics[width=7.2cm]{ftilmann/psdcor-ob28.ps}
+\caption{Tilt correction example for station OB28 (a) Noise PSD
+for all components. \DIFdelbeginFL \DIFdelFL{The scale is arbitrary, but horizontal and vertical components are
+normalised by the same constant. }\DIFdelendFL Note that the horizontal channel has
+the same shape as the vertical but is noisier by  10-20 db. (b)
+Coherency between the vertical noise and the pressure and two horizontal
+channels. (c) The empirically determined transfer function from the
+horizontal $x$ component
+to the vertical component.  
+Convolved with the noise on the $x$ component, this function predicts the noise on the vertical
+channel.
+%Dotted lines give formal 95\% confidence intervals resulting
+%from the transfer function estimation.
+(d) Noise PSD for the
+vertical component.  For the tilt-corrected signal (dashed line),
+the predicted noise from the horizontal components has been subtracted
+from the vertical components. For the tilt and pressure-corrected
+signal (dotted line), the predicted noise from the pressure signal has
+been subtracted
+from the tilt-corrected signal.  For comparison, the uncorrected noise
+PSD for OB21, the \DIFdelbeginFL \DIFdelFL{least noisy }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{quietest }\DIFaddendFL station, has been superimposed (gray
+line). Below $\sim$0.12 Hz, the dashed and dotted line lie on top of
+each other, above this frequency the dotted and continuous line lie on
+top of each other.
+\DIFdelbeginFL %DIFDELCMD < \remark{PLOTS (a,d)WOULD BE NEATER IF INSTRUMENT CORRECTION WERE
+%DIFDELCMD < CARRIED OUT AND DECIBEL SCALE USED.  PLEASE COMMENT WHETHER YOU THINK
+%DIFDELCMD < THIS IS NECESSARY. 
+%DIFDELCMD < Yes, I think instrument correction is better. We are already showing 
+%DIFDELCMD < psd fo corrected data, and I refer to this figure as an 
+%DIFDELCMD < example of psd on horizontal channels: it is important to see here 
+%DIFDELCMD < how flat the psd ae below 0.1 Hz}
+%DIFDELCMD < %%%
+\DIFdelendFL }
+\DIFaddbeginFL \remark{The figure is still the old one, not the latest one I said
+  (with true acceleration spectra rather than counts).  I have changed
+  the figure caption to describe the new figure.}
+\DIFaddendFL \label{fig:tilt-correction1}
+\end{figure}
+%----------------------------------------------------------
+
+\end{document}
+

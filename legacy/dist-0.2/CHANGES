@@ -1,0 +1,22 @@
+Version 0.2  September 2004
+===========================
+
+- introduced subtype DVIPSCOL (coloring changed blocks for dvips converter)
+
+- support for utf8 and other encodings 
+
+Minor:
+
+- removed buggy COLOR subtype
+
+- Usage information no longer printed automatically after certain syntactic error messages
+
+- short options -a, -A, -x, -X now really do what is claimed in the manual
+
+- bug in failback splitting of input was fixed
+
+- options --exclude-textcmd, --append-textcmd, --exclude-safecmd, and --append-safecmd
+  can now take comma-separated list as well as a file as argument.
+
+
+

@@ -1,0 +1,108 @@
+#!/bin/csh
+set refversion=1.0.1
+# for comparison with 0.5:
+#set options="-V -t UNDERLINE -s SAFE -f FLOATSAFE  --disable-citation-markup"
+set options="-V -t UNDERLINE -s SAFE -f FLOATSAFE "
+#set options="-V -t UNDERLINE -s SAFE -f FLOATSAFE --math-markup=3"
+
+#setenv INTERACTIVE
+alias latexdiff ../latexdiff
+#alias latexdiff ../dist/latexdiff-fast
+# also run?
+set run=0
+
+set testroots=( test rapine_et_al island_obs2004 texdiffsample gershwin12 gershwin34 example utf \
+delequ latin9 pollack move-equation nomarkup subscript doubledollar \
+DIFDELCMDBUG eqnarray subscriptm delequ2 schneider gennady umesh underwood endfloat outerrise \
+delequ3 "simplefrac --allow-spaces" "master --flatten" titlediffTest2 exampleDiff bornd \
+"rolla --math-markup=2" mini "complex-maths --math-markup=1" margalit )
+
+if ( $#argv >= 1 ) then
+  if ( $argv[1] == "--reset" ) then
+    echo "Running verify in RESET mode, ie. save all differences with version number $refversion for later use, overwriting if necessary."
+    echo "Press Return to confirm"
+    set dummy="$<"
+    set reset
+  else if ( $argv[1] == "--run" ) then
+    echo "Running pdflatex on difference files"
+    set run=1
+  else
+    unset reset
+  endif
+else 
+  unset reset
+endif
+
+set failed
+set noexist
+set failedrun
+set pdfout
+while ( $#testroots >= 1 )
+#foreach test ( $testroots)
+  echo $testroots[1]
+  set sample=( $testroots[1] )
+  shift testroots
+  if ( $#sample > 1 ) then 
+    set eopt=$sample[2-]
+  else
+    set eopt
+  endif
+  set sample=$sample[1]
+  echo "========================================="
+  echo "Differencing ${sample}-old.tex ${sample}-new.tex (using $eopt)"
+  latexdiff $options $eopt ${sample}-old.tex ${sample}-new.tex > ${sample}-diff.tex
+#  diff ${sample}-diff-$refversion.tex ${sample}-diff.tex
+  if ( $?reset ) then
+    cp  ${sample}-diff.tex  ${sample}-diff-$refversion.tex 
+  else 
+    if (! -e ${sample}-diff-$refversion.tex ) then
+       echo "Reference version ${sample}-diff-$refversion.tex does not exist."
+       set noexist = ( $noexist $sample )
+       goto run
+    endif
+    echo "Comparing ${sample}-diff-$refversion.tex and  ${sample}-diff.tex (body only)"
+    sed -n '/begin{document}/,/end{document}/ p' ${sample}-diff-$refversion.tex > tmp-ref.$$.tex
+    sed -n '/begin{document}/,/end{document}/ p' ${sample}-diff.tex > tmp-cur.$$.tex
+    diff -q tmp-ref.$$.tex tmp-cur.$$.tex
+    if ( $status ) then
+      if (! $run) diff -c ${sample}-diff-$refversion.tex ${sample}-diff.tex
+      echo "\07" 
+      echo "Comparison of ${sample}-old.tex and ${sample}-new.tex gave different results to reference version. See above for detailed listing."
+      if ( $?INTERACTIVE ) then
+        echo "Press Return to continue" ; set dummy="$<" 
+      endif
+      set failed = ( $failed $sample )
+    else
+      echo "Passed comparison..."
+    endif
+  endif
+run:
+  if ( $run ) then 
+    pdflatex -interaction=batchmode ${sample}-diff.tex 
+
+    if ($status || ! -e ${sample}-diff.pdf ) then 
+       echo "Compilation of ${sample}-diff.tex did not complete as expected."
+       set failedrun=($failedrun ${sample}-diff.tex)
+    else
+       set pdfout=($pdfout ${sample}-diff.pdf )
+    endif
+  endif
+end
+if ( ! $?reset && $#failed >= 1 ) then 
+  echo "The following test(s) failed:"
+  echo $failed
+  echo "The following test(s) did not have a reference version available:"
+  echo $noexist
+endif
+
+if ( $run ) then
+  foreach out ( $pdfout )
+    echo "okular $out &"
+  end
+  echo "The compilation of the following programs resulted in problems:"
+  echo $failedrun
+endif
+
+
+
+

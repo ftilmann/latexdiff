@@ -1,0 +1,1621 @@
+\documentclass[jgr]{agu2001}
+%\documentclass[draft,jgr]{agu2001}
+%\usepackage{times}
+\bibliographystyle{agu}
+\usepackage{mylatex}
+% uncomment the next two lines to include graphics
+\usepackage{graphicx}
+%\usepackage{mygraphicx}
+
+\newlength{\tw}
+\setlength{\tw}{\textwidth}
+\newcommand{\tm}{\tablenotemark}
+%\renewcommand{\includegraphics}[2][]{\fbox{Include: {\sf #1} {\tt #2 }}}
+% comment unless pictures are in draft mode
+\setkeys{Gin}{draft=false}
+
+\authorrunninghead{TILMANN ET AL.}
+\titlerunninghead{SEISMICITY OF MID-ATLANTIC RIDGE, 5\dg S}
+
+%\authoraddr{F. J. Tilmann,
+%Bullard Laboratories, Department of Earth Sciences,
+%Madingley Road, Cambridge CB3 0EZ, United Kingdom 
+%(tilmann@esc.cam.ac.uk)}
+
+%\authoraddr{Ernst Flueh, Lars Planert, Tim Reston, Wilhelm Weinrebe,
+%GEOMAR, Wischofstr. 1-3, 24148 Kiel, Germany
+%(\mbox{eflueh@geomar.de}, \mbox{lplanert@geomar.de}, \mbox{treston@geomar.de},\linebreak \mbox{wweinreb@geomar.de})}
+
+%\received{}
+%\revised{}
+%\accepted{}
+%\cpright{AGU}{2003}
+
+\begin{document}
+
+\title{Micro-earthquake seismicity of the Mid-Atlantic ridge at
+ 5\dg S, a view of tectonic extension}
+%\author{Frederik Tilmann}
+%\affil{GEOMAR, Kiel; Bullard Laboratories, Department of Earth Sciences,
+%University of Cambridge}
+%\author{Ernst Flueh, Lars Planert, Tim Reston, Wilhelm Weinrebe}
+%\affil{GEOMAR, Kiel}
+\date{\today}
+
+\begin{abstract}
+Based on an  ocean-bottom micro-earthquake survey of the
+Mid-Atlantic ridge just south of the 5\dg S transform fault/fracture
+zone, we find seismic activity to be concentrated within the western
+half of the median valley.  The median valley seismic zone is bounded
+in along-axis direction by the transform faults to the north and the
+north, and the tip of the axial volcanic ridge to the south.  A few
+scattered events occurred within the inside corner high, on the
+transform fault, and in the western side wall close to the segment
+center. Earthquakes reach a maximum depth of 8~km below the median
+valley floor and appear to be predominantly in the mantle although a
+few crustal earthquakes also occurred.  We infer the median valley
+seismic activity to arise from slip on two parallel low-angle normal
+faults which dip from the inside corner toward the spreading axis.
+\end{abstract}
+
+\begin{article}
+%\setlength{\baselineskip}{9pt}
+
+\section{Introduction}
+
+Magmatism and mechanical extension are 
+ processes contributing to  seafloor spreading.  Whereas magmatic injection is dominant for
+fast-spreading ridges mechanical extension is likely to be important
+in slow-spreading ridges  \citep{mutter92}.  Evidence for the strong
+role of mechanical extension at slow-spreading ridges can be seen in the morphology of the
+spreading axis (well developed median valleys with at least one
+bounding side wall with strong relief), the intermittent nature of
+magmatic activity (no continuous eruption centers are generally 
+discernible, and seismically detectable magma chambers, common at
+fast-spreading ridges, are usually absent), the higher rate and larger
+depth extent of seismic activity (both in local surveys
+\citep[e.g.,][]{toomey88} and globally \citep{huang88,rundquist02}),
+and the strong segmentation by transform faults and non-transform
+ridge discontinuities (NTD). A strong asymmetry along both types of
+segment boundary is frequently observed, with the inside corner next
+to the active transform or NTD being
+characterized  by high topography, large inferred fault spacings, and a positive gravity anomaly
+indicative of thinned crust, and the outside corner next to the
+inactive fracture zone being associated with more subdued topography,
+small inferred faults spacings, 
+and a negative gravity anomaly \citep{shaw93,escartin95}. This asymmetry,
+combined with the observation of corrugations parallel to the
+spreading direction on many inside corner highs (ICH) and the
+recovery of gabbro and serpentinite samples from their surface, has
+led to a model where ICHs are interpreted to be the unroofed footwalls
+of  deeply penetrating detachment faults and  extension
+is thus largely accommodated by simple shear
+\citep{tucholke94}. Shallow listric successor faults might then
+develop in the ICH to accommodate bending as result of progressive footwall rotation.  In this model, the outside
+corner is characterised by high angle, small offset normal faulting
+between rotated fault blocks. In one flavour of this model, a magmatic
+phase follows once the offset on the detachment has reached a critical
+value, which must be sufficiently large to exhume mantle peridotite in
+order to explain the presence of serpentinite dredged from ICHs. The crust 
+created in the magmatic phase is then cut by a new detachment fault,
+and the cycle is repeated.  Alternatively,
+magmatic production is contemporaneous with mechanical extension and part
+of the newly created crust is continuously exhumed by the
+detachment. In this model, the ICH is primarily gabbroic at all
+stages, and the serpentinite samples are interpreted as fault gouge
+smeared along the slip surface of the mantle penetrating detachment \citep{reston02}.
+Consistent with both models, quasi-periodically spaced topographic and
+gravity highs can be
+found away from the Mid-Atlantic ridge  (MAR) near fracture zones on the
+inside corner side with wavelengths of 10-30~km along the flowline, i.e. in
+ridge-perpendicular direction, giving a time-scale of 0.6--2~My for initiation of new detachment faults.  The
+association of these highs with detachment faults was supported by the
+observation of a sequence of low-angle (30\dg) faults in a multi-channel seismic
+line along a fossil inside corner flowline, where the faults were
+associated with basement topography reminiscent of
+present-day ICHs \citep{ranero99}. 
+Towards the segment center, where fault spacing is usually small and
+the across-axis profile more symmetric \citep{shaw93}, the
+detachment is thought to die out because of thermal structure or as a
+geometric requirement.  The geometric requirement only applies to
+segments where the transform or NTD steps in the same direction at
+both ends; an inside corner is thus paired with an outside corner, and
+the segment center needs to mediate between the different structures.
+Being further away from the cooling influence of the transform or NTD,
+the segment centers are likely to be warmer, and the lithosphere is
+accordingly weaker.  The median valley within segment centers is often
+elevated by 1000~m or more compared to the median valley near the
+segment boundaries, presumably because of increased
+crustal thickness near the center,
+which in turn is related to the  higher temperatures just discussed.
+
+Seismicity patterns can provide a direct image of the tectonic
+processes currently operating, and give indirect information about the
+temperature through the depth of the brittle-ductile transition.
+Here we report on the micro-earthquake activity of the Mid-Atlantic
+ridge segment just south of 5\dg S based on a brief survey carried out
+as part of R/V Meteor
+cruise M47/2 in 2000, also drawing on several wide-angle profiles shot
+through the array [{\it Planert et al.}, manuscript in preparation].
+The segment is bounded to the north by the 70 km long left-laterally
+stepping 5\dg S transform fault and fracture zone
+(Fig.~\ref{fig:glob-seis}).  The off-axis bathymetry is marked by a
+number of topographic features trending obliquely to the direction of
+both ridge and transform faults. These linear features are particularly visible on the South
+American plate, where they trend predominantly NE-SW; they are probably
+related to regular rearrangements of the spreading system or migrating
+NTDs between the Ascension and 5\dg S transform faults. 
+ The study area is unusual in that the ICH elevation is almost matched
+by that of the OC massif,
+albeit the latter is of much smaller lateral extent
+(Fig.~\ref{fig:seismag-map}).  This peculiarity and a number of other
+morphological features have led \citet{reston02} to propose that the
+outside corner massif is really part of a fossil ICH which was split
+by a ridge jump to the west at $\sim$0.75~Ma.  A similarly-shaped,
+though less elevated massif further to the east hints at the
+possibility that several instances of ridge jumping might have
+occurred in the past. \remark{TIM, IN THE EPSL ARTICLE YOU STATE
+SOMETHING DIFFERENT, IE. THAT OC LOOKS 'NORMAL' AFTER INITIAL
+HIGH. HOWEVER IT SEEMS TO ME THAT THE NEXT HIGH GOING EAST IS MORPHOLOGICALLY
+QUITE SIMILAR TO THE OC, AND I SEEM TO REMEMBER THAT IN CONVERSATIONS
+YOU WERE NOT OPPOSED TO THE IDEA OF MULTIPLE RIDGE JUMPS, IN FACT IT
+MIGHT HAVE BEEN YOUR IDEA}  In spite of
+this peculiarity we will argue that in fact the seismicity patters are
+broadly consistent with previous surveys along the MAR and can be
+understood in terms of a variation of the basic
+\citet{tucholke94} model:  the seismicity suggests
+that at least two parallel low angle faults are active at the same time
+rather than extension being taken up by one detachment only.
+
+\section{Earthquake location}
+
+\subsection{Data}
+
+A network of altogether 16 free fall ocean bottom stations (consisting
+of 13 ocean bottom hydro\-phones--OBH), and 3 ocean bottom seismometers/hydro\-phones--OBS) was deployed
+on May 3, 2000 on the inside corner high and the median valley in the
+study area.  The array was continuously recording at 100 Hz sampling frequency, while other
+geophysical and geological investigations (bathymetric mapping,
+dredging, refraction seismology) were carried out in the study area.
+The total recording period was 10 days, however, 3 instruments
+returned no usable data because of equipment problems, and a number of
+stations recorded only for a few days, mainly because they were
+recovered before the end of the experiment in order to be used in the
+contemporaneous refraction experiments.  Because of the rough
+topography and lack of sedimentary cover at the ridge the seismometers
+did not couple well to the seafloor, resulting in ringing and delayed
+signal onsets, such that few usable velocity seismograms were
+obtained.  The hydrophones were partly differential pressure gauges
+(DPG) and partly piezo-electric hydrophones.
+%henceforth simply referred to as ``hydrophones''.  
+They generally produced clear signal onsets for
+P waves and even recorded waves converted from S to P at the seafloor
+for some events and stations
+(Figure~\ref{fig:data-example}). Accordingly, most subsequent analysis
+was based on the hydrophone and DPG recordings.  An
+exception to this rule is station obs12, which recorded reasonable Z
+component seismograms, but no usable hydrophone data.  
+
+ In spite of the short recording time a large number of events was
+recorded. Basic processing involved the following steps:
+\begin{enumerate}
+\item Relocation of stations using the water wave arrival time of
+airgun shots.
+\item 
+Correction of the timing of the records assuming  linear drift
+of the data logger clock between synchronization with GPS time at the
+beginning and end of the experiment.  
+\item Bandpass filter with a 5-20 Hz passband.  The
+filtering is crucial for the DPG records, for which otherwise
+microseismic noise completely obscures the signal. We checked with
+hydrophone records that signal distortion and any delay introduced by
+the filter are not severe.  
+\item Generation of  a preliminary list of events
+with a trigger algorithm that  detects nearly
+co-incident changes in the amplitude at several stations and can
+detect and remove man-made airgun shots, which otherwise lead to a
+large number of spurious triggers.  
+\item Manually inspect all trigger events and pick arrivals, assigning
+a weight to each pick. Remove
+events, which are unclear, presumably not earthquakes, or cannot be
+picked on at least three stations. 
+\item Obtain a preliminary location of each event by linearised
+inversion and using a 1-D velocity model derived from the refraction
+data [{\it Planert et al.}, manuscript in preparation].
+\end{enumerate}
+Altogether 148 events were pickable on at least 3 instruments. Of
+these, 77 had picks on at least 5 stations and an azimuthal gap of
+less than 300\dg, and are referred to as ``restricted event set''. The
+remaining 71 events are termed ``marginal events''. (An azimuthal gap
+of 300\dg is not normally considered to be sufficient for a
+well-constrained location; however, extensive testing of the
+robustness of these locations with respect to random errors and the
+assumed velocity models showed that they are well enough located to
+provide meaningful tectonic information, and should therefore be included.)
+28 events in the
+restricted data set
+ had at least one S pick, and 52 events had reasonably well
+constrained depth (see below for further details). 
+
+\subsection{Method}
+
+We re-located all events in the restricted event set at the same time as determining a minimum
+1D-model and station corrections \citep[using VELEST,][]{kissling94}.  Since the event set is rather small, and most events
+fall into the 7--11 km depth band, the 
+minimum 1D model is poorly resolved, and only the average sub-Moho
+velocity, which is almost 8~km/s,
+is constrained by the inversion.
+%  (All depths are reported relative
+% to sea-level; in order to get depth below the median valley seafloor
+% it is necessary to subtract 4--5 km.)
+%  Consequently, the only quantity constrained by
+%the inversion is the average sub-Moho velocity, which is almost
+%8~km/s. 
+ Otherwise, the model is strongly influenced by the starting 
+model.  We considered two extreme starting models, one appropriate for
+the median valley, where---as we will see---most earthquakes are located, and
+one appropriate for the ICH, where most stations are located (see
+Figure~\ref{fig:velmod} for the velocity models). We also
+relocated the events keeping the model fixed, i.e. by a simple
+joint-hypocenter determination .  All inversions achieve a satisfactory fit of
+the data. We chose the minimum 1D model resulting from an inversion with the
+ICH starting model as the preferred model because it yielded the
+lowest residual RMS.  In most instances the systematic differences in
+inferred location between the different velocity models is small, such
+that the patterns reported in the following are not affected by the
+choice of velocity model (see appendix).
+However, the apparent depth of shallow median valley earthquakes is
+increased by about 1~km in the median valley model compared to their
+location in the preferred model.  
+
+The picking error was estimated {\it a posteriori} by the method of
+\citet{wilcock91}, modified to allow for different pick weights, to be 0.04~s
+for the highest quality picks, and 0.08~s for the lowest quality picks.
+% that were still used in the location procedure.
+The location uncertainty due to
+picking errors is evaluated using a Monte-Carlo method, and again all
+results reported in the following are robust with respect to likely
+mislocations (see appendix for details).  
+Subsequently, we re-located all marginal events with the station
+terms and, where applicable, the velocity model derived from the
+restricted data set. 
+
+We further re-located the events using the
+double-difference method \citep{waldhauser00}.  Whereas the results
+were broadly consistent with the joint hypocenter or minimum 1D model
+locations, they did not concentrate seismicity in narrower bands, and
+relative relocation vectors between the double-difference method and
+the conventional techniques showed no systematic pattern.  A failure
+of the double-difference method to improve location accuracy in this
+experiment would not be surprising
+because of the relatively small number of picks available for most
+events. In the absence of further information we thus preferred the
+locations obtained by the use of absolute travel times.
+
+\subsection{Results}
+
+The distribution of events is shown in
+Figure~\ref{fig:seismag-map}. All events with both upper
+and lower 68\% confidence bounds on depth of less than 2~km are
+included in the cross-sections and maps with grayshade-coded earthquake
+depth in Figures~\ref{fig:croslon} and \ref{fig:croslat}.
+Traditionally, it is assumed that the availability of $S$ picks is
+critical for earthquake depths to be constrained, whereas we only have
+$S$ picks available for a subset of those events.  However, for many
+events both direct and indirect arrivals have been recorded at
+different stations.  Because these arrivals are associated with rays leaving
+the focus in upward and downward direction, respectively, the
+partial derivatives of their arrivals times with respect to depth have
+opposite signs, and depth can thus be reasonably well constrained even
+in the absence of $S$ waves.
+It has to be kept in mind that the seismic activity patterns described
+in the following strictly apply only to the duration of the
+experiment. We will consider later how representative they might be of
+seismicity in the longer term.  Only the events in the median valley
+are sufficiently numerous and well-constrained to warrant a detailed
+discussion.  We will thus defer discussion of these events to a later
+section but briefly discuss the other groups here.
+\begin{description}
+\item[Median Valley, along-axis deep]  The vast majority of events during the
+experiment occurred within the median valley, referred to henceforward
+as the median valley seismic zone (MVSZ).  Earthquakes are
+concentrated within a 5--8~km wide zone bounded to the west by a
+fault, labelled F1 in Figure~\ref{fig:seismag-map}, which was
+previously identified from the bathymetric data \citep{reston02}.
+This fault has to be considered the side wall of the median
+valley, even though it is only associated with rather minor topography
+(0.5--1~km) compared with the imposing scarp (more than 2~km relief)
+presented by the split ICH massif.  To the north the seismic zone is
+bounded by the transform fault; an apparent reduction of activity
+within 5~km of the transform is not robust when considering the
+location uncertainties of the earthquakes and the station
+distribution. To the south the seismic zone terminates rather sharply near the
+northern tip of the axial volcanic ridge at 5\dg 14'S.  The latitude
+of earthquakes near the southern tip is rather well constrained.  We
+further tested the influence of the station distribution on this limit
+by re-locating all events but removing a number of stations a time.
+Even when leaving out stations obs12, obh11, and obh10 (the
+southernmost row) the southern limit of the MVSZ
+does not change.  The eastern limit of the seismically active zone is
+somewhat less well defined.  North of 5\dg 10' S, most earthquakes are
+in the western half of the valley with a few events near the eastern
+flank.  South of  5\dg 10'S, earthquakes occur under the whole
+width of the median valley. Earthquakes depths lie between 5 and 12~km
+below sea-level, or equivalently 1-8~km below the median valley floor.  The pattern
+of activity is virtually identical for the restricted and marginal
+event set, which gives reassurance that no significant bias was
+introduced by the selection criteria.
+  The two marginal events
+underneath the outside corner have uncertainties large enough that
+they might have occurred in the outer reaches of the median valley. Hence, we
+do not consider the outside corner as a separate seismically
+active zone.
+% Earthquakes in the mantle 
+% association with faults
+
+\item[Inside Corner High]  A small number of events occurred
+underneath the ICH.  The  4 events with depth control have depths
+between 7 and 10~km below sea level, or equivalently 4--8~km
+below the seafloor, putting them in the mantle and lower
+crust (see Figure~\ref{fig:croslat}, top and middle). 
+Therefore, they cannot be associated with the formation of successor
+faults in the \citet{tucholke94} model, which are shallow.
+A micro-earthquake survey of a  seismically much more active ICH
+\citep[at 29\dg N,][]{wolfe95} has also placed ICH events in the
+mantle, and has determined one composite focal mechanism showing
+normal faulting with a $\sim$45\dg dip.  \citet{wolfe95} interpreted the ICH
+seismicity to result from tectonic extension within a
+diffuse zone underneath the ICH with no single dominant detachment
+fault.  Analogously, we propose that the few events in the ICH
+accommodate tensile stresses within the ICH, although we have no focal solution to
+ascertain the validity of this statement.  In any case, the low level
+of seismic activity, if indeed representative, argues that extension
+within the ICH is minor compared to the processes operating underneath the
+median valley.
+
+\item[Western flank, close to segment center]
+A cluster near the southernmost station obh16
+comprises 6 events in the restricted set and 3 marginal events.
+The 4 earthquakes with well-constrained depths lie between  6 and
+10~km below sea level on an eastward
+dipping plane (about 30\dg dip), but the number of events is too small to identify this
+plane with a fault plane.
+%The fact that the events are distributed in depth but are confined
+%laterally to a small area is suggestive of high-angle faulting,
+%although again no focal mechanism is available to support or refute
+%this conjecture.  Such a pattern would be consistent with the
+%classical model for segment centers of
+%slow-spreading ridges \citep{mutter92}
+% where new crust is continuously generated
+%within the median valley and is accompanied by
+%high-angle faulting within the side walls.
+
+\item[Transform Fault]  A number of events are likely to have
+originated on the transform fault.  These include the two events in the
+restricted set just north of the ICH Eastern scarp with depths of
+7 and 7~km, and the three
+large marginal events near 5\dg 02'S, 11\dg 57'W, the uncertainties of
+which are all consistent with a origin on the transform. In fact, it
+is remarkable how close to the transform they locate in spite of  the
+considerable distance from the network.  The only event that locates  north of the transform is
+particularly poorly constrained, such that it could have also
+originated on the transform.  
+%The events on the transform probably
+%accommodate transverse motion between the African and South American
+%plate according to the classic model of transform fault seismicity \citep{sykes67}.
+\end{description}
+
+\section{Focal mechanisms}
+
+First motion polarities were determined on the unfiltered records, if
+possible.  However, it was necessary to apply a 1-20 Hz bandpass
+filter to the DPG data for
+all but the largest events in order to make the signal visible above
+the micro-seismic noise. As the application of this particular bandpass did not
+change first motion polarities of those arrivals which could be picked on
+the unfiltered records, we are confident that our results are not
+biased by the use of the bandpass.  
+No individual event provided enough measurements to constrain the
+focal solution with any degree of confidence. Nevertheless, some
+systematic trends were discernible:  allowable pressure
+axes are either close to vertical or their horizontal component is approximately aligned with the
+median valley direction, and allowable tension axes were in general within
+30\dg or so of the horizontal direction.  Assuming double-couple
+mechanisms, composite focal solutions
+were then determined for groups of closely spaced events with similar
+waveforms.   Independent and stable solutions could be obtained for
+only two groups of events (Table~\ref{tbl:focmec} and Figure~\ref{fig:seismag-map})
+because most of the events occurred at the edge of the array and
+because take-off angles are strongly
+model-dependent at close distances.
+
+The solution for the group of 5 events within the center of the
+MVSZ exhibits eastward dipping low-angle normal
+faulting (or westward-dipping high angle faulting)
+with a strike parallel to the strike of the median valley bounding
+fault F1 (340\dg) or perpendicular to the spreading direction (347\dg in
+the Nuvel-1 model \citep{demets90})---uncertainties are too large to
+discriminate between both possibilities.
+The same solution is obtained for both end member velocity models,
+i.e. the median valley and the ICH velocity models.
+
+The solution for the group of 6 events near the southern end of
+the MVSZ shows some model dependence, and two alternative, albeit similar
+solutions are presented.  The first is obtained for the median valley
+velocity model and shows extremely low angle normal faulting ($<10\dg$
+eastward dip), or extremely high-angle faulting verging on a dip-slip
+mechanism, striking 10\dg, i.e. rotated clockwise from the strike of
+the solution for the first event group but almost parallel to the southward continuation
+of bounding fault F1, which exhibits a kink near 5\dg 16'S,  a few km south of the
+event group.  The second solution is obtained for the ICH model and
+shows oblique normal-faulting, again with a strike closer to
+perpendicular to the spreading direction (350\dg) but still rotated
+clockwise with respect to the  solution to the first event.
+
+\section{Earthquake Magnitude}
+
+The absolute calibration of our hydrophones was not well determined,
+and we were also concerned about possible site effects due to
+the rough topography.  Therefore, we did not determine seismic moments
+directly, but instead measured peak-to-peak amplitudes within 15~s of
+the first arrival for each station on the 5--20~Hz bandpass filtered,
+but not instrument-corrected
+records, i.e. the unit of the amplitude measurements is counts.
+  We then assumed these measurements
+can be described by \citep[modified from][]{hutton87}
+\begin{equation}
+M_i=\log A_{ij} + B \log(d_{ij}) + C d_{ij} - S_{j}
+\end{equation}
+where $M_i$ is the magnitude of the $i$th earthquake, $A_{ij}$ the
+amplitude of earthquake $i$ at station $j$, $d_{ij}$ the distance
+between the hypocenter and the station, $B$ is a parameter related to
+geometric spreading ($B$=1 corresponds to body wave spreading in a
+homogeneous medium), $C$ is a parameter related to attenuation, and
+$S_{j}$ is the station parameter ($S_{j}$ corresponds to the logarithm
+of the product of the station gain, including any site effects, and a
+constant that relates physical amplitude measurements, i.e. pressure
+or displacement, to the magnitude scale).
+
+The equation above can be written as 
+\begin{equation}
+\log A_{ij}= M_i - B \log(d_{ij}) - C d_{ij} + S_{j}
+\end{equation}
+Treating $M_i$, $B$, $C$, and $S_j$ as unknowns and calculating
+$d_{ij}$ for each station event-pair, we inverted the resulting linear
+system of equations for the restricted event set, and subsequently
+used the values of $B$ ($1.08 \pm 0.13$), $C$ ($0.011\pm0.03$) and the
+% with newer event set (inv.pro109kmvel instead of default), the
+% following values are obtained:
+% 'b'    [1.2804]    [0.1230]   'c'    [0.0074]    [0.0035]
+% (1 standard deviation errors)
+$S_{j}$'s to determine magnitudes for the full set.   
+Although no significance should be attached to the values of $B$ and
+$C$, the fact that they are reasonable gives confidence in the
+applicability of the equations above.
+
+Because there is a trade-off between the average
+value of the $M_i$'s and the average value of the $S_j$'s, the absolute
+magnitudes are unconstrained by this approach and need to be fixed.
+In order to get a least some idea about absolute magnitudes we made
+use of two independent
+approaches. First, we extrapolated the long term globally registered earthquake activity on this
+part of the MAR to determine how many events of a certain magnitude
+would be expected for the duration of our experiment. We then fixed the
+average magnitude such that the number of events recorded matches the
+expected number.  Second, we measured corner frequencies on the DPG
+traces for all
+events in the restricted set, after first correcting for the
+frequency-dependent response of the instruments. Assuming a stress drop (here 5~bar) and the
+\citet{brune70} source model, we can estimate moment
+magnitudes from the corner frequencies. We then fixed the average magnitude of our estimate, such
+that magnitudes agree with the moment magnitudes thus estimated.
+Both approaches involve a number of poorly determined unknowns and
+uncertain assumptions, but agree to within about half a magnitude with
+each other.  We thus consider the reported absolute magnitudes
+accurate to within 0.5--1 magnitude steps.  Relative magnitudes are
+determined much more reliably with 95\% confidence uncertainties
+of 0.12--0.24 magnitude steps.  
+% with more up-to-date event set get 0.13-0.21.
+
+We obtained a $b$ value of  $1.27\pm0.14$ for the events in the MVSZ (95\%
+confidence error of straight line fit, Figure~\ref{fig:magnitude}).  
+% newer value for MV events only: b=1.269\pm 0.135
+The $b$ value is the slope of
+the cumulative magnitude-frequency distribution and is this only
+dependent on relative magnitudes. It measures the
+relative frequency of large and small earthquakes where a large $b$
+values is associated with a large number of small events for a given
+number of larger events.
+Sometimes, $b$ values are quoted for frequency-magnitude  plots with 
+ the logarithm of seismic moment as the dependent variable. In order to convert the magnitude $b$ values into a
+ moment $b$ value it is necessary to multiply by a factor of $2/3$,
+yielding $b=0.8\pm0.1$.
+% b=0.0846\pm0.090  for updated set
+
+\section{Refraction experiment}
+
+Four long intersecting wide-angle profiles (up to 170 km) and three
+shorter  long profiles (up to 50 km) were acquired during the cruise.  The long
+lines run both parallel and perpendicular to the median valley. 
+The first set of lines intersect beneath the ICH, the second set
+concentrates on the segment north of the 5\dg S transform fault (Figure.
+%extend from the center of one segment across the transform well into
+%the next segment.
+ The short profiles  run nearly in north-south
+direction and make use of the stations distribution of the seismological network
+(see Figure~\ref{fig:seismag-map}). For the long lines a total of 54 GEOMAR ocean bottom
+seismometers (OBS) and hydrophones (OBH) with an average spacing of
+3nm recorded the airgun shots. An array with a total volume of 96l
+was used as the seismic source. A shot interval of 60s and a ship
+speed of 4kn resulted  in an average  shot spacing of 120m. 
+% The four long profiles focused on a number of topographic features
+% (median valley, inside corner high,  outside corner, transform fault)
+% in order to resolve related velocity variations inside the crust and
+% the uppermost mantle. Imaging the internal velocity structure
+% contributes to the understanding of the tectonic processes occuring at
+% slow spreading ridge transform intersections. 
+ 
+Because the rough topography caused enhanced attenuation of the seismic
+energy propagation efficiency varies strongly but in most cases
+arrivals can be seen for offsets of more than 40km, sometimes up to 90km. Besides crustal phases and
+mantle phases (Pn), only a few Moho reflections (PmP) are visible in
+the data. For assessing velocity models we chose a combination of
+forward modelling and first-arrival tomographic inversion. For
+profiles with sufficient Moho reflections a joint refraction and
+reflection travel-time tomography was employed. \remark{REFERENCES:
+ZELT?, KORENAGA?} 
+
+%Preliminary results show a velocity structure which differs
+%significantly from normal oceanic crustal structure
+%\citep[e.g.]{white92}.
+ In the median valley the models show an unusually thin crust
+of about 4km thickness (near obh04, see Figure~\ref{fig:croslon})
+underlain by a normal-to-low
+velocity upper mantle ($V_p\sim$7.5~km/s). \remark{I RE-COLLECT THIS
+WAS SUPPOSED TO BE A MINIMUM ESTIMATE. IS THIS STILL TRUE?} The Moho is shallowing
+towards the transform fault in the north, reaching a depth of about
+7km below sealevel at the northern end of the line, corresponding to a
+crustal thickness of 3~km. Velocity depth profiles show no strong changes in the velocity
+gradient, starting with  sub-seafloor velocities of about 3km/s
+increasing to lower crustal velocities of max. 6.9km/s.
+ In contrast
+velocity depth profiles in the region of the inside corner high as
+well as the outside corner show either very high near surface
+velocities (>6.0km/s near obs06, see Figure~\ref{fig:croslat}) or very high velocity
+gradients resulting in  crustal velocities up to 6.5km/s within the
+first 1000m below seafloor. Below, velocities  increase steadily up to
+ 7.5-7.8km/s at 4.0--6.0 km depth below seafloor. Due to the
+absence of clear $P_mP$ reflections, the Moho is not well defined. By
+assuming that velocities of $\geq$7.5km/s are indicative for the upper
+mantle, models suggest  crustal thicknesses of 4.0-5.0km at the
+eastern flank of the inside corner high and 4.5-5.5km at the outside
+corner. Further refinements including amplitude modelling is still in
+progress and will be presented elsewhere. \remark{CAN I GET A MOHO
+DEPTH CONTOUR, OR IS THE MODEL NOT WELL CONSTRAINED ENOUGH}
+
+
+\section{Discussion}
+
+\subsection{How representative are the results of the long term
+  seismicity and comparison with teleseismically recorded earthquakes}
+
+The interpretation of  seismicity patterns derived from brief deployments requires
+the implicit or explicit assumption that these patterns are indicative
+of long term trends.
+%, even though swarm-like activity is known to
+%occur frequently for large earthquakes (magnitude 5--6) at mid-oceanic
+%ridges \citep{sykes70}.   
+Given the very short period our array was
+active we have to carefully consider the question of applicability to longer
+time frames.  Since even the teleseismic record is unlikely to
+span a full seismic cycle, there is no way to answer this question with
+ certainty.  Nevertheless, we will put forward a number of
+circumstantial arguments to make the case that the assumption of long-term
+applicability is at least plausible.   First, we can probably discount the
+possibility that the recorded micro-earthquakes are largely
+aftershocks of a large earthquake just before the deployment of the
+ocean bottom network.  We estimate that an earthquake rupturing the whole
+MVSZ would have a magnitude of
+6.5.  Even an event rupturing along a length of 10 km would still have
+a magnitude of 4.5--5.  Earthquakes of such magnitude are large enough
+to be recorded globally, but no event near the study area is listed in
+the NEIC catalog \citep{neic}
+either immediately preceding the experiment, or shortly afterwards.
+The fact that magnitudes estimated from the corner frequency agree at
+least in order-of-magnitude with the rate of events expected from
+extrapolation of the Gutenberg-Richter curve for events in the global
+data set for this part of the MAR also argues against the possibility that
+we caught an aftershock or swarm sequence with
+seismicity rates strongly exceeding long term averages.  As outlined
+in the preceding section, the
+absolute magnitude estimate is crude, though,  and  small changes with respect to the
+background rate would go unnoticed.
+Second, if we discount the effect of events being masked by
+co-incident airgun shooting and the change in array geometry towards
+the end of the experiment, seismic activity is well distributed in
+time, i.e., there is no correlation between the timing of an event and
+its location, and no swarm-like activity is noticeable. 
+Our third argument relies on the precedence set by a number of
+micro-earthquake surveys along the Northern MAR
+\citep{toomey88,kong92,wolfe95,barclay01}, lasting between 10 and 43
+days. The seismicity obtained in these experiments can now be compared
+to the seismicity as determined by an array of autonomous hydrophones
+in the North Atlantic \citep{smith03}, which has been operating for
+since 2000. Both the spatial pattern
+\citep[Fig.~13 of ][]{smith03} and rate of seismic
+activity (Table~\ref{tbl:comparison}) show approximate agreement between
+micro-earthquake surveys and hydrophone data, if systematic shifts in
+the epicentral positions are attributed to topographic steering (the
+location by hydrophones relies on T phases, i.e., strictly describes the
+point of conversion from a $P$ wave within the solid earth to a
+acoustic wave in the SOFAR channel rather than the epicenter).  This broad agreement indicates that
+Mid-Atlantic Ridge seismicity recorded over periods of days to weeks is
+usually representative of seismicity over a period of a few years.
+How this relates to seismicity over several centuries is still
+an open question that current data does not allow us to address.
+
+Figure~\ref{fig:glob-seis} gives an overview of the globally recorded
+seismicity in the vicinity of the study area. Judging from the
+apparent location of the strike-slip events in the south of the map,
+which are presumably all associated with the Ascension transform
+fault, epicentral mislocation of the Harvard centroid moment tensor (CMT) solutions
+\citep{dziewonski81a} can be as large as 50~km. The events 
+in the EHB catalog, which were located with short period body waves
+\citep{engdahl98}, follow the bathymetric trace of the ridge  transform
+faults more closely with formal standard errors of 10--20~km.  Only
+one centroid moment tensor solution locates within the study
+area. Like the composite focal mechanisms it exhibits (oblique) normal
+faulting. However, the dip is $\sim 45\dg$ for both nodal planes,
+15--20\dg steeper than the low-angle plane inferred from the local
+composite solution. However, the reported centroid depth is 15~km,
+which is very likely too deep given the results of this and other OBS
+surveys and  maximum centroid depth limit
+of 6--7~km for slow spreading ridges that \citet{huang88} inferred  from waveform modeling. 
+The dip trades off with depth and is poorly constrained by the CMT
+method if the depth is incorrect
+\citep{dziewonski81a}\remark{STATEMENT REALLY PERS. COMM. FROM
+  ALESSIA MAGGI, BUT SHE THINKS DZIEWONSIKI SAYS SO, TOO. FJT: CHECK} such that
+the discrepancy between the CMT catalog earthquake and the composite focal
+solutions is probably not significant. Similarly to the results of the
+ocean bottom survey, the ridge is far more seismically active than the
+transform.  Some earthquakes locate between 5\dg 15' and 5\dg 30'S,
+where the median valley  was found to be inactive in the ocean bottom
+survey, but location uncertainties are too large to tell whether these
+earthquakes were in the median valley or along its flanks. There the
+ocean bottom network did record some events, so there is no
+inconsistency between the distribution of the teleseismically located
+events, and those recorded in the ocean bottom
+survey.
+
+\subsection{Tectonic interpretation}
+
+Within the MVSZ, earthquakes predominantly occur on the western half of the median valley but are
+fairly uniformly distributed in north-south direction.  Whereas some
+crustal earthquakes have occurred, most of the events have hypocenters
+beneath the Moho, even when taking into account uncertainties within
+their location and inaccuracies in the Moho depth, which was obtained
+by wide-angle modelling.  The deepest earthquakes reach a depth of 
+12~km, or equivalently 8~km beneath the median valley floor. The ridge-parallel cross section
+along the median valley (Figure~\ref{fig:croslon}) suggests a
+shallowing of the base of the seismogenic zone both towards the
+volcanic ridge at the segment center and towards the segment end.
+However, this apparent shallowing might be an artifact of the
+selection criteria for events with well-constrained depths: the areas
+around obh03 (near the segment end) and around obh09 (near
+the southern end of the MVSZ) contain many more
+events with poorly constrained depths than the region
+near obh04 (near where the deepest earthquakes are observed).  This
+pattern is not surprising, as the accuracy of depth determination
+depends on good azimuthal coverage and the presence of stations with
+direct and refracted arrivals, which is easier to achieve close to the
+array center, i.e., for the area near obh04.  Furthermore, the cross-section seems to show that there are less
+shallow earthquakes in the northern  and
+southern part of the MVSZ compared to the center.  There is no physical reason why a shallowing of
+the base of the seismogenic layer should cause a deepening of 
+its top but the cross-section is entirely consistent with
+the explanation that the actual depth distribution along the median
+valley axis is fairly uniform and apparent differences are due to
+sampling bias. Even if take the depth distribution at face value,
+shoaling of the base of the seismogenic layer is limited to 1--2~km.
+Both the occurrence of a large number of mantle earthquakes and the
+fact that sub-Moho velocities are not or only slightly lower than
+unaltered young oceanic mantle argue against large-scale
+serpentinization although a small degree of serpentinization cannot be
+excluded.
+
+Turning our attention now to the ridge-perpendicular cross-sections
+(Figure~\ref{fig:croslat}) we  attempt to constrain the faulting
+styles based on th depth distribution of events and the focal solution.
+We begin the discussion with the middle section, which includes the
+largest number of events.  The composite focal solution for this area
+allows either westward dipping high angle normal faulting (60\dg dip)
+or eastward dipping low angle normal faulting (30\dg dip).  High angle
+faulting, if extending towards the surface, would imply a fault trace
+on the outside corner side.  Indeed a fault,
+labelled F2 in Figure~\ref{fig:seismag-map}, was identified previously
+from the
+bathymetric data on the outside corner side of the median valley
+\citep{reston02} and, although subdued at the latitude of the
+cross-section, is still identifiable as a step in the bathymetric
+profile. However, a number of events are just 1--2~km below the
+western part of the median valley. This seems hard to reconcile with a
+single high angle fault originating at the eastern side wall.  In
+fact, several closely spaced high angle faults would be required to account
+for the distribution of earthquakes in the cross-section, and no
+obvious bathymetric manifestations of multiple high-angle faulting
+can be seen within the median valley.  On the other hand, if we assume
+the shallow dipping plane is the focal plane, we can connect the
+shallow group of crustal events to the surface trace of fault F1
+by a line which has just the right dip to be consistent with both the focal
+plane solution and the linear trend of the event locations. Running
+sub-parallel to F2, fault F1 forms the western side wall of the median
+valley \citep{reston02} and, like F2, dies out towards the north.  A
+direct relationship of fault trace F1 and the group of deep events in
+the mantle would require faulting on a steeply eastward dipping
+plane, inconsistent with the focal solution.  But again a line can be
+drawn, approximately consistent with the shallow dipping plane of the
+focal mechanism and the linear trend of the the events. This line, if
+extended to the surface, emerges near the foot of the ICH scarp.  The
+ICH scarp is thought to have arisen from rifting of the ICH massif
+rather than by exhumation along a detachment fault
+\citep{reston02}.  Nevertheless it seems plausible that a fault
+initiated along a pre-existing zone of weakness related to the
+rifting, and that the topographic relief presented by the scarp is
+augmented by movement along this fault. Therefore, we infer two almost
+parallel fault planes dipping towards the median valley at $\sim$30\dg.
+Four intermediate depth events
+lie between the shallow and deep groups and are also aligned along a
+30{\dg} dipping plane.  These events could be mislocated events on one
+of the two more active faults, in
+which case the apparent linear trend would have arisen
+co-incidentally, or another minor fault exists between them, running parallel to them.
+%Whilst other tectonic systems are conceivable the one described is the
+%simplest one compatible with both the focal mechanism and the
+%distribution of events.
+
+   Somewhat puzzling about our
+interpretation is the absence of shallow events on the proposed lower
+(or outer) fault  Of course, this lack of events could be attributed
+to the short experimental period and co-incidence.  A more intriguing
+%and somewhat speculative 
+possibility is that the fault is effectively
+smeared by serpentinite fault gouge, lowering its seismic potential \citep{reinen00};
+serpentinite gouge was conjectured to have existed along a detachment
+fault at an earlier phase of the segment evolution \citep[also see
+introduction]{reston02}. This interpretation would imply that water
+has penetrated into the mantle along this fault and caused localised
+serpentinization but it cannot penetrate very far, as earthquakes do occur in
+the mantle portion of the fault, and $P$ velocities are not unusually
+slow; a corollary of this interpretation is that the presence of
+shallow events on the eastern fault would indicate that it has not yet
+penetrated the mantle or that water cannot move along it.
+\remark{Maybe this idea is letting speculation go a bit too far. Tim
+is this reasonable?}
+A last possibility is that the fault simply does not extend to the
+surface. 
+
+Moving on to the southernmost cross-section (Figure \ref{fig:croslat}, bottom)
+we recognize a cluster of events at 9--10~km depth and two isolated
+events, one deep, one shallow further east.  Since the events in the
+cluster are very closely spaced no linear trend can be
+determined. Planes through the group of events at the angles suggested
+by the focal solution emerge either near fault trace F2 or near the
+western scarp of the southern extension of the ICH ridge.  Both
+variants seem plausible; continuity with the section to the north
+would imply the latter but bends in the median valley side walls
+ and the volcanic ridge just to the south (Figure~\ref{fig:seismag-map}) suggest
+a change in tectonic regime.  Either way, a connection with fault F1
+seems unlikely, except for the isolated shallow event.
+
+The northernmost section (Figure \ref{fig:croslat}, top) presents the
+most-scattered picture and we do not have a focal solution to guide
+our interpretation.  The three westernmost events probably
+accommodate diffuse stress within the ICH .  The median valley events
+are sparse enough that it is just possible to interpret them as lying
+on the northward continuations of the low angle faults identified in
+the middle section.  On the other hand, bathymetric structures become
+more oblique near the transform fault, possibly causing
+deformation to become more diffuse. 
+
+The well-defined volcanic ridge south of 5\dg 16'S \citep{reston02} indicates recent magmatic
+activity.  The ridge coincides with an aseismic zone where
+earthquakes, if they occur at all, are of much smaller magnitude
+than
+those in the MVSZ (during the experiment only events with a magnitude
+less than 1 could have feasibly escaped detection).  Elevated temperatures or the presence of fluids
+could suppress tectonic earthquakes;  volcanic earthquakes would be
+expected to occur but might simply be too small or too intermittent to
+have been recorded during the experiment.  The fact that there is no
+or only weak shoaling of the base of the seismogenic layer implies
+that either the temperature gradient along the transition between MVSZ
+and the aseismic ridge is large, or the transition is controlled by
+fluids rather than temperature.   Seismic velocities could provide
+further information on the thermal structure, but the median valley
+refraction profile does not extend far enough south to resolve the
+velocity structure of the volcanic ridge.\remark{OR IS THIS SENTENCE UNNECESSARY?}
+
+
+\remark{WHAT SHOULD FOLLOW HERE OR ELSEWHERE IS A SHORT DISCUSSION OF
+MEDIAN VALLEY VELOCITIES AND HOW THEY COMPARE TO AVERAGES}
+% - LARS OR
+%ERNST, COULD YOU TAKE CARE OF THIS?  IF WE SUBMIT THIS AND THE
+%REFRACTION PAPER TOGETHER THEY SHOULD BE AT LEAST A SHORT SUMMARY OF
+%THE CONCLUSIONS OF THE REFRACTION PAPER IN THIS REGARD.  ANOTHER
+%ISSUE:  THE MEDIAN VALLEY PROFILE SEEM TO BLEND INTO THE STARTING
+%MODEL AT THE EDGES WHERE PRESUMABLY THERE IS NO DATA. IS IT POSSIBLE
+%TO INSTEAD ASSUME THERE IS NO LATERAL CHANGE FROM THE LAST CONTROLLED
+%PART, WHICH WOULD MAKE FOR A NICER FIGURE?}
+
+
+\subsection{Synthesis with previous micro-earthquake surveys}
+
+The tectonic interpretation just put forward is broadly consistent
+with \citeauthor{tucholke94}'s conceptual
+model of tectonically controlled extension along deep-cutting
+detachment faults, with the important distinction that deformation is
+not simply taken up by one large detachment fault but that several
+parallel faults can be active at the same time.  The inferred dip of
+these faults ($\sim$30\dg) is similar to the dip of the presumed
+detachment faults in the multi-channel seismic survey of a fossil ICH
+\citep{ranero99}.  The horizontal spacing between the two faults in
+ridge-perpendicular direction is $\sim$7~km, which is slightly lower
+than, but still comparable to, the spacing of the fossil detachment
+faults (10--15~km, Figure~4 of \citet{ranero99}).  Rather than segment
+ends evolving strictly in a well defined sequence---initiation of
+detachment, amagmatic extension, magmatic intrusion---as envisioned by
+\citet{tucholke94} we seem to be faced with a more continuous process,
+with magmatic injection being co-incident with tectonic extension
+\citep{reston02}, and with extension being accommodated at least
+temporarily along two (or more?) parallel faults, which are
+active at the same time.  
+\remark{KEEP NEXT TWO SENTENCES OR TOO SPECULATIVE?}
+Of course, eventually the fault furthest
+from the ridge axis must die out, and new faults must be
+initiated. As pointed out above there is some suggestion that fault
+F1 does not yet penetrate deeply, and has possibly been initiated
+rather recently.
+
+In the following, we contrast our results with those of a number of
+surveys along the northern MAR at 23\dg, 26\dg, 29\dg,  and 35\dg N (Table~\ref{tbl:comparison}.  The spreading
+rate of the MAR in this area ( 2.3~cm/yr) is somewhat slower than
+at 5\dg S (3.2 cm/yr) and the plates being separated are different
+ones \citep{demets94}.
+Nevertheless, these surveys represent the closest analogue.
+The maximum hypocentral depth in this study is the same as that
+observed by \citet{toomey88} for earthquakes beneath the median valley
+floor near 23\dg N, classified as a cold segment by \citep{thibaud98}. Further similarities are the
+similar $b$ values ($0.8\pm0.1$ both at 23\dg N and in this
+study) and the large cross-axis topographic relief, which
+characterises both segments.
+
+The surveys at 23\dg N \citep{kong92} and 29\dg N \citep{wolfe95}
+exhibit slightly lower maximum earthquake depths of 6--7 km below the
+seafloor and have intermediate cross-axis relief.  An extreme case is
+presented by the segment at 35\dg N \citep{barclay01} where earthquake
+depths only reach 4~km, and cross-axis relief is small.  Based on
+various lines of geophysical evidence, both
+\citet{kong92} and \citet{barclay01} infer recent magmatic injection
+events for `their segments'.
+%, whereas the segment at 29\dg N has been
+%classified as hot segment by \citet{thibaud98}, and the one at 23\dg N
+%as cold segment. 
+
+\citet{barclay01} pointed out an apparent correlation between
+large cross-axis relief and large maximum earthquake depth
+(Figure~\ref{fig:maxdep-topo}).  The segment presented in this work
+follows this pattern but if the topographic relief is measured
+from the median valley to the crest of the ICH ridge the maximum depth saturates at ~8 km.
+There also appears to be an inverse correlation
+between the maximum earthquake depth and the $b$ value with
+large $b$ values being associated with shallow maximum depths
+(Table~\ref{tbl:comparison} and this study),
+although there is at least one exception to this rule (rift mountains
+at 23\dg N).  Physically, such a correlation is not surprising, as
+increased temperatures would lift the base of the seismogenic
+layer as well as increase the $b$ value.  
+
+Marked differences also
+exist in  the style of faulting inferred for the various segments.
+\citet{kong92} attributes most seismic activity to accommodation of
+cooling stresses induced by an already solidified but still hot
+igneous intrusion; for the other segments primarily tectonic extension
+is invoked.  \citet{barclay01} interprets the earthquakes 
+ near the
+segment center to result from  stress on normal faults bounding the
+valley in accordance with classic extension along segment centers of
+slow-spreading ridges \citep{mutter92}.   Similarly to our
+interpretation of the seismicity at 5\dg S, \citet{toomey88} infer a
+large mantle-penetrating 
+%detachment
+normal fault for the segment at 29\dg N, albeit
+at a dip of 45\dg N.  In contrast to the rather weak seismicity
+underneath the ICH in this experiment, the ICH was the most
+seismically active area in the micro-earthquake survey at 29\dg N
+\citep{wolfe95}. Because the ICH events occurred at depths between 3
+and 6~km (relative to the median valley seafloor) and gravity data
+indicates a thin crust underneath the ICH, \citet{wolfe95} interpreted
+these ICH events as accommodating extension over a broad area rather
+than along a well-defined detachment as required by the
+\citet{tucholke94} model.   Intriguingly, the two segments also
+present rather different morphologies (Figure~\ref{fig:topo-cmp}),
+which reflect the differences in seismicity.  The ICH at
+5\dg S is characterised by pronounced axis-perpendicular striations
+and large topographic relief.  In contrast, the ICH at 29\dg N has a
+rough and rugged surface but lacks well-defined striations and has
+less relief.  This apparent consistency between seismicity patterns
+and morphology might  be just co-incidence but it might also
+suggest a long term stability of the style of tectonic extension,
+particularly as the striations at 5\dg S really record an earlier
+phase of extension before the proposed ridge jump
+\citep{reston02}. The latter interpretation  raises  the question what
+controls the style of extension that a particular ridge adopts.   We
+note that the
+ICH at 29\dg N is located next to a non-transform discontinuity,
+whereas the one at 5\dg S is next to a 70~km offset transform. However,
+an early micro-earthquake OBS survey near the Vema transform fault at
+11\dg N also reported diffuse micro-earthquake activity at the inside
+corner \citep{rowlett84}, so the question is open.  
+\remark{ESCARTIN OR SOMEBODY ELSE MUST HAVE DONE A SYSTEMATIC OVERVIEW
+WHERE STRIATIONS ARE FOUND, ANY IDEA?}
+
+\section{Conclusion}
+
+During a 10-day passive ocean-bottom survey of the  MAR just south
+of the 5\dg S fracture zone, we observed seismic activity to be
+concentrated in the western half of the MV, termed the median valley
+seismic zone (MVSZ). In axis-parallel direction, the MVSZ is bounded
+by the transform fault to the north and the axial
+volcanic ridge to the south.  A few scattered events occurred on the transform
+fault, below the ICH and beneath the western side wall of the median
+valley at the latitude of the volcanic ridge. The maximum earthquake
+depth (8~km) and $b$ values (0.8) in the MVSZ, as well as the large
+cross-axis relief, are typical for a `cold' segment.  The depth
+distribution of earthquakes indicates tectonic extension is
+accommodated along mantle-penetrating low-angle detachment faults, but in contrast to
+previous models, it appears that at least two parallel faults can be
+active at the same time.  The presence of a well-defined volcanic
+ridge and the absence of recorded earthquakes near the segment center
+indicate it is hot and magmatically active.  This contrast between
+segment center and segment end is expected but the transition appears
+to be surprisingly sharp, with no or little shoaling of earthquake
+depths or reduction of seismic activity on approaching the aseismic
+zone. 
+
+From the compilation of maximum earthquake depths observed in this and
+previous micro-earthquake surveys in relation to cross-axis relief
+(Figure~\ref{fig:maxdep-topo}) we suggest that 8~km below the median valley
+seafloor represents a global limit to the depth of seismic faulting at
+the MAR.  This depth compares with the 6--7~km maximum depth of centroid
+solutions derived by body waveform modeling \citep{huang88}, which was
+used to argue for a thickness of the seismogenic zone at
+slow-spreading ridges of twice that
+amount, i.e., 12~km \citep{solomon88}.  This argument assumes
+that the seismogenic layer extends to the seafloor and that moment
+release is uniform throughout the seismogenic layer.  In contrast to
+the former assumption, the micro-earthquake surveys at the MAR
+generally found few earthquakes within the top 2-3~km of the crust, so
+that the centroid depth estimate and OBS survey
+based estimate of maximum bounds on the thickness of the seismogenic
+layer are in fact not inconsistent.
+
+\appendix
+
+\section{Station list and event list}
+
+A complete list of located earthquakes is given in
+Table~\ref{tbl:bulletin}, and of the ocean bottom stations in Table~\ref{tbl:stations}.
+
+\section{Distribution of events through time}
+
+Most of the recorded events occurred during the first 3.5 days of
+monitoring (Fig.~\ref{fig:timeline}). This pattern is most likely not
+related to a change in actual seismicity levels but due to the fact
+that later events are often obscured by co-incident airgun shots or
+have not been  recorded  on a sufficient number
+of instruments by the thinned network at the end of the survey.   No
+obvious clustering or swarm activity was observed (Figure~\ref{fig:time-map})
+
+\section{Exploring Uncertainty}
+
+The minimum-misfit locations are subject to a number of errors which
+we attempt to quantify here in order to assess the robustness of our results.
+   Errors in the location are due to a combination of
+the following factors.
+\begin{description}
+\item[Timing error]  The internal clocks of the data loggers were
+synchronized with GPS time before and after the deployment.  The
+largest discrepancy of all instruments was 0.05~s at obh16, with
+typical values around 0.02~s.  The
+timing of the data was then corrected assuming a linear drift of the
+internal clock. Although the validity of this assumption cannot be
+tested directly, it is generally thought to be appropriate because of
+the fact that the drift of the internal clock is primarily related to
+temperature, which is expected to be fairly constant at
+the sea floor, and to deviations of the oscillating crystal from
+specifications, which also does not change significantly over the 
+time frame of the experiment. For the corrected data, the timing error
+is thus thought to be less than the sampling interval of 0.01~s.
+Unfortunately, a few instruments (obh03,
+obh05, obh09, obh10, obh11, obh15) lost
+power before their internal clock could be compared to the GPS.  For
+these stations, the timing error could be as large as 0.05~s, but is
+likely to be much smaller for most events as the large error would
+only apply to events recorded at the end of the survey.
+
+\item[Picking error]
+The picking error follows more or less a Gaussian distribution with
+unusually long tails, which are caused by outliers due to phase mis-identification
+or cycle skipping.   The standard deviation of the Gaussian
+part of the picking
+error was estimated {\it a posteriori} following the procedure of \citet{wilcock91},
+modified for different pick weights.  It was found to be 0.04 s for
+Q0 picks (the highest quality picks), 0.05 s for Q1 picks, 0.06 s for Q2 picks, and 0.08s
+for Q3 picks.    We  used a Monte Carlo method to ascertain how picking errors
+translate into location error. We randomly perturbed picking times
+using Gaussian distributions of the appropriate width for different pick
+qualities.  Additionally, we created outliers with
+a chance of 5\% for Q3, 2.5\% for Q2, 1.25\% for Q1 and 0.625\% for
+Q0, and relocated the events using the perturbed travel times. This
+experiment was repeated a thousand times and 95\% confidence limits for
+latitude, longitude and depth were determined for the resulting distribution of
+hypocenters.  
+%In many cases, the error thus determined were far less
+%than the formal errors reported by the location
+%routine \citep[program HYP, ][]{lienert95} because this code estimates
+%picking errors for each event separately, which results in a
+%significant over-estimation if there are only few picks available per event\citep{wilcock91}.
+%In other cases the Monte-Carlo error was larger than the formal error
+%because the formal error did not properly take into account the non-linearity
+%of the location problem.  The 95\%  errors are mostly between ..  and
+%.. km horizontally, and between ... and .. vertically (see
+%Table~\ref{tbl:bulletin}).
+ In order to visualize the acceptable range
+of earthquake locations, Figures~\ref{fig:map95lat}
+and~\ref{fig:map95lon} show the 95\% confidence lower and upper bound of each
+earthquake for latitude and longitude, respectively. It should be
+noted that the distribution shown in these figures is not in itself realistic, as it is
+highly improbable that all earthquakes are simultaneously at their
+upper or lower bounds. It also does not take account of possible
+trade-offs between latitude and longitude.  Conversely, a few
+(i.e., $\sim$5\%) of the events might fall outside the indicated
+bounds.  Based on these bounds, we can draw the following conclusions.
+All events west of 11\dg 50' W  have probably originated on the transform
+fault.  With the exception of one or two poorly located ones, all
+events which located underneath the inside corner high and its flanks
+also have uncertainty bounds within the inside corner, i.e. it is unlikely
+that there are mislocated median valley or transform fault
+earthquakes.  A similar statement applies to the southern group of
+events near station obh16.  The location of most of these event is
+closely constrained, such that they could not have originated underneath
+the median valley.   Lastly, the large group of events within the MVSZ
+(median valley seismic zone) remains predominantly in the western part of the median
+valley, even though the bounds for a number of individual earthquakes
+allow locations in its eastern part or even near the outside corner.
+%(it has to be remembered that it is rather unlikely that a large
+%number of events are at either bound). 
+The upper latitude bounds of
+some events fall outside the segment end but the corresponding locations are
+unlikely on geological grounds.  However, the data are certainly
+compatible with seismic activity underneath the
+median valley continuing right up to the segment end, in spite of the
+fact that the minimum misfit locations seem to imply reduced activity
+near the segment end. 
+
+\item[Model error]
+A systematic error is introduced into earthquake locations by
+deviations of the assumed velocity model from the true one, particularly where
+events are close to or outside the limits of the array.  The preferred
+locations were obtained by joint inversion for the locations,
+station terms and a minimum 1D-model \citep[using
+VELEST][]{kissling94}. However, the size and distribution of the data
+set is such that only the mantle velocity is constrained.
+The ``minimum 1D model'' is thus highly dependent on the starting
+model.  Fortunately, we have available refraction profiles along the median
+valley, and through the inside corner high both parallel to and
+perpendicular to the ridge[{\it Planert},
+in preparation].  From these, we constructed 1D models appropriate for
+the median valley (where most of the earthquakes are) and the inside
+corner high (where the stations are located).  First, we used these
+models in a joint hypocenter determination, presented in Figure~\ref{fig:mapvar}(top).
+We then used these
+events as starting models for the joint inversion. The resulting
+locations for the inside corner starting model are our preferred
+solution. The distribution and model obtained with the median valley
+starting model are shown in Fig.~\ref{fig:mapvar}(bottom).  The
+preferred model results in the least data misfit of all models but the
+difference is not significant.  Although individual location
+differences between the models can exceed 1~km, the resulting pattern
+is the same.  A similar statement applies to the depth sections
+(Fig.~\ref{fig:croslonvar} and~\ref{fig:croslatvar}) except that the
+apparent depth of shallow median valley earthquakes is 
+increased by about 1~km in the median valley model compared to their
+location in the preferred model.
+
+Ideally, one would use a 3D velocity model to locate the earthquakes.
+However, no such 3D model is currently available.
+%the density of the refraction profiles is not high enough to
+%make such an enterprise feasible. 
+\remark{ I THINK IT IS 
+FEASIBLE AND WOULD BE VERY WORTHWHILE TO CONSTRUCT AND USE A 3D MODEL
+BASED ON A COMBINATION OF REFRACTION DATA, TOPOGRAPHY AND POSSIBLY GRAVITY
+BUT IT IS NOT A TRIVIAL TASK AND I AM NOT WELL POSITIONED TO CARRY IT
+OUT, BOTH TIME-WISE AND WITH RESPECT TO ACCESS TO  THE REFRACTION DATA, WHICH IS
+THE MAIN CONSTRAINT.  MAYBE LARS OR SOMEONE ELSE  FEELS INCLINED.  ONCE A 3D MODEL EXISTS, IT IS RELATIVELY STRAIGHTFORWARD
+TO RE-LOCATE THE EQS IN IT, AND I COULD EASILY CARRY THAT OUT.}  As the velocity-depth function at
+any one point of the 3D model is likely to lie between the models for
+the inside corner high and the median valley, the actual distribution
+is likely to lie between the extreme cases in Figure~\ref{fig:mapvar}.
+
+\item[Modeling of wave propagation]
+A further systematic error arises from the assumptions made in
+calculating the travel time, e.g., validity of the ray approximation
+and isotropy of the medium.  The assumption of isotropy might be
+violated, since we know the
+oceanic lithosphere can be  strongly anisotropic \citep{barclay98}.  However, the
+effect of azimuthal anisotropy would be largest in the upper mantle or
+lower crust where ray paths are mostly sub-horizontal. Here, the
+differences between the different models considered above are comparable
+to or larger than the differences between fast and slow P waves  in any
+realistic anisotropic structure.  Therefore, the maps in
+Figure~\ref{fig:mapvar} should also give a qualitative assessment what
+magnitude of error could maximally be expected from ignoring anisotropy.
+\end{description}
+
+\begin{acknowledgments}
+The RV METEOR cruise M47/2 and subsequent data analysis was funded by
+the Deutsche Forschungsgemeinschaft.  Special thanks goes to
+Capt. Martin Kull and his crew for their excellent support during the
+cruise, and the scientific shipboard party for collecting the data. We
+thank Anne Otto for carrying out most of the initial event checking
+and picking.  Software packages contributing substantially to the
+analysis, processing and presentation of this data set were GMT \citep{wessel91},
+SeisAn \citep{havskov99}, and the
+PASSCAL suite of programs, part of the trigger
+program was provided by William Langin.  Additional bathymetric data
+for Figure~\ref{fig:topo-cmp} were obtained from the
+Ridge Multi Beam Synthesis Project at Lamont-Doherty Earth Observatory\linebreak
+(\mbox{http://ocean-ridge.ldeo.columbia.edu/}).  
+\end{acknowledgments}
+
+\bibliography{lit-base}
+
+\end{article}
+% for galley place end article before bibliography!
+
+\clearpage
+%\newpage
+\begin{table}
+\caption{Focal mechanism solutions}
+
+\begin{flushleft}
+\begin{tabular}{lrrrrrrccc}
+\tableline
+Composite        & Plane 1 &      &       & Plane 2 &       &      & \#     & \#        & Polarity\\
+Solution         & Strike & Dip   & Rake  & Strike  & Dip   & Rake & events & Polarities & errors\\
+\tableline
+5 6 0939         & 340    & 30   & -90   & 160     & 60 &  -90    & 5      & 25         & 1\\
+5 3 1255, Sol. 1 & 344$\pm$10    & 11$\pm$5   &  -116$\pm$5  & 191 & 80 & -85  & 6      & 29 & 0\\
+5 3 1255, Sol. 2 & 328$\pm$10    & 36$\pm$15  & -126$\pm$10  & 191 & 62 & -67  & 6 & 29  & 2\\
+\tableline
+\end{tabular}
+\end{flushleft}
+\tablecomment{5 6 0939: Solutions with strikes 340-10{\dg} are
+compatible with the data. 340\dg was chosen as the strike of the
+preferred solution because it is parallel to the structure in the
+topography.  The dip is constrained to lie between 25\dg\ and 40\dg, the
+rake can lie between -70 and -90\dg (with the lower bound only
+obtained for strikes closer to 0\dg). 
+% Errors for other events give the approximate range of solutions
+%compatible with the polarity measurements. 
+Polarity errors for both events are close to nodal planes (see Fig~\protect\ref{fig:seismag-map}).} 
+\label{tbl:focmec}
+\end{table}
+
+\begin{table}
+\caption{Comparison of OBS surveys in the North Atlantic with North Atlantic regional hydrophone array data}
+
+\begin{flushleft}
+\begin{tabular}{clllcrcrc}
+\tableline
+                 &           &           & Max   &                  &\multicolumn{2}{l}{Cumul.\#OBS}   & \multicolumn{2}{l}{Cumul.\#Hydro}  \\ 
+                 &           &           & Depth & $b$-value        &\multicolumn{2}{l}{$M_0>10^{19}$dyn-cm\tm{c}}   & \multicolumn{2}{l}{ASL$>$211 db\tm{d}} \\
+Area\tm{a}       & Reference & \#days   & (km)\tm{b} & ($\log_{10}M_0$) &\multicolumn{1}{l}{Total} & Per week&\multicolumn{1}{l}{Total} &Per week\\
+\tableline
+22\dg 30'-22\dg 50' N &\citet{toomey88} & 10  & 8 & $0.8\pm0.1$ (MV floor) &         12 & 8.4 & 35 & 0.23 \\
+                      &                 &     & 5 & $0.5\pm0.1$ (Rift Mnts.)    &            &     &    &      \\
+26\dg 00'-26\dg 13' N &\citet{kong92}   & 23  &   & $1.0\pm0.1$ (total)       &         93 &28.3 & 32 & 0.21 \\
+                      &                 &     & 7  &0.6-0.9$\pm$0.1 (segm.end)&            &     &    &      \\ 
+                      &                 &     & 6  &1.1-1.5$\pm$0.1 (segm.cnt.)&            &     &    &      \\
+28\dg 52'-29\dg 05' N &\citet{wolfe95}& 41    & 5.5-7\tm{e}  & $0.82\pm0.05$   &  not known      & &  44 & 0.04 \\ 
+\multicolumn{2}{r}{(Segment end and ICH only)} &  &   &                     &            &     &    &      \\
+34\dg 42'-35\dg 00' N &\citet{barclay01}& 43  & 4   &$0.94\pm0.05$            &          4 &0.65 &  3 & 0.02 \\
+                      & (Segment center only) &   &    &                     &            &     &    &      \\
+\tableline
+\end{tabular}
+\end{flushleft}
+\tablenotetext{a}{The area gives the approximate extent of the area
+for which the OBS arrays had good coverage. It also represents the N-S
+limits for the search in the hydrophone event catalog
+\protect\citep{smith03}. In E-W direction the search was limited to a
+band $\sim$15' longitude either side of the ridge axis.} 
+\tablenotetext{b}{Depth is quoted relative to the median valley floor}
+\tablenotetext{c}{The number of events above the threshold was
+determined from the straight line-fits to the frequency-log moment
+curves provided by the references.  A threshold of $M_0>10^{19}$dyn-cm
+($M_W=1.97$) was chosen because it did not require extrapolation for
+any of the experiments.} 
+\tablenotetext{d}{ASL is the acoustic source level as defined in
+\citet{fox01} (the hydrophone catalogue is estimated to be complete
+ to an ASL of 210 db).  According to their regression, an ASL of 211
+db corresponds to an earthquake of magnitude 2.0.  Taken at face
+value, this would imply an excess of OBS events relative to the events
+recorded by the hydrophone array, however, the magnitude-ASL
+regression presented by \citet{fox01} has large error bounds, and in
+fact, an ASL of 211~db could correspond to earthquakes with magnitudes
+as large as 3, if the upper error bound is used for the slope of the
+ASL versus magnitude curve (9.9 instead of 7.8 db/mag).  This seems
+reasonable given that the $b$ value of the frequency-ASL curve,
+$\sim$12, translates into the average slow-spreading ridge frequency-magnitude $b$ value of
+1.2--1.3 \citep{rundquist02} only if the upper bound is assumed.  The hydrophone
+event rate is then approximately compatible with the OBS derived
+rates, with the possible exception of \citet{kong92}. }
+\tablenotetext{e}{Lower bound for earthquakes located with at least 5 OBS, upper bound for earthquakes located with 4 OBS.}
+\label{tbl:comparison}
+\end{table}
+
+
+
+\begin{figure}
+\includefig{glob-seis/glob-seis}{35pc}%.ps
+\caption{Regional map of a part of the southern Mid-Atlantic
+ridge including the study area. Several segments of the
+Mid-Atlantic-Ridge, which trend NNW-SSE, are offset by minor transform
+faults.   The yellow rectangle marks the location of the detailed map
+in Figure~2.  Red circles indicate earthquakes from 1963-2001 in the
+Engdahl catalog \citep{engdahl98}. Harvard CMT
+solutions until June 2003 \citep{dziewonski81a} are shown, where the
+double-couple part of the moment tensor is indicated by black lines.
+As all events in this area are likely to be close to double-couple,
+the deviations of the moment tensors from a double-couple are
+a coarse indicator of the uncertainty of the solution. Bathymetry is derived from
+satellite altimetry \citep{smith97}; contours are drawn at 500~m intervals.}
+\label{fig:glob-seis}
+\end{figure}
+
+\clearpage
+
+%% Hit a agu package bug here: double-space figures do not appear in
+%% draft mode, leave in single-space and only put into double-space
+%% right at the end
+\begin{figure}
+%\begin{figure*}
+\includefig{seismag-map/seismag-map}{39pc}%.eps
+%\noindent\includegraphics[width=39pc]{seismag-map/seismag-map.ps}
+
+\caption{Distribution of earthquakes recorded with the ocean bottom
+stations.  Red circles and hexagons: events located with at least 5 stations and
+azimuthal gap less than 300\dg, hexagons indicates at least one $S$
+arrival was used. Gray circles: marginally located events not fulfilling above
+criteria. Gray triangles: station locations.  Composite focal mechanisms for two
+groups of events are shown as lower hemisphere projections.  
+%The first
+%(labeled 5~6~0939) comprises 5 
+%events (yielding 25 polarity measurements), the second (labeled
+%5~3~1255) comprises 6 events (yielding 29 polarity measurements).
+  For
+event 5~3~1255 an alternative solution (labelled ALT is shown), which results from
+the use of a different velocity model, is also shown.  Details of the focal
+mechanism solutions are shown to the right of the map, where the thick
+black line shows the preferred solution (identical to the
+mechanisms shown in the map), the thin gray lines indicate other
+solutions that are consistent with the data, and black and white circles show
+compressive and dilatational first motion, respectively. Direct rays
+leaving the earthquake focus in upward direction are plotted at the
+opposite azimuth and the incidence angle is set to to the angle
+between the ray direction and vertical-up.  Triangles indicate possible P and T axes.  The bathymetry is
+based on processed multi-beam soundings acquired during the cruise.
+Marked morphological features: MV: Median Valley, TF: transform fault,
+ICH: inside corner high, OC outside corner massif, AVR: axial volcanic
+ridge, FAVR: extinct (fossil) axial volcanic ridge. Faults F1 and F2 were identified by \citep{reston02}.  
+The dashed lines show possible continuations of the faults where their morphological expression is 
+less clear.}
+\label{fig:seismag-map}
+%\end{figure*}
+\end{figure}
+
+\clearpage
+
+\begin{figure}
+\includefig{data-example/data-example}{20pc}%.eps
+\caption{Traces for hydrophone and DPG channels of all stations for the
+2000/05/03 12:55:04 event, filtered with a 5-20~Hz bandpass.  The
+analyst picks are shown in red, the calculated travel times for the
+best solution are shown in blue.  Picks with the number 4 next to them
+are considered unreliable and were not used in the location
+procedure.  The large arrival appearing 3--5~s after the first arrival
+is the first station-side multiple in the water column, i.e., the
+delay is proportional to the water depth near the station.}
+\label{fig:data-example}
+\end{figure}
+
+\begin{figure}
+\includefig{velmod/velmod}{20pc}%.ps
+\caption{Velocity models used for earthquake location.  Models marked INV resulted from a joint inversion for earthquake locations and the velocity model.}
+\label{fig:velmod}
+\end{figure}
+
+
+
+\begin{figure}
+\large \sf \bf a\hspace{14pc}b
+
+\includefig{depth-map/depth-map-ns}{17pc} \includefig{mv-profile/mv-profile-bw}{22pc}%.ps%.eps
+
+\begin{flushleft}c\end{flushleft}
+
+\includefig{cros/cros-ns}{39pc}%.ps
+
+\caption{Depth distribution of earthquakes and velocity structure
+along the median valley. 
+(a) Overview map.  Gray  circles correspond to
+events with reasonable depth control (neither upper nor lower 68\% confidence
+bound must be more than 2 km from the optimum solution depth). Open circles correspond
+to events with poor depth-control. The continuous line indicates the position
+of the profiles in b an c, and the dashed line indicates the size of
+the box within which earthquakes are projected onto the profile line.
+ (b) $P$ velocity model for the median valley based on
+refraction data. Velocities in the lower crust are poorly controlled
+and trade-off somewhat with velocities in the mantle.  The model shown
+represents a minimum estimate for
+sub-Moho velocities, but faster sub-Moho velocities (up to 7.7-7.8
+km/s) are possible, if correspondingly lower crustal velocities are
+assumed.
+(c) Cross section along the median valley for all events with
+reasonable depth control (gray circles in a).  Error bars show
+68\% confidence bounds in depth and longitude determined by a
+Monte-Carlo method (hence the bounds are not necessarily symmetric). 
+Gray continuous lines show the bathymetry (light gray: eastern flank,
+medium gray: median valley, dark gray: western flank). The bathymetry
+is taken along the continuous and dashed lines in a. The Moho depth is from b.}
+\label{fig:croslon}
+\end{figure}
+
+\clearpage
+
+\begin{figure}
+
+\includefig{depth-map/depth-map-1}{16pc} \includefig{cros/cros-1}{23pc} %.ps.eps
+
+\includefig{depth-map/depth-map-2}{16pc} \includefig{cros/cros-2}{23pc} %.ps.eps
+
+\includefig{depth-map/depth-map-3}{16pc} \includefig{cros/cros-3}{23pc} %.ps.eps
+
+\caption{Cross section perpendicular to the median valley along three
+adjacent transects.  Figure format is as in
+Fig.~\protect\ref{fig:croslon} except that the light gray bathymetry
+corresponds to  the northern dashed line in map view,
+the medium gray bathymetry  to the central continuous line and the
+dark gray bathymetry to the southern dashed line. The central and
+southern profile (middle and bottom) include a
+half-sphere-behind-vertical-plane projection of the
+composite focal solutions 5-6-0939 and 5-3-1255, respectively. As the
+focal mechanisms are composite solutions, their position in the
+cross-section is approximate, and they are included for
+visualisation of the dip of the focal planes only. Two alternative
+solutions, between which the data cannot discriminate, are plotted on
+top of each other for
+event 5-3-1255 (see text and caption of
+Fig.~\protect\ref{fig:seismag-map} for further details) in the
+southernmost cross-section. 
+Position of fault traces  F1 and F2 are marked (see Figure~\protect\ref{fig:seismag-map}).
+Proposed faults are suggested by dashed lines, in the bottom figure two alternative possibilities are given
+ (see text).}
+
+\label{fig:croslat}
+\end{figure}
+
+\begin{figure}
+
+\includefig{magnitude/magnitude}{20pc} %.eps
+\caption{Cumulative magnitude distribution for all median valley events recorded on
+May 3-8.  Later events were excluded from the $b$ value
+determination because on those days concurrent shooting, equipment
+failure, and station pull-out noticeably  reduced the detection
+threshold of the array.   }
+%$b$ value fits using different
+%subsets (no time restriction, only restricted events, etc.) resulted
+%in $b$ value estimates compatible with the preferred value, given the
+%error bounds.}
+\label{fig:magnitude}
+\end{figure}
+
+\begin{figure}
+\includefig{maxdep-topo/maxdep-topo}{20pc} %.eps
+
+\caption{Maximum depth of seismicity versus cross-axis relief. Adapted from
+  \protect\citet{barclay01} with the results of this study added. 
+Cross axis relief was determined by averaging the relief from the median valley
+floor to the first crest of the side wall, with the error bars representing the 
+variability of the relief thus measured among several parallel profiles in the
+vicinity of the hypocenters.  For the present study, there is an 
+ambiguity whether the crest of fault F1 or the inside corner high should be used,
+so both alternatives are presented.  The error bars for the maximum earthquake depths
+are determined from the error bars of the deepest events in the survey.}
+% summarise explanation from Barclay.
+% Two variants: cross-axis relief with respect to fault scarp F1, and
+ % with respect to ICH
+\label{fig:maxdep-topo}
+\end{figure}
+
+\begin{figure}
+\includefig{topo-cmp/topo-cmp}{20pc} %.eps
+\caption{Detail of the bathymetry of the ICHs of the ridge segments at
+29\dg N (top; \citet{wolfe95}) and 5\dg S (bottom; this study).  Both
+data sets are plotted at the same scale and using the same colour
+scale; illumination is from NNW in both images, but intensity
+normalization  has been optimized for each image separately to enhance contrast.  The resolution of the top image is 200m, that of
+the bottom image 100m. 
+Dashed white
+lines approximately delineate the most seismically active zones.}
+\label{fig:topo-cmp}
+\end{figure}
+
+
+% AGU docu says the following commands should be used but they don't work
+%\setfigurenum{1}
+%\settablenum{1}
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{A\arabic{figure}}
+
+\setcounter{table}{0}
+\renewcommand{\thetable}{A\arabic{table}}
+
+
+\clearpage
+
+%\input{bul-tbl.tex}
+% label set in bul-tbl.tex : tbl:bulletin
+%\clearpage
+
+\begin{table}
+%\input{sta-tbl.tex}
+\label{tbl:stations}
+\end{table}
+
+
+\clearpage
+
+
+\begin{figure}
+
+\includefig{timeline/timeline}{0.8\tw} %.eps
+
+\caption{Top: Overview of the performance of the stations of the network.
+Wide light gray bars mark times when the station was not providing
+useful data, either because they were recovered early to be used in
+another part of the experiment or because of various, sometimes
+intermittent equipment problems.  Each black bar represents a valid
+pick (weight Q0-Q3).  Bottom: distribution of located events in time
+(time scale is the same as for the top part).  Each event is marked by
+a black star beneath the axis and a
+vertical bar, which shows the number of valid picks (dark gray: $P$, light
+gray $S$).  Black horizontal bars indicate the times when active
+shooting is carried out.}
+\label{fig:timeline}
+\end{figure}
+
+\begin{figure}
+
+\includefig{time-map/time-map}{0.8\tw} %.ps
+
+\caption{Time sequence of events.  The events are numbered in the
+sequence they occurred, and the sequence number is color-coded.}
+\label{fig:time-map}
+\end{figure}
+
+
+\begin{figure}
+
+\includefig{seismag-map-95/seismag-map-95-0}{0.65\tw} %.ps
+
+\includefig{seismag-map-95/seismag-map-95-1}{0.65\tw} %.ps
+
+\caption{Lower and upper 95\% confidence bounds on earthquake
+latitude.   Top: Red and dark gray circles
+indicate the lower bound on earthquake latitude (95\% confidence) of
+events in the restricted and marginal set, respectively.
+Bottom: Earthquake latitudes are set to their upper bound.
+Earthquake longitudes are left at the value of the minimum misfit
+location.  Confidence bounds were obtained by a Monte-Carlo method
+(see text). For reference, minimum-misfit earthquake locations are shown as 
+ light gray circles  (restricted set) and hexagons or white circles
+(marginal set). }
+\label{fig:map95lat}
+\end{figure}
+
+
+\begin{figure}
+
+\includefig{seismag-map-95/seismag-map-95-2}{0.65\tw} %.ps
+
+\includefig{seismag-map-95/seismag-map-95-3}{0.65\tw} %.ps
+
+\caption{Lower and upper 95\% confidence bounds on earthquake
+longitude.  Figure format is equivalent to Figure~\ref{fig:map95lat}. }
+\label{fig:map95lon}
+\end{figure}
+
+\begin{figure}
+
+\setlength{\figarrwidth}{0.5\tw}
+
+\includefig{seismag-map-var/seismag-map-jhd-mva-obh10}{20pc} \includefig{seismag-map-var/seismag-map-jhd-pro109kmvel}{20pc} %.ps.ps
+
+\includefig{seismag-map-var/seismag-map-inv-mva-obh10}{20pc} %.ps
+
+\caption{Earthquake locations obtained with alternative 1-D velocity
+models, indicated by  red and dark gray circles (for events in the
+restricted and marginal set, respectively)
+Top left: Locations for a model appropriate for the median valley, where most
+earthquakes are located. 
+Top right: Locations for a model appropriate for inside corner high, where most
+stations are located. 
+Bottom: Locations for an alternative minimum 1-D velocity model
+obtained by joint inversion with the median valley model as starting
+model.
+%Bottom right: Velocity models.
+  For reference, earthquake locations obtained with the
+preferred velocity model, which was obtained by joint inversion using
+the inside corner model as starting model, are shown as 
+ light gray circles  (restricted set) and hexagons or white circles
+(marginal set). }
+\label{fig:mapvar}
+\end{figure}
+
+
+\begin{figure}
+
+\includefig{cros/cros-ns-jhd-mva-obh10}{30pc} %.ps
+
+\includefig{cros/cros-ns-jhd-pro109kmvel}{30pc} %.ps
+
+\includefig{cros/cros-ns-inv-mva-obh10}{30pc} %.ps
+
+\caption{Comparison of along-axis median valley cross section for different 1-D velocity
+models.  In each case the same events are shown as in
+Figure~\ref{fig:croslon}, where empty circles and dotted error bars
+indicate their location within the preferred model for reference, and
+gray circles indicate their location in the alternative models.
+Top: Locations for a model appropriate for the median valley, where most
+earthquakes are located. 
+Middle: Locations for a model appropriate for inside corner high, where most
+stations are located. 
+Bottom: Locations for an alternative minimum 1-D velocity model
+obtained by joint inversion with the median valley model as starting
+model.}
+\label{fig:croslonvar}
+\end{figure}
+
+\begin{figure}
+
+\includefig{cros/cros-2-jhd-mva-obh10}{30pc} % .ps
+
+\includefig{cros/cros-2-jhd-pro109kmvel}{30pc} % .ps
+
+\includefig{cros/cros-2-inv-mva-obh10}{30pc} % .ps
+
+\caption{Comparison of across-axis median valley cross section (middle
+section) for different 1-D velocity
+models.  In each case the same events are shown as in
+Figure~\ref{fig:croslat}.  Figure format is as in Figure~\ref{fig:croslonvar}.}
+\label{fig:croslatvar}
+\end{figure}
+
+
+\end{document}
+% LocalWords:  piezo kissling wilcock waldhauser MVSZ wolfe sykes demets hutton
+% LocalWords:  ij brune MV neic kong barclay dziewonski engdahl PERS ALESSIA pc
+% LocalWords:  DZIEWONSIKI obh MVSZ reinen thibaud Vema rowlett solomon Kull TF
+% LocalWords:  wessel havskov PASSCAL Langin Doherty lrrrrrrccc clllcrcrc Cumul
+% LocalWords:  dyn Mnts segm seis NNW seismag AVR FAVR mv cros topo cmp ps
+% LocalWords:  optimized footwalls unroofed footwall

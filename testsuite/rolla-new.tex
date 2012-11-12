@@ -1,0 +1,36 @@
+
+\documentclass{article}
+\special{papersize=210mm,297mm}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage[latin1]{inputenc}
+\usepackage{psfrag}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\sgn}{\mathrm{sgn}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Pb}{\mathbb{P}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\I}{1\!{\rm I}}
+
+\begin{document}
+
+\begin{eqnarray*}
+\Pb\big(\mathcal V_{n}(x)\big)
+	& = &
+\frac1{|B_M|} \E \left( \sum_{x\in B_M}  \I_{\mathcal V_{n}(x)} \right)
+	\leqslant 	
+\frac1{|B_M|} \E \left( \sum_{v \in B_{M+n}}  \I_{\mathcal U_{n}(v)} \right) \\
+	& =				&
+\frac{|B_{M+n}|}{|B_M|} \frac1{|B_{M+n}|} \E \left( \sum_{v \in B_{M+n}}  
+								\I_{\mathcal U_{n}(v)} \right)
+	= 
+\frac{|B_{M+n}|}{|B_M|} \Pb\big(\mathcal U_{n}(v)\big)
+\end{eqnarray*}
+
+\end{document}

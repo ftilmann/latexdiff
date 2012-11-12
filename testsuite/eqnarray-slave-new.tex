@@ -1,0 +1,30 @@
+The VM(BB) system models the coupling between energetic particles and the wave modes they excite.
+The formulation here is a fully nonlinear self-consistent model for the particle distribution $f(x,v,t)$ and the electric field $E(x,t)$; it is based on the one-dimensional electrostatic bump-on-tail model with particle distribution relaxation and background electric field damping:
+
+\begin{eqnarray}
+\label{MVE2}
+	\frac{\partial f}{\partial t} + v \frac{\partial f}{\partial x} + E \frac{\partial f}{\partial v} & = &
+		Q(v) - \nu_a \left( f - F_{\rm bulk} \right) \\
+		& = & - \nu_a \left( f - F_0 \right)         \\
+\label{MDCE2}
+	\frac{\partial E}{\partial t} + \int v \left( f - f_0 \right) dv & = & - \gamma_d E
+\end{eqnarray}
+%
+Here $\nu_a$ denotes the particle relaxation rate, $\gamma_d$ the combined effect of all background damping mechanisms that act on the electric field, and $f_0$ the spatial mean of $f$; $Q$ represents the source of EPs and $F_{\rm bulk}$ the thermalised distribution driven to by collisions; the bump-on-tail distribution $F_0 = Q / \nu_a + F_{\rm bulk}$.
+We note that $E = 0$, $f = F_0$ is a steady-state spatially uniform solution.
+
+\begin{eqnarray}
+\label{MVE2}
+	\frac{\partial f}{\partial t} + v \frac{\partial f}{\partial x} + E \frac{\partial f}{\partial v} & = &
+		Q(v) - \nu_a \left( f - F_{\rm bulk} \right) \\
+		& = & - \nu_a \left( f - F_0 \right)         \\
+\label{MDCE2}
+	\frac{\partial E}{\partial t} + \int v \left( f - f_0 \right) dv & = & - \gamma_d E
+\end{eqnarray}
+%
+And at last a table only in new file:
+
+\input{newtable}
+
+End of table
+

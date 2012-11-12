@@ -1,0 +1,34 @@
+
+\documentclass{article}
+\special{papersize=210mm,297mm}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage[latin1]{inputenc}
+\usepackage{psfrag}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\sgn}{\mathrm{sgn}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Pb}{\mathbb{P}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\I}{1\!{\rm I}}
+
+\begin{document}
+Since $S_n(x)\subseteq B_n(x)=\big\{y:|y-x|\leqslant n\big\}$ we have
+\[
+ \lim_{M\to\infty} \frac1{|B_M|} \sum_{v\in B_M} \I_{\mathcal
+  U(v)} =
+ \lim_{M\to\infty} \frac1{|B_M|} \sum_{x\in B_M} \Big[ |S_n(x)| \I_{
+\mathcal
+                   V(x)} \Big]
+ \geqslant \lim_{M\to\infty} \frac{1}{|B_M|} \sum_{x\in B_M} \I_{\mathcal V(x)},
+\]
+where the equality is obtained by re-indexing the sums and using amenability of
+$\Z^d$.
+
+\end{document}

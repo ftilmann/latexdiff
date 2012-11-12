@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage[nomarkers,nolists]{endfloat}
+
+\begin{document}
+	some text
+
+% endfloat requires \begin and \end commands at start of line
+\begin{table}
+  	\caption{My caption}
+	\begin{tabular}{c}
+		data
+	\end{tabular}
+	
+	some comment for under the table
+	
+\end{table}
+
+% endfloat requires \begin and \end commands at start of line
+\begin{figure}
+	\centering
+	My figure
+  	\caption{My caption}
+	\label{fig}
+	
+\end{figure}
+		
+some more text
+\end{document}

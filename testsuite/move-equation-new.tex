@@ -1,0 +1,49 @@
+\documentclass[11pt]{article}
+
+\begin{document}
+
+The decidability analysis provided in Section~\ref{sec:decidability}
+must consider all future actions.
+In order to track \emph{all} flows, we also need to track actual past
+information flows.
+Thus we track:
+\begin{description}
+\item[$didFlow(l_1,l_2)$:] the set of labels which could have
+  actually flowed across $mayFlow(l_1,l_2)$.
+\end{description}
+The set $didFlow(l_1,l_2)$ is updated  every time a process first
+reads $l_1$ and then writes $l_2$. 
+Let $flowed(l)=$
+$ \bigcup_{l' \in \mbox{\scriptsize system}}$
+$didFlow(l',l) \cup \{l\}$.
+ Then:
+\[
+    didFlow(l_1,l_2) \leftarrow didFlow(l_1,l_2) \cup flowed(l_1)
+\]
+
+We also track past administrative approvals  relative to the
+flows over a defined \(mayFlow(l_1,l_2)\) as follows:
+\begin{description}
+\item[$confidentialityFlow(l_1,l_2)$:] the set of predecessor labels
+  which have approved the possible increase in readership due to a flow of that
+  label using $mayFlow(l_1,l_2)$.
+  A necessary condition for $l\in confidentialityFlow(l_1,l_2)$
+  is that after the time of approval it was possible that
+  $r(l_2) \not\subseteq r(l)$.
+\item[$integrityFlow(l_1,l_2)$:] the set of successor labels
+  whose integrity is not greater than or equal to $l_1$
+  and which have approved a flow over $mayFlow(l_1,l_2)$.
+  A necessary condition for $l \in integrityFlow(l_1,l_2)$
+  is that after the time of approval $r(l_1) \not\succeq r(l)$.
+\item[$didFlow(l_1,l_2)$:] the set of labels which could have
+  actually flowed across $mayFlow(l_1,l_2)$.
+\end{description}
+While these play no role in the decidability of
+our system, they reduce the amount of clutter that
+an administrator needs to deal with, by allowing
+ each edge to be  approved by a given label's administrators
+at most once.
+
+\end{document}
+
+

@@ -1,0 +1,48 @@
+\documentclass[10pt, pagebackref, a4paper, oneside]{amsart}
+
+
+
+
+\newtheorem{prop}{Proposition}
+\newtheorem{lem}{Lemma}
+
+\begin{document}
+
+
+
+\begin{prop}
+For every $\delta>0$, there exists a function $V_\delta : T \to
+[1,\infty)$ satisfying the following property. There exists $C>0$
+and, for all $t>0$, there exists $b(t)>0$ such that, for all $x\in
+T_1$,
+  \begin{equation}
+  \int_0^{2\pi} V_\delta(g_t r_\theta x) d \theta
+  \leq C e^{-(1-\delta)t} V_\delta(x) + b.
+  \end{equation}
+Moreover, $V_\delta$ is $\Gamma$-invariant and the induced function
+on $T_1/\Gamma$ is proper. Finally, $\log V_\delta$ is
+$(1+\delta)$-Lipschitz for the Finsler metric of Paragraph
+\ref{subsec_Finsler}.
+\end{prop}
+
+
+$|\partial K'(t_n)| \geq |\partial K| e^{-(1+o(1))t_n
+|\kappa'(0)|_{\kappa(0)}}$. Combining those inequalities, we get a
+contradiction:
+  \begin{align*}
+  \tilde \alpha_i(\kappa(0))e^{(1+\delta+\epsilon)t_n |\kappa'(0)|_{\kappa(0)}}
+  &\leq |\partial K(t_n)|^{-1-\delta}
+  \leq |\partial K'(t_n)|^{-1-\delta}
+  \\&
+  \leq |\partial K|^{-1-\delta} e^{(1+\delta+o(1))t_n |\kappa'(0)|_{\kappa(0)}}
+  \leq \tilde \alpha_i(\kappa(0)) e^{(1+\delta+o(1))t_n |\kappa'(0)|_{\kappa(0)}}.
+  \qedhere
+  \end{align*}
+
+
+From now on, let us fix a small $\delta>0$, and the corresponding
+function $V_\delta$ given by the previous proposition.
+
+
+
+\end{document}

@@ -1,0 +1,11 @@
+\begin{figure*}
+
+\centering
+My figure
+   \caption{My caption}
+\DIFaddbeginFL \label{fig}
+
+\DIFaddendFL
+\end{figure*}
+\efloatseparator
+ 

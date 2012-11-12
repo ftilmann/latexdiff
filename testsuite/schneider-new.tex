@@ -1,0 +1,43 @@
+\documentclass[12pt]{article}
+\sloppy
+
+\newcommand{\theversion}{{version = 1.00 of previous.tex 2006 Nov 28 }}
+
+\textheight 9.0 in % this works
+\textwidth 6.5in
+\oddsidemargin 0in
+
+\title{TITLE}
+
+\author{
+Thomas D. Schneider
+}
+
+\date{\theversion}
+
+\usepackage{graphics}
+\usepackage{color}
+
+% this improves the PDF fonts dramatically on screen:
+\usepackage{pslatex} % Times New Roman Font
+% HOWEVER if printed from acrobat it will lose dashes!
+
+\newenvironment{DIFnomarkup}{}{}
+
+\begin{document}
+
+\maketitle
+
+Claude Shannon wrote this equation:
+%
+\begin{equation}
+H = - \sum_{i} p_i \log_2 p_i
+\;\;\;\;\;\mbox{(bits per symbol)}
+\label{eqn.H}
+\end{equation}
+
+% \begin{DIFnomarkup}
+\section{Acknowledgments}
+% \end{DIFnomarkup}
+
+\end{document}
