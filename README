@@ -74,6 +74,10 @@ DOCUMENTATION:
 Usage instructions are in the manual latexdiff-man.pdf as well as the 
 man pages.
 
+CHANGELOGS:
+
+Check out the comment lines at the beginning of the perl scripts (latexdiff, latexdiff-vc, latexrevise)
+
 CONTRIBUTIONS
 
 The directory contrib contains code written by others relating to latexdiff.  

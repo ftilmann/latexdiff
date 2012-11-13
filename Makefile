@@ -1,6 +1,8 @@
 # Makefile for preparing files for distribution
+VERSION=1.0.1
 
-.PHONY: distribution test mkdirs clean cleanall cleantest
+
+.PHONY: distribution release test mkdirs clean cleanall cleantest
 
 default:
 	@echo "Type:"
@@ -9,12 +11,14 @@ default:
 
 distribution: mkdirs dist/latexdiff dist/latexrevise dist/latexdiff-so dist/latexdiff-fast dist/latexdiff-vc dist/latexdiff.1 dist/latexrevise.1 dist/latexdiff-vc.1 dist/doc/latexdiff-man.pdf dist/example/example-draft.tex dist/example/example-rev.tex dist/doc/example-diff.tex dist/doc/latexdiff-man.tex dist/COPYING dist/README
 
-mkdirs:
+mkdirs: dist/doc dist/example
 	mkdir -p dist/doc
 	mkdir -p dist/example
 
-latexdiff.tar: distribution
-	cd dist; tar -cvf ../latexdiff.tar .
+release: latexdiff-$(VERSION).tar.gz
+
+latexdiff-$(VERSION).tar.gz: distribution
+	tar -z -cvf latexdiff-$(VERSION).tar.gz --dereference --exclude-vcs  latexdiff-$(VERSION)
 
 dist/latexdiff: latexdiff
 	grep -v '^###' latexdiff > dist/latexdiff ; chmod a+x dist/latexdiff
