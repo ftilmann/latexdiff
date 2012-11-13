@@ -11,11 +11,15 @@ default:
 
 distribution: mkdirs dist/latexdiff dist/latexrevise dist/latexdiff-so dist/latexdiff-fast dist/latexdiff-vc dist/latexdiff.1 dist/latexrevise.1 dist/latexdiff-vc.1 dist/doc/latexdiff-man.pdf dist/example/example-draft.tex dist/example/example-rev.tex dist/doc/example-diff.tex dist/doc/latexdiff-man.tex dist/COPYING dist/README
 
-mkdirs: dist/doc dist/example
+mkdirs: dist
 	mkdir -p dist/doc
 	mkdir -p dist/example
 
 release: latexdiff-$(VERSION).tar.gz
+
+dist: latexdiff-$(VERSION)
+	ln -s latexdiff-$(VERSION) dist
+	
 
 latexdiff-$(VERSION).tar.gz: distribution
 	tar -z -cvf latexdiff-$(VERSION).tar.gz --dereference --exclude-vcs  latexdiff-$(VERSION)

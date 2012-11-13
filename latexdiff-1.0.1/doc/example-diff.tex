@@ -1,0 +1,89 @@
+\documentclass[12pt,a4paper]{article}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL example-draft.tex   Tue Nov 13 00:43:28 2012
+%DIF ADD example-rev.tex     Tue Nov 13 00:43:28 2012
+
+\setlength{\topmargin}{-0.2in}
+\setlength{\textheight}{9.5in}
+\setlength{\oddsidemargin}{0.0in}
+
+%DIF 7c7
+%DIF < \setlength{\textwidth}{6.5in}
+%DIF -------
+\setlength{\textwidth}{6in} %DIF > 
+%DIF -------
+
+\title{latexdiff Example - \DIFdelbegin \DIFdel{Draft }\DIFdelend \DIFaddbegin \DIFadd{Revised }\DIFaddend version}
+\author{F Tilmann}
+% Note how in the preamble visual markup is never used (even %DIF > 
+% if some preamble might eventually end up as visible text.) %DIF > 
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+\maketitle
+
+\section*{Introduction}
+
+This is an extremely simple document that showcases some of \DIFaddbegin \DIFadd{the }\DIFaddend latexdiff features.
+Type
+\begin{verbatim}
+latexdiff -t UNDERLINE example-draft.tex example-rev.tex > example-diff.tex
+\end{verbatim}
+to create the difference file.  You can inspect this file directly. Then run either 
+\begin{verbatim}
+pdflatex example-diff.tex
+xpdf example-diff.pdf
+\end{verbatim}
+or
+\begin{verbatim}
+latex example-diff.tex
+dvips -o example-diff.ps example-diff.dvi
+gv example-diff.ps
+\end{verbatim}
+to display the markup.
+
+\section*{\DIFdelbegin \DIFdel{Another }\DIFdelend \DIFaddbegin \DIFadd{Yet another }\DIFaddend section title}
+
+ \DIFdelbegin \DIFdel{A paragraph with a line only in the draft document.  }\DIFdelend More things could be said were it not for the constraints of time and space.
+
+\DIFaddbegin \DIFadd{A paragraph with a line only in the revised document.  }\DIFaddend More things could be 
+said were it not for the constraints of time and space.
+
+And here is a \DIFdelbegin \DIFdel{tipo}\DIFdelend \DIFaddbegin \DIFadd{typo}\DIFaddend . 
+
+Here is a table:
+
+\begin{tabular}{ll}
+Name & Description \\
+\hline
+Gandalf & \DIFdelbegin \DIFdel{Grey }\DIFdelend \DIFaddbegin \DIFadd{White }\DIFaddend \\
+Saruman & \DIFdelbegin \DIFdel{White
+}\DIFdelend \DIFaddbegin \DIFadd{Evil
+}\DIFaddend \end{tabular}
+
+And \DIFdelbegin \DIFdel{sometimes a whole paragraph gets completely rewritten. In this
+case latexdiff marks up the whole paragraph even if some words in it
+are identical}\DIFdelend \DIFaddbegin \DIFadd{now for something completely different, with not a paragraph in sight}\DIFaddend .
+No change, 
+no markup!
+\end{document}
+
+
