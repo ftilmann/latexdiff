@@ -13,7 +13,7 @@ latexrevise, which accepts or rejects all changes.  Manual
 editing of the difference file can be used to override this default
 behaviour and accept or reject selected changes only.  
 
-The author is F Tilmann (ftilmann@users.berlios.de)
+The author is F Tilmann (ftilmann@users.berlios.de). 
 
 Project webpage:   http://latexdiff.berlios.de/
 CTAN page:          http://www.ctan.org/tex-archive/support/latexdiff

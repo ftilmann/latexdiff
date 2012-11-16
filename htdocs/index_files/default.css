@@ -1,0 +1,49 @@
+.side {
+  float: left;
+  width: 160px;
+}
+.main {
+  float: right;
+  width: 640px;
+}
+.heading {
+  border-bottom: 1px solid black;
+  padding: 3px 0px 3px 10px;
+  background-color: #7da7d1;
+  color: black;
+  margin-bottom: 10px;
+}
+.content {
+  border-bottom: 1px solid black;
+  margin: 0;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+dl {
+  padding: 0;
+}
+dt {
+  margin: 0;
+  padding: 0 10px;
+}
+.sideBox {
+  border: 1px solid black;
+  padding-left: 0;
+  margin-bottom: 10px;
+}
+.mainBox {
+  border: 1px solid black;
+  padding: 0px;
+  margin-bottom: 15px;
+  clear: right;
+}
+.container {
+  margin: 0 auto;
+  padding: 0;
+  height: auto;
+  width: 820px;
+}
+.mainHeading {
+}

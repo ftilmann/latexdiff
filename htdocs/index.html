@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>Latexdiff</title>
+    <link rel="stylesheet" href="index_files/default.css" type="text/css">
+    <meta name="author" content="Frederik TIlmann">
+    <meta name="description" content="latexdiff compares two latex files and marks up significant differences between them (i.e. a diff for latex files)">
+    <meta name="keywords" content="latexdiff, latex, diff, text
+      comparison">
+    <script language="javascript" src="http://latexdiff.berlios.de/email.js"></script>
+  </head>
+  <body>
+
+    <div class="container">
+      <div class="side">
+  <div class="sideBox">
+    <div class="heading">
+       latexdiff 
+    </div>
+    <div class="content">
+      <dl>
+        <dt>
+          <a href="index.html">Home</a>
+        </dt>
+        <dt>
+          <a href="https://developer.berlios.de/project/showfiles.php?group_id=13015">Download(Berlios)</a>
+        </dt>
+        <dt>
+          <a href="http://www.ctan.org/tex-archive/support/latexdiff">Download(CTAN)</a>
+        </dt>
+<!--         <dt> -->
+<!--           <a href="http://clip.berlios.de/faq.html">FAQ</a> -->
+<!--         </dt> -->
+        <dt>
+          <a href="latexdiff-man.pdf">Manual</a>
+        </dt>
+        <dt>
+          <a href="http://developer.berlios.de/projects/latexdiff/">Project Page</a>
+        </dt>
+      </dl>
+    </div>
+  </div>
+  <div class="sideBox">
+    <div class="heading">
+       Mailing Lists 
+    </div>
+    <div class="content">
+      <dl>
+        <dt>
+           <a href="https://lists.berlios.de/mailman/listinfo/latexdiff-announce">Announcements</a> 
+        </dt>
+        <dt>
+           <a href="https://lists.berlios.de/mailman/listinfo/latexdiff-users">Users</a> 
+        </dt>
+        <dt>
+           <a href="https://lists.berlios.de/mailman/listinfo/latexdiff-devel">Developer</a>
+        </dt>
+      </dl>
+    </div>
+  </div>
+  <div class="sideBox">
+    <div class="heading">
+       Actions 
+    </div>
+    <div class="content">
+      <dl>
+        <dt>
+           <a href="https://developer.berlios.de/bugs/?group_id=13015">Report a bug</a> 
+        </dt>
+        <dt>
+           <a href="https://developer.berlios.de/feature/?group_id=13015">Suggest a feature</a> 
+        </dt>
+        <dt>
+           <a href="https://developer.berlios.de/patch/?group_id=13015">Submit a patch</a>
+        </dt>
+        <dt>
+           <a  href="#donate">Provide support</a>
+        </dt>
+      </dl>
+    </div>
+  </div>
+
+   This Site is hosted by 
+  <br>
+ <a href="http://developer.berlios.de"><img
+	    src="http://developer.berlios.de/bslogo.php?group_id=13015" width="124" height="32" border="0" alt="BerliOS Logo" /></a> 
+
+<br><noscript><p>
+<small>Please note that email addresses on this site are protected to avoid abuse by spammers.
+You will need a JavaScript-enabled browser to see the email addresses.</small>
+</noscript>
+ </div>
+
+      <div class="main">
+        <div class="mainBox">
+          <div class="heading"><center><h3>Latexdiff</h3></center></div>
+          <div class="content">
+	    
+           <p> latexdiff is a Perl script, which compares two latex files and marks
+up significant differences between them (i.e. a diff for latex files).
+  Various options are available for visual markup using standard latex 
+packages such as "color.sty". Changes not directly affecting visible 
+text, for example in formatting commands, are still marked in 
+the latex source.</p>
+ 
+<p>A rudimentary revision facilility is provided by another Perl script,
+latexrevise, which accepts or rejects all changes.  Manual
+editing of the difference file can be used to override this default
+behaviour and accept or reject selected changes only.  </p>
+
+<p>The author is <a
+		href="http://www.gfz-potsdam.de/portal/gfz/Struktur/Departments/Department+2/sec24/M5_Telefonliste/STAFF/Frederik+Tilmann">Frederik Tilmann</a>, email: <script>mail("ftilmann","users.berlios",14,"")</script></p>
+I gratefully acknowledge all contributors of bug fixes, enhanced
+	    features, bug reports and people who have suggested
+	    features. If you would like to become a developer for
+	    latexdiff, get in touch.</p>
+
+<p>This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License Version 3 as published by
+the Free Software Foundation.</p>
+
+          </div>
+        </div>
+ 
+          <div class="heading"><center><h3>Requirements</h3></center></div>
+          <div class="content">
+	<p>    Perl 5.8 or higher must be installed.
+  The latexdiff script makes use of the Perl package Algorithm::Diff (available 
+from www.cpan.org, current version 1.19). You can either install this package, or
+use the standalone version of latexdiff, latexdiff-so, which has version 1.15 of 
+this package inlined and does not require external installation of
+the package. Because latexdiff uses internal functions of Algorithm:Diff whose 
+calling format or availability can change without notice, the preferred method is
+now to use the standalone version.</p>
+
+<p>As an alternative, latexdiff-fast has a modified version of Algorithm::Diff inlined,
+which internally uses the UNIX diff command.  This version is much faster but is dependent
+on an external "diff" command.  Subtle differences in the algorithm of Algorithm::Diff and 
+UNIX-diff mean that the resulting set of differences will generally not be the same as
+for the standard latexdiff.  In most practical cases, these differences are minor, though.</p> 
+          </div>
+
+<a name="donate">
+          <div class="heading"><center><h3>And finally...</h3></center></div>
+          <div class="content">
+
+
+	<p> If you like latexdiff, in-kind support to latexdiff in the form of encouraging emails, well-documented
+	  bug reports, patches, or offers to become a developer is
+	  much  appreciated.</br>
+         Alternatively,  if would like to show your
+	    appreciation otherwise, you can contribute an amount of your choice
+	    through PayPal (no account needed) </p>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+">
+<input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal — The safer, easier way to pay online.">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+<p> The monies raised this way will be split fourways and disbursed as
+	    follows.
+	  <ol>
+	    <li> One quarter passed on to berliOS for hosting the project
+<li> One quarter passed on to <a href="http://www.tug.org">TUG</a> (TeX User Group) for hosting the CTAN archive and
+	    supporting TeX/LaTeX
+<li> One quarter passed on to a charity which supports children at a school in
+	    my home town in various ways (<a href="http://www.lgg-darmstadt.de/pages/verein-lgg.php">Verein LGG</a>)
+<li> The last quarter I will use to buy my children some ice cream (in
+	    compensation for the weekends spent on latexdiff; just
+	      kidding... )
+</ol>
+
+Please note that this is entirely voluntary, and will have no
+	    bearing on the processing of bug reports or feature
+	    requests.  </p>
+<p><small>Disclaimer: as there is no easy way to affect automatic splitting of
+	    received contributions, the donated amounts first will go
+	    to my account.  I am afraid you will have to trust me on
+	    the promise to disburse them as outlined above; I will
+	    keep records and provide them on request. Transfer of the
+	    monies would normally occur once a year, or once a total
+	    contribution of 100 EUR is reached, whatever is
+	    earlier. If total contributions within a year are less
+	    than 20 EUR, I will carry over this amount into the next
+	    year rather than  making transfers.  Finally, in the
+	    unexpected case that contributions reach levels that
+	    strict adherence to 4. above would be seriously detrimental to
+	    the dental and other health of my children, I retain the
+	    right to gratify them in some other way.
+</small>
+</p> 
+          </div>
+        <center>
+          <img src="http://developer.berlios.de/dbimage.php?id=5068" height="701" width="496">
+        </center>
+      </div>
+        </div>
+    </div>
+</body></html>
