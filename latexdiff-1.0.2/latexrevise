@@ -26,7 +26,6 @@
 # Version 0.3   Updated for compatibility with latexdiff 0.3 output (DIFAUXCMD removal)
 # Version 0.1   First public release
 
-### NB Lines starting with three hashes should be removed before release
 use Getopt::Long ;
 use strict;
 use warnings;
@@ -107,9 +106,6 @@ if ( ($accept &&  $decline) || ($accept && $simplify) || ($decline && $simplify)
   die '-a,-d and -s options are mutually axclusive. Type latexrevise -h to get more help.';
 }
 
-###if (! $accept &&  ! $decline && ! $simplify ) {
-###  die 'One of -a, -d or -s option required. Type latexrevise -h to get more help.';
-###}
 
 
 print STDERR "ACCEPT mode\n" if $verbose && $accept;
@@ -156,8 +152,6 @@ if (length $preamble && ( $accept || $decline ) ) {
 if ($accept) {
   # remove ADDMARKOPEN, ADDMARKCLOSE tokens
   @matches= $body =~ m/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/sg;
-###  print STDERR "DEBUG: ",scalar @matches,"|||$body|||\n";
-###  print STDERR "DEBUG: $ADDMARKCLOSE matches: ",scalar ($body =~ m/${ADDMARKCLOSE}/sg ),"\n";
   checkpure(@matches);
   $body =~ s/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/$1/sg;
   # remove text flanked by DELMARKOPEN, DELMARKCLOSE tokens
@@ -194,17 +188,12 @@ elsif ( $decline) {
   while ( $body =~ m/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/s ) {
     $prematch=$`;
     $postmatch=$';
-###    print STDERR "PRE: |",substr($prematch,-20),"|\n";
-###    print STDERR "MATC:|",$&,"|\n";
-###    print STDERR "POST:|",substr($postmatch,0,20),"|\n";
     checkpure($1);
     if ( $prematch =~ /\w$/s && $postmatch =~ /^\w/ ) {
-###      print STDERR "Insert space!\n";
       # apparently no white-space between word=>Insert white space
       $body =~ s/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/ /s ;
     }
     elsif ( $prematch =~ /\s$/s && $postmatch =~ /^[.,;:]/ ) {
-###      print STDERR "Remove space!\n";
       # space immediately before one of ".,:;" => remove this space
       $body =~ s/\s${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}//s ;
     }
@@ -255,7 +244,6 @@ if (defined($comment)) {
   # carry out the substitution
   $cnt = 0 + $body =~ s/\\${comment}(?:\[${brat0}\])?\{${pat4}\}//sg ;
   print STDERR "$cnt matches found and removed.\n" if $verbose;
-###  $body =~ s/${comment}//sg;
   # and undo the protection substitution
   $body =~ s/(%.*)${someword}(.*)$/$1${comment}$2/mg ;
 }
@@ -275,7 +263,6 @@ if (defined($markup)) {
   # carry out the substitution
   $cnt = 0 + $body =~ s/\\${markup}(?:\[${brat0}\])?\{(${pat4})\}/$1/sg ;
   print STDERR "$cnt matches found and removed.\n" if $verbose;
-###  $body =~ s/${markup}//sg;
   # and undo the protection substitution
   $body =~ s/(%.*)${someword}(.*)$/$1${markup}$2/mg ;
 }
@@ -300,9 +287,7 @@ if ( length $preamble ) {
 # $ADDMARKOPEN, $ADDMARKCLOSE,$DELMARKOPEN, or $DELMARKCLOSE
 # If so, die reporting nesting problems, otherwise return to caller
 sub checkpure {
-###  print STDERR "Checkpure : ",scalar(@matches)," tokens\n.";
   while (defined($_=shift)) {
-###    print STDERR "$_\n";
     if (  /$ADDMARKOPEN/ || /$ADDMARKCLOSE/
 	  || /$DELMARKOPEN/ || /$DELMARKCLOSE/ ) {
       die <<EOF ;
