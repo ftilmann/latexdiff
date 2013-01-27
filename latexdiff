@@ -22,6 +22,10 @@
 #
 # Detailed usage information at the end of the file
 #
+# Version 1.0.3alpha
+#    - fix bug in add_safe_commands that made latexdiff hang on DeclareMathOperator 
+#      command in preamble
+#
 # Version 1.0.1 - treat \big,\bigg etc. equivalently to \left and
 #              \right - include starred version in MATHENV - apply
 #            - flatten recursively and --flatten expansion is now
@@ -837,7 +841,7 @@ sub add_safe_commands {
       # get rid of comments
     my $to_test = "";
       # test for \DeclareMathOperator{\foo}{myoperator}
-    while ( $preamble =~ m/\DeclareMathOperator\s*\{\\(\w*?)\}/s) {
+    while ( $preamble =~ m/\DeclareMathOperator\s*\{\\(\w*?)\}/osg) {
       $to_test=$1;
       if ($to_test ne "" and not iscmd($to_test,\@SAFECMDLIST,\@SAFECMDEXCL) and not iscmd($to_test, \@SAFECMDEXCL, []))  {
         # one should add $to_test to the list of safe commands.
