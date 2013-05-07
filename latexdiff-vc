@@ -25,6 +25,7 @@
 #
 # Detailed usage information at the end of the file
 #
+# version 1.0.3: Bug fix: replace use of system('cp...') with File::Copy::copy (Patch contributed by D. Bremner)
 # version 1.0.2: - option --so to use latexdiff-so
 # version 1.0.1 (change version numbering to match that of latexdiff)
 #   - Option --fast to use latexdiff-fast, 
@@ -38,6 +39,8 @@ use Getopt::Long ;
 use Pod::Usage qw/pod2usage/ ;
 use File::Temp qw/tempdir/ ;
 use File::Basename qw/dirname/;
+use File::Copy;
+
 use strict ;
 use warnings ;
 
@@ -239,18 +242,17 @@ while ( $infile=$file2=shift @files ) {
     ### system("$diffcmd$revs[0] $infile| $patchcmd -o$file1") ;
     if (system("$diffcmd$revs[0] $infile | $patchcmd -o$file1")==0  and -z $file1 ) {
       # no differences detected, i.e. file is equal to current version
-      system("\cp $infile $file1");
+      copy($infile,$file1) || die "copy($infile,$file1) failed: $!";
     }
   } elsif ( scalar(@revs) == 2 ) {
     ($file1=$infile) =~ s/\.(tex|bbl)/-oldtmp-$$.$1/ ;
     $file2 =~ s/\.(tex|bbl)/-newtmp-$$.$1/ ;
     push @tmpfiles,$file2;
-      ;
     if (system("$diffcmd$revs[1] $infile | $patchcmd -o$file2")==0 and -z $file2 ) {
-      system("\cp $infile $file2");
+      copy($infile,$file2) || die "copy($infile,$file2) failed: $!";
     }
     if (system("$diffcmd$revs[0] $infile | $patchcmd -o$file1")==0 and -z $file1 ) {
-	system("\cp $infile $file1");
+       copy($infile,$file1) || die "copy($infile,$file1) failed: $!";
     };
   }
 

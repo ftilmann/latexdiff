@@ -27,7 +27,8 @@
 #      command in preamble
 #    - \(..\) inline math expressions were not parsed correctly, if the contained a linebreak
 #    - applied patch contributed by tomflannaghan via Berlios: [ Patch #3431 ] Adds correct handling of \left< and \right>
-#    - \$ is treated correctly as a literal dollar sign (thanks to Reed Cartwright for reporting this bug and sketching out the solution)
+#    - \$ is treated correctly as a literal dollar sign (thanks to Reed Cartwright and Joshua Miller for reporting this bug 
+#       and sketching out the solution)
 #
 # Version 1.0.1 - treat \big,\bigg etc. equivalently to \left and
 #              \right - include starred version in MATHENV - apply
