@@ -1,0 +1,77 @@
+\documentclass{report}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL mini-old.tex   Sun Jan 27 23:50:05 2013
+%DIF ADD mini-new.tex   Sun Jan 27 23:50:05 2013
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{amssymb}
+\usepackage[all]{xy}
+\usepackage[usenames]{color}
+\usepackage{longtable}
+\usepackage{ifthen}
+\usepackage{soul}
+\usepackage{float} % <- gives the H positioning option to figure
+\usepackage{array} % <- gives newcolumntype
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}} % centered fixed with column
+
+\title{Diff Test} 
+\author{Mikael Brännström}
+\date{13 January 2010} % Activate to display a given date or no date
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+\maketitle
+
+\chapter{Main}
+
+\begin{center}
+\begin{longtable}{|p{165pt}|p{45pt}|C{25pt}|C{25pt}|C{25pt}|}
+\caption{Message overview.} \\
+\hline
+\em{Message} & \em{Class} & \em{All?} & \em{Read-only?} & \em{Snap\-shot-only?} \\
+\hline \hline
+\endhead
+
+\DIFaddbegin \DIFadd{New}\-\DIFadd{Order}\-\DIFadd{Single  }& \DIFadd{Order }& \DIFadd{send }& &  \\*
+
+\DIFadd{Order}\-\DIFadd{Cancel}\-\DIFadd{Replace}\-\DIFadd{Request  }& \DIFadd{Order }& \DIFadd{send }& &  \\*
+
+\DIFadd{Order}\-\DIFadd{Cancel}\-\DIFadd{Request  }& \DIFadd{Order }& \DIFadd{send }& &  \\*
+
+\DIFadd{Execution}\-\DIFadd{Report  }& \DIFadd{Order }& \DIFadd{recv }& \DIFadd{recv }& \DIFadd{recv  }\\*
+
+\DIFadd{Order}\-\DIFadd{Cancel}\-\DIFadd{Reject  }& \DIFadd{Order }& \DIFadd{recv }& \DIFadd{recv }&  \\*
+
+\DIFadd{Order}\-\DIFadd{Mass}\-\DIFadd{Status}\-\DIFadd{Request  }& \DIFadd{Order }& \DIFadd{send }& \DIFadd{send }& \DIFadd{send  }\\*
+    \hline
+\DIFaddend Trade\-Capture\-Report  & Trade & send recv & recv & recv  \\*
+
+Trade\-Capture\-Report\-Ack  & Trade & recv & recv &  \DIFaddbegin \\*
+
+\DIFadd{Trade}\-\DIFadd{Capture}\-\DIFadd{Report}\-\DIFadd{Request  }& \DIFadd{Trade }& \DIFadd{send }& \DIFadd{send }& \DIFadd{send  }\DIFaddend \\*
+
+Trade\-Capture\-Report\-Request\-Ack  & Trade & recv & recv & recv  \\*
+    \hline
+\end{longtable}
+\end{center}
+
+\end{document}

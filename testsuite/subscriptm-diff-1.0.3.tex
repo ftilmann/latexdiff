@@ -1,0 +1,58 @@
+\documentclass{article}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL subscriptm-old.tex   Sun Jan 27 23:50:05 2013
+%DIF ADD subscriptm-new.tex   Sun Jan 27 23:50:05 2013
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+\DIFdelbegin \DIFdel{An }\DIFdelend \DIFaddbegin \DIFadd{No }\DIFaddend equation with different subscripts
+\DIFdelbegin \[\DIFdel{
+a_r=a_\beta+a_{i+j}
+}\]
+%DIFAUXCMD
+\DIFdel{and the same with superscripts
+}\[\DIFdel{
+a^r=a^\beta+a^{i+j}
+}\]
+%DIFAUXCMD
+\DIFdelend \DIFaddbegin 
+
+\DIFadd{and none with superscripts
+}
+
+\DIFaddend Now an equation that is in both \DIFaddbegin \DIFadd{but subtly different
+}\DIFaddend \[
+E=mc\DIFdelbegin \DIFdel{^3}\DIFdelend \DIFaddbegin \DIFadd{^2}\DIFaddend \ \ \ \ x=1+\sin y\DIFdelbegin \DIFdel{^{i+j+\cdots}
+}\DIFdelend \DIFaddbegin \DIFadd{^{i+j+k+\cdots}
+}\DIFaddend \]
+\DIFdelbegin \DIFdel{and equation using }%DIFDELCMD < \verb|\left| %%%
+\DIFdel{and }%DIFDELCMD < \verb|\right|
+%DIFDELCMD < 
+
+%DIFDELCMD < %%%
+\[\DIFdel{
+S=\left    \{ 5+\smile+\frac{numerator}{denominator} \right \}
+}\]
+%DIFAUXCMD
+\DIFdelend 
+
+
+\end{document}

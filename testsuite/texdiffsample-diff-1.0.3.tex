@@ -1,0 +1,54 @@
+\documentclass[12pt,a4paper]{article}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL texdiffsample-old.tex   Sun Jan 27 23:50:05 2013
+%DIF ADD texdiffsample-new.tex   Sun Jan 27 23:50:05 2013
+\usepackage[widemargins]{a4}
+
+\usepackage{times}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+
+\section{Sample}
+
+This is \DIFdelbegin \DIFdel{sample text.
+}%DIFDELCMD < 
+
+%DIFDELCMD < %%%
+\DIFdel{And this was }\DIFdelend a text.
+
+\begin{tabular}{r|l}
+
+\textbf{No.} & \textbf{Item} \\
+\hline
+
+1. & Apple \\
+2. & Orange \\
+\DIFdelbegin \DIFdel{2. }\DIFdelend \DIFaddbegin \DIFadd{3. }\DIFaddend & \DIFdelbegin \DIFdel{Arange }\DIFdelend \DIFaddbegin \DIFadd{Beer }\DIFaddend \\
+\DIFdelbegin \DIFdel{3. }\DIFdelend \DIFaddbegin \DIFadd{4. }\DIFaddend & Cat \\
+\DIFdelbegin \DIFdel{4. }\DIFdelend \DIFaddbegin \DIFadd{5. }\DIFaddend & Monkey \\
+
+\end{tabular}
+
+\end{document}

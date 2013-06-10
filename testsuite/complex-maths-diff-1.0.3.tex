@@ -1,0 +1,112 @@
+\documentclass[10pt, pagebackref, a4paper, oneside]{amsart}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL complex-maths-old.tex   Sun Jan 27 23:50:05 2013
+%DIF ADD complex-maths-new.tex   Sun Jan 27 23:50:05 2013
+
+
+
+
+\newtheorem{prop}{Proposition}
+\newtheorem{lem}{Lemma}
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+
+
+
+\begin{prop}
+\DIFdelbegin \DIFdel{For every $\delta>0$, there exists a function $V_\delta : T \to
+[1,\infty)$ satisfying the following property}\DIFdelend \DIFaddbegin \DIFadd{Let $\delta\in (0,1/4)$}\DIFaddend . There exists $C>0$ \DIFdelbegin \DIFdel{and, for all $t>0$, there exists $b(t)>0$ }\DIFdelend such that, for \DIFdelbegin \DIFdel{all $x\in
+T_1$,
+  }\begin{displaymath}\DIFdel{
+  \int_0^{2\pi} V_\delta(g_t r_\theta x) d \theta
+  \leq C e^{-(1-\delta)t} V_\delta(x) + b.
+  }\end{displaymath}
+%DIFAUXCMD
+\DIFdel{Moreover, $V_\delta$ is $\Gamma$-invariant and the
+induced function on $T_1/\Gamma$ is proper. Finally, }\DIFdelend \DIFaddbegin \DIFadd{any $x\in
+X$ and any $t\geq 0$,
+  }\begin{equation}\DIFadd{
+  \label{eqVdeltaWu}
+  \frac{1}{\mu_u(W^u_{1/100}(x))}\int_{W^u_{1/100}(x)} V_\delta( g_t y) d\mu_u(y)
+  \leq C e^{-(1-2\delta) t} V_\delta(x)+C,
+  }\end{equation}
+\DIFadd{where $V_\delta(x)=\max(1/sys(x)^{1+\delta}, 1)$. Moreover, the
+function }\DIFaddend $\log V_\delta$ is $(1+\delta)$-Lipschitz for the Finsler
+\DIFdelbegin \DIFdel{metric of Paragraph
+\ref{subsec_Finsler}}\DIFdelend \DIFaddbegin \DIFadd{norm of the previous section}\DIFaddend .
+\end{prop}
+
+\DIFdelbegin \DIFdel{$|\partial K'(t_n)| \geq |\partial K| e^{-(1+o(1))t_n
+|\kappa'(0)|_{\kappa(0)}}$.
+Combining those inequalities, we get a
+contradiction:
+  }\begin{align*}\DIFdel{
+  \tilde \alpha_i(\kappa(0))e^{(1+\delta+\epsilon)t_n |\kappa'(0)|_{\kappa(0)}}
+  }&\DIFdel{\leq |\partial K(t_n)|^{-1-\delta}
+  \leq |\partial K'(t_n)|^{-1-\delta}
+  }\\&
+  \DIFdel{\leq |\partial K|^{-1-\delta} e^{(1+\delta+o(1))t_n |\kappa'(0)|_{\kappa(0)}}
+  \leq \tilde \alpha_i(\kappa(0)) e^{(1+\delta+o(1))t_n |\kappa'(0)|_{\kappa(0)}}.
+  \qedhere
+  }\end{align*}
+%DIFAUXCMD
+%DIFDELCMD < 
+
+%DIFDELCMD < %%%
+\DIFdel{From now on, let us fix a small }\DIFdelend \DIFaddbegin \DIFadd{We will use the following lemma, which is due to Eskin-Masur
+\mbox{%DIFAUXCMD
+\cite{eskin_masur}
+}%DIFAUXCMD
+and Athreya \mbox{%DIFAUXCMD
+\cite{athreya}
+}%DIFAUXCMD
+.
+}\begin{lem}
+\DIFadd{For every }\DIFaddend $\delta>0$, \DIFdelbegin \DIFdel{and the corresponding
+function $V_\delta$ given by the previous proposition}\DIFdelend \DIFaddbegin \DIFadd{there exists $C>0$ such that, for all $t>0$,
+there exist a function $V^{(t)}_\delta : T \to [1,\infty)$ and a
+scalar $b(t)>0$ satisfying the following property. For all $x\in
+T_1$,
+  }\begin{equation}\DIFadd{
+  \label{good_vdelta}
+  \int_0^{2\pi} V_\delta^{(t)}(g_t r_\theta x) d \theta
+  \leq C e^{-(1-\delta)t} V_\delta^{(t)}(x) + b.
+  }\end{equation}
+\DIFadd{Moreover,
+  }\begin{equation}\DIFadd{
+  \label{Vdeltasmooth}
+  V_\delta^{(t)}(g x) \leq C V_\delta^{(t)}(x)
+  }\end{equation}
+\DIFadd{for all $x\in T$ and all $g\in SL$ in any fixed neighborhood of the
+identity. Finally, there exists a constant $C_{\delta,t}$ such that
+$V_\delta^{(t)}/ V_\delta\in [C_{\delta,t}^{-1}, C_{\delta,t}]$.
+}\end{lem}
+\DIFadd{The order of quantifiers in our statement corrects a mistake in
+Athreya's Lemma 2.10.
+}
+
+\DIFadd{In the next lemma, we transfer the previous estimate on circle
+averages to estimates on horocycle averages}\DIFaddend .
+
+
+
+\end{document}

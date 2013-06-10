@@ -55,7 +55,6 @@ EOF
 my ($version,$help,$fast,$so,$postscript,$pdf,$force,$dir,$cvs,$rcs,$svn,$git,$diffcmd,$patchcmd,@revs);
 # Preset Variables
 my $latexdiff="latexdiff"; # Program for making the comparison
-### $latexdiff="/home/tilmann/src/latexdiff/trunk/latexdiff"; # Program for making the comparison
 my $vc="";
 my $tempdir=tempdir(CLEANUP => 1);
 # Variables
@@ -223,12 +222,6 @@ if ( ($vc eq "SVN" || $vc eq "CVS") && scalar(@revs)) {
   length($revs[0]) > 0 or $revs[0]="HEAD";
 }
 
-### print STDERR "DEBUG revs($#revs): " . join(":",@revs) . "\n";
-### print STDERR "DEBUG Files($#files): $file1 " . join(":",@files) . "\n";
-### print STDERR "DEBUG LDOptions($#ldoptions): " . join(":",@ldoptions) . "\n";
-### print STDERR "DEBUG vc: $vc \n";
-### print STDERR "DEBUG append $append  \n";
-### print STDERR "DEBUG dir $dir  \n" if ( defined ($dir));
 #exit ; 
 
 
@@ -269,7 +262,6 @@ while ( $infile=$file2=shift @files ) {
   } else {
     ($diff=$infile) =~ s/\.(tex|bbl)$/$append.$1/ ;
   }
-###  print STDERR "DEBUG: diff $diff";
   # make directories if needed
   $dirname=dirname($diff) ;
   system("mkdir -p $dirname") unless ( -e $dirname );
@@ -307,11 +299,9 @@ foreach $diff ( @difffiles ) {
   }
   @ptmpfiles=();
   ( $diffbase=$diff) =~ s/\.(tex)$// ;
-###  print STDERR "DEBUG Postscript $postscript CWD $cwd";
 
   # adapt magically changebar styles to [pdftex] display driver if pdf output was selected
   if ( $pdf ) {
-### note: might do this all within Perl, ie. slurp in whole file; make change; write back
     system("sed \"s/Package\\[dvips\\]/Package[pdftex]/\" \"$diff\" > \"$diff.tmp$$\" ; \\mv \"$diff.tmp$$\" \"$diff\"");
   }
   print STDERR "PDF: $pdf Postscript: $postscript cwd $cwd\n";

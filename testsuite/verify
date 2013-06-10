@@ -1,5 +1,5 @@
 #!/bin/csh
-set refversion=1.0.1
+set refversion=1.0.3
 # for comparison with 0.5:
 #set options="-V -t UNDERLINE -s SAFE -f FLOATSAFE  --disable-citation-markup"
 set options="-V -t UNDERLINE -s SAFE -f FLOATSAFE "
@@ -15,7 +15,7 @@ set testroots=( test rapine_et_al island_obs2004 texdiffsample gershwin12 gershw
 delequ latin9 pollack move-equation nomarkup subscript doubledollar \
 DIFDELCMDBUG eqnarray subscriptm delequ2 schneider gennady umesh underwood endfloat outerrise \
 delequ3 delequ4 "simplefrac --allow-spaces" "master --flatten" titlediffTest2 exampleDiff bornd \
-"rolla --math-markup=2" mini "complex-maths --math-markup=1" margalit )
+"rolla --math-markup=2" mini "complex-maths --math-markup=1" margalit circonflex)
 
 if ( $#argv >= 1 ) then
   if ( $argv[1] == "--reset" ) then

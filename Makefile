@@ -1,5 +1,5 @@
 # Makefile for preparing files for distribution
-VERSION=1.0.2
+VERSION=1.0.3
 
 
 .PHONY: distribution release test mkdirs clean cleanall cleantest webmanual
@@ -16,6 +16,7 @@ distribution: mkdirs dist/latexdiff dist/latexrevise dist/latexdiff-so dist/late
 mkdirs: dist
 	mkdir -p dist/doc
 	mkdir -p dist/example
+	mkdir -p dist/contrib
 
 release: latexdiff-$(VERSION).tar.gz
 

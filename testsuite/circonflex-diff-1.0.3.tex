@@ -1,0 +1,69 @@
+\documentclass{article}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL circonflex-old.tex   Sun May 26 23:10:57 2013
+%DIF ADD circonflex-new.tex   Sun May 26 23:53:29 2013
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w}\`{o}\DIFadd{rld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w}\'{o}\DIFadd{rld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w\^orld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w\"orld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w\H{o}rld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w}\~{o}\DIFadd{rld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w\c{o}rld}\DIFaddend !
+
+\DIFdelbegin \DIFdel{Hello world}\DIFdelend %DIF > Hello w\k{o}rld!
+\DIFaddbegin 
+
+\DIFadd{Hello wor}{\DIFadd{\l}}\DIFadd{d}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w}\={o}\DIFadd{rld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w\b{o}rld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w}\.{o}\DIFadd{rld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w\d{o}rld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w\r{o}rld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w\u{o}rld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w\v{o}rld}\DIFaddend !
+
+Hello \DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \DIFadd{w\t{or}ld}\DIFaddend !
+
+Hello\DIFdelbegin \DIFdel{world}\DIFdelend \DIFaddbegin \_world\DIFaddend !
+
+and some real superscript, e.g. a degree sign:
+\DIFdelbegin \DIFdel{$^\circ$.
+ }\DIFdelend \DIFaddbegin 
+
+\DIFadd{Water: H$_2$O
+ }\DIFaddend\end{document}
+

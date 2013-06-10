@@ -1,0 +1,203 @@
+\documentclass[11pt]{article}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL test-old.tex   Sun Jan 27 23:50:05 2013
+%DIF ADD test-new.tex   Sun Jan 27 23:50:05 2013
+%\usepackage[germanb]{babel}
+\usepackage{epsf}
+%DIF 4-5c4-6
+%DIF < \input{mylatex.sty}
+%DIF < \input{myepsf.sty}
+%DIF -------
+%\input{mylatex.sty} %DIF > 
+% extra line %DIF > 
+%\input{myepsf.sty} %DIF > 
+%DIF -------
+\setlength{\topmargin}{-0.2in}
+\setlength{\textheight}{9.5in}
+%DIF 8d9
+%DIF < \setlength{\textwidth}{6.5in}
+%DIF -------
+\setlength{\oddsidemargin}{0.0in}
+%\setlength{\topmargin}{1.0in}
+\renewcommand{\baselinestretch}{1.8}
+%DIF 12a12
+\setlength{\textwidth}{6.5in} %DIF > 
+%DIF -------
+
+\newcommand{\ea}{{\it et al.}}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+
+\newenvironment{reflist}{\begin{list}{}{\setlength{\itemindent}{-\leftmargin}} \small }
+                           {\end{list}}
+
+%DIF 19c20
+%DIF < \providecommand{\remark}[1]{{ \bf [ \em #1 ]}}
+%DIF -------
+\providecommand{\remark}[1]{{ \bf { \em #1 }}} %DIF > 
+%DIF -------
+
+
+%\def\rf{\vskip 5pt\par\hang\noindent}
+\def\rf{\item}
+
+\newcommand{\jgr}{J. Geophys. Res.}
+\newcommand{\refer}[6]{{#1, #2, #3, {\it #4} {\bf #5}, {#6}.}}
+% \refer{authors}{year}{title}{Journal}{Volume}{page}
+\newcommand{\refartbook}[7]{{#1, #2, #3. In: {\it #4}, ed. by #5, #6, #7.}}
+% \refartbook{authors}{year}{article title}{book-title}{editor}{publisher}{pages}
+\newcommand{\refbook}[5]{{#1, #2, {\it #3}, #4.}}
+% \refbook{authors}{year}{book-title}{publisher}{page}
+% Note: currently output of page is suppressed
+\newcommand{\refreport}[5]{{#1, #2, {\it #3}, #4, #5.}}
+% \refreport{authors}{year}{report-title}{Report Number}{Publisher}
+
+
+\title{DRAFT -    A different kind of discrimination: a trigger algorithm for detecting natural seismicity in the presence of artificial sources}
+\author{Frederik J. Tilmann}
+\date{\today}
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+ABSTRACT \DIFaddbegin \DIFadd{\% %DIF >  comment after explicit percentage sign \%
+}\\%DIF >  Now this one we want to keep as comment
+\DIFaddend \end{abstract}
+
+\DIFdelbegin %DIFDELCMD < \section[Introduction]{%%%
+\DIFdelend \DIFaddbegin \section{\DIFaddend Introduction}
+
+\mbox{\DIFdelbegin \DIFdel{An old }\DIFdelend \DIFaddbegin \DIFadd{A new }\DIFaddend mbox}
+The use of automatic triggers in order to detect earthquake activity \DIFaddbegin \verb|verbose test  *** [[]{{{|
+\DIFaddend is routine in both temporary and permanent networks.   After suitable pre-processing of \DIFaddbegin \verb|more verbose stuff|
+\DIFaddend the data, e.g. frequency filtering for noise suppresion, the
+triggering algorithm generally proceeds in two stages
+(Figure~\DIFdelbegin \DIFdel{\ref{fig:flowchart}}\DIFdelend \DIFaddbegin \DIFadd{\ref{fig:flowchart-2}}\DIFaddend ).  In the first stage, each trace is considered
+individually, and the trigger algorithms marks the times, at which
+signals or arrivals are recorded, usually by comparing the short-term
+average with the long-term average of the signal (STA/LTA method), and
+triggering when this ratio exceeds a certain threshold.  This
+algorithm results in many spurious triggers due to noise bursts or
+cultural or electronic noise, unless the station is very quiet.  For
+this reason, a second stage compares the trigger times of all stations
+of the network and only declares a valid trigger if more than a
+specified number of stations have declared a trigger at almost the
+same time (network triggering), excluding thus noise bursts at single stations.  
+\DIFdelbegin %DIFDELCMD < \begin{verbatim}%DIFDELCMD < 
+%DIFDELCMD < some ticky text
+%DIFDELCMD < \end{verbatim}
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin \begin{verbatim}
+some tricky text
+\end{verbatim}
+\DIFaddend However, this type of algorithm is unable to distinguish artificial
+sources that are strong enough to be recorded at all stations from
+natural seismicity. For example, during deployments of networks of ocean bottom
+seismometers and hydrophones, often active shooting is carried out
+contemporaneously with surveys of microearthquake activity, such that
+the continuous recordings of earthquake activity are `contaminated' with artificial signals.
+% either  
+%directly above the network in order to better locate the network
+%stations and characterise crustal structure beneath them, or simply
+%nearby, because collaborating groups carry out reflection
+%or wide-angle surveys.   
+Unfortunately,\DIFdelbegin \DIFdel{the frequency content of
+}\DIFdelend \DIFaddbegin \ \DIFadd{the }{\em \DIFadd{frequency content}} \DIFadd{of M}\"{a}\DIFadd{rchen
+}\DIFaddend airgun shots and many other marine sources is not sufficiently removed from the typical frequency
+content of local earthquakes such that suppression of the shots by %DIF >  end of line comment
+pre-filtering is not possible.    Nevertheless, shots are immediately
+apparent on plots of continuous data (Figure~\ref{fig:data})
+simply because of their regularity; marine shooting is nearly always
+carried out at regular intervals, with shot intervals between
+$\sim$10 and 120~s.   This fact led to the idea to develop
+an algorithm that can automatically discriminate shots from
+earthquakes based on the regularity of triggers.  This algorithm will
+be described in the following.  It is operating between station-wise STA/LTA
+triggering and network triggering, detecting and removing shots from
+the station-wise trigger lists.   Earthquakes occuring between shots
+will in most cases be triggering correctly.
+
+A sentence with *** stars*in*my*eyes.
+
+  As the shot times are known it would, of course, also be possible to
+  exclude the times of active shooting 
+from the trigger algorithm, or even to selectively block the
+triggers that coincide with expected arrival times of the shots at the
+various stations.  However, this would be tedious and would require
+good communication between the different groups, in particular if the
+instruments are deployed and recovered on different cruises.
+Excluding times of shooting completely would also result in valid
+earthquakes that occurred between shots to be excluded
+unneccessarily.  Blocking triggers selectively based on {\it a priori}
+knowledge of the exact shooting times and locations would require theoretical travel times
+from each shot point to all stations of the network and puts even
+higher demands on the quality of communication.
+
+
+\section{Algorithm}
+
+\DIFaddbegin \begin{minipage}[b]{5cm}
+\DIFadd{MINIPAGE
+}\end{minipage}
+
+\DIFaddend \section{Data examples}
+
+\section{Discussion}
+
+\section*{References}
+
+\begin{figure}
+\caption{Flow chart (a) Network triggering (b) Shot removal stage}
+\label{fig:flowchart}
+\end{figure}
+
+\begin{figure}
+\caption{Trace \DIFaddbeginFL \DIFaddFL{\{}\DIFaddendFL including shots and earthquakes (a) Data high-pass filtered to remove microseismic noise (corner 5.0 Hz) (b) Trigger trace causes triggers at both events and shots \protect\remark{from GERSHWIN data}}
+\label{fig:data}
+\end{figure}
+
+%DIF > \begin{figure}
+\DIFaddbegin \DIFadd{her is some text between figures
+%DIF > \end{figure}
+}
+
+\DIFaddend \begin{figure}
+\caption{Histogram of distances to neighbouring trigger times.  The
+  peak near zero comes about because often the coda of an event
+  triggers repeatedly (because of different phases or multiples). The
+  peaks at multiples of .. s are due to regular shot intervals.}
+\label{fig:histograms}
+\end{figure}
+\DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\cite[]{habermas:03}
+}%DIFAUXCMD
+.more text
+more text
+in North Europe
+\mbox{%DIFAUXCMD
+\cite[]{essen:03}
+}%DIFAUXCMD
+.
+We find that the seondary microseismic noise at ob21 
+}\DIFaddend 
+
+\end{document}
