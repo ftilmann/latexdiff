@@ -1,5 +1,5 @@
 # Makefile for preparing files for distribution
-VERSION=1.0.3
+VERSION=1.0.4alpha
 
 
 .PHONY: distribution release test mkdirs clean cleanall cleantest webmanual
@@ -11,7 +11,7 @@ default:
 	@echo "make release         - to prepare file" latexdiff-$(VERSION).tar.gz " for upload"
 	@echo "make webmanual       - to prepare manual pdf for inclusion in webpage"
 
-distribution: mkdirs dist/latexdiff dist/latexrevise dist/latexdiff-so dist/latexdiff-fast dist/latexdiff-vc dist/latexdiff.1 dist/latexrevise.1 dist/latexdiff-vc.1 dist/doc/latexdiff-man.pdf dist/example/example-draft.tex dist/example/example-rev.tex dist/doc/example-diff.tex dist/doc/latexdiff-man.tex dist/COPYING dist/README dist/contrib
+distribution: mkdirs dist/latexdiff dist/latexrevise dist/latexdiff-so dist/latexdiff-fast dist/latexdiff-vc dist/latexdiff.1 dist/latexrevise.1 dist/latexdiff-vc.1 dist/doc/latexdiff-man.pdf dist/example/example-draft.tex dist/example/example-rev.tex dist/doc/example-diff.tex dist/doc/latexdiff-man.tex dist/COPYING dist/README dist/contrib dist/Makefile
 
 mkdirs: dist
 	mkdir -p dist/doc
@@ -21,7 +21,6 @@ mkdirs: dist
 release: latexdiff-$(VERSION).tar.gz
 
 dist: latexdiff-$(VERSION)
-	rm dist
 	ln -s latexdiff-$(VERSION) dist
 
 webmanual: htdocs/latexdiff-man.pdf
@@ -104,6 +103,9 @@ dist/README: README
 	cp $< $@
 
 dist/COPYING: COPYING
+	cp $< $@
+
+dist/Makefile: Makefile.dist
 	cp $< $@
 
 dist/contrib: contrib

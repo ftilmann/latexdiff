@@ -48,7 +48,7 @@ The basic installation procedure is almost trivial:
 3. Optionally create soft links latexdiff-cvs latexdiff-rcs, and
    latexdiff-svn for latexdiff-vc.
 
-The attached Makefile contains example commands to carry out above 
+The attached trivial Makefile contains example commands to carry out above 
 steps as root for a typical UNIX installation. Type 
 
   make install          (for the stand alone version)
@@ -65,7 +65,8 @@ or
 or
   make test-fast
 
-to test the respective versions on a brief example before installation
+to test the respective versions on a brief example before installation. It will often be
+as easy to carry out these steps manually instead of using the Makefile.
 
 
 DOCUMENTATION:

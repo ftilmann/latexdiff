@@ -14,8 +14,8 @@ set run=0
 set testroots=( test rapine_et_al island_obs2004 texdiffsample gershwin12 gershwin34 example utf \
 delequ latin9 pollack move-equation nomarkup subscript doubledollar \
 DIFDELCMDBUG eqnarray subscriptm delequ2 schneider gennady umesh underwood endfloat outerrise \
-delequ3 delequ4 "simplefrac --allow-spaces" "master --flatten" titlediffTest2 exampleDiff bornd \
-"rolla --math-markup=2" mini "complex-maths --math-markup=1" margalit circonflex)
+delequ3 delequ4 "simplefrac --allow-spaces" "master --flatten" titlediffTest2 exampleDiff bornd2 \
+"rolla --math-markup=2" mini "complex-maths --math-markup=1" margalit circonflex mwe-comment)
 
 if ( $#argv >= 1 ) then
   if ( $argv[1] == "--reset" ) then
