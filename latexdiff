@@ -22,17 +22,23 @@
 #
 # Detailed usage information at the end of the file
 #
+# ToDo:
+#  
+#
 # Version 1.0.4alpha
+#    - fix units package incompatibility with ulem for text maths statements $ ..$ (thanks to Stuart Prescott for reporting this)
 #    - amsmath environment cases treated correctly (Bug fix #19029) (thanks to Jalar)
 #    - {,} in comments no longer confuse latexdiff (Bug fix #19146)
+#    - \% in one-letter sub/Superscripts was not converted correctly
 # Version 1.0.3
 #    - fix bug in add_safe_commands that made latexdiff hang on DeclareMathOperator 
 #      command in preamble
 #    - \(..\) inline math expressions were not parsed correctly, if they contained a linebreak
 #    - applied patch contributed by tomflannaghan via Berlios: [ Patch #3431 ] Adds correct handling of \left< and \right>
 #    - \$ is treated correctly as a literal dollar sign (thanks to Reed Cartwright and Joshua Miller for reporting this bug 
-#       and sketching out the solution)
-#    - \^ and \_ are correctly interpreted as accent and underlined space, respectively, not as superscript of subscript (thanks to Wail Yahyaoui for pointing out this bug)
+#      and sketching out the solution)
+#    - \^ and \_ are correctly interpreted as accent and underlined space, respectively, not as superscript of subscript
+#      (thanks to Wail Yahyaoui for pointing out this bug)
 #
 # Version 1.0.1 - treat \big,\bigg etc. equivalently to \left and
 #              \right - include starred version in MATHENV - apply
@@ -117,7 +123,8 @@ my $COUNTERCMD='(?:footnote|part|chapter|section|subsection|subsubsection|paragr
                                         # should be the same as in the new file
 my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
 my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
-
+my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths expression with \mbox ( to get around compatibility
+                      # problems between some maths packages and ulem package
 
 ### use context2cmd list instead to define TITLECMD
 ###my $TITLECMD='(?:title|author|date|institute)'; # Preamble commands which contain text to be epressed by \maketitle command
@@ -183,7 +190,7 @@ my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblel
     $replacecontext1,$appendcontext1,
     $replacecontext2,$appendcontext2,
     $help,$verbose,$driver,$version,$ignorewarnings,
-    $enablecitmark,$disablecitmark,$allowspaces,$flatten,$debug);  ###$disablemathmark,
+    $enablecitmark,$disablecitmark,$allowspaces,$flatten,$debug,$earlylatexdiffpreamble);  ###$disablemathmark,
 # MNEMNONICS for mathmarkup
 my $mathmarkup;
 use constant {
@@ -212,6 +219,9 @@ $mathmarkup=COARSE;
 $verbose=0;
 # output debug and intermediate files, set to 0 in final distribution
 $debug=1; 
+# insert preamble directly after documentclass - experimental feature, set to 0 in final distribution
+$earlylatexdiffpreamble=1;
+
 # define character properties
 sub IsNonAsciiPunct { return <<'END'    # Unicode punctuation but excluding ASCII punctuation
 +utf8::IsPunct
@@ -549,8 +559,6 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $comment='%.*?\n';
   my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
 
-
-
 # now we are done setting up and can start working   
 my ($oldfile, $newfile) = @ARGV;
 # check for existence of input files
@@ -674,6 +682,7 @@ if ( length $oldpreamble && length $newpreamble ) {
   %packages=list_packages(@newpreamble) unless %packages;
 ###  if ( %packages ) {print STDERR "DEBUG Packages: ",%packages,"\n" ;}
   if (defined $packages{"hyperref"} ) {
+    # deleted lines should not generate or appear in link names:
     print STDERR "hyperref package detected.\n" if $verbose ;
     $latexdiffpreamble =~ s/\{\\DIFadd\}/{\\DIFaddtex}/g;
     $latexdiffpreamble =~ s/\{\\DIFdel\}/{\\DIFdeltex}/g;
@@ -683,6 +692,16 @@ if ( length $oldpreamble && length $newpreamble ) {
 ###    $latexdiffpreamble .= '\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}}' . "\n";
 ###    $latexdiffpreamble .= '%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
   }
+
+###  if (defined $packages{"units"} && ( uc($type) eq "UNDERLINE" || uc($type) eq "FONTSTRIKE" || uc($type) eq "CULINECHBAR") {
+  if (defined $packages{"units"}  && ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/ ) ) {
+    # protect inlined maths environments by surrounding with an \mbox
+    # this is done to get around an incompatibility between the ulem and units package
+    # where spaces in the argument to underlined or crossed-out \unit commands cause an error message
+    print STDERR "units package detected at the same time as style using ulem.\n" if $verbose ;
+    $MBOXINLINEMATH=1;
+  }
+
   print STDERR "Differencing preamble.\n" if $verbose;
 
   # insert dummy first line such that line count begins with line 1 (rather than perl's line 0) - just so that line numbers inserted by linediff are correct
@@ -700,7 +719,14 @@ if ( length $oldpreamble && length $newpreamble ) {
     push @diffpreamble,"%DIF DELETED TITLE COMMANDS FOR MARKUP";
     push @diffpreamble,join("\n",@auxlines);
   }
-  push @diffpreamble,$latexdiffpreamble;
+  if ( $earlylatexdiffpreamble) {
+    # insert latexdiff command directly after documentclass at beginning of preamble
+    # note that grep is only run for its side effect
+    ( grep { s/^([^%]*\\documentclass.*)$/$1$latexdiffpreamble/ } @diffpreamble )==1 or die "Could not find documentclass statement in preamble";
+  } else {
+    # insert latexdiff commands at the end of preamble (default behaviour)
+    push @diffpreamble,$latexdiffpreamble;
+  }
   push @diffpreamble,'\begin{document}';
 }
 elsif ( !length $oldpreamble && !length $newpreamble ) {
@@ -1678,8 +1704,8 @@ sub preprocess {
 ###    s/(%.*)\\begin\{(.*)$/$1\\BEGINDIF\{$2/mg ;
 ###    s/(%.*)\\end\{(.*)$/$1\\ENDDIF\{$2/mg ;
 # replace {,} in comments with \\CLEFTBRACE,\\CRIGHTBRACE
-    1 while s/(%.*)\{(.*)$/$1\\CLEFTBRACE$2/mg ;
-    1 while s/(%.*)\}(.*)$/$1\\CRIGHTBRACE$2/mg ;
+    1 while s/(%.*)\{(.*)$/$1\\CLEFTBRACE $2/mg ;
+    1 while s/(%.*)\}(.*)$/$1\\CRIGHTBRACE $2/mg ;
 
 ###    s/\n(\s*)\n((?:\s*\n)*)/\\PAR\n$2/g ;
     s/\n(\s*?)\n((?:\s*\n)*)/\n$1\\PAR\n$2/g ;
@@ -1953,6 +1979,12 @@ sub postprocess {
       if ($CITECMD) {
 	$delblock=~s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat6\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
       } 
+      # if MBOXINLINEMATH is set, protect inlined math environments with an extra mbox
+      if ( $MBOXINLINEMATH ) {
+	# note additional \newline after command is omitted from output if right at the end of deleted block (otherwise a spurious empty line is generated)
+	$delblock=~s/($math)(?:[\s\n]*)?/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/sg;
+      }
+
 #     splice in modified delblock
       substr($_,$begin,$len)=$delblock;
       pos = $begin + length($delblock);
@@ -1979,6 +2011,11 @@ sub postprocess {
 ###	print STDERR "DEBUG: addblock before:|$addblockbefore|\n";
 ###	print STDERR "DEBUG: addblock after: |$addblock|\n";
       }
+      # if MBOXINLINEMATH is set, protect inlined math environments with an extra mbox
+      if ( $MBOXINLINEMATH ) {
+	##$addblock=~s/($math)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/sg;
+	$addblock=~s/($math)(?:[\s\n]*)?/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/sg;
+      }
 #     splice in modified addblock
       substr($_,$begin,$len)=$addblock;
       pos = $begin + length($addblock);
@@ -1994,9 +2031,9 @@ sub postprocess {
 
     # replace {,} in comments with \\CLEFTBRACED,\\CRIGHTBRACED
     # This needs to be repeated here to also get rid of DIFdelcmd-protected environments
-    # not CLEFTBRACED used here vs CLEFTBRACE in initial conversion
-    1 while s/(%.*)\{(.*)$/$1\\CLEFTBRACED$2/mg ;
-    1 while s/(%.*)\}(.*)$/$1\\CRIGHTBRACED$2/mg ;
+    # note CLEFTBRACED used here vs CLEFTBRACE in initial conversion
+    1 while s/(%.*)\{(.*)$/$1\\CLEFTBRACED $2/mg ;
+    1 while s/(%.*)\}(.*)$/$1\\CRIGHTBRACED $2/mg ;
 
     # Replace MATHMODE environments from step 1a above by the correct Math environment
 
@@ -2067,8 +2104,8 @@ sub postprocess {
     s/${DELCMDOPEN}\\(verbatim\*?)\{([-\d]*?)\}/"${DELCMDOPEN}\\begin{${1}}".fromhash(\%verbhash,$2,$DELCMDOPEN)."${DELCMDOPEN}\\end{${1}}"/esg;
 ###    s/(?<!%\\DIFCMD < )\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
     s/\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
-    # Convert '\PERCENTAGE ' back into '\%'			       
-    s/\\PERCENTAGE /\\%/g;
+    # Convert '\PERCENTAGE ' back into '\%' (the final question mark catches a special situation where due to a latter pre-processing step the ' ' becomes separated	       
+    s/\\PERCENTAGE ?/\\%/g;
     # Convert '\DOLLAR ' back into '\$'			       
     s/\\DOLLAR /\\\$/g;
     # remove all \PAR tokens (taking care to properly keep commented out PAR's
@@ -2096,8 +2133,8 @@ sub postprocess {
     # undo renaming of the \begin and \end,{,}  and dollars in comments 
 ###    s/(%.*)\\BEGINDIF\{(.*)$/$1\\begin\{$2/mg ;
 ###    s/(%.*)\\ENDDIF\{(.*)$/$1\\end\{$2/mg ;
-    1 while s/(%.*)\\CLEFTBRACED(.*)$/$1\{$2/mg ;
-    1 while s/(%.*)\\CRIGHTBRACED(.*)$/$1\}$2/mg ;
+    1 while s/(%.*)\\CLEFTBRACED (.*)$/$1\{$2/mg ;
+    1 while s/(%.*)\\CRIGHTBRACED (.*)$/$1\}$2/mg ;
     1 while s/(%.*)DOLLARDIF/$1\$/mg ;
     # undo renaming of the \cite.. commands in comments 
     if ( $CITECMD ) {
@@ -2114,8 +2151,8 @@ sub postprocess {
     # Convert  \SUBSCRIPNB{n} into _n  and  \SUBCRIPT{nn} into _{nnn}
     1 while s/\\SUBSCRIPT{($pat6)}/_{$1}/g ;
     1 while s/\\SUBSCRIPTNB{($pat0)}/_$1/g ;
-    1 while s/(%.*)\\CRIGHTBRACE(.*)$/$1\}$2/mg ;
-    1 while s/(%.*)\\CLEFTBRACE(.*)$/$1\{$2/mg ;
+    1 while s/(%.*)\\CRIGHTBRACE (.*)$/$1\}$2/mg ;
+    1 while s/(%.*)\\CLEFTBRACE (.*)$/$1\{$2/mg ;
 
 
 #    Change \QLEFTBRACE, \QRIGHTBRACE to \{,\}
@@ -2546,7 +2583,7 @@ Miscelleneous options
 
 --no-label             Suppress inclusion of old and new file names as comment in output file
 
---visble-label         Include old and new filenames (or labels set with --label option) as 
+--visible-label         Include old and new filenames (or labels set with --label option) as 
                        visible output
 
 --flatten              Replace \\input and \\include commands within body by the content
