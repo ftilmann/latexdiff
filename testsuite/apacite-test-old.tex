@@ -1,0 +1,18 @@
+\documentclass{article}
+
+\usepackage{apacite}
+
+\begin{document}
+
+Here's some text, followed by a very important reference
+\cite<here I feel obligated to cite>[even though it's not really
+necessary]{small}.  Then a bit more text, with another reference
+\cite{small} that I'll probably remove later.
+
+Next a new paragraph \cite{big}.  Again, \citeA{big} claims XYZ
+although we're not really sure why.
+
+\bibliographystyle{apacite}
+\bibliography{apacite-test.bib}
+
+\end{document}

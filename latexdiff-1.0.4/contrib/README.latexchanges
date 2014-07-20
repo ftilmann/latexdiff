@@ -1,0 +1,13 @@
+latexchanges.py (Jan-Ake Larsson):
+Here's a wrapper I wrote for latexdiff, intended as a drop-in
+replacement for latex, when you have several numbered (or dated)
+versions of a manuscript. My coauthors don't as a rule know what CVS or
+SVN is, they simply use a number or date for the different versions.
+
+latexchanges replaces the current DVI with one that includes a
+latexdiff to the last version. The last version is selected as the
+TEX file in the same directory with the same prefix (up to a number
+or a dot), that has an mtime immediately preceding the given TEX
+file.
+
+

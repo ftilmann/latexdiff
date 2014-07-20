@@ -227,12 +227,6 @@ if ( ($vc eq "SVN" || $vc eq "CVS") && scalar(@revs)) {
   length($revs[0]) > 0 or $revs[0]="HEAD";
 }
 
-### print STDERR "DEBUG revs($#revs): " . join(":",@revs) . "\n";
-### print STDERR "DEBUG Files($#files): $file1 " . join(":",@files) . "\n";
-### print STDERR "DEBUG LDOptions($#ldoptions): " . join(":",@ldoptions) . "\n";
-### print STDERR "DEBUG vc: $vc \n";
-### print STDERR "DEBUG append $append  \n";
-### print STDERR "DEBUG dir $dir  \n" if ( defined ($dir));
 #exit ; 
 
 
@@ -273,7 +267,6 @@ while ( $infile=$file2=shift @files ) {
   } else {
     ($diff=$infile) =~ s/\.(tex|bbl)$/$append.$1/ ;
   }
-###  print STDERR "DEBUG: diff $diff";
   # make directories if needed
   $dirname=dirname($diff) ;
   system("mkdir -p $dirname") unless ( -e $dirname );

@@ -1,5 +1,5 @@
 # Makefile for preparing files for distribution
-VERSION=1.0.4alpha
+VERSION=1.0.4
 
 
 .PHONY: distribution release test mkdirs clean cleanall cleantest webmanual
@@ -105,8 +105,8 @@ dist/README: README
 dist/COPYING: COPYING
 	cp $< $@
 
-dist/Makefile: Makefile.dist
-	cp $< $@
+#dist/Makefile: Makefile.dist
+#	cp $< $@
 
 dist/contrib: contrib
 	cp -r $</* $@
