@@ -236,7 +236,7 @@ $mathmarkup=COARSE;
 
 $verbose=0;
 # output debug and intermediate files, set to 0 in final distribution
-$debug=0; 
+$debug=1; 
 # insert preamble directly after documentclass - experimental feature, set to 0 in final distribution
 # Note that this failed with mini example (or other files, where packages used in latexdiff preamble
 # are called again with incompatible options in preamble of resulting file)
@@ -990,7 +990,7 @@ sub flatten {
   print STDERR "DEBUG: includeonly $includeonly\n" if $debug;
 
   # recursively replace \\input and \\include files
-  $text=~s/(^(?:[^%\n]|\\%)*)\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?)}/{ 
+  $text=~s/(^(?:[^%\n]|\\%)*)(?:\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?))}/{ 
 	    $fname = $2 if defined($2) ;
 	    $fname = $3 if defined($3) ;
             #      # add tex extension unless there is a three letter extension already 
