@@ -12,10 +12,10 @@ latexrevise, which accepts or rejects all changes.  Manual
 editing of the difference file can be used to override this default
 behaviour and accept or reject selected changes only.  
 
-The author is F Tilmann (ftilmann@users.berlios.de). 
+The author is F Tilmann. 
 
-Project webpage:   http://latexdiff.berlios.de/
-CTAN page:          http://www.ctan.org/tex-archive/support/latexdiff
+Project webpage:   https://github.com/ftilmann/latexdiff/
+CTAN page:         http://www.ctan.org/pkg/latexdiff
 
 
 REQUIREMENTS
@@ -45,7 +45,7 @@ The basic installation procedure is almost trivial:
 
 2. Copy latexdiff.1 and latexrevise.1 into the correct man directory
 
-3. Optionally create soft links latexdiff-cvs latexdiff-rcs, and
+3. Optionally create soft links latexdiff-cvs latexdiff-rcs, latexdiff-git and
    latexdiff-svn for latexdiff-vc.
 
 The attached trivial Makefile contains example commands to carry out above 

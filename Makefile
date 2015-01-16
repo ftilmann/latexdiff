@@ -105,8 +105,8 @@ dist/README: README
 dist/COPYING: COPYING
 	cp $< $@
 
-#dist/Makefile: Makefile.dist
-#	cp $< $@
+dist/Makefile: Makefile.dist
+	cp $< $@
 
 dist/contrib: contrib
 	cp -r $</* $@

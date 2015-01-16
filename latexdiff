@@ -29,6 +29,10 @@
 ###  - make style that allows (forward and backjumping with hyperref)
 ###  - make style / latexdiff-vc combo that allows only to output pages with changes 
 ###    (remember to update answer on stack exchange: http://tex.stackexchange.com/questions/166049/invisible-markers-in-pdfs-using-pdflatex)
+###  - user configurable mbox protection (see http://tex.stackexchange.com/questions/218973/how-to-protect-or-mbox-commands-in-latexdiff ), also see email
+#
+# Version 1.0.5a
+#    - treat \_ and \& correctly as safe commands, even if used without spacing to the next word
 #
 # Version 1.0.4
 #    - introduce list UNSAFEMATHCMD, which holds list of commands which cannot be marked up with \DIFadd or \DIFdel commands  (only relevant for WHOLE and COARSE math markup modes)
@@ -119,8 +123,8 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.0.4  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
-  (c) 2004-2014 F J Tilmann
+This is LATEXDIFF 1.0.5a  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+  (c) 2004-2015 F J Tilmann
 EOF
 
 # Configuration variables: these have to be visible from the subroutines
@@ -530,10 +534,12 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $and = '&';
 ###  my $spacecmd = '\\\\\040';
   my $coords= '[\-.,\s\d]*';
+# quoted underscore - this needs special treatment as perl treats _ as a letter (\w) but latex does not
+# such that a\_b is interpreted as a{\_}b by latex but a{\_b} by perl
+  my $quotedunderscore='\\\\_';
 # word: sequence of letters or accents followed by letter
   my $word='(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])+';
   my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|]|\\\\(?:[|{}]|\w+))';
-
 ###  my $word='(?:[-\p{IsL}*]|\\\\[\"\'\`~^][\p{IsL}A-Za-z\*])+';
 ### standard $cmdoptseq without intervening spaces
 ###pre-0.3  my $cmdoptseq='\\\\[\w\d\*]+(?:\['.$brat0.'\]|\{'. $pat6 . '\}|\(' . $coords .'\))*';
@@ -548,10 +554,9 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 ### test version (this seems to give the same results as version above)
 ## the current maths command cannot cope with newline within the math expression
 ### my $math='\$(?:[^$]|\\\$)*?\$|\\[(].*?\\[)]';
-
 ###  my $math='\$(?:[^$]|\\\$)*\$';
   my $comment='%.*?\n';
-  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
+  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
 
 # now we are done setting up and can start working   
 my ($oldfile, $newfile) = @ARGV;
@@ -783,7 +788,7 @@ if ( uc($type) ne "UNDERLINE" && uc($type) ne "FONTSTRIKE" && uc($type) ne "CULI
 ###$CITECMD='(?:cite\w*|nocite)' if $enablecitmark ; # as above for explicit selection
 $CITECMD=$citpat if $enablecitmark ; # as above for explicit selection
 
-print STDERR "CITECMD:|$CITECMD|\n" if $debug;
+###print STDERR "CITECMD:|$CITECMD|\n" if $debug;
 
 if (defined $packages{"amsmath"}  or defined $packages{"amsart"} or defined $packages{"amsbook"} ) {
   print STDERR "amsmath package detected.\n" if $verbose ;
@@ -990,7 +995,7 @@ sub flatten {
   print STDERR "DEBUG: includeonly $includeonly\n" if $debug;
 
   # recursively replace \\input and \\include files
-  $text=~s/(^(?:[^%\n]|\\%)*)(?:\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?))}/{ 
+  $text=~s/(^(?:[^%\n]|\\%)*)\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?)}/{ 
 	    $fname = $2 if defined($2) ;
 	    $fname = $3 if defined($3) ;
             #      # add tex extension unless there is a three letter extension already 
@@ -1747,7 +1752,7 @@ sub marktags {
 # preprocess($string, ..)
 # carry out the following pre-processing steps for all arguments:
 # 1. Remove leading white-space
-#    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE
+#    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE and \& to \AMPERSAND
 ### pre 1.0.4 BEGINDIF,ENDDIF substitution
 ### #. change begin and end commands  within comments to BEGINDIF, ENDDIF
 ###    so they don't disturb the pattern matching (if there are several \begin or \end in one line, this 
@@ -1779,6 +1784,7 @@ sub preprocess {
     #    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE
     s/(?<!\\)\\{/\\QLEFTBRACE /sg;
     s/(?<!\\)\\}/\\QRIGHTBRACE /sg;
+    s/(?<!\\)\\&/\\AMPERSAND /sg;
 ### pre 1.0.4
 ###    # change begin and end commands  within comments such that they
 ###    # don't disturb the pattern matching (if there are several \begin or \end in one line
@@ -1904,7 +1910,7 @@ sub fromhash {
 # 10.  package specific processing:  endfloat: make sure \begin{figure} and \end{figure} are always
 #      on a line by themselves, similarly for table environment
 #  4, undo renaming of the \begin, \end,{,}  in comments
-#    Change \QLEFTBRACE, \QRIGHTBRACE to \{,\}
+#    Change \QLEFTBRACE, \QRIGHTBRACE,\AMPERSAND to \{,\},\&
 #
 # Note have to manually synchronize substitution commands below and 
 # DIF.. command names in the header
@@ -2247,6 +2253,7 @@ sub postprocess {
 #    Change \QLEFTBRACE, \QRIGHTBRACE to \{,\}
     s/\\QLEFTBRACE /\\{/sg;
     s/\\QRIGHTBRACE /\\}/sg;
+    s/\\AMPERSAND /\\&/sg;
 
   return;
   }
@@ -3397,8 +3404,8 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.0.4
-Copyright (C) 2004-2012 Frederik Tilmann
+Version 1.0.5a
+Copyright (C) 2004-2015 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License Version 3
@@ -3626,6 +3633,8 @@ Pr
 sec
 sup
 [Hclbdruvt]
+_
+AMPERSAND
 (SUPER|SUB)SCRIPTNB
 (SUPER|SUB)SCRIPT
 PERCENTAGE
@@ -3666,12 +3675,12 @@ sqrt
 %%END TEXT COMMANDS 
 
 %%BEGIN CONTEXT1 COMMANDS
-% Regex matching commands with a text argument (leave out the \), which will fail out of context, but whose argument should be printed as plain text
+% Regex matching commands with a text argument (leave out the \), which will fail out of context. These commands behave like text commands, except when they occur in a deleted section, where they are disabled, but their argument is shown as deleted text.
 caption
 %%END CONTEXT1 COMMANDS 
 
 %%BEGIN CONTEXT2 COMMANDS
-% Regex matching commands with a text argument (leave out the \), which will fail out of context, but whose argument should be printed as plain text
+% Regex matching commands with a text argument (leave out the \), which will fail out of context.  As corresponding commands for context1.  The only difference is that context2 commands are completely disabled in deleted sections, including their arguments.
 title
 author
 date
