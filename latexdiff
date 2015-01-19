@@ -663,6 +663,14 @@ exetime(1);
 if ($flatten) {
   $oldbody=flatten($oldbody,$oldpreamble,$oldfile,$encoding);
   $newbody=flatten($newbody,$newpreamble,$newfile,$encoding);
+###   if ( $debug ) {
+###     open(FILE,">","latexdiff.debug.flatold");
+###     print FILE $oldpreamble,'\\begin{document}',$oldbody,'\\end{document}',$oldpost;
+###     close(FILE);
+###     open(FILE,">","latexdiff.debug.flatnew");
+###     print FILE $newpreamble,'\\begin{document}',$newbody,'\\end{document}',$newpost;
+###     close(FILE);
+###   }
 }
 
 
@@ -996,6 +1004,7 @@ sub flatten {
 
   # recursively replace \\input and \\include files
   $text=~s/(^(?:[^%\n]|\\%)*)\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?)}/{ 
+	    $begline=(defined($1)? $1 : "") ;
 	    $fname = $2 if defined($2) ;
 	    $fname = $3 if defined($3) ;
             #      # add tex extension unless there is a three letter extension already 
@@ -1007,7 +1016,6 @@ sub flatten {
             ###$replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
 	    $replacement=flatten(read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding), $preamble,$filename,$encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
 	    # \include always starts a new page; use explicit \newpage command to simulate this
-	    $begline=(defined($1)? $1 : "") ;
 	    $newpage=(defined($3)? " \\newpage " : "") ;
 	    "$begline$newpage$replacement$newpage";
           }/exgm;
