@@ -23,6 +23,7 @@
 # Detailed usage information at the end of the file
 #
 # ToDo:
+###  
 ###  - recursive processing of included files and bibliography with latexdiff-vc  
 ###  - add possibility to store configuration options for latexdiff in a file rather than as options
 ###  - use kdiff3 as a merge tool
@@ -32,6 +33,7 @@
 ###  - user configurable mbox protection (see http://tex.stackexchange.com/questions/218973/how-to-protect-or-mbox-commands-in-latexdiff ), also see email
 #
 # Version 1.0.5a
+#    - treat diacritics (\",\', etc) as safe commands
 #    - treat \_ and \& correctly as safe commands, even if used without spacing to the next word
 #
 # Version 1.0.4
@@ -1032,7 +1034,8 @@ sub flatten {
   }/exgm;
   # replace subfile with contents (subfile package)
   $text=~s/(^(?:[^%\n]|\\%)*)\\subfile{(.*?)}/{ 
-	   $fname = $2; 
+           $begline=(defined($1)? $1 : "") ;
+     	   $fname = $2; 
            #      # add tex extension unless there is a three letter extension already 
            $fname .= ".tex" unless $fname =~ m|\.\w{3}|;
            print STDERR "DEBUG Beg of line match |$1|\n" if defined($1) && $debug ;
@@ -1046,7 +1049,6 @@ sub flatten {
 ###           $subfile=~s|^.*\\begin{document}||s; 
 ###           $subfile=~s|\\end{document}.*$||s;
 	   $replacement=flatten($subbody, $preamble,$filename,$encoding);
-           $begline=(defined($1)? $1 : "") ;
 	   "$begline$replacement";
   }/exgm;
 
@@ -1209,10 +1211,10 @@ sub bodydiff {
 
   print STDERR "(",exetime()," s)\n","Pass 2: inserting DIF tokens and mark up.  " if $verbose;
   if ( $debug ) {
-    open(TOKENOLD,">","latexdiff.debug.tokenold2.tex");
+    open(TOKENOLD,">","latexdiff.debug.tokenold2");
     print TOKENOLD join("***\n",@oldwords);
     close(TOKENOLD);
-    open(TOKENNEW,">","latexdiff.debug.tokennew2.tex");
+    open(TOKENNEW,">","latexdiff.debug.tokennew2");
     print TOKENNEW join("***\n",@newwords);
     close(TOKENNEW);
   }
@@ -1325,7 +1327,7 @@ sub pass1 {
 #			print STDERR "Unchanged block $cnt, $last1,$last2 \n";
                         if ($cnt < $MINWORDSBLOCK 
 			    && $cnt==scalar (
-				     grep { /^$wpat/ || ( /^\\([\w\d\*]+)((?:\[$brat0\]|\{$pat6\})*)/o 
+				     grep { /^$wpat/ || ( /^\\((?:[`'^"~=.]|[\w\d@*]+))((?:\[$brat0\]|\{$pat6\})*)/o 
 							   && iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 							   && scalar(@dummy=split(" ",$2))<3 ) }
 					     @$block) )  {
@@ -1477,8 +1479,8 @@ sub extracttextblocks {
   for ($i=0;$i< scalar @$block;$i++) {
     ($token,$index)=@{ $block->[$i] };
     # store pure text blocks
-### pre-0.3    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d\*]+)((?:\[$brat0\]|\{$pat6\})*)/o 
-    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d\*]+)((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat6\})*)/o 
+### pre-0.3    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d*]+)((?:\[$brat0\]|\{$pat6\})*)/o 
+    if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat6\})*)/o 
 				&& iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 				&& !iscmd($1,\@TEXTCMDLIST,\@TEXTCMDEXCL))) {
       # we have text or a command which can be treated as text
@@ -1631,7 +1633,7 @@ sub pass2 {
 }
 
 # marktags($openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment,\@block)
-# returns ($openmark,$open,$block,$close,$closemark) if @block only contains no commands (except white-listed ones),
+# returns ($openmark,$open,$block,$close,$closemark) if @block contains no commands (except white-listed ones),
 # braces, ampersands, or comments
 # mark comments with $comment
 # exclude all other exceptions from scope of open, close like this
@@ -1653,7 +1655,7 @@ sub marktags {
   @$block=splitlatex(join "",@$block);
   foreach (@$block) {
     $word=$_; 
-###    print STDERR "MARKTAGS: |$word|\n";
+    ### print STDERR "DEBUG MARKTAGS: |$word|\n" if $debug;
     if ( $word =~ s/^%/%$comment/ ) {
       # a comment
 ###      print STDERR "MARKTAGS: Add comment |$word|\n";
@@ -1668,14 +1670,12 @@ sub marktags {
       push (@$retval,$openmark); 
       $noncomment=1;
     }
-    # negative lookahead pattern (?!) in second clause is put in to avoid mathcing \( .. \) patterns
+    # negative lookahead pattern (?!) in second clause is put in to avoid matching \( .. \) patterns
     # also note that second pattern will match \\
 ###    print STDERR "DEBUG marktags: Considering word |$word|\n";
-    # Note: the second pattern should really be $word =~ /^\\(?!\()(\\|[\w*@]+)/, ie * replaced by +
-    # and then all commands \" \' etc declared safe. But as I don't have a complete list of one letter 
-    # commands, and nobody has complained so far, I will eave this as is
-    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[\w*@]*)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
-###    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\([\w*@\\% ]+)/ && !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
+    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
+      ### print STDERR "DEBUG MARKTAGS is a non-safe command ($1)\n" if $debug;
+      ###    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\([\w*@\\% ]+)/ && !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
       # word is a command or other significant token (not in SAFECMDLIST)
 	## same conditions as in subroutine extractcommand:
 	# check if token is an alphanumeric command sequence with at least one non-optional argument
@@ -1741,7 +1741,8 @@ sub marktags {
 	$cmd=1;
       }
     } else {
-      # just an ordinary word or word in SAFECMD
+      ###print STDERR "DEBUG MARKTAGS is an ordinary word or SAFECMD command \n" if $debug;
+      # just an ordinary word or command in SAFECMD
       push (@$retval,$open) if $cmd==-1 ;
       push (@$retval,$closecmd,$open) if $cmd==1 ;
       push (@$retval,$word);
@@ -3640,7 +3641,8 @@ min
 Pr
 sec
 sup
-[Hclbdruvt]
+[Hclbkdruvt]
+[`'^"~=.]
 _
 AMPERSAND
 (SUPER|SUB)SCRIPTNB

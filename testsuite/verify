@@ -53,7 +53,7 @@ while ( $#testroots >= 1 )
   latexdiff $options $eopt ${sample}-old.tex ${sample}-new.tex > ${sample}-diff.tex
 #  diff ${sample}-diff-$refversion.tex ${sample}-diff.tex
   if ( $?reset ) then
-    cp  ${sample}-diff.tex  ${sample}-diff-$refversion.tex 
+    \cp  ${sample}-diff.tex  ${sample}-diff-$refversion.tex 
   else 
     if (! -e ${sample}-diff-$refversion.tex ) then
        echo "Reference version ${sample}-diff-$refversion.tex does not exist."
