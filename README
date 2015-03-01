@@ -45,8 +45,8 @@ The basic installation procedure is almost trivial:
 
 2. Copy latexdiff.1 and latexrevise.1 into the correct man directory
 
-3. Optionally create soft links latexdiff-cvs latexdiff-rcs, latexdiff-git and
-   latexdiff-svn for latexdiff-vc.
+3. Optionally create soft links latexdiff-cvs latexdiff-rcs, latexdiff-git
+   latexdiff-svn and latexdiff-hg for latexdiff-vc.
 
 The attached trivial Makefile contains example commands to carry out above 
 steps as root for a typical UNIX installation. Type 

@@ -35,6 +35,7 @@
 # Version 1.0.5a
 #    - treat diacritics (\",\', etc) as safe commands
 #    - treat \_ and \& correctly as safe commands, even if used without spacing to the next word
+#    - Add a BOLD markup type that sets added text in bold face
 #
 # Version 1.0.4
 #    - introduce list UNSAFEMATHCMD, which holds list of commands which cannot be marked up with \DIFadd or \DIFdel commands  (only relevant for WHOLE and COARSE math markup modes)
@@ -2527,7 +2528,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
 --type=markupstyle
 -t markupstyle         Add code to preamble for selected markup style
                        Available styles: UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
-                                         CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR
+                                         CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD
                        [ Default: UNDERLINE ]
 
 --subtype=markstyle
@@ -2865,7 +2866,7 @@ C<\DIFadd> and C<\DIFdel> commands.
 Available styles: 
 
 C<UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
-CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR>
+CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD>
 
 [ Default: C<UNDERLINE> ]
 
@@ -3238,6 +3239,10 @@ No mark up of text, but mark margins with changebars (Requires changebar package
 =item C<INVISIBLE>
 
 No visible markup (but generic markup commands will still be inserted.
+
+=item C<BOLD>
+
+Added text is set in bold face, discarded is not shown.
 
 =back
 
@@ -3765,6 +3770,10 @@ institute
 \providecommand{\DIFdel}[1]{}
 %DIF END INVISIBLE PREAMBLE
 
+%DIF BOLD PREAMBLE
+\providecommand{\DIFadd}[1]{{\bf #1}}
+\providecommand{\DIFdel}[1]{}
+%DIF END BOLD PREAMBLE
 
 %% SUBTYPES (Markers for beginning and end of changed blocks)
 

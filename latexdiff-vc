@@ -54,7 +54,7 @@ EOF
 
 
 # Option names
-my ($version,$help,$fast,$so,$postscript,$pdf,$force,$dir,$cvs,$rcs,$svn,$git,$diffcmd,$patchcmd,@revs);
+my ($version,$help,$fast,$so,$postscript,$pdf,$force,$dir,$cvs,$rcs,$svn,$git,$hg,$diffcmd,$patchcmd,@revs);
 # Preset Variables
 my $latexdiff="latexdiff"; # Program for making the comparison
 my $latexcmd="latex"; # latex compiler if not further identified
@@ -71,6 +71,7 @@ GetOptions('revision|r:s' => \@revs,
            'rcs' => \$rcs,
            'svn' => \$svn,
            'git' => \$git,
+           'hg' => \$hg,
            'dir|d:s' => \$dir,
 	   'fast' => \$fast,
 	   'so' => \$so,
@@ -102,15 +103,15 @@ if ( $cvs ) {
   $vc="CVS";
 }
 if ( $rcs ) {
-  die "Cannot specify more than one of --cvs, --rcs --svn or --git." if ($vc);
+  die "Cannot specify more than one of --cvs, --rcs, --svn --git or --hg." if ($vc);
   $vc="RCS";
 }
 if ( $svn ) {
-  die "Cannot specify more than one of --cvs, --rcs --svn or --git." if ($vc);
+  die "Cannot specify more than one of --cvs, --rcs, --svn --git or --hg." if ($vc);
   $vc="SVN";
 }
 if ( $git ) {
-  die "Cannot specify more than one of --cvs, --rcs, --svn or --git." if ($vc);
+  die "Cannot specify more than one of --cvs, --rcs, --svn --git or --hg." if ($vc);
   $vc="GIT";
 }
 
@@ -142,6 +143,8 @@ if (! $vc && scalar(@revs)>0 ) {
     $vc="SVN";
   } elsif ( $0 =~ /-git$/ ) {
     $vc="GIT";
+  } elsif ( $0 =~ /-hg$/ ) {
+    $vc="HG";
   } elsif ( -e "$file2,v" ) {
     print STDERR "Guess you are using RCS ...\n";
     $vc="RCS";
@@ -151,6 +154,9 @@ if (! $vc && scalar(@revs)>0 ) {
   } elsif ( -d ".git" ) {
     print STDERR "Guess you are using GIT ...\n";
     $vc="GIT";
+  } elsif ( -d ".hg" ) {
+    print STDERR "Guess you are using HG ...\n";
+    $vc="HG";
   } elsif ( -e "CVSROOT" || defined($ENV{"CVSROOT"}) ) {
     print STDERR "Guess you are using CVS ...\n";
     $vc="CVS";
@@ -181,6 +187,9 @@ if ( scalar(@revs)>0 ) {
     # alternatively:
     # $diffcmd  = "git diff ";
     # $patchcmd = "patch -R -p1";
+  } elsif ( $vc eq "HG" ) {
+    $diffcmd  = "hg diff -r";
+    $patchcmd = "patch -R -p1";
   } else {
     print STDERR "Unknown versioning system $vc \n";
     exit 10;
@@ -400,7 +409,7 @@ file in postscript or pdf format.
 
 =over 4
 
-=item B<--rcs>, B<--svn>, B<--cvs>, or B<--git>
+=item B<--rcs>, B<--svn>, B<--cvs>, B<--git> or B<--hg>
 
 Set the version system. 
 If no version system is specified, latexdiff-vc will venture a guess.
@@ -410,7 +419,7 @@ the respective versioning system. However, this default can still be overridden 
 
 =item B<-r>, B<-r> F<rev> or B<--revision>, B<--revision=>F<rev>
 
-Choose revision (under RCS, CVS, SVN or GIT). One or two B<-r> options can be
+Choose revision (under RCS, CVS, SVN, GIT or HG). One or two B<-r> options can be
 specified, and they result in different behaviour:
 
 =over 4
