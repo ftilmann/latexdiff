@@ -35,7 +35,9 @@
 # Version 1.0.5a
 #    - treat diacritics (\",\', etc) as safe commands
 #    - treat \_ and \& correctly as safe commands, even if used without spacing to the next word
-#    - Add a BOLD markup type that sets added text in bold face
+#    - Add a BOLD markup type that sets added text in bold face (Contribution by )
+#    - add append-mboxsafecmd list option to be able to specify
+#    - protect \SI command in \siunitx package
 #
 # Version 1.0.4
 #    - introduce list UNSAFEMATHCMD, which holds list of commands which cannot be marked up with \DIFadd or \DIFdel commands  (only relevant for WHOLE and COARSE math markup modes)
@@ -197,6 +199,9 @@ my @MATHTEXTCMDEXCL=();  #
 # Note I need to declare this with "our" instead of "my" because later in the code I have to "local"ise these  
 our @SAFECMDLIST=();  # array containing patterns of safe commands (which do not break when in the argument of DIFadd or DIFDEL)
 our @SAFECMDEXCL=();
+my @MBOXCMDLIST=();   # patterns for commands which are in principle safe but which need to be surrounded by an \mbox
+my @MBOXCMDEXCL=();           # all the patterns in MBOXCMDLIST will be appended to SAFECMDLIST
+
 
 my ($i,$j,$l);
 my ($old,$new);
@@ -216,6 +221,7 @@ my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblel
     $replacecontext2,$appendcontext2,
     $help,$verbose,$driver,$version,$ignorewarnings,
     $enablecitmark,$disablecitmark,$allowspaces,$flatten,$debug,$earlylatexdiffpreamble);  ###$disablemathmark,
+my ($mboxsafe);
 # MNEMNONICS for mathmarkup
 my $mathmarkup;
 use constant {
@@ -225,9 +231,11 @@ use constant {
   FINE => 3
 };
 
+my ($mboxcmd);
 
 my (@configlist,@labels,
     @appendsafelist,@excludesafelist,
+    @appendmboxsafelist,@excludemboxsafelist,
     @appendtextlist,@excludetextlist,
     @appendcontext1list,@appendcontext2list,
     @packagelist);
@@ -284,6 +292,8 @@ GetOptions('type|t=s' => \$type,
 	   'append-context1cmd=s' => \@appendcontext1list,
 	   'replace-context2cmd=s' => \$replacecontext2,
 	   'append-context2cmd=s' => \@appendcontext2list,
+	   'exclude-mboxsafecmd=s' => \@excludemboxsafelist,
+	   'append-mboxsafecmd=s' => \@appendmboxsafelist,
 	   'show-preamble' => \$showpreamble,
 	   'show-safecmd' => \$showsafe,
 	   'show-textcmd' => \$showtext,
@@ -359,6 +369,19 @@ foreach $excludesafe ( @excludesafelist ) {
   init_regex_arr_ext(\@SAFECMDEXCL, $excludesafe);
 }
 ### }
+# setting up @MBOXCMDLIST and @MBOXCMDEXCL
+### if (defined($mboxsafelist)) {
+foreach $mboxsafe ( @appendmboxsafelist ) {
+  init_regex_arr_ext(\@MBOXCMDLIST, $mboxsafe);
+}
+### }
+### if (defined($excludesafe)) {
+foreach $mboxsafe ( @excludemboxsafelist ) {
+  init_regex_arr_ext(\@MBOXCMDEXCL, $mboxsafe);
+}
+### }
+
+
 
 # setting up @TEXTCMDLIST and @TEXTCMDEXCL
 if (defined($replacetext)) {
@@ -716,6 +739,13 @@ if ( length $oldpreamble && length $newpreamble ) {
     $MBOXINLINEMATH=1;
   }
 
+  if (defined $packages{"siunitx"}  && ( $enablecitmark || ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/  && ! $disablecitmark ))) {
+    # protect SI command by surrounding them with an \mbox
+    # this is done to get around an incompatibility between the ulem and siunitx package
+    print STDERR "siunitx package detected at the same time as style using ulem.\n" if $verbose ;
+    init_regex_arr_ext(\@MBOXCMDLIST,'SI');
+  }
+
   print STDERR "Differencing preamble.\n" if $verbose;
 
   # insert dummy first line such that line count begins with line 1 (rather than perl's line 0) - just so that line numbers inserted by linediff are correct
@@ -805,6 +835,13 @@ if (defined $packages{"amsmath"}  or defined $packages{"amsart"} or defined $pac
   print STDERR "amsmath package detected.\n" if $verbose ;
   $MATHARRREPL='align*';
 }
+
+# add commands in MBOXCMDLIST to SAFECMDLIST
+foreach $mboxcmd ( @MBOXCMDLIST ) {
+  init_regex_arr_ext(\@SAFECMDLIST, $mboxcmd);
+}
+
+
 
 print STDERR "Preprocessing body.  " if $verbose;
 my ($oldleadin,$newleadin)=preprocess($oldbody,$newbody);
@@ -1746,7 +1783,17 @@ sub marktags {
       # just an ordinary word or command in SAFECMD
       push (@$retval,$open) if $cmd==-1 ;
       push (@$retval,$closecmd,$open) if $cmd==1 ;
-      push (@$retval,$word);
+      ###TODO:  check here if it is a command in MBOXCMD list, and surround it with \mbox{...}
+      ### $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL))
+      ### but actually this check has been carried out already so can simply check if word begins with backslash
+      if ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)(.*)(\s*)$/ &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL)) {
+	# $word is a safe command in MBOXCMDLIST
+	### print STDERR "DEBUG Mboxsafecmd detected:$word:\n" if $debug ;
+	push(@$retval,'\\mbox{\\' . $1 . $2 . '}' . $3);
+      } else {
+	# $word is a normal word or a safe command (not in MBOXCMDLIST
+	push (@$retval,$word);
+      }
       $cmd=0;
     }
   }
@@ -2610,6 +2657,16 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                        context2 commands are completely disabled in deleted sections, including
                        their arguments.
 
+--exclude-mboxsafecmd=exclude-file
+--exclude-mboxsafecmd="cmd1,cmd2,..."
+--append-mboxsafecmd=append-file
+--append-mboxsafecmd="cmd1,cmd2,..."
+                       Define safe commands, which additionally need to be protected by encapsulating
+                       in an \\mbox{..}. This is sometimes needed to get around incompatibilities 
+                       between external packages and the ulem package, which is  used for highlighting
+                       in the default style UNDERLINE as well as CULINECHBAR CFONTSTRIKE
+                       
+
 
 --config var1=val1,var2=val2,...
 -c var1=val1,..        Set configuration variables.
@@ -2633,7 +2690,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                        Use of the --packages option disables automatic scanning, so if for any
                        reason package specific parsing needs to be switched off, use --packages=none.
                        The following packages trigger special behaviour:
-                       endfloat hyperref amsmath apacite
+                       endfloat hyperref amsmath apacite siunitx
                        [ Default: scan the preamble for \\usepackage commands to determine
                          loaded packages.]
 
@@ -2676,6 +2733,7 @@ Other configuration options:
 
 --disable-citation-markup  Suppress citation markup in styles using ulem (UNDERLINE, 
                        FONTSTRIKE, CULINECHBAR)
+                       (also disable 
 --enable-citation-markup   Protect citation commands in changed sections with \\mbox command
                        [i.e. use default behaviour for ulem package for other packages]
 
@@ -3018,9 +3076,22 @@ argument is shown as deleted text.
 
 =item B<--append-context2cmd=append-file> or
 =item B<--append-context2cmd="cmd1,cmd2,...">
+
 As corresponding commands for context1.  The only difference is that
 context2 commands are completely disabled in deleted sections, including
 their arguments.
+
+
+=item B<--exclude-safecmd=exclude-file> or B<--exclude-safecmd="cmd1,cmd2,...">
+
+=item B<--append-mboxsafecmd=append-file> or B<--append-mboxsafecmd="cmd1,cmd2,...">
+
+Define safe commands, which additionally need to be protected by encapsulating
+in an \\mbox{..}. This is sometimes needed to get around incompatibilities 
+between external packages and the ulem package, which is  used for highlighting
+in the default style UNDERLINE as well as CULINECHBAR CFONTSTRIKE
+
+
 
 
 
@@ -3369,14 +3440,16 @@ C<|subsubsection|paragraph|subparagraph)>  ]
 =item Citations result in overfull boxes
 
 There is an incompatibility between the C<ulem> package, which C<latexdiff> uses for underlining and striking out in the UNDERLINE style,
-the default style. In order to be able to mark up citations properly, they are placed with an C<\mbox> command in post-processing. As mboxes
-cannot be broken across lines, this procedure frequently results in overfull boxes, possibly obscuring the content as it extends beyond the right margin. If this is a problem, you have two possibilities:
+the default style, and the way citations are generated. In order to be able to mark up citations properly, they are enclosed with an C<\mbox> 
+command. As mboxes cannot be broken across lines, this procedure frequently results in overfull boxes, possibly obscuring the content as it extends beyond the right margin. If this is a problem, you have two possibilities. The same occurs for some other packages (e.g., siunitx)
 
 1. Use C<COLOR> or C<DVIPSCOL> subtype markup (option C<-s COLOR>): If this markup is chosen, then changed citations are no longer marked up
 with the wavy line (additions) or struck out (deletions), but are still highlighted in the appropriate color.
 
 2. Choose option C<--disable-citation-markup> which turns off the marking up of citations: deleted citations are no longer shown, and
 added ctations are shown without markup. (This was the default behaviour of latexdiff at versions 0.6 and older)
+
+
 
 =item Changes in complicated mathematical equations result in latex processing errors
 
