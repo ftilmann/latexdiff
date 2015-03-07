@@ -148,8 +148,8 @@ my $COUNTERCMD='(?:footnote|part|chapter|section|subsection|subsubsection|paragr
                                         # for the associated counter such that the overall numbers
                                         # should be the same as in the new file
 my @UNSAFEMATHCMD=('qedhere');           # Commands which are definitely unsafe for marking up (amsmath qedhere only tested to not work with UNDERLINE markup)
-my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
-my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
+###my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
+###my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
 my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths expression with \mbox ( to get around compatibility
                       # problems between some maths packages and ulem package
 
@@ -302,8 +302,8 @@ GetOptions('type|t=s' => \$type,
            'packages=s' => \@packagelist,
 	   'allow-spaces' => \$allowspaces,
            'math-markup=s' => \$mathmarkup,
-           'enable-citation-markup' => \$enablecitmark,
-           'disable-citation-markup' => \$disablecitmark,
+           'enable-citation-markup|enforce-auto-mbox' => \$enablecitmark,
+           'disable-citation-markup|disable-auto-mbox' => \$disablecitmark,
 	   'verbose|V' => \$verbose,
 	   'ignore-warnings' => \$ignorewarnings,
 	   'driver=s'=> \$driver,
@@ -703,6 +703,10 @@ if ($flatten) {
 
 
 my @auxlines;
+
+# boolean variab
+my ($ulem)=0;
+
 if ( length $oldpreamble && length $newpreamble ) {
   # pre-process preamble by looking for commands used in \maketitle (title, author, date etc commands) 
   # and marking up content with latexdiff markup
@@ -718,32 +722,17 @@ if ( length $oldpreamble && length $newpreamble ) {
   # get a list of packages from preamble if not predefine
   %packages=list_packages(@newpreamble) unless %packages;
   ###  if ( %packages ) {print STDERR "DEBUG Packages: ",%packages,"\n" ;}
+
   if (defined $packages{"hyperref"} ) {
     # deleted lines should not generate or appear in link names:
     print STDERR "hyperref package detected.\n" if $verbose ;
     $latexdiffpreamble =~ s/\{\\DIFadd\}/{\\DIFaddtex}/g;
     $latexdiffpreamble =~ s/\{\\DIFdel\}/{\\DIFdeltex}/g;
     $latexdiffpreamble .= join "\n",(extrapream("HYPERREF"),"");
-###    $latexdiffpreamble .= '%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
-###    $latexdiffpreamble .= '\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}}' . "\n";
-###    $latexdiffpreamble .= '\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}}' . "\n";
-###    $latexdiffpreamble .= '%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
-  }
-
-###  if (defined $packages{"units"} && ( uc($type) eq "UNDERLINE" || uc($type) eq "FONTSTRIKE" || uc($type) eq "CULINECHBAR") {
-  if (defined $packages{"units"}  && ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/ ) ) {
-    # protect inlined maths environments by surrounding with an \mbox
-    # this is done to get around an incompatibility between the ulem and units package
-    # where spaces in the argument to underlined or crossed-out \unit commands cause an error message
-    print STDERR "units package detected at the same time as style using ulem.\n" if $verbose ;
-    $MBOXINLINEMATH=1;
-  }
-
-  if (defined $packages{"siunitx"}  && ( $enablecitmark || ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/  && ! $disablecitmark ))) {
-    # protect SI command by surrounding them with an \mbox
-    # this is done to get around an incompatibility between the ulem and siunitx package
-    print STDERR "siunitx package detected at the same time as style using ulem.\n" if $verbose ;
-    init_regex_arr_ext(\@MBOXCMDLIST,'SI');
+    ###    $latexdiffpreamble .= '%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
+    ###    $latexdiffpreamble .= '\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}}' . "\n";
+    ###    $latexdiffpreamble .= '\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}}' . "\n";
+    ###    $latexdiffpreamble .= '%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
   }
 
   print STDERR "Differencing preamble.\n" if $verbose;
@@ -794,40 +783,65 @@ elsif ( !length $oldpreamble && !length $newpreamble ) {
 ### For this reason we only declare them as safe in the other styles.
 ### Because they are text commands their content is still marked up
 # and $packages{"apacite"}!~/natbibpapa/
-my ($citpat,$citpatsafe);
+###my ($citpat,$citpatsafe);
+
+$ulem = ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/ || defined $packages{"ulem"});
+
+
+###  if (defined $packages{"units"} && ( uc($type) eq "UNDERLINE" || uc($type) eq "FONTSTRIKE" || uc($type) eq "CULINECHBAR") {
+if (defined $packages{"units"}  && $ulem ) {
+  # protect inlined maths environments by surrounding with an \mbox
+  # this is done to get around an incompatibility between the ulem and units package
+  # where spaces in the argument to underlined or crossed-out \unit commands cause an error message
+  print STDERR "units package detected at the same time as style using ulem.\n" if $verbose ;
+  $MBOXINLINEMATH=1;
+}
+
+if (defined $packages{"siunitx"}  && ( $enablecitmark || ( $ulem  && ! $disablecitmark ))) {
+  # protect SI command by surrounding them with an \mbox
+  # this is done to get around an incompatibility between the ulem and siunitx package
+  print STDERR "siunitx package detected at the same time as style using ulem.\n" if $verbose ;
+  init_regex_arr_ext(\@MBOXCMDLIST,'SI');
+}
+
+
+my ( $citpat);
 
 if ( defined $packages{"apacite"}  ) {
-  print STDERR "DEBUG apacite citation commands\n"  if $debug;
-  $citpatsafe=qr/^(?:mask)?(?:full|short)?cite(?:A|author|year)?(?:NP)?$/;
+  print STDERR "apacite package detected.\n" if $verbose ;
+###  $citpatsafe=qr/^(?:mask)?(?:full|short)?cite(?:A|author|year)?(?:NP)?$/;
   $citpat='(?:mask)?(?:full|short|no)?cite(?:A|author|year|meta)?(?:NP)?';
 } else {
   # citation command pattern for all other citation schemes
-  $citpatsafe=qr/^cite.*$/;
+###  $citpatsafe=qr/^cite.*$/;
   $citpat='(?:cite\w*|nocite)';
 };
 
-if ( uc($type) ne "UNDERLINE" && uc($type) ne "FONTSTRIKE" && uc($type) ne "CULINECHBAR" ) {
+###if ( uc($type) ne "UNDERLINE" && uc($type) ne "FONTSTRIKE" && uc($type) ne "CULINECHBAR" ) {
 ###  push (@SAFECMDLIST, qr/^cite.*$/);
-  push (@SAFECMDLIST, $citpatsafe);
+if ( ! $ulem ) {
+  # modes not using ulem: citation is safe
+  push (@SAFECMDLIST, $citpat);
 } else {
   ### Experimental: disable text and emph commands
 ###  push (@SAFECMDLIST, qr/^cite.*$/) unless $disablecitmark;
-  push (@SAFECMDLIST, $citpatsafe) unless $disablecitmark;
   push(@SAFECMDEXCL, qr/^emph$/, qr/^text..$/);
   # replace \cite{..} by \mbox{\cite{..}} in added or deleted blocks in post-processing
+###  push (@SAFECMDLIST, $citpatsafe) unless $disablecitmark;
+  push(@MBOXCMDLIST,$citpat) unless $disablecitmark;
   if ( uc($subtype) eq "COLOR" or uc($subtype) eq "DVIPSCOL" ) {
     # remove \cite command again from list of safe commands
-    pop @SAFECMDLIST;
+    pop @MBOXCMDLIST;
     # deleted cite commands
 ###    $CITE2CMD='(?:cite\w*|nocite)' unless $disablecitmark ; # \cite-type commands which should be reinstated in deleted blocks
-    $CITE2CMD=$citpat unless $disablecitmark ; # \cite-type commands which should be reinstated in deleted blocks
-  } else {
-###    $CITECMD='(?:cite\w*|nocite)' unless $disablecitmark ; # \cite commands which need to be protected within an mbox in UNDERLINE and other modes using ulem
-    $CITECMD=$citpat unless $disablecitmark ; # \cite commands which need to be protected within an mbox in UNDERLINE and other modes using ulem
+###    $CITE2CMD=$citpat unless $disablecitmark ; # \cite-type commands which should be reinstated in deleted blocks
   }
+### else {
+###    $CITECMD=$citpat unless $disablecitmark ; # \cite commands which need to be protected within an mbox in UNDERLINE and other modes using ulem
+###  }
 }
-###$CITECMD='(?:cite\w*|nocite)' if $enablecitmark ; # as above for explicit selection
-$CITECMD=$citpat if $enablecitmark ; # as above for explicit selection
+###$CITECMD=$citpat if $enablecitmark ; # as above for explicit selection
+push(@MBOXCMDLIST,$citpat) if $enablecitmark ;
 
 ###print STDERR "CITECMD:|$CITECMD|\n" if $debug;
 
@@ -1786,10 +1800,10 @@ sub marktags {
       ###TODO:  check here if it is a command in MBOXCMD list, and surround it with \mbox{...}
       ### $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL))
       ### but actually this check has been carried out already so can simply check if word begins with backslash
-      if ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)(.*)(\s*)$/ &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL)) {
+      if ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)(.*?)(\s*)$/s &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL)) {
 	# $word is a safe command in MBOXCMDLIST
-	### print STDERR "DEBUG Mboxsafecmd detected:$word:\n" if $debug ;
-	push(@$retval,'\\mbox{\\' . $1 . $2 . '}' . $3);
+	###print STDERR "DEBUG Mboxsafecmd detected:$word:\n" if $debug ;
+	push(@$retval,"\\mbox{$AUXCMD\n\\" . $1 . $2 . $3 ."}$AUXCMD\n" );
       } else {
 	# $word is a normal word or a safe command (not in MBOXCMDLIST
 	push (@$retval,$word);
@@ -1986,10 +2000,10 @@ sub postprocess {
     # Replace \RIGHTBRACE by }    
     s/\\RIGHTBRACE/}/g;
 
-    # change citation commands within comments to protect from processing
-    if ($CITECMD){
-      1 while s/(%.*)\\($CITECMD)/$1\\CITEDIF$2/m ;
-    }
+###    # change citation commands within comments to protect from processing
+###    if ($CITECMD){
+###      1 while s/(%.*)\\($CITECMD)/$1\\CITEDIF$2/m ;
+###    }
     # Check all deleted blocks: where a deleted block contains a matching \begin and
     #    \end environment (these will be disabled by a %DIFDELCMD statements), enable
     #    these commands again (such that for example displayed math in a deleted equation
@@ -2111,20 +2125,20 @@ sub postprocess {
 	substr($delblock,$begin2,$len2)=$mathblock;
 	pos($delblock) = $begin2 + length($mathblock);
       }
-      if ($CITE2CMD) {
-###   ${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat6\}))  .*?%%%\n
-	$delblock=~s/($DELCMDOPEN\s*\\($CITE2CMD)(.*)$DELCMDCLOSE)/
-	  # Replacement code 
-	  {my ($aux,$all);
-	   $aux=$all=$1;
-	   $aux=~s#\n?($DELCMDOPEN|$DELCMDCLOSE)##g;
-	   $all."$aux$AUXCMD\n";}/sge;
-      }
-      # or protect \cite commands with \mbox
-      if ($CITECMD) {
-###	$delblock=~s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat6\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-	$delblock=~s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat6\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-      } 
+###      if ($CITE2CMD) {
+######   ${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat6\}))  .*?%%%\n
+###	$delblock=~s/($DELCMDOPEN\s*\\($CITE2CMD)(.*)$DELCMDCLOSE)/
+###	  # Replacement code 
+###	  {my ($aux,$all);
+###	   $aux=$all=$1;
+###	   $aux=~s#\n?($DELCMDOPEN|$DELCMDCLOSE)##g;
+###	   $all."$aux$AUXCMD\n";}/sge;
+###      }
+###      # or protect \cite commands with \mbox
+###      if ($CITECMD) {
+######	$delblock=~s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat6\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
+###	$delblock=~s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat6\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
+###      } 
       # if MBOXINLINEMATH is set, protect inlined math environments with an extra mbox
       if ( $MBOXINLINEMATH ) {
 	# note additional \newline after command is omitted from output if right at the end of deleted block (otherwise a spurious empty line is generated)
@@ -2151,15 +2165,15 @@ sub postprocess {
 	substr($addblock,$begin2,$len2)=$mathblock;
 	pos($addblock) = $begin2 + length($mathblock);
       }
-      if ($CITECMD) {
-	my $addblockbefore=$addblock;
-###	$addblock=~ s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat2\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-	#(?:mask)?(?:full|short|no)?cite(?:A|author|year|meta)(?:NP)?$/
-	###my $CITECMD; $CITECMD="cite(?:A)$";
-	$addblock=~ s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat2\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-	print STDERR "DEBUG: CITECMD $CITECMD\nDEBUG: addblock before:|$addblockbefore|\n" if $debug;
-	print STDERR "DEBUG: addblock after: |$addblock|\n" if $debug;
-      }
+###      if ($CITECMD) {
+###	my $addblockbefore=$addblock;
+######	$addblock=~ s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat2\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
+###	#(?:mask)?(?:full|short|no)?cite(?:A|author|year|meta)(?:NP)?$/
+###	###my $CITECMD; $CITECMD="cite(?:A)$";
+###	$addblock=~ s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat2\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
+###	print STDERR "DEBUG: CITECMD $CITECMD\nDEBUG: addblock before:|$addblockbefore|\n" if $debug;
+###	print STDERR "DEBUG: addblock after: |$addblock|\n" if $debug;
+###      }
       # if MBOXINLINEMATH is set, protect inlined math environments with an extra mbox
       if ( $MBOXINLINEMATH ) {
 	##$addblock=~s/($math)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/sg;
@@ -2288,10 +2302,10 @@ sub postprocess {
 ###    1 while s/(%.*)\\CLEFTBRACED (.*)$/$1\{$2/mg ;
 ###    1 while s/(%.*)\\CRIGHTBRACED (.*)$/$1\}$2/mg ;
     1 while s/(%.*)DOLLARDIF/$1\$/mg ;
-    # undo renaming of the \cite.. commands in comments 
-    if ( $CITECMD ) {
-      1 while s/(%.*)\\CITEDIF($CITECMD)/$1\\$2/mg ;
-    }
+###    # undo renaming of the \cite.. commands in comments 
+###    if ( $CITECMD ) {
+###      1 while s/(%.*)\\CITEDIF($CITECMD)/$1\\$2/mg ;
+###    }
 #   Convert \begin{SQUAREBRACKET} \end{SQUAREBRACKET} into \[ \]
     s/\\end{SQUAREBRACKET}/\\\]/sg;
     s/\\begin{SQUAREBRACKET}/\\\[/sg;
@@ -2731,11 +2745,15 @@ Other configuration options:
                                This mode is most suitable, if only minor changes to equations are
                                expected, e.g. correction of typos. 
 
---disable-citation-markup  Suppress citation markup in styles using ulem (UNDERLINE, 
-                       FONTSTRIKE, CULINECHBAR)
-                       (also disable 
---enable-citation-markup   Protect citation commands in changed sections with \\mbox command
-                       [i.e. use default behaviour for ulem package for other packages]
+--disable-citation-markup 
+--disable-auto-mbox    Suppress citation markup and markup of other vulnerable commands in styles 
+                       using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR)
+                       (the two options are identical and are simply aliases)
+
+--enable-citation-markup
+--enforce-auto-mbox    Protect citation commands and other vulnerable commands in changed sections 
+                       with \\mbox command, i.e. use default behaviour for ulem package for other packages
+                       (the two options are identical and are simply aliases)
 
 Miscelleneous options
 
@@ -3178,14 +3196,17 @@ C<fine> or C<3>: Detect small change in equations and mark up at fine granularit
 This mode is most suitable, if only minor changes to equations are
 expected, e.g. correction of typos. 
 
-=item B<--disable-citation-markup>
+=item B<--disable-citation-markup> or B<--disable-auto-mbox>
 
-Suppress citation markup in styles using ulem (UNDERLINE, 
-FONTSTRIKE, CULINECHBAR)
+Suppress citation markup and markup of other vulnerable commands in styles 
+using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR)
+(the two options are identical and are simply aliases)
 
-=item B<--enable-citation-markup>
+=item B<--enable-citation-markup> or B<--enforce-auto-mbox>
 
-Protect citation commands in changed sections with \\mbox command [i.e. use default behaviour for ulem package for other packages]
+ Protect citation commands and other vulnerable commands in changed sections 
+with \\mbox command, i.e. use default behaviour for ulem package for other packages
+(the two options are identical and are simply aliases)
 
 =back
 
