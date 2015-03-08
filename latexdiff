@@ -35,9 +35,10 @@
 # Version 1.0.5a
 #    - treat diacritics (\",\', etc) as safe commands
 #    - treat \_ and \& correctly as safe commands, even if used without spacing to the next word
-#    - Add a BOLD markup type that sets added text in bold face (Contribution by )
-#    - add append-mboxsafecmd list option to be able to specify
-#    - protect \SI command in \siunitx package
+#    - Add a BOLD markup type that sets added text in bold face (Contribution by Victor Zabalza via pull request )
+#    - add append-mboxsafecmd list option to be able to specify special safe commands which need to be surrounded by mbox to avoid breaking the latex
+#    - protect \SI command in \siunitx package and \cref,\Cref{range}{*}
+#    - bug fix: packages identified correctly even if \usepackage command options extend over several lines (previously \usepackage command needed to fully contained in one line
 #
 # Version 1.0.4
 #    - introduce list UNSAFEMATHCMD, which holds list of commands which cannot be marked up with \DIFadd or \DIFdel commands  (only relevant for WHOLE and COARSE math markup modes)
@@ -720,8 +721,9 @@ if ( length $oldpreamble && length $newpreamble ) {
   add_safe_commands($newpreamble);
 
   # get a list of packages from preamble if not predefine
-  %packages=list_packages(@newpreamble) unless %packages;
-  ###  if ( %packages ) {print STDERR "DEBUG Packages: ",%packages,"\n" ;}
+###  %packages=list_packages(@newpreamble) unless %packages;
+  %packages=list_packages($newpreamble) unless %packages;
+  if ( %packages && $debug ) { my $key ; foreach $key (keys %packages) { print STDERR "DEBUG \\usepackage[",$packages{$key},"]{",$key,"}\n" ;} }
 
   if (defined $packages{"hyperref"} ) {
     # deleted lines should not generate or appear in link names:
@@ -802,6 +804,13 @@ if (defined $packages{"siunitx"}  && ( $enablecitmark || ( $ulem  && ! $disablec
   # this is done to get around an incompatibility between the ulem and siunitx package
   print STDERR "siunitx package detected at the same time as style using ulem.\n" if $verbose ;
   init_regex_arr_ext(\@MBOXCMDLIST,'SI');
+}
+
+if (defined $packages{"cleveref"}  && ( $enablecitmark || ( $ulem  && ! $disablecitmark ))) {
+  # protect SI command by surrounding them with an \mbox
+  # this is done to get around an incompatibility between the ulem and siunitx package
+  print STDERR "siunitx package detected at the same time as style using ulem.\n" if $verbose ;
+  init_regex_arr_ext(\@MBOXCMDLIST,'[Cc]ref(?:range)?\*?,labelcref,(?:lc)?name[cC]refs?');
 }
 
 
@@ -951,22 +960,43 @@ sub read_file_with_encoding {
   return $output;
 }
 
-# %packages=list_packages(@preamble)
+## %packages=list_packages(@preamble)
+## scans the arguments for \documentclass,\RequirePackage and \usepackage statements and constructs a hash
+## whose keys are the included packages, and whose values are the associated optional arguments
+#sub list_packages {
+#  my (@preamble)=@_;
+#  my %packages=();
+#  foreach $line ( @preamble ) {
+#    # get rid of comments
+#    $line=~s/(?<!\\)%.*$// ;
+#    if ( $line =~ m/\\(?:documentclass|usepackage|RequirePackage)(?:\[(.+?)\])?\{(.*?)\}/ ) {
+##      print STDERR "Found something: |$line|\n" if $debug;
+#      if (defined($1)) {
+#	$packages{$2}=$1;
+#      } else {
+#	$packages{$2}="";
+#      }
+#    }
+#  }
+#  return (%packages);
+#}
+
+
+# %packages=list_packages($preamble)
 # scans the arguments for \documentclass,\RequirePackage and \usepackage statements and constructs a hash
 # whose keys are the included packages, and whose values are the associated optional arguments
 sub list_packages {
-  my (@preamble)=@_;
+  my ($preamble)=@_;
   my %packages=();
-  foreach $line ( @preamble ) {
-    # get rid of comments
-    $line=~s/(?<!\\)%.*$// ;
-    if ( $line =~ m/\\(?:documentclass|usepackage|RequirePackage)(?:\[(.+?)\])?\{(.*?)\}/ ) {
-#      print STDERR "Found something: |$line|\n";
-      if (defined($1)) {
-	$packages{$2}=$1;
-      } else {
-	$packages{$2}="";
-      }
+
+  # remove comments 
+  $preamble=~s/(?<!\\)%.*$//mg ;
+
+  while ( $preamble =~  m/\\(?:documentclass|usepackage|RequirePackage)(?:\[($brat0)\])?\{(.*?)\}/gs ) {
+    if (defined($1)) {
+      $packages{$2}=$1;
+    } else {
+      $packages{$2}="";
     }
   }
   return (%packages);
@@ -2704,7 +2734,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                        Use of the --packages option disables automatic scanning, so if for any
                        reason package specific parsing needs to be switched off, use --packages=none.
                        The following packages trigger special behaviour:
-                       endfloat hyperref amsmath apacite siunitx
+                       endfloat hyperref amsmath apacite siunitx cleveref
                        [ Default: scan the preamble for \\usepackage commands to determine
                          loaded packages.]
 
@@ -3024,6 +3054,14 @@ errors).
 =item C<apacite>
 
 Redefine the commands recognised as citation commands.
+
+=item C<siunitx>
+
+Treat \\SI as equivalent to citation commands (i.e. protect with \\mbox if markup style uses ulem package.
+
+=item C<cleveref>
+
+Treat \\cref,\\Cref, etc as equivalent to citation commands (i.e. protect with \\mbox if markup style uses ulem package.
 
 =back
 
