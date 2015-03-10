@@ -803,7 +803,8 @@ if (defined $packages{"siunitx"}  && ( $enablecitmark || ( $ulem  && ! $disablec
   # protect SI command by surrounding them with an \mbox
   # this is done to get around an incompatibility between the ulem and siunitx package
   print STDERR "siunitx package detected at the same time as style using ulem.\n" if $verbose ;
-  init_regex_arr_ext(\@MBOXCMDLIST,'SI');
+  init_regex_arr_ext(\@SAFECMDLIST,'num,si');
+  init_regex_arr_ext(\@MBOXCMDLIST,'SI,ang,numlist,numrange,SIlist,SIrange');
 }
 
 if (defined $packages{"cleveref"}  && ( $enablecitmark || ( $ulem  && ! $disablecitmark ))) {
