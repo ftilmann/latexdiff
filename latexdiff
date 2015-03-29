@@ -28,9 +28,10 @@
 ###  - add possibility to store configuration options for latexdiff in a file rather than as options
 ###  - use kdiff3 as a merge tool
 ###  - make style that allows (forward and backjumping with hyperref)
-###  - make style / latexdiff-vc combo that allows only to output pages with changes 
+###  - make style / latexdiff-vc combo that allows only to output pages with changes   DONE
 ###    (remember to update answer on stack exchange: http://tex.stackexchange.com/questions/166049/invisible-markers-in-pdfs-using-pdflatex)
 ###  - user configurable mbox protection (see http://tex.stackexchange.com/questions/218973/how-to-protect-or-mbox-commands-in-latexdiff ), also see email
+#      DONE
 #
 # Version 1.0.5a
 #    - treat diacritics (\",\', etc) as safe commands
@@ -39,6 +40,8 @@
 #    - add append-mboxsafecmd list option to be able to specify special safe commands which need to be surrounded by mbox to avoid breaking the latex
 #    - protect \SI command in \siunitx package and \cref,\Cref{range}{*}
 #    - bug fix: packages identified correctly even if \usepackage command options extend over several lines (previously \usepackage command needed to fully contained in one line
+#    - new subtype ONLYCHANGEDPAGE outputs only changed pages (might not work well for floating material)
+#      
 #
 # Version 1.0.4
 #    - introduce list UNSAFEMATHCMD, which holds list of commands which cannot be marked up with \DIFadd or \DIFdel commands  (only relevant for WHOLE and COARSE math markup modes)
@@ -245,9 +248,6 @@ my ($assign,@config);
 # the optional arguments to the package are the values of the hash elements
 my ($pkg,%packages);
 # Defaults
-$type='UNDERLINE';
-$subtype='SAFE';
-$floattype='FLOATSAFE';
 $mathmarkup=COARSE;
 
 $verbose=0;
@@ -325,6 +325,14 @@ print STDERR $versionstring if $verbose;
 
 if (defined($showall)){
   $showpreamble=$showsafe=$showtext=$showconfig=1;
+}
+# Default types
+$type='UNDERLINE' unless defined($type);
+$subtype='SAFE' unless defined($subtype);
+# set floattype to IDENTICAL for LABEL and ONLYCHANGEDPAGE subtype, unless it has been set explicitly on the command line
+$floattype=($subtype eq 'LABEL' || $subtype eq 'ONLYCHANGEDPAGE') ? 'IDENTICAL' : 'FLOATSAFE' unless defined($floattype);
+if ( $subtype eq 'LABEL' ) {
+  print STDERR "Note that LABEL subtype is deprecated. If possible, use ZLABEL instead (requires zref package)";
 }
 
 if (defined($mathmarkup)) {
@@ -2626,7 +2634,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
 --subtype=markstyle
 -s markstyle           Add code to preamble for selected style for bracketing
                        commands (e.g. to mark changes in  margin)
-                       Available styles: SAFE MARGINAL DVIPSCOL COLOR LABEL
+                       Available styles: SAFE MARGINAL DVIPSCOL COLOR LABEL ONLYCHANGEDPAGE
                        [ Default: SAFE ]
 
 --floattype=markstyle
@@ -3944,24 +3952,94 @@ institute
 
 %DIF LABEL PREAMBLE
 % To show only pages with changes (pdf) (external program pdftk needs to be installed)
-% (only works for simple documents with non-repeated page numbers)
+% (only works for simple documents with non-repeated page numbers, otherwise use ZLABEL)
 % pdflatex diff.tex
 % pdflatex diff.tex
-% pdftk diff.pdf cat `perl -lne 'if (m/\\newlabel{DIFchg[be]\d*}{{.*}{(.*)}}/) { print $1 }' diff.aux | uniq | tr -s \\n ' '` output diff-changedpages.pdf
+%pdftk diff.pdf cat \
+%`perl -lne '\
+% if (m/\\newlabel{DIFchg[b](\d*)}{{.*}{(.*)}}/) { $start{$1}=$2; print $2}\
+% if (m/\\newlabel{DIFchg[e](\d*)}{{.*}{(.*)}}/) { \
+%      if (defined($start{$1})) { \
+%         for ($j=$start{$1}; $j<=$2; $j++) {print "$j";}\
+%      } else { \
+%         print "$2"\
+%      }\
+% }' diff.aux \
+% | uniq \
+% | tr  \\n ' '` \
+% output diff-changedpages.pdf
 % To show only pages with changes (dvips/dvipdf)
-% latex diff.tex
-% latex diff.tex
-% dvips -pp `perl -lne 'if (m/\\newlabel{DIFchg[be]\d*}{{.*}{(.*)}}/) { print $1 }' diff.aux | uniq | tr -s \\n ','` diff.dvi 
+% dvips -pp `\
+% [ put here the perl script from above]
+% | uniq | tr -s \\n ','`
 \typeout{Check comments in preamble of output for instructions how to show only pages where changes have been made}
 \newcount\DIFcounterb
 \global\DIFcounterb 0\relax
 \newcount\DIFcountere
 \global\DIFcountere 0\relax
-\providecommand{\DIFaddbegin}{\global\advance\DIFcounterb 1\relax\label{DIFchgb\the\DIFcounterb}} %DIF PREAMBLE
-\providecommand{\DIFaddend}{\global\advance\DIFcountere 1\relax\label{DIFchge\the\DIFcountere}} %DIF PREAMBLE
-\providecommand{\DIFdelbegin}{\global\advance\DIFcounterb 1\relax\label{DIFchgb\the\DIFcounterb}} %DIF PREAMBLE
-\providecommand{\DIFdelend}{\global\advance\DIFcountere 1\relax\label{DIFchge\the\DIFcountere}} %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{\global\advance\DIFcounterb 1\relax\label{DIFchgb\the\DIFcounterb}}
+\providecommand{\DIFaddend}{\global\advance\DIFcountere 1\relax\label{DIFchge\the\DIFcountere}}
+\providecommand{\DIFdelbegin}{\global\advance\DIFcounterb 1\relax\label{DIFchgb\the\DIFcounterb}}
+\providecommand{\DIFdelend}{\global\advance\DIFcountere 1\relax\label{DIFchge\the\DIFcountere}}
 %DIF END LABEL PREAMBLE
+
+%DIF ZLABEL PREAMBLE
+% To show only pages with changes (pdf) (external program pdftk needs to be installed)
+% (uses zref for reference to absolute page numbers)
+% pdflatex diff.tex
+% pdflatex diff.tex
+%pdftk diff.pdf cat \
+`perl -lne 'if (m/\\zref\@newlabel{DIFchgb(\d*)}{.*\\abspage{(\d*)}}/ ) { $start{$1}=$2; print $2 } \
+  if (m/\\zref\@newlabel{DIFchge(\d*)}{.*\\abspage{(\d*)}}/) { \
+      if (defined($start{$1})) { \
+         for ($j=$start{$1}; $j<=$2; $j++) {print "$j";}\
+      } else { \
+         print "$2"\
+      }\
+ }' diff.aux \
+ | uniq \
+ | tr  \\n ' '` \
+ output diff-changedpages.pdf
+% To show only pages with changes (dvips/dvipdf)
+% latex diff.tex
+% latex diff.tex
+% dvips -pp `perl -lne 'if (m/\\newlabel{DIFchg[be]\d*}{{.*}{(.*)}}/) { print $1 }' diff.aux | uniq | tr -s \\n ','` diff.dvi 
+\typeout{Check comments in preamble of output for instructions how to show only pages where changes have been made}
+\usepackage[user,abspage]{zref}
+\newcount\DIFcounterb
+\global\DIFcounterb 0\relax
+\newcount\DIFcountere
+\global\DIFcountere 0\relax
+\providecommand{\DIFaddbegin}{\global\advance\DIFcounterb 1\relax\zlabel{DIFchgb\the\DIFcounterb}}
+\providecommand{\DIFaddend}{\global\advance\DIFcountere 1\relax\zlabel{DIFchge\the\DIFcountere}}
+\providecommand{\DIFdelbegin}{\global\advance\DIFcounterb 1\relax\zlabel{DIFchgb\the\DIFcounterb}}
+\providecommand{\DIFdelend}{\global\advance\DIFcountere 1\relax\zlabel{DIFchge\the\DIFcountere}}
+%DIF END ZLABEL PREAMBLE
+
+%DIF ONLYCHANGEDPAGE PREAMBLE
+\RequirePackage{atbegshi}
+\RequirePackage{etoolbox}
+\RequirePackage{zref}
+% redefine label command to write immediately to aux file - page references will be lost
+\makeatletter \let\oldlabel\label% Store \label 
+\renewcommand{\label}[1]{% Update \label to write to the .aux immediately 
+\zref@wrapper@immediate{\oldlabel{#1}}} 
+\makeatother 
+\newbool{DIFkeeppage}
+\newbool{DIFchange}
+\boolfalse{DIFkeeppage}
+\boolfalse{DIFchange}
+\AtBeginShipout{%
+  \ifbool{DIFkeeppage}
+        {\global\boolfalse{DIFkeeppage}}  % True DIFkeeppage
+         {\ifbool{DIFchange}{\global\boolfalse{DIFkeeppage}}{\global\boolfalse{DIFkeeppage}\AtBeginShipoutDiscard}} % False DIFkeeppage
+}
+\providecommand{\DIFaddbegin}{\global\booltrue{DIFkeeppage}\global\booltrue{DIFchange}}
+\providecommand{\DIFaddend}{\global\booltrue{DIFkeeppage}\global\boolfalse{DIFchange}}
+\providecommand{\DIFdelbegin}{\global\booltrue{DIFkeeppage}\global\booltrue{DIFchange}}
+\providecommand{\DIFdelend}{\global\booltrue{DIFkeeppage}\global\boolfalse{DIFchange}}
+%DIF END ONLYCHANGEDPAGE PREAMBLE
+
 %% FLOAT TYPES 
 
 %DIF FLOATSAFE PREAMBLE
