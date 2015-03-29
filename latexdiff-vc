@@ -25,7 +25,9 @@
 #
 # Detailed usage information at the end of the file
 #
-# version 1.0.4alpha:
+# version 1.05alpha:
+#       - add option --only-changes to output only changed pages (in combination with --ps or --pdf option)
+# version 1.0.4:
 #	- [ Patch #3486 contributed by cbarbu] add additional compilation for styles using chbar + avoid pdf/postscripts repeat in the code
 # version 1.0.3: Bug fix: replace use of system('cp...') with File::Copy::copy (Patch contributed by D. Bremner)
 #                 Quotes around system call file arguments to allow filenames with spaces (Patch contributed by ssteve)
@@ -54,7 +56,7 @@ EOF
 
 
 # Option names
-my ($version,$help,$fast,$so,$postscript,$pdf,$force,$dir,$cvs,$rcs,$svn,$git,$hg,$diffcmd,$patchcmd,@revs);
+my ($version,$help,$fast,$so,$postscript,$pdf,$onlychanges,$force,$dir,$cvs,$rcs,$svn,$git,$hg,$diffcmd,$patchcmd,@revs);
 # Preset Variables
 my $latexdiff="latexdiff"; # Program for making the comparison
 my $latexcmd="latex"; # latex compiler if not further identified
@@ -78,6 +80,7 @@ GetOptions('revision|r:s' => \@revs,
            'postscript|ps' => \$postscript,
            'pdf' => \$pdf,
            'force' => \$force,
+	   'only-changes' => \$onlychanges,
            'version' => \$version,
 	   'help|h' => \$help);
 
@@ -130,7 +133,7 @@ if ( defined($dir) && ( -f $dir || $dir =~ /^-/ ) ) {
 #print "DEBUG: latexdiff-vc command line: ", join(" ",@ARGV), "\n"; 
 
 $file2=pop @ARGV;
-( defined($file2) && $file2 =~ /\.(tex|bbl)$/ ) or pod2usage("Must specify at least one tex or bbl file");
+( defined($file2) && $file2 =~ /\.(tex|bbl|flt)$/ ) or pod2usage("Must specify at least one tex, bbl or flt file");
 
 if (! $vc && scalar(@revs)>0 ) {
   # have to guess $vc
@@ -199,17 +202,21 @@ if ( scalar(@revs)>0 ) {
 
 # make file list (last arguments), initial arguments have to be passed to latexdiff
 # We assume an argument is a valid file rather than a latexdiff argument
-# if it has extension .tex or .bbl
+# if it has extension .tex, .bbl or .flt (output of flatex)
 
 @files=($file2);
 while( $file1=pop @ARGV ) {
-  if ( $file1 =~ /\.(tex|bbl)$/ ) {
+  if ( $file1 =~ /\.(tex|bbl|flt)$/ ) {
     # $file1 looks like a valid file name and is prepended to file list
     unshift @files, $file1 ;
   } else {
     # $file1 looks like an option for latexdiff, push it back to argument stack
     unshift @ldoptions, $file1 ;
   }
+}
+# impose ZLABEL subtype if --only-changes option
+if ( $onlychanges ) {
+  push @ldoptions, "-s", "ZLABEL" ;
 }
 
 if ( scalar(@revs) == 0 ) {
@@ -238,7 +245,7 @@ if ( ($vc eq "SVN" || $vc eq "CVS") && scalar(@revs)) {
 
 ### print STDERR "DEBUG revs($#revs): " . join(":",@revs) . "\n";
 ### print STDERR "DEBUG Files($#files): $file1 " . join(":",@files) . "\n";
-### print STDERR "DEBUG LDOptions($#ldoptions): " . join(":",@ldoptions) . "\n";
+print STDERR "DEBUG LDOptions($#ldoptions): " . join(":",@ldoptions) . "\n";
 ### print STDERR "DEBUG vc: $vc \n";
 ### print STDERR "DEBUG append $append  \n";
 ### print STDERR "DEBUG dir $dir  \n" if ( defined ($dir));
@@ -251,7 +258,7 @@ if ( ($vc eq "SVN" || $vc eq "CVS") && scalar(@revs)) {
 while ( $infile=$file2=shift @files ) {
   print STDERR "Working on  $infile \n";
   if ( scalar(@revs) == 1 ) {
-    ($file1=$infile) =~ s/\.(tex|bbl)/-oldtmp-$$.$1/ ;
+    ($file1=$infile) =~ s/\.(tex|bbl|flt)/-oldtmp-$$.$1/ ;
     push @tmpfiles,$file1;
     # compare file with previous version ($revs[0]="") or specified version
     ### system("$diffcmd$revs[0] $infile| $patchcmd -o$file1") ;
@@ -260,8 +267,8 @@ while ( $infile=$file2=shift @files ) {
       copy($infile,$file1) || die "copy($infile,$file1) failed: $!";
     }
   } elsif ( scalar(@revs) == 2 ) {
-    ($file1=$infile) =~ s/\.(tex|bbl)/-oldtmp-$$.$1/ ;
-    $file2 =~ s/\.(tex|bbl)/-newtmp-$$.$1/ ;
+    ($file1=$infile) =~ s/\.(tex|bbl|flt)/-oldtmp-$$.$1/ ;
+    $file2 =~ s/\.(tex|bbl|flt)/-newtmp-$$.$1/ ;
     push @tmpfiles,$file2;
     if (system("$diffcmd$revs[1] $infile | $patchcmd -o$file2")==0 and -z $file2 ) {
       copy($infile,$file2) || die "copy($infile,$file2) failed: $!";
@@ -280,7 +287,7 @@ while ( $infile=$file2=shift @files ) {
   if ( defined($dir) ) {
     $diff="$dir/$infile" ; 
   } else {
-    ($diff=$infile) =~ s/\.(tex|bbl)$/$append.$1/ ;
+    ($diff=$infile) =~ s/\.(tex|bbl|flt)$/$append.$1/ ;
   }
 ###  print STDERR "DEBUG: diff $diff";
   # make directories if needed
@@ -350,17 +357,54 @@ foreach $diff ( @difffiles ) {
   if ( $postscript ) {
     my $dvi="$diffbase.dvi";
     my $ps="$diffbase.ps";
+    my $ppoption="";
 
-    system("dvips -o $ps $dvi");
+    if ( $onlychanges ) {
+      $ppoption="-pp ".join(",",findchangedpages("$diffbase.aux"));
+    }
+    system("dvips $ppoption -o $ps $dvi");
     push @ptmpfiles, "$diffbase.aux","$diffbase.log",$dvi ;
     print "Generated postscript file $ps\n";
   } 
   elsif ( $pdf ) {
+    if ( $onlychanges ) {
+      my @pages=findchangedpages("$diffbase.aux");
+      system ("pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"")==0 or 
+               die ("Could not execute <pdftk $diffbase.pdf cat " . join(" ",@pages) . " output $diffbase-changedpage.pdf> . Return code: $?");
+      move("$diffbase-changedpage.pdf","$diffbase.pdf");
+    }
     push @ptmpfiles, "$diffbase.aux","$diffbase.log";
   }
   }
   unlink @ptmpfiles;
   chdir $cwd;
+}
+
+# findchangedpages($auxfile)
+# returns a list of the page numbers on which changes were marked with the ZLABEL subtype of latexdiff
+sub findchangedpages {
+  my ($auxfile) =@_;
+  my $j;
+  my (%pages);		# note that I use a hash with page numbers as keys and arbitrary values - this way I can use perl's built-in functions to get red of duplicates
+  my %start;
+  open(AUX,$auxfile) or die ("Could open aux file $auxfile . System error: $!");
+  while (<AUX>) {
+    if (m/\\zref\@newlabel{DIFchgb(\d*)}{.*\\abspage{(\d*)}}/ ) { 
+      $start{$1}=$2; $pages{$2}=1;
+    }
+    if (m/\\zref\@newlabel{DIFchge(\d*)}{.*\\abspage{(\d*)}}/) { 
+      if (defined($start{$1})) {
+	for ($j=$start{$1}; $j<=$2; $j++) {
+	  $pages{$j}=1;
+	}
+      } else {
+	$pages{$2}=1;
+      }
+    }
+  }
+  close(AUX);
+  # sort pages numerically (they should be sorted already; this is just to make sure
+  return(sort {$a <=> $b} keys(%pages));
 }
 
 # greptex returns 1 if regex is not matched in filename
@@ -474,6 +518,12 @@ bibtex; latex; latex; dvips>.
 Generate pdf output from difference file using C<pdflatex>. This will
 run the sequence C<pdflatex; pdflatex> on the difference file, or
 C<pdflatex; bibtex; pdflatex; pdflatex> for files requiring bibtex.
+
+=item B<--only-changes>
+
+Post-process the output such that only pages with changes on them are displayed. This requires the use of subtype ZLABEL 
+in latexdiff, which will be set automatically, but any manually set -s option will be overruled (also requires zref package to 
+be installsed). (note that this option must be combined with --ps or --pdf to make sense)
 
 =item B<--force>
 

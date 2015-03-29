@@ -2634,8 +2634,9 @@ format as new.tex but has all changes relative to old.tex marked up or commented
 --subtype=markstyle
 -s markstyle           Add code to preamble for selected style for bracketing
                        commands (e.g. to mark changes in  margin)
-                       Available styles: SAFE MARGINAL DVIPSCOL COLOR LABEL ONLYCHANGEDPAGE
+                       Available styles: SAFE MARGINAL DVIPSCOL COLOR ZLABEL ONLYCHANGEDPAGE (LABEL)*
                        [ Default: SAFE ]
+                       * LABEL subtype is deprecated
 
 --floattype=markstyle
 -f markstyle           Add code to preamble for selected style which 
@@ -2991,9 +2992,18 @@ B<-s markstyle>
 Add code to preamble for selected style for bracketing
 commands (e.g. to mark changes in  margin). This option defines
 C<\DIFaddbegin>, C<\DIFaddend>, C<\DIFdelbegin> and C<\DIFdelend> commands.
-Available styles: C<SAFE MARGINAL COLOR DVIPSCOL LABEL>
+Available styles: C<SAFE MARGINAL COLOR DVIPSCOL  ZLABEL ONLYCHANGEDPAGE (LABEL)*>
 
 [ Default: C<SAFE> ]
+* Subtype C<LABEL> is deprecated
+
+Subtype ZLABEL can be used to highlight only changed pages, but requires post-processing (Use 
+latexdiff-vc with --only-changes option or use script given within preamble of diff files made using this style.
+
+Subtype ONLYCHANGEDPAGE also highlights changed pages, without the need for post-processing, but will not work reliably if
+there is floating material (figures, tables)
+
+Subtype LABEL is similar to ZLABEL, but does not need the zref package and works less reliably (deprecated).
 
 =item B<--floattype=markstyle> or
 B<-f markstyle>
@@ -3501,7 +3511,7 @@ C<|subsubsection|paragraph|subparagraph)>  ]
 
 =back
 
-=head1 COMMON PROBLEMS
+=head1 COMMON PROBLEMS AND FAQ
 
 =over 10
 
@@ -3515,13 +3525,18 @@ command. As mboxes cannot be broken across lines, this procedure frequently resu
 with the wavy line (additions) or struck out (deletions), but are still highlighted in the appropriate color.
 
 2. Choose option C<--disable-citation-markup> which turns off the marking up of citations: deleted citations are no longer shown, and
-added ctations are shown without markup. (This was the default behaviour of latexdiff at versions 0.6 and older)
+added citations are shown without markup. (This was the default behaviour of latexdiff at versions 0.6 and older)
 
-
+Similar behaviour might be found for some commands in various packages. The options are generally the same.
 
 =item Changes in complicated mathematical equations result in latex processing errors
 
 Try options C<--math-markup=whole>.   If even that fails, you can turn off mark up for equations with C<--math-markup=off>.
+
+=item How can I just show the pages 
+
+Use options -C<-s ZLABEL>  (some postprocessing required) or C<-s ONLYCHANGEDPAGE>. C<latexdiff-vc --ps|--pdf> with C<--only-changes> option takes care of
+the post-processing for you (requires zref packages).
 
 =back
 
@@ -3989,17 +4004,17 @@ institute
 % pdflatex diff.tex
 % pdflatex diff.tex
 %pdftk diff.pdf cat \
-`perl -lne 'if (m/\\zref\@newlabel{DIFchgb(\d*)}{.*\\abspage{(\d*)}}/ ) { $start{$1}=$2; print $2 } \
-  if (m/\\zref\@newlabel{DIFchge(\d*)}{.*\\abspage{(\d*)}}/) { \
-      if (defined($start{$1})) { \
-         for ($j=$start{$1}; $j<=$2; $j++) {print "$j";}\
-      } else { \
-         print "$2"\
-      }\
- }' diff.aux \
- | uniq \
- | tr  \\n ' '` \
- output diff-changedpages.pdf
+%`perl -lne 'if (m/\\zref\@newlabel{DIFchgb(\d*)}{.*\\abspage{(\d*)}}/ ) { $start{$1}=$2; print $2 } \
+%  if (m/\\zref\@newlabel{DIFchge(\d*)}{.*\\abspage{(\d*)}}/) { \
+%      if (defined($start{$1})) { \
+%         for ($j=$start{$1}; $j<=$2; $j++) {print "$j";}\
+%      } else { \
+%         print "$2"\
+%      }\
+% }' diff.aux \
+% | uniq \
+% | tr  \\n ' '` \
+% output diff-changedpages.pdf
 % To show only pages with changes (dvips/dvipdf)
 % latex diff.tex
 % latex diff.tex
