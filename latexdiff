@@ -807,19 +807,42 @@ if (defined $packages{"units"}  && $ulem ) {
   $MBOXINLINEMATH=1;
 }
 
-if (defined $packages{"siunitx"}  && ( $enablecitmark || ( $ulem  && ! $disablecitmark ))) {
+if (defined $packages{"siunitx"} ) {
   # protect SI command by surrounding them with an \mbox
   # this is done to get around an incompatibility between the ulem and siunitx package
-  print STDERR "siunitx package detected at the same time as style using ulem.\n" if $verbose ;
+  print STDERR "siunitx package detected.\n" if $verbose ;
+  my $mboxcmds='SI,ang,numlist,numrange,SIlist,SIrange';
   init_regex_arr_ext(\@SAFECMDLIST,'num,si');
-  init_regex_arr_ext(\@MBOXCMDLIST,'SI,ang,numlist,numrange,SIlist,SIrange');
+  if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
+    init_regex_arr_ext(\@MBOXCMDLIST,$mboxcmds);
+  } else {
+    init_regex_arr_ext(\@SAFECMDLIST,$mboxcmds);
+  }
 }
 
-if (defined $packages{"cleveref"}  && ( $enablecitmark || ( $ulem  && ! $disablecitmark ))) {
-  # protect SI command by surrounding them with an \mbox
-  # this is done to get around an incompatibility between the ulem and siunitx package
-  print STDERR "siunitx package detected at the same time as style using ulem.\n" if $verbose ;
-  init_regex_arr_ext(\@MBOXCMDLIST,'[Cc]ref(?:range)?\*?,labelcref,(?:lc)?name[cC]refs?');
+if (defined $packages{"cleveref"} ) {
+  # protect selected command by surrounding them with an \mbox
+  # this is done to get around an incompatibility between ulem and cleveref package
+  print STDERR "cleveref package detected.\n" if $verbose ;
+  my $mboxcmds='[Cc]ref(?:range)?\*?,labelcref,(?:lc)?name[cC]refs?' ;
+  if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
+    init_regex_arr_ext(\@MBOXCMDLIST,$mboxcmds);
+  } else {
+    init_regex_arr_ext(\@SAFECMDLIST,$mboxcmds);
+  }
+}
+
+if (defined $packages{"glossaries"} ) {
+  # protect selected command by surrounding them with an \mbox
+  # this is done to get around an incompatibility between ulem and cleveref package 
+  print STDERR "glossaries package detected.\n" if $verbose ;
+  my $mboxcmds='[gG][lL][sS](?:spl|disp|link|first|firstplural|desc|user[iv][iv]?[iv]?),[aA][cC][rR](?:long|longpl|full|fullpl),[aA][cC][lfp]?[lfp]?';
+  init_regex_arr_ext(\@SAFECMDLIST,'[gG][lL][sS](?:text|plural|name|symbol|entryname|entryplural|entryfirstplural|entrydesc|entrydescplural|entrysymbol|entrysymbolplural|entryuser[iv][iv]?[iv]?|entrynumberlist|entrydisplaynumberlist|entrylong|entrylongpl|entryshort|entryshortpl|entryfull|entryfullpl),[gG]lossentry(?:name|desc),[aA][cC][rR](?:short|shortpl),[aA]csp?');
+  if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
+    init_regex_arr_ext(\@MBOXCMDLIST,$mboxcmds);
+  } else {
+    init_regex_arr_ext(\@SAFECMDLIST,$mboxcmds);
+  }
 }
 
 
