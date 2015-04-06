@@ -859,7 +859,7 @@ if (defined $packages{"mhchem"} ) {
   print STDERR "mhchem package detected.\n" if $verbose ;
   init_regex_arr_ext(\@SAFECMDLIST,'ce');
   push(@UNSAFEMATHCMD,'cee');
-  # The next command would be needed to allow highlighting the interior of \ch commands in math environments
+  # The next command would be needed to allow highlighting the interior of \cee commands in math environments
   # but the redefinitions in chemformula are too deep to make this viable
   # push(@MATHTEXTCMDLIST,'cee');
 }
@@ -3139,24 +3139,24 @@ Redefine the commands recognised as citation commands.
 
 =item C<siunitx>
 
-Treat \\SI as equivalent to citation commands (i.e. protect with \\mbox if markup style uses ulem package.
+Treat C<\SI> as equivalent to citation commands (i.e. protect with C<\mbox> if markup style uses ulem package.
 
 =item C<cleveref>
 
-Treat \\cref,\\Cref, etc as equivalent to citation commands (i.e. protect with \\mbox if markup style uses ulem package.
+Treat C<\cref,\Cref>, etc as equivalent to citation commands (i.e. protect with C<\mbox> if markup style uses ulem package.
 
 =item C<mhchem>
 
-Treat \\ce as a safe command, i.e. it will be highlighted (note that \cee will not be highlighted in equations as this leads to processing errors)
+Treat C<\ce> as a safe command, i.e. it will be highlighted (note that C<\cee> will not be highlighted in equations as this leads to processing errors)
 
-=item C<mhchem>
+=item C<chemformula>
 
-Treat \\ch as a safe command outside equations, i.e. it will be highlighted (note that \cee will not be highlighted in equations as this leads to processing errors)
+Treat C<\ch> as a safe command outside equations, i.e. it will be highlighted (note that C<\ch> will not be highlighted in equations as this leads to processing errors)
 
 
 =back
 
-[ Default: scan the preamble for C<\\usepackage> commands to determine
+[ Default: scan the preamble for C<\usepackage> commands to determine
   loaded packages. ]
 
 
