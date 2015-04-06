@@ -918,7 +918,8 @@ foreach $mboxcmd ( @MBOXCMDLIST ) {
 
 
 print STDERR "Preprocessing body.  " if $verbose;
-my ($oldleadin,$newleadin)=preprocess($oldbody,$newbody);
+###my ($oldleadin,$newleadin)=preprocess($oldbody,$newbody);
+preprocess($oldbody,$newbody);
 
 
 ###print STDERR "DEBUG PREPROCESS OLD:\n$oldbody\n END PREPROCESS\n";
@@ -944,7 +945,8 @@ if (defined($visiblelabel)) {
   $diffbo = "\\begin{verbatim}LATEXDIFF comparison\nOld: $oldlabel\nNew: $newlabel\\end{verbatim}\n$diffbo"   ;
 }
 
-$diffall .= "$newleadin$diffbo" ;
+###$diffall .= "$newleadin$diffbo" ;
+$diffall .= "$diffbo" ;
 $diffall .= "\\end{document}$newpost" if length $newpreamble ;
 if ( lc($encoding) ne "utf8" && lc($encoding) ne "ascii" ) {
   print STDERR "Encoding output file to $encoding\n" if $verbose;
@@ -1947,10 +1949,10 @@ sub marktags {
 #     names or labels but it does not matter because they are converted back in the postprocessing step
 # Returns: leading white space removed in step 1
 sub preprocess {
-  my @leadin=() ;
+###  my @leadin=() ;
   for (@_) { 
-    s/^(\s*)//s;
-    push(@leadin,$1);
+###    s/^(\s*)//s;
+###    push(@leadin,$1);
     #    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE
     s/(?<!\\)\\{/\\QLEFTBRACE /sg;
     s/(?<!\\)\\}/\\QRIGHTBRACE /sg;
@@ -1994,7 +1996,7 @@ sub preprocess {
     # add final token " STOP"
     $_ .= " STOP"
   }
-  return(@leadin);
+###  return(@leadin);
 }
 
 #hashstring=tohash(\%hash,$string)
