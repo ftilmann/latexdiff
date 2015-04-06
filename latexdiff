@@ -38,10 +38,11 @@
 #    - treat \_ and \& correctly as safe commands, even if used without spacing to the next word
 #    - Add a BOLD markup type that sets added text in bold face (Contribution by Victor Zabalza via pull request )
 #    - add append-mboxsafecmd list option to be able to specify special safe commands which need to be surrounded by mbox to avoid breaking the latex
-#    - protect \SI command in \siunitx package and \cref,\Cref{range}{*}
+#    - support for siunitx and cleveref packages: protect \SI command in siunitx package and \cref,\Cref{range}{*} in cleveref packages (thanks to Stefan Pinnow for testing)
+#    - experimental support for chemformula, mhchem packages: define \ch and \ce in packages as safe (but not \ch,\cee in equation array environments) - these unfortunately will not be marked up (thanks to Stefan Pinnow for testing)
 #    - bug fix: packages identified correctly even if \usepackage command options extend over several lines (previously \usepackage command needed to fully contained in one line
 #    - new subtype ONLYCHANGEDPAGE outputs only changed pages (might not work well for floating material)
-#      
+#    - new subtype ZLABEL operates similarly to LABEL but uses absolute page numbers (needs zref package)
 #
 # Version 1.0.4
 #    - introduce list UNSAFEMATHCMD, which holds list of commands which cannot be marked up with \DIFadd or \DIFdel commands  (only relevant for WHOLE and COARSE math markup modes)
@@ -834,15 +835,33 @@ if (defined $packages{"cleveref"} ) {
 
 if (defined $packages{"glossaries"} ) {
   # protect selected command by surrounding them with an \mbox
-  # this is done to get around an incompatibility between ulem and cleveref package 
+  # this is done to get around an incompatibility between ulem and glossaries package 
   print STDERR "glossaries package detected.\n" if $verbose ;
-  my $mboxcmds='[gG][lL][sS](?:spl|disp|link|first|firstplural|desc|user[iv][iv]?[iv]?),[aA][cC][rR](?:long|longpl|full|fullpl),[aA][cC][lfp]?[lfp]?';
+  my $mboxcmds='[gG][lL][sS](?:|pl|disp|link|first|firstplural|desc|user[iv][iv]?[iv]?),[aA][cC][rR](?:long|longpl|full|fullpl),[aA][cC][lfp]?[lfp]?';
   init_regex_arr_ext(\@SAFECMDLIST,'[gG][lL][sS](?:text|plural|name|symbol|entryname|entryplural|entryfirstplural|entrydesc|entrydescplural|entrysymbol|entrysymbolplural|entryuser[iv][iv]?[iv]?|entrynumberlist|entrydisplaynumberlist|entrylong|entrylongpl|entryshort|entryshortpl|entryfull|entryfullpl),[gG]lossentry(?:name|desc),[aA][cC][rR](?:short|shortpl),[aA]csp?');
   if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
     init_regex_arr_ext(\@MBOXCMDLIST,$mboxcmds);
   } else {
     init_regex_arr_ext(\@SAFECMDLIST,$mboxcmds);
   }
+}
+
+if (defined $packages{"chemformula"} ) {
+  print STDERR "chemformula package detected.\n" if $verbose ;
+  init_regex_arr_ext(\@SAFECMDLIST,'ch');
+  push(@UNSAFEMATHCMD,'ch');
+  # The next command would be needed to allow highlighting the interior of \ch commands in math environments
+  # but the redefinitions in chemformula are too deep to make this viable
+  # push(@MATHTEXTCMDLIST,'ch');
+}
+
+if (defined $packages{"mhchem"} ) {
+  print STDERR "mhchem package detected.\n" if $verbose ;
+  init_regex_arr_ext(\@SAFECMDLIST,'ce');
+  push(@UNSAFEMATHCMD,'cee');
+  # The next command would be needed to allow highlighting the interior of \ch commands in math environments
+  # but the redefinitions in chemformula are too deep to make this viable
+  # push(@MATHTEXTCMDLIST,'cee');
 }
 
 
@@ -1346,10 +1365,15 @@ sub bodydiff {
 # Each element of words is either
 # a word (including trailing spaces and punctuation)
 # a latex command
+# if there is white space in the beginning return that as first token
 sub splitlatex {
-  my ($string) = @_ ;
+  my ($inputstring) = @_ ;
+  my $string=$inputstring ;
   # if input is empty, return empty list
   length($string)>0 or return ();
+  $string=~s/^(\s*)//s;
+  my $leadin=$1;
+  length($string)>0 or return ($leadin);
 
   my @retval=($string =~ m/$pat/osg);  
 
@@ -1391,6 +1415,7 @@ sub splitlatex {
     }
 
   }
+  unshift(@retval,$leadin) if (length($leadin)>0);
   return @retval;
 }
 
@@ -1767,6 +1792,8 @@ sub marktags {
 
 # split this block to flatten out sequences joined in pass1
   @$block=splitlatex(join "",@$block);
+  print STDERR "DEBUG: marktags $openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment\n" if $debug;
+  ### print STDERR "DEBUG: marktags blocksplit ",join("|",@$block),"\n" if $debug;
   foreach (@$block) {
     $word=$_; 
     ### print STDERR "DEBUG MARKTAGS: |$word|\n" if $debug;
@@ -1780,15 +1807,24 @@ sub marktags {
       push (@$retval,$word); 
       next;
     }
+    if ( $word =~ m/^\s*$/ ) {
+      print STDERR "DEBUG MARKTAGS: whitespace detected |$word| cmdcom |$cmdcomment| |$opencmd|\n" if $debug;
+      # a sequence of white-space characters - this should only ever happen for the first element of block.
+      # in deleted block, omit, otherwise just copy it in 
+      if ( ! $cmdcomment) {   # ignore in deleted blocks
+	push(@$retval,$word);
+      }
+      next;
+    }
     if (! $noncomment) {
       push (@$retval,$openmark); 
       $noncomment=1;
     }
     # negative lookahead pattern (?!) in second clause is put in to avoid matching \( .. \) patterns
     # also note that second pattern will match \\
-###    print STDERR "DEBUG marktags: Considering word |$word|\n";
+    ### print STDERR "DEBUG marktags: Considering word |$word|\n";
     if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
-      ### print STDERR "DEBUG MARKTAGS is a non-safe command ($1)\n" if $debug;
+      ###print STDERR "DEBUG MARKTAGS is a non-safe command ($1)\n" if $debug;
       ###    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\([\w*@\\% ]+)/ && !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
       # word is a command or other significant token (not in SAFECMDLIST)
 	## same conditions as in subroutine extractcommand:
@@ -1837,6 +1873,7 @@ sub marktags {
 	  # ""
 	  local @SAFECMDLIST=(".*"); 
 	  local @SAFECMDEXCL=('\\','\\\\',@UNSAFEMATHCMD);
+	  ### print STDERR "DEBUG: Command $command argtext ",join(",",@argtext),"\n" if $debug;
 	  push(@$retval,$command,marktags("","",$open,$close,"","",$comment,\@argtext)#@argtext
                        ,$closingbracket);
         } else {
@@ -2767,7 +2804,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                        Use of the --packages option disables automatic scanning, so if for any
                        reason package specific parsing needs to be switched off, use --packages=none.
                        The following packages trigger special behaviour:
-                       endfloat hyperref amsmath apacite siunitx cleveref
+                       endfloat hyperref amsmath apacite siunitx cleveref mhchem chemformula
                        [ Default: scan the preamble for \\usepackage commands to determine
                          loaded packages.]
 
@@ -3080,7 +3117,8 @@ The following packages trigger special behaviour:
 
 =item C<amsmath> 
 
-Configuration variable amsmath is set to C<align*> (Default: C<eqnarray*>)
+Configuration variable MATHARRREPL is set to C<align*> (Default: C<eqnarray*>). (Note that many of the 
+amsmath array environments are already recognised by default as such)
 
 =item C<endfloat> 
 
@@ -3105,10 +3143,19 @@ Treat \\SI as equivalent to citation commands (i.e. protect with \\mbox if marku
 
 Treat \\cref,\\Cref, etc as equivalent to citation commands (i.e. protect with \\mbox if markup style uses ulem package.
 
+=item C<mhchem>
+
+Treat \\ce as a safe command, i.e. it will be highlighted (note that \cee will not be highlighted in equations as this leads to processing errors)
+
+=item C<mhchem>
+
+Treat \\ch as a safe command outside equations, i.e. it will be highlighted (note that \cee will not be highlighted in equations as this leads to processing errors)
+
+
 =back
 
 [ Default: scan the preamble for C<\\usepackage> commands to determine
-  loaded packages.]
+  loaded packages. ]
 
 
 
