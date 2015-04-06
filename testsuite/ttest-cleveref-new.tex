@@ -1,0 +1,54 @@
+
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+\begin{document}
+
+\section{Test}
+\label{sec:test}
+
+Aaa \cref{sec:test,fig:test} bbb ccc ddd eee fff ggg hhh iii jjj.
+\Cref{sec:test} aaa bbb ccc ddd eee fff ggg hhh iii jjj. Aaa
+\crefrange{eq:a}{eq:c} bbb ccc ddd eee fff ggg hhh iii jjj.
+\Crefrange{eq:a}{eq:c} aaa bbb ccc ddd eee fff ggg hhh iii jjj. Aaa bbb ccc ddd
+eee fff ggg hhh iii jjj. Aaa \cref*{sec:test} bbb ccc ddd eee fff ggg hhh iii
+jjj. \Cref*{sec:test} aaa bbb ccc ddd eee fff ggg hhh iii jjj. Aaa
+\crefrange*{eq:a}{eq:b} bbb ccc ddd eee fff ggg hhh iii jjj.
+\Crefrange*{eq:a}{eq:b} aaa bbb ccc ddd eee fff ggg hhh iii jjj. Aaa
+\cpageref{fig:test} bbb ccc ddd eee fff ggg hhh iii jjj. \Cpageref{fig:test}
+aaa bbb ccc ddd eee fff ggg hhh iii jjj. Aaa \cpagerefrange{sec:test}{fig:test}
+bbb ccc ddd eee fff ggg hhh iii jjj. \Cpagerefrange{sec:test}{fig:test} aaa bbb
+ccc ddd eee fff ggg hhh iii jjj. Aaa \namecref{sec:test} bbb ccc ddd eee fff
+ggg hhh iii jjj. \nameCref{sec:test} aaa bbb ccc ddd eee fff ggg hhh iii jjj.
+Aaa \lcnamecref{sec:test} bbb ccc ddd eee fff ggg hhh iii jjj. Aaa
+\namecrefs{fig:test} bbb ccc ddd eee fff ggg hhh iii jjj. \nameCrefs{fig:test}
+aaa bbb ccc ddd eee fff ggg hhh iii jjj. Aaa \lcnamecrefs{fig:test} bbb ccc ddd
+eee fff ggg hhh iii jjj. Aaa \labelcref{sec:test} bbb ccc ddd eee fff ggg hhh
+iii jjj. Aaa \labelcpageref{sec:test} bbb ccc ddd eee fff ggg hhh iii jjj.
+%
+    \begin{equation}
+    \label{eq:a}
+        a^2 + b^2 = c^2
+    \end{equation}
+%
+    \begin{equation}
+    \label{eq:b}
+        E = m \, c^2
+    \end{equation}
+%
+    \begin{equation}
+    \label{eq:c}
+        1 + 1 = 2
+    \end{equation}
+
+\newpage
+
+\begin{figure}
+        \centering
+    \fbox{test}
+    \caption{Test}
+        \label{fig:test}
+\end{figure}
+
+\end{document}

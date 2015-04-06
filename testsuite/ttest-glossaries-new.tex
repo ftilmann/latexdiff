@@ -1,0 +1,79 @@
+
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage[
+    acronym,
+    nonumberlist,
+    shortcuts,
+    savenumberlist=true,
+        ]{glossaries}
+    \newacronym{test}{abc}{alphabet}
+\begin{document}
+
+Aaa \gls{test}[ing] bbb \glspl{test}[ing] ccc \glstext{test}[ing] ddd
+\glsfirst{test}[ing] eee \glsplural{test}[ing] fff \glsfirstplural{test}[ing]
+ggg \glsname{test}[ing] hhh \glssymbol{test}[ing] iii \glsdesc{test}[ing] jjj
+\glsuseri{test}[ing] kkk \glsuserii{test}[ing] lll \glsuseriii{test}[ing] mmm
+\glsuseriv{test}[ing] nnn \glsuserv{test}[ing] ooo \glsuservi{test}[ing] ppp.
+
+Aaa \Gls{test}[ing] bbb \Glspl{test}[ing] ccc \Glstext{test}[ing] ddd
+\Glsfirst{test}[ing] eee \Glsplural{test}[ing] fff \Glsfirstplural{test}[ing]
+ggg \Glsname{test}[ing] hhh \Glssymbol{test}[ing] iii \Glsdesc{test}[ing] jjj
+\Glsuseri{test}[ing] kkk \Glsuserii{test}[ing] lll \Glsuseriii{test}[ing] mmm
+\Glsuseriv{test}[ing] nnn \Glsuserv{test}[ing] ooo \Glsuservi{test}[ing] ppp.
+
+Aaa \GLS{test}[ing] bbb \GLSpl{test}[ing] ccc \GLStext{test}[ing] ddd
+\GLSfirst{test}[ing] eee \GLSplural{test}[ing] fff \GLSfirstplural{test}[ing]
+ggg \GLSname{test}[ing] hhh \GLSsymbol{test}[ing] iii \GLSdesc{test}[ing] jjj
+\GLSuseri{test}[ing] kkk \GLSuserii{test}[ing] lll \GLSuseriii{test}[ing] mmm
+\GLSuseriv{test}[ing] nnn \GLSuserv{test}[ing] ooo \GLSuservi{test}[ing] ppp.
+
+
+
+Aaa \glsentryname{test} bbb \glossentryname{test} ccc \glsentrytext{test} ddd
+\glsentryplural{test} eee \glsentryfirst{test} fff \glsentryfirstplural{test}
+ggg \glsentrydesc{test} hhh \glossentrydesc{test} iii \glsentrydescplural{test}
+jjj \glsentrysymbol{test} kkk \glossentrysymbol{test} lll
+\glsentrysymbolplural{test} mmm \glsentryuseri{test} nnn \glsentryuserii{test}
+ooo \glsentryuseriii{test} ppp \glsentryuseriv{test} qqq \glsentryuserv{test}
+rrr \glsentryuservi{test} sss \glsentrynumberlist{test} ttt
+\glsdisplaynumberlist{test} uuu.
+
+Aaa \Glsentryname{test} bbb \Glossentryname{test} ccc \Glsentrytext{test} ddd
+\Glsentryplural{test} eee \Glsentryfirst{test} fff \Glsentryfirstplural{test}
+ggg \Glsentrydesc{test} hhh \Glossentrydesc{test} iii \Glsentrydescplural{test}
+jjj \Glsentrysymbol{test} kkk \glossentrysymbol{test} lll
+\Glsentrysymbolplural{test} mmm \Glsentryuseri{test} nnn \Glsentryuserii{test}
+ooo \Glsentryuseriii{test} ppp \Glsentryuseriv{test} qqq \Glsentryuserv{test}
+rrr \Glsentryuservi{test} sss.
+
+
+
+Aaa \acrshort{test}[ing] bbb \acrshortpl{test}[ing] ccc \acrlong{test}[ing] ddd
+\acrlongpl{test}[ing] eee \acrfull{test}[ing] fff \acrfullpl{test}[ing] ggg.
+
+Aaa \Acrshort{test}[ing] bbb \Acrshortpl{test}[ing] ccc \Acrlong{test}[ing] ddd
+\Acrlongpl{test}[ing] eee \Acrfull{test}[ing] fff \Acrfullpl{test}[ing] ggg.
+
+Aaa \ACRshort{test}[ing] bbb \ACRshortpl{test}[ing] ccc \ACRlong{test}[ing] ddd
+\ACRlongpl{test}[ing] eee \ACRfull{test}[ing] fff \ACRfullpl{test}[ing] ggg.
+
+
+
+Aaa \acs{test}[ing] bbb \acsp{test}[ing] ccc \acl{test}[ing] ddd
+\aclp{test}[ing] eee \acf{test}[ing] fff \acfp{test}[ing] ggg \ac{test}[ing]
+hhh \acp{test}[ing] iii.
+
+Aaa \Acs{test}[ing] bbb \Acsp{test}[ing] ccc \Acl{test}[ing] ddd
+\Aclp{test}[ing] eee \Acf{test}[ing] fff \Acfp{test}[ing] ggg \Ac{test}[ing]
+hhh \Acp{test}[ing] iii.
+
+
+
+Aaa \glsentrylong{test} bbb \glsentrylongpl{test} ccc \glsentryshort{test} ddd
+\glsentryshortpl{test} eee \glsentryfull{test} fff \glsentryfullpl{test} ggg.
+
+Aaa \Glsentrylong{test} bbb \Glsentrylongpl{test} ccc \Glsentryshort{test} ddd
+\Glsentryshortpl{test} eee \Glsentryfull{test} fff \Glsentryfullpl{test} ggg.
+
+\end{document}
