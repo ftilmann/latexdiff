@@ -43,6 +43,7 @@
 #    - bug fix: packages identified correctly even if \usepackage command options extend over several lines (previously \usepackage command needed to fully contained in one line
 #    - new subtype ONLYCHANGEDPAGE outputs only changed pages (might not work well for floating material)
 #    - new subtype ZLABEL operates similarly to LABEL but uses absolute page numbers (needs zref package)
+#    - undocumented option --debug/--nodebug to override default setting for debug mode (Default: 0 for release version, 1: for development version
 #
 # Version 1.0.4
 #    - introduce list UNSAFEMATHCMD, which holds list of commands which cannot be marked up with \DIFadd or \DIFdel commands  (only relevant for WHOLE and COARSE math markup modes)
@@ -253,7 +254,7 @@ $mathmarkup=COARSE;
 
 $verbose=0;
 # output debug and intermediate files, set to 0 in final distribution
-$debug=1; 
+$debug=0; 
 # insert preamble directly after documentclass - experimental feature, set to 0 in final distribution
 # Note that this failed with mini example (or other files, where packages used in latexdiff preamble
 # are called again with incompatible options in preamble of resulting file)
@@ -311,7 +312,8 @@ GetOptions('type|t=s' => \$type,
 	   'driver=s'=> \$driver,
 	   'flatten' => \$flatten,
 	   'version' => \$version,
-	   'help|h|H' => \$help);
+	   'help|h|H' => \$help,
+	   'debug!' => \$debug );
 
 if ( $help ) {
   usage() ;
@@ -838,7 +840,7 @@ if (defined $packages{"glossaries"} ) {
   # this is done to get around an incompatibility between ulem and glossaries package 
   print STDERR "glossaries package detected.\n" if $verbose ;
   my $mboxcmds='[gG][lL][sS](?:|pl|disp|link|first|firstplural|desc|user[iv][iv]?[iv]?),[aA][cC][rR](?:long|longpl|full|fullpl),[aA][cC][lfp]?[lfp]?';
-  init_regex_arr_ext(\@SAFECMDLIST,'[gG][lL][sS](?:text|plural|name|symbol|entryname|entryplural|entryfirstplural|entrydesc|entrydescplural|entrysymbol|entrysymbolplural|entryuser[iv][iv]?[iv]?|entrynumberlist|entrydisplaynumberlist|entrylong|entrylongpl|entryshort|entryshortpl|entryfull|entryfullpl),[gG]lossentry(?:name|desc),[aA][cC][rR](?:short|shortpl),[aA]csp?');
+  init_regex_arr_ext(\@SAFECMDLIST,'[gG][lL][sS](?:(?:entry)?(?:text|plural|name|symbol)|displaynumberlist|entryfirst|entryfirstplural|entrydesc|entrydescplural|entrysymbolplural|entryuser[iv][iv]?[iv]?|entrynumberlist|entrydisplaynumberlist|entrylong|entrylongpl|entryshort|entryshortpl|entryfull|entryfullpl),[gG]lossentry(?:name|desc|symbol),[aA][cC][rR](?:short|shortpl),[aA]csp?');
   if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
     init_regex_arr_ext(\@MBOXCMDLIST,$mboxcmds);
   } else {
@@ -1173,9 +1175,9 @@ sub flatten {
      	   $fname = $2; 
            #      # add tex extension unless there is a three letter extension already 
            $fname .= ".tex" unless $fname =~ m|\.\w{3}|;
-           print STDERR "DEBUG Beg of line match |$1|\n" if defined($1) && $debug ;
+###           print STDERR "DEBUG Beg of line match |$1|\n" if defined($1) && $debug ;
            print STDERR "Include file as subfile $fname\n" if $verbose;
-           print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
+###           print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
            # content of file becomes replacement value (use recursion)
            # now strip away everything outside and including \begin{document} and \end{document} pair#
 	   #             # note: no checking for comments is made
@@ -1794,7 +1796,7 @@ sub marktags {
 
 # split this block to flatten out sequences joined in pass1
   @$block=splitlatex(join "",@$block);
-  print STDERR "DEBUG: marktags $openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment\n" if $debug;
+  ### print STDERR "DEBUG: marktags $openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment\n" if $debug;
   ### print STDERR "DEBUG: marktags blocksplit ",join("|",@$block),"\n" if $debug;
   foreach (@$block) {
     $word=$_; 
@@ -1810,7 +1812,7 @@ sub marktags {
       next;
     }
     if ( $word =~ m/^\s*$/ ) {
-      print STDERR "DEBUG MARKTAGS: whitespace detected |$word| cmdcom |$cmdcomment| |$opencmd|\n" if $debug;
+      ### print STDERR "DEBUG MARKTAGS: whitespace detected |$word| cmdcom |$cmdcomment| |$opencmd|\n" if $debug;
       # a sequence of white-space characters - this should only ever happen for the first element of block.
       # in deleted block, omit, otherwise just copy it in 
       if ( ! $cmdcomment) {   # ignore in deleted blocks
@@ -2806,7 +2808,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                        Use of the --packages option disables automatic scanning, so if for any
                        reason package specific parsing needs to be switched off, use --packages=none.
                        The following packages trigger special behaviour:
-                       endfloat hyperref amsmath apacite siunitx cleveref mhchem chemformula
+                       endfloat hyperref amsmath apacite siunitx cleveref glossaries mhchem chemformula
                        [ Default: scan the preamble for \\usepackage commands to determine
                          loaded packages.]
 
@@ -3144,6 +3146,10 @@ Treat C<\SI> as equivalent to citation commands (i.e. protect with C<\mbox> if m
 =item C<cleveref>
 
 Treat C<\cref,\Cref>, etc as equivalent to citation commands (i.e. protect with C<\mbox> if markup style uses ulem package.
+
+=item C<glossaries>
+
+Define most of the glossaries commands as safe, protecting them with \mbox'es where needed
 
 =item C<mhchem>
 
