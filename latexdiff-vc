@@ -25,7 +25,12 @@
 #
 # Detailed usage information at the end of the file
 #
+# Planned:
+#      - with option --flatten and version control option, checkout the whole tree into a temporary directory
+#        (use svn info + checkout ; git archive )
+#
 # version 1.05alpha:
+#
 #       - add option --only-changes to output only changed pages (in combination with --ps or --pdf option)
 # version 1.0.4:
 #	- [ Patch #3486 contributed by cbarbu] add additional compilation for styles using chbar + avoid pdf/postscripts repeat in the code
@@ -50,20 +55,20 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.0.4alpha
-  (c) 2005-2013 F J Tilmann
+This is LATEXDIFF-VC 1.0.5alpha
+  (c) 2005-2015 F J Tilmann
 EOF
 
 
 # Option names
-my ($version,$help,$fast,$so,$postscript,$pdf,$onlychanges,$force,$dir,$cvs,$rcs,$svn,$git,$hg,$diffcmd,$patchcmd,@revs);
+my ($version,$help,$fast,$so,$postscript,$pdf,$onlychanges,$flatten,$force,$dir,$cvs,$rcs,$svn,$git,$hg,$diffcmd,$patchcmd,@revs);
 # Preset Variables
 my $latexdiff="latexdiff"; # Program for making the comparison
 my $latexcmd="latex"; # latex compiler if not further identified
 my $vc="";
-my $tempdir=tempdir(CLEANUP => 1);
+my $tempdir=tempdir(CLEANUP => 1);   # generate a temp dir, which will automatically be deleted at program exit
 # Variables
-my ($file1,$file2,$diff,$diffbase,$answer,$options,$infile,$append,$dirname,$cwd);
+my ($file1,$file2,$diff,$diffbase,$rootdir,$answer,$options,$infile,$append,$dirname,$cwd);
 my (@files,@ldoptions,@tmpfiles,@ptmpfiles,@difffiles,$extracomp); # ,
 
 Getopt::Long::Configure('pass_through','bundling');
@@ -81,6 +86,7 @@ GetOptions('revision|r:s' => \@revs,
            'pdf' => \$pdf,
            'force' => \$force,
 	   'only-changes' => \$onlychanges,
+	   'flatten:s' => \$flatten,
            'version' => \$version,
 	   'help|h' => \$help);
 
@@ -129,6 +135,12 @@ if ( defined($dir) && ( -f $dir || $dir =~ /^-/ ) ) {
   unshift @ARGV,$dir;
   $dir="";
 }
+# check whether the first file name or first passed-through option for latexdiff got misinterpreted as an option to an empty --flatten option
+if ( defined($flatten) && ( -f $flatten || $flatten =~ /^-/ ) ) {
+  unshift @ARGV,$flatten;
+  $flatten="";
+}
+
 
 #print "DEBUG: latexdiff-vc command line: ", join(" ",@ARGV), "\n"; 
 
@@ -214,6 +226,11 @@ while( $file1=pop @ARGV ) {
     unshift @ldoptions, $file1 ;
   }
 }
+
+if ( defined($flatten) ) {
+  push @ldoptions, "--flatten" ;
+}
+
 # impose ZLABEL subtype if --only-changes option
 if ( $onlychanges ) {
   push @ldoptions, "-s", "ZLABEL" ;
@@ -221,8 +238,27 @@ if ( $onlychanges ) {
 
 if ( scalar(@revs) == 0 ) {
   pod2usage("When -r option is not used, two .tex files (old and new) must be given on the command line") unless @files==2;
+  warn "Option -flatten should normally be combined with -r option (Results will probably not be as expected)" if $flatten;
     #  compare two files
   $file1=shift @files ;
+} else {
+  # revision control
+  if ( $flatten ) {
+    pod2usage("Only one root file must be given  if --flatten option is used with version control") if  @files != 1;
+    $tempdir='.' if ( $flatten eq "keep-intermediate" );
+    print "flatten tempdir |$tempdir|";
+    if ( $vc eq "SVN" ) {
+      my (@infoout)=`svn info`;
+      my (@urlline) = grep(/^URL:/, @infoout);
+      @urlline ==1 or die "Ambiguous output from svn info command."; 
+      ( $rootdir = $urlline[0] ) =~ s/URL:\s*// ;
+      chomp $rootdir;
+    } elsif ( $vc eq "GIT" ) {
+      # do nothing
+    } else {
+      die "--flatten option with revision control only possible with SVN and GIT modes";
+    }
+  }
 }
 
 if ( scalar(@revs) == 2 ) {
@@ -245,7 +281,7 @@ if ( ($vc eq "SVN" || $vc eq "CVS") && scalar(@revs)) {
 
 ### print STDERR "DEBUG revs($#revs): " . join(":",@revs) . "\n";
 ### print STDERR "DEBUG Files($#files): $file1 " . join(":",@files) . "\n";
-print STDERR "DEBUG LDOptions($#ldoptions): " . join(":",@ldoptions) . "\n";
+###print STDERR "DEBUG LDOptions($#ldoptions): " . join(":",@ldoptions) . "\n";
 ### print STDERR "DEBUG vc: $vc \n";
 ### print STDERR "DEBUG append $append  \n";
 ### print STDERR "DEBUG dir $dir  \n" if ( defined ($dir));
@@ -253,31 +289,55 @@ print STDERR "DEBUG LDOptions($#ldoptions): " . join(":",@ldoptions) . "\n";
 
 
 # cycle through all files
-
 @difffiles=();
+
 while ( $infile=$file2=shift @files ) {
   print STDERR "Working on  $infile \n";
   if ( scalar(@revs) == 1 ) {
-    ($file1=$infile) =~ s/\.(tex|bbl|flt)/-oldtmp-$$.$1/ ;
-    push @tmpfiles,$file1;
-    # compare file with previous version ($revs[0]="") or specified version
-    ### system("$diffcmd$revs[0] $infile| $patchcmd -o$file1") ;
-    if (system("$diffcmd$revs[0] \"$infile\" | $patchcmd -o\"$file1\"")==0  and -z $file1 ) {
-      # no differences detected, i.e. file is equal to current version
-      copy($infile,$file1) || die "copy($infile,$file1) failed: $!";
-    }
+    if ( defined($flatten) ) {
+       my $olddir=$tempdir . "/latexdiff-vc-$revs[0]";
+       print STDERR "Checking out old dir into: $olddir (rev: $revs[0])\n";
+       checkout_dir($revs[0],$olddir);
+###       print STDERR "DEBUG olddir $olddir";
+###       unless (-e $olddir) { mkdir $olddir or die "Cannot mkdir $olddir ." ;}
+###       print STDERR "DEBUG svn checkout -r $revs[0] $rootdir $olddir";
+###       system("svn checkout -r $revs[0] $rootdir $olddir")==0 or die "Something went wrong in executing:  svn checkout -r $revs[0] $rootdir";
+       $file1=$olddir ."/".$infile;
+     } else {
+       ($file1=$infile) =~ s/\.(tex|bbl|flt)/-oldtmp-$$.$1/ ;
+       push @tmpfiles,$file1;
+       # compare file with previous version ($revs[0]="") or specified version
+       ### system("$diffcmd$revs[0] $infile| $patchcmd -o$file1") ;
+       if (system("$diffcmd$revs[0] \"$infile\" | $patchcmd -o\"$file1\"")==0  and -z $file1 ) {
+	 # no differences detected, i.e. file is equal to current version
+	 copy($infile,$file1) || die "copy($infile,$file1) failed: $!";
+       }
+     }
   } elsif ( scalar(@revs) == 2 ) {
-    ($file1=$infile) =~ s/\.(tex|bbl|flt)/-oldtmp-$$.$1/ ;
-    $file2 =~ s/\.(tex|bbl|flt)/-newtmp-$$.$1/ ;
-    push @tmpfiles,$file2;
-    if (system("$diffcmd$revs[1] $infile | $patchcmd -o$file2")==0 and -z $file2 ) {
-      copy($infile,$file2) || die "copy($infile,$file2) failed: $!";
+    if ( defined($flatten) ) {
+      my $olddir=$tempdir . "/latexdiff-vc-$revs[0]";
+      print STDERR "Checking out old dir into: $olddir (rev: $revs[0])\n";
+      checkout_dir($revs[0],$olddir);
+      $file1=$olddir ."/".$infile;
+
+      my $newdir=$tempdir . "/latexdiff-vc-$revs[1]";
+      print STDERR "Checking out new dir into: $newdir\n";
+      checkout_dir($revs[1],$newdir);
+      $file2=$newdir ."/".$infile;
+    } else {
+      ($file1=$infile) =~ s/\.(tex|bbl|flt)/-oldtmp-$$.$1/ ;
+      $file2 =~ s/\.(tex|bbl|flt)/-newtmp-$$.$1/ ;
+      push @tmpfiles,$file2;
+      if (system("$diffcmd$revs[1] $infile | $patchcmd -o$file2")==0 and -z $file2 ) {
+	copy($infile,$file2) || die "copy($infile,$file2) failed: $!";
+      }
+      if (system("$diffcmd$revs[0] $infile | $patchcmd -o$file1")==0 and -z $file1 ) {
+	copy($infile,$file1) || die "copy($infile,$file1) failed: $!";
+      };
     }
-    if (system("$diffcmd$revs[0] $infile | $patchcmd -o$file1")==0 and -z $file1 ) {
-       copy($infile,$file1) || die "copy($infile,$file1) failed: $!";
-    };
   }
 
+###  print STDERR "DEBUG: file1 |$file1| file2 |$file2|\n";
   if ( -z $file1 || -z $file2) {
     print STDERR "One or both of the files to compare are empty. Possibly something went wrong in the retrieval of older versions. Aborting ...\n" ;
     exit(10);
@@ -289,6 +349,7 @@ while ( $infile=$file2=shift @files ) {
   } else {
     ($diff=$infile) =~ s/\.(tex|bbl|flt)$/$append.$1/ ;
   }
+   
 ###  print STDERR "DEBUG: diff $diff";
   # make directories if needed
   $dirname=dirname($diff) ;
@@ -296,7 +357,7 @@ while ( $infile=$file2=shift @files ) {
 
   # Remaining options are passed to latexdiff
   $options = join(" ",@ldoptions);
-
+   
   if ( -e $diff && ! $force ) {
     print STDERR "OK to overwrite existing file $diff (y/n)? ";
     $answer = <STDIN> ;
@@ -310,7 +371,7 @@ while ( $infile=$file2=shift @files ) {
     print STDERR  "Something went wrong in $latexdiff. Deleting $diff and abort\n" ; unlink $diff ; exit(5) 
   };
   print "Generated difference file $diff\n";
-
+   
   if ( ( $postscript or $pdf ) and !( scalar(@revs) && greptex( qr/\\document(?:class|style)/ , $diff ) ) ) {
     # save filename for later processing if postscript or pdf conversion is requested and either two-file mode was used (scalar(@revs)==0) or the diff file contains documentclass statement (ie. is a root document)
     push @difffiles, $diff ;
@@ -407,7 +468,24 @@ sub findchangedpages {
   return(sort {$a <=> $b} keys(%pages));
 }
 
+# checkout_dir(rev,dirname)
+# checks out revision rev and stores it in dirname
+# uses global variables: $vc, $rootdir
+sub checkout_dir {
+  my ($rev,$dirname)=@_;
+
+  unless (-e $dirname) { mkdir $dirname or die "Cannot mkdir $dirname ." ;}
+  if ( $vc eq "SVN" ) {
+    system("svn checkout -r $rev $rootdir $dirname")==0 or die "Something went wrong in executing:  svn checkout -r $rev $rootdir $dirname";
+  } elsif ( $vc eq "GIT" ) {
+    system("git archive --format=tar $rev | ( cd $dirname ; tar -xf -)")==0 or die "Something went wrong in executing:  git archive --format=tar $rev | ( cd $dirname ; tar -xf -)";
+  } else {
+    die "checkout_dir: only works with SVN and GIT VCS system (selected: $vc)";
+  }
+}
+
 # greptex returns 1 if regex is not matched in filename
+# only the 25 first non-comment lines are scanned
 # 0 if there is a match
 sub greptex {
   my ($regex,$filename)=@_;
@@ -500,6 +578,15 @@ to the
 original filename, creating the directory and subdirectories should they not exist already.  This is particularly useful in order to clone a
 complete directory hierarchy.  Optionally, a pathname F<path> can be specified, which is prepended instead of C<diff>.
 
+=item B<--flatten,--flatten=keep-intermediate>
+
+If combined with C<--git> or -C<--svn> option or the corresponding modes, check out the revisions to compare in a separate temporary directory, and then pass on option C<--flatten> to latexdiff. The directory in which C<latexdiff-vc> is invoked defines the subtree, which will be checked out.
+Note that if additional files are needed which are not included in the flatten procedure (package files, included graphics), there need to be accessible in the current directory. If you use bibtex, it is recommended to include the .bbl in the version management.
+
+The generic usage of this function is : C<latexdiff-vc --flatten -r rev1 [-r rev2] master.tex> where master.tex is the project file containing the highest level of includes etc.
+
+With C<--flatten=keep-intermediate>, the intermediate revision snapshots are kept in the current directory (Default is to store them in a temporary directory and delete them after generating the diff file.)
+
 =item B<--fast> or B<--so>
 
 Use C<latexdiff-fast> or C<latexdiff-so>, respectively (instead of C<latexdiff>).
@@ -567,7 +654,7 @@ Copyright (C) 2005,2012 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License Version 3
-Contributors: S Utcke, H Bruyninckx
+Contributors: S Utcke, H Bruyninckx; some ideas have been inspired by git-latexdiff bash script.
 
 =cut
 
