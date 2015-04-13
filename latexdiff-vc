@@ -253,10 +253,10 @@ if ( scalar(@revs) == 0 ) {
       @urlline ==1 or die "Ambiguous output from svn info command."; 
       ( $rootdir = $urlline[0] ) =~ s/URL:\s*// ;
       chomp $rootdir;
-    } elsif ( $vc eq "GIT" ) {
+    } elsif ( $vc eq "GIT" || $vc eq "HG" ) {
       # do nothing
     } else {
-      die "--flatten option with revision control only possible with SVN and GIT modes";
+      die "--flatten option with revision control only possible with SVN, HG and GIT modes";
     }
   }
 }
@@ -479,8 +479,10 @@ sub checkout_dir {
     system("svn checkout -r $rev $rootdir $dirname")==0 or die "Something went wrong in executing:  svn checkout -r $rev $rootdir $dirname";
   } elsif ( $vc eq "GIT" ) {
     system("git archive --format=tar $rev | ( cd $dirname ; tar -xf -)")==0 or die "Something went wrong in executing:  git archive --format=tar $rev | ( cd $dirname ; tar -xf -)";
+  } elsif ( $vc eq "HG" ) {
+    system("hg archive --type files -r $rev $dirname")==0 or die "Something went wrong in executing:  hg archive --type files -r $rev $dirname";
   } else {
-    die "checkout_dir: only works with SVN and GIT VCS system (selected: $vc)";
+    die "checkout_dir: only works with SVN, HG and GIT VCS system (selected: $vc)";
   }
 }
 
