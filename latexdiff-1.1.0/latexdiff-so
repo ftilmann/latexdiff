@@ -23,14 +23,6 @@
 # Detailed usage information at the end of the file
 #
 # ToDo:
-###  
-###  - recursive processing of included files and bibliography with latexdiff-vc  
-###  - add possibility to store configuration options for latexdiff in a file rather than as options
-###  - use kdiff3 as a merge tool
-###  - make style that allows (forward and backjumping with hyperref)
-###  - make style / latexdiff-vc combo that allows only to output pages with changes   DONE
-###    (remember to update answer on stack exchange: http://tex.stackexchange.com/questions/166049/invisible-markers-in-pdfs-using-pdflatex)
-###  - user configurable mbox protection (see http://tex.stackexchange.com/questions/218973/how-to-protect-or-mbox-commands-in-latexdiff ), also see email
 #      DONE
 #
 # Version 1.1.0
@@ -122,8 +114,464 @@
 # Version 0.2   September 04 extension to utf-8 and variable encodings
 # Version 0.1   August 04    First public release
 
-### NB Lines starting with three hashes should be removed before release
-use Algorithm::Diff qw(traverse_sequences);
+# Inserted block for stand-alone version replaces
+# use Algorithm::Diff qw(traverse_sequences);
+# in standard version
+# The following BEGIN block contains a verbatim copy of
+# Ned Konz' Algorithm::Diff package version 1.15 except
+# that all POD documentation has been stripped out.
+# I encourage you to download and install the Algorithm::Diff
+# package and use the standard latexdiff version instead
+# (current distribution available from http://search.cpan.org/~nedkonz/Algorithm-Diff-1.15
+#  the most recent version can be found via  http://search.cpan.org/search?module=Algorithm::Diff )
+# Please note that the LICENCSE for Algorithm::Diff :
+#   "Copyright (c) 2000-2002 Ned Konz.  All rights reserved.
+#    This program is free software;
+#    you can redistribute it and/or modify it under the same terms
+#    as Perl itself."
+# The stand-alone version of latexdiff is provided as a convenience
+# for latex users with no knowledge of PERL who do not wish to install
+# additional packages to be able to use latexdiff.  If you believe
+# the inlining of Algorithm::Diff violates its license please contact
+# me and I will modify the latexdiff distribution accordingly.
+# Frederik Tilmann (tilmann@esc.cam.ac.uk)
+BEGIN { 
+package Algorithm::Diff;
+use strict;
+use vars qw($VERSION @EXPORT_OK @ISA @EXPORT);
+use integer;    # see below in _replaceNextLargerWith() for mod to make
+                # if you don't use this
+require Exporter;
+@ISA       = qw(Exporter);
+@EXPORT    = qw();
+@EXPORT_OK = qw(LCS diff traverse_sequences traverse_balanced sdiff);
+$VERSION = sprintf('%d.%02d so', (q$Revision: 1.15 $ =~ /\d+/g));
+
+# McIlroy-Hunt diff algorithm
+# Adapted from the Smalltalk code of Mario I. Wolczko, <mario@wolczko.com>
+# by Ned Konz, perl@bike-nomad.com
+
+
+# Create a hash that maps each element of $aCollection to the set of positions
+# it occupies in $aCollection, restricted to the elements within the range of
+# indexes specified by $start and $end.
+# The fourth parameter is a subroutine reference that will be called to
+# generate a string to use as a key.
+# Additional parameters, if any, will be passed to this subroutine.
+#
+# my $hashRef = _withPositionsOfInInterval( \@array, $start, $end, $keyGen );
+
+sub _withPositionsOfInInterval
+{
+	my $aCollection = shift;    # array ref
+	my $start       = shift;
+	my $end         = shift;
+	my $keyGen      = shift;
+	my %d;
+	my $index;
+	for ( $index = $start ; $index <= $end ; $index++ )
+	{
+		my $element = $aCollection->[$index];
+		my $key = &$keyGen( $element, @_ );
+		if ( exists( $d{$key} ) )
+		{
+			unshift ( @{ $d{$key} }, $index );
+		}
+		else
+		{
+			$d{$key} = [$index];
+		}
+	}
+	return wantarray ? %d : \%d;
+}
+
+# Find the place at which aValue would normally be inserted into the array. If
+# that place is already occupied by aValue, do nothing, and return undef. If
+# the place does not exist (i.e., it is off the end of the array), add it to
+# the end, otherwise replace the element at that point with aValue.
+# It is assumed that the array's values are numeric.
+# This is where the bulk (75%) of the time is spent in this module, so try to
+# make it fast!
+
+sub _replaceNextLargerWith
+{
+	my ( $array, $aValue, $high ) = @_;
+	$high ||= $#$array;
+
+	# off the end?
+	if ( $high == -1 || $aValue > $array->[-1] )
+	{
+		push ( @$array, $aValue );
+		return $high + 1;
+	}
+
+	# binary search for insertion point...
+	my $low = 0;
+	my $index;
+	my $found;
+	while ( $low <= $high )
+	{
+		$index = ( $high + $low ) / 2;
+
+		#		$index = int(( $high + $low ) / 2);		# without 'use integer'
+		$found = $array->[$index];
+
+		if ( $aValue == $found )
+		{
+			return undef;
+		}
+		elsif ( $aValue > $found )
+		{
+			$low = $index + 1;
+		}
+		else
+		{
+			$high = $index - 1;
+		}
+	}
+
+	# now insertion point is in $low.
+	$array->[$low] = $aValue;    # overwrite next larger
+	return $low;
+}
+
+# This method computes the longest common subsequence in $a and $b.
+
+# Result is array or ref, whose contents is such that
+# 	$a->[ $i ] == $b->[ $result[ $i ] ]
+# foreach $i in ( 0 .. $#result ) if $result[ $i ] is defined.
+
+# An additional argument may be passed; this is a hash or key generating
+# function that should return a string that uniquely identifies the given
+# element.  It should be the case that if the key is the same, the elements
+# will compare the same. If this parameter is undef or missing, the key
+# will be the element as a string.
+
+# By default, comparisons will use "eq" and elements will be turned into keys
+# using the default stringizing operator '""'.
+
+# Additional parameters, if any, will be passed to the key generation routine.
+
+sub _longestCommonSubsequence
+{
+	my $a      = shift;    # array ref
+	my $b      = shift;    # array ref
+	my $keyGen = shift;    # code ref
+	my $compare;           # code ref
+
+	# set up code refs
+	# Note that these are optimized.
+	if ( !defined($keyGen) )    # optimize for strings
+	{
+		$keyGen = sub { $_[0] };
+		$compare = sub { my ( $a, $b ) = @_; $a eq $b };
+	}
+	else
+	{
+		$compare = sub {
+			my $a = shift;
+			my $b = shift;
+			&$keyGen( $a, @_ ) eq &$keyGen( $b, @_ );
+		};
+	}
+
+	my ( $aStart, $aFinish, $bStart, $bFinish, $matchVector ) =
+	  ( 0, $#$a, 0, $#$b, [] );
+
+	# First we prune off any common elements at the beginning
+	while ( $aStart <= $aFinish
+		and $bStart <= $bFinish
+		and &$compare( $a->[$aStart], $b->[$bStart], @_ ) )
+	{
+		$matchVector->[ $aStart++ ] = $bStart++;
+	}
+
+	# now the end
+	while ( $aStart <= $aFinish
+		and $bStart <= $bFinish
+		and &$compare( $a->[$aFinish], $b->[$bFinish], @_ ) )
+	{
+		$matchVector->[ $aFinish-- ] = $bFinish--;
+	}
+
+	# Now compute the equivalence classes of positions of elements
+	my $bMatches =
+	  _withPositionsOfInInterval( $b, $bStart, $bFinish, $keyGen, @_ );
+	my $thresh = [];
+	my $links  = [];
+
+	my ( $i, $ai, $j, $k );
+	for ( $i = $aStart ; $i <= $aFinish ; $i++ )
+	{
+		$ai = &$keyGen( $a->[$i], @_ );
+		if ( exists( $bMatches->{$ai} ) )
+		{
+			$k = 0;
+			for $j ( @{ $bMatches->{$ai} } )
+			{
+
+				# optimization: most of the time this will be true
+				if ( $k and $thresh->[$k] > $j and $thresh->[ $k - 1 ] < $j )
+				{
+					$thresh->[$k] = $j;
+				}
+				else
+				{
+					$k = _replaceNextLargerWith( $thresh, $j, $k );
+				}
+
+				# oddly, it's faster to always test this (CPU cache?).
+				if ( defined($k) )
+				{
+					$links->[$k] =
+					  [ ( $k ? $links->[ $k - 1 ] : undef ), $i, $j ];
+				}
+			}
+		}
+	}
+
+	if (@$thresh)
+	{
+		for ( my $link = $links->[$#$thresh] ; $link ; $link = $link->[0] )
+		{
+			$matchVector->[ $link->[1] ] = $link->[2];
+		}
+	}
+
+	return wantarray ? @$matchVector : $matchVector;
+}
+
+sub traverse_sequences
+{
+	my $a                 = shift;                                  # array ref
+	my $b                 = shift;                                  # array ref
+	my $callbacks         = shift || {};
+	my $keyGen            = shift;
+	my $matchCallback     = $callbacks->{'MATCH'} || sub { };
+	my $discardACallback  = $callbacks->{'DISCARD_A'} || sub { };
+	my $finishedACallback = $callbacks->{'A_FINISHED'};
+	my $discardBCallback  = $callbacks->{'DISCARD_B'} || sub { };
+	my $finishedBCallback = $callbacks->{'B_FINISHED'};
+	my $matchVector = _longestCommonSubsequence( $a, $b, $keyGen, @_ );
+
+	# Process all the lines in @$matchVector
+	my $lastA = $#$a;
+	my $lastB = $#$b;
+	my $bi    = 0;
+	my $ai;
+
+	for ( $ai = 0 ; $ai <= $#$matchVector ; $ai++ )
+	{
+		my $bLine = $matchVector->[$ai];
+		if ( defined($bLine) )    # matched
+		{
+			&$discardBCallback( $ai, $bi++, @_ ) while $bi < $bLine;
+			&$matchCallback( $ai,    $bi++, @_ );
+		}
+		else
+		{
+			&$discardACallback( $ai, $bi, @_ );
+		}
+	}
+
+	# The last entry (if any) processed was a match.
+	# $ai and $bi point just past the last matching lines in their sequences.
+
+	while ( $ai <= $lastA or $bi <= $lastB )
+	{
+
+		# last A?
+		if ( $ai == $lastA + 1 and $bi <= $lastB )
+		{
+			if ( defined($finishedACallback) )
+			{
+				&$finishedACallback( $lastA, @_ );
+				$finishedACallback = undef;
+			}
+			else
+			{
+				&$discardBCallback( $ai, $bi++, @_ ) while $bi <= $lastB;
+			}
+		}
+
+		# last B?
+		if ( $bi == $lastB + 1 and $ai <= $lastA )
+		{
+			if ( defined($finishedBCallback) )
+			{
+				&$finishedBCallback( $lastB, @_ );
+				$finishedBCallback = undef;
+			}
+			else
+			{
+				&$discardACallback( $ai++, $bi, @_ ) while $ai <= $lastA;
+			}
+		}
+
+		&$discardACallback( $ai++, $bi, @_ ) if $ai <= $lastA;
+		&$discardBCallback( $ai, $bi++, @_ ) if $bi <= $lastB;
+	}
+
+	return 1;
+}
+
+sub traverse_balanced
+{
+	my $a                 = shift;                                  # array ref
+	my $b                 = shift;                                  # array ref
+	my $callbacks         = shift || {};
+	my $keyGen            = shift;
+	my $matchCallback     = $callbacks->{'MATCH'} || sub { };
+	my $discardACallback  = $callbacks->{'DISCARD_A'} || sub { };
+	my $discardBCallback  = $callbacks->{'DISCARD_B'} || sub { };
+	my $changeCallback    = $callbacks->{'CHANGE'};
+	my $matchVector = _longestCommonSubsequence( $a, $b, $keyGen, @_ );
+
+	# Process all the lines in match vector
+	my $lastA = $#$a;
+	my $lastB = $#$b;
+	my $bi    = 0;
+	my $ai    = 0;
+	my $ma    = -1;
+	my $mb;
+
+	while (1)
+	{
+
+		# Find next match indices $ma and $mb
+		do { $ma++ } while ( $ma <= $#$matchVector && !defined $matchVector->[$ma] );
+
+		last if $ma > $#$matchVector;    # end of matchVector?
+		$mb = $matchVector->[$ma];
+
+		# Proceed with discard a/b or change events until
+		# next match
+		while ( $ai < $ma || $bi < $mb )
+		{
+
+			if ( $ai < $ma && $bi < $mb )
+			{
+
+				# Change
+				if ( defined $changeCallback )
+				{
+					&$changeCallback( $ai++, $bi++, @_ );
+				}
+				else
+				{
+					&$discardACallback( $ai++, $bi, @_ );
+					&$discardBCallback( $ai, $bi++, @_ );
+				}
+			}
+			elsif ( $ai < $ma )
+			{
+				&$discardACallback( $ai++, $bi, @_ );
+			}
+			else
+			{
+
+				# $bi < $mb
+				&$discardBCallback( $ai, $bi++, @_ );
+			}
+		}
+
+		# Match
+		&$matchCallback( $ai++, $bi++, @_ );
+	}
+
+	while ( $ai <= $lastA || $bi <= $lastB )
+	{
+		if ( $ai <= $lastA && $bi <= $lastB )
+		{
+
+			# Change
+			if ( defined $changeCallback )
+			{
+				&$changeCallback( $ai++, $bi++, @_ );
+			}
+			else
+			{
+				&$discardACallback( $ai++, $bi, @_ );
+				&$discardBCallback( $ai, $bi++, @_ );
+			}
+		}
+		elsif ( $ai <= $lastA )
+		{
+			&$discardACallback( $ai++, $bi, @_ );
+		}
+		else
+		{
+
+			# $bi <= $lastB
+			&$discardBCallback( $ai, $bi++, @_ );
+		}
+	}
+
+	return 1;
+}
+
+sub LCS
+{
+	my $a = shift;                                           # array ref
+	my $matchVector = _longestCommonSubsequence( $a, @_ );
+	my @retval;
+	my $i;
+	for ( $i = 0 ; $i <= $#$matchVector ; $i++ )
+	{
+		if ( defined( $matchVector->[$i] ) )
+		{
+			push ( @retval, $a->[$i] );
+		}
+	}
+	return wantarray ? @retval : \@retval;
+}
+
+sub diff
+{
+	my $a      = shift;    # array ref
+	my $b      = shift;    # array ref
+	my $retval = [];
+	my $hunk   = [];
+	my $discard = sub { push ( @$hunk, [ '-', $_[0], $a->[ $_[0] ] ] ) };
+	my $add = sub { push ( @$hunk, [ '+', $_[1], $b->[ $_[1] ] ] ) };
+	my $match = sub { push ( @$retval, $hunk ) if scalar(@$hunk); $hunk = [] };
+	traverse_sequences( $a, $b,
+		{ MATCH => $match, DISCARD_A => $discard, DISCARD_B => $add }, @_ );
+	&$match();
+	return wantarray ? @$retval : $retval;
+}
+
+sub sdiff
+{
+	my $a      = shift;    # array ref
+	my $b      = shift;    # array ref
+	my $retval = [];
+	my $discard = sub { push ( @$retval, [ '-', $a->[ $_[0] ], "" ] ) };
+	my $add = sub { push ( @$retval, [ '+', "", $b->[ $_[1] ] ] ) };
+	my $change = sub {
+		push ( @$retval, [ 'c', $a->[ $_[0] ], $b->[ $_[1] ] ] );
+	};
+	my $match = sub {
+		push ( @$retval, [ 'u', $a->[ $_[0] ], $b->[ $_[1] ] ] );
+	};
+	traverse_balanced(
+		$a,
+		$b,
+		{
+			MATCH     => $match,
+			DISCARD_A => $discard,
+			DISCARD_B => $add,
+			CHANGE    => $change,
+		},
+		@_
+	);
+	return wantarray ? @$retval : $retval;
+}
+
+1;
+}
+import Algorithm::Diff qw(traverse_sequences);
+# End of inserted block for stand-alone version
 
 use Getopt::Long ;
 use strict ;
@@ -154,14 +602,9 @@ my $COUNTERCMD='(?:footnote|part|chapter|section|subsection|subsubsection|paragr
                                         # for the associated counter such that the overall numbers
                                         # should be the same as in the new file
 my @UNSAFEMATHCMD=('qedhere');           # Commands which are definitely unsafe for marking up (amsmath qedhere only tested to not work with UNDERLINE markup)
-###my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
-###my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
 my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths expression with \mbox ( to get around compatibility
                       # problems between some maths packages and ulem package
 
-### use context2cmd list instead to define TITLECMD
-###my $TITLECMD='(?:title|author|date|institute)'; # Preamble commands which contain text to be epressed by \maketitle command
-###my $LISTENV='(?:itemize|description|enumerate)'; # list making environments - they will generally be kept
 
 # Markup strings
 # If at all possible, do not change these as parts of the program
@@ -371,27 +814,19 @@ if (defined($replacesafe)) {
 } else {
   init_regex_arr_data(\@SAFECMDLIST, "SAFE COMMANDS");
 }
-### if (defined($appendsafe)) {
 foreach $appendsafe ( @appendsafelist ) {
   init_regex_arr_ext(\@SAFECMDLIST, $appendsafe);
 }
-### }
-### if (defined($excludesafe)) {
 foreach $excludesafe ( @excludesafelist ) {
   init_regex_arr_ext(\@SAFECMDEXCL, $excludesafe);
 }
-### }
 # setting up @MBOXCMDLIST and @MBOXCMDEXCL
-### if (defined($mboxsafelist)) {
 foreach $mboxsafe ( @appendmboxsafelist ) {
   init_regex_arr_ext(\@MBOXCMDLIST, $mboxsafe);
 }
-### }
-### if (defined($excludesafe)) {
 foreach $mboxsafe ( @excludemboxsafelist ) {
   init_regex_arr_ext(\@MBOXCMDEXCL, $mboxsafe);
 }
-### }
 
 
 
@@ -401,11 +836,9 @@ if (defined($replacetext)) {
 } else {
   init_regex_arr_data(\@TEXTCMDLIST, "TEXT COMMANDS");
 }
-### if (defined($appendtext)) {
 foreach $appendtext ( @appendtextlist ) {
   init_regex_arr_ext(\@TEXTCMDLIST, $appendtext);
 }
-### if (defined($excludetext)) {
 foreach $excludetext ( @excludetextlist ) {
   init_regex_arr_ext(\@TEXTCMDEXCL, $excludetext);
 }
@@ -433,7 +866,6 @@ foreach $appendcontext2 ( @appendcontext2list ) {
 }
 
 # setting configuration variables
-### if (defined($config)) {
 @config=();
 foreach $config ( @configlist ) {
   if (-f $config || lc $config eq '/dev/null' ) {
@@ -452,9 +884,7 @@ foreach $config ( @configlist ) {
      push @config,split(",",$config)
   }
 }
-###  print STDERR "configuration: |$config|  , #@config#\n";
 foreach $assign ( @config ) {
-###    print STDERR "assign:|$assign|\n";
   $assign=~ m/\s*(\w*)\s*=\s*(\S*)\s*$/ or die "Illegal assignment $assign in configuration list (must be variable=value)";  
   if ( $1 eq "MINWORDSBLOCK" ) { $MINWORDSBLOCK = $2; }
   elsif ( $1 eq "FLOATENV" ) { $FLOATENV = $2 ; }
@@ -472,11 +902,6 @@ if ( $mathmarkup == COARSE || $mathmarkup == WHOLE ) {
   push(@MATHTEXTCMDLIST,qr/^MATHBLOCK(?:$MATHENV|$MATHARRENV|SQUAREBRACKET)$/);
 }
 
-### if ( $disablemathmark ) {
-###   $PICTUREENV="(?:$PICTUREENV)|(?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET";
-###   $MATHENV="";
-###   $MATHARRENV="";
-### }
 
 
 foreach $pkg ( @packagelist ) {
@@ -546,14 +971,6 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 
 # Patterns. These are used by some of the subroutines, too
 # I can only define them down here because value of extraspace depends on an option
-###   my $pat0 = '(?:[^{}]|\\\{|\\\})*';
-###  my $pat1 = '(?:[^{}]|\\\{|\\\}|\{'.$pat0.'\})*';
-###  my $pat2 = '(?:[^{}]|\\\{|\\\}|\{'.$pat1.'\})*';
-###   my $pat3 = '(?:[^{}]|\\\{|\\\}|\{'.$pat2.'\})*';
-###   my $pat4 = '(?:[^{}]|\\\{|\\\}|\{'.$pat3.'\})*';
-###   my $pat5 = '(?:[^{}]|\\\{|\\\}|\{'.$pat4.'\})*';
-###   my $pat6 = '(?:[^{}]|\\\{|\\\}|\{'.$pat5.'\})*';
-### 0.6: Use preprocessing to suppress \{ and \}, so no longer need to account for this in patterns
   my $pat0 = '(?:[^{}])*';
   my $pat1 = '(?:[^{}]|\{'.$pat0.'\})*';
   my $pat2 = '(?:[^{}]|\{'.$pat1.'\})*';
@@ -564,13 +981,11 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $brat0 = '(?:[^\[\]]|\\\[|\\\])*'; 
   my $abrat0 = '(?:[^<>])*';
 
-###print STDERR "DEBUG pat1 $pat1\n      pat2 $pat6\n";
   my $quotemarks = '(?:\'\')|(?:\`\`)';
   my $punct='[0.,\/\'\`:;\"\?\(\)\[\]!~\p{IsNonAsciiPunct}\p{IsNonAsciiS}]';
   my $number='-?\d*\.\d*';
   my $mathpunct='[+=<>\-\|]';
   my $and = '&';
-###  my $spacecmd = '\\\\\040';
   my $coords= '[\-.,\s\d]*';
 # quoted underscore - this needs special treatment as perl treats _ as a letter (\w) but latex does not
 # such that a\_b is interpreted as a{\_}b by latex but a{\_b} by perl
@@ -578,21 +993,11 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 # word: sequence of letters or accents followed by letter
   my $word='(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])+';
   my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|]|\\\\(?:[|{}]|\w+))';
-###  my $word='(?:[-\p{IsL}*]|\\\\[\"\'\`~^][\p{IsL}A-Za-z\*])+';
-### standard $cmdoptseq without intervening spaces
-###pre-0.3  my $cmdoptseq='\\\\[\w\d\*]+(?:\['.$brat0.'\]|\{'. $pat6 . '\}|\(' . $coords .'\))*';
-###  my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:\['.$brat0.'\]|\{'. $pat6 . '\}|\(' . $coords .'\))'.$extraspace.')*';
   my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat0.'\]|\{'. $pat6 . '\}|\(' . $coords .'\))'.$extraspace.')*';
-###pre-0.3  my $oneletcmd='(?:\\\\.|[_\^])(?:\['.$brat0.'\]|\{'. $pat6 . '\})*';
   my $backslashnl='\\\\\n';
   my $oneletcmd='\\\\.\*?(?:\['.$brat0.'\]|\{'. $pat6 . '\})*';
-### the commented out version is simpler but for some reason cannot cope with newline (in spite of s option) - need to include \newline explicitly
-###  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(].*?\\\\[)]';
   my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(](?:.|\n)*?\\\\[)]';
-### test version (this seems to give the same results as version above)
 ## the current maths command cannot cope with newline within the math expression
-### my $math='\$(?:[^$]|\\\$)*?\$|\\[(].*?\\[)]';
-###  my $math='\$(?:[^$]|\\\$)*\$';
   my $comment='%.*?\n';
   my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
 
@@ -625,7 +1030,6 @@ if (defined($labels[1])) {
 $encoding=guess_encoding($newfile) unless defined($encoding);
 
 $encoding = "utf8" if $encoding =~ m/^utf8/i ;
-###print STDERR "Encoding $encoding\n" if $verbose;
 if (lc($encoding) eq "utf8" ) {
   binmode(STDOUT, ":utf8");
   binmode(STDERR, ":utf8");
@@ -634,81 +1038,20 @@ if (lc($encoding) eq "utf8" ) {
 $old=read_file_with_encoding($oldfile,$encoding);
 $new=read_file_with_encoding($newfile,$encoding);
 
-###if (lc($encoding) eq "utf8" ) {
-###  binmode(STDOUT, ":utf8");
-###  binmode(STDERR, ":utf8");
-###  open (OLD, "<:utf8",$oldfile) or die("Couldn't open $oldfile: $!");
-###  open (NEW, "<:utf8",$newfile) or die("Couldn't open $newfile: $!");
-###  local $/ ; # locally set record operator to undefined, ie. enable whole-file mode
-###  $old=<OLD>;
-###  $new=<NEW>;
-###} elsif ( lc($encoding) eq "ascii") {
-###  open (OLD, $oldfile) or die("Couldn't open $oldfile: $!");
-###  open (NEW, $newfile) or die("Couldn't open $newfile: $!");
-###  local $/ ; # locally set record operator to undefined, ie. enable whole-file mode
-###  $old=<OLD>;
-###  $new=<NEW>;
-###} else {
-###  require Encode;
-###  open (OLD, "<",$oldfile) or die("Couldn't open $oldfile: $!");
-###  open (NEW, "<",$newfile) or die("Couldn't open $newfile: $!");
-###  local $/ ; # locally set record operator to undefined, ie. enable whole-file mode
-###  $old=<OLD>;
-###  $new=<NEW>;
-###  print STDERR "Converting from $encoding to utf8\n" if $verbose;
-###  $old=Encode::decode($encoding,$old);
-###  $new=Encode::decode($encoding,$new);
-###}
 
 
-#### Slurp old and new files
-###{ 
-###  local $/ ; # locally set record operator to undefined, ie. enable whole-file mode
-###  $old=<OLD>;
-###  $new=<NEW>;
-###}
 
 # reset time
 exetime(1);
 ($oldpreamble,$oldbody,$oldpost)=splitdoc($old,'\\\\begin\{document\}','\\\\end\{document\}');
 
-###if ( $oldpreamble =~ m/\\usepackage\[(\w*?)\]\{inputenc\}/  ) {
-###    $encoding=$1;
-###    require Encode;
-###    print STDERR "Detected input encoding $encoding.\n" if $verbose;
-###    $oldpreamble=Encode::decode($encoding,$oldpreamble);
-###    $oldbody=Encode::decode($encoding,$oldbody);
-###    $oldpost=Encode::decode($encoding,$oldpost);
-####    Encode::from_to($oldpreamble,$encoding,"utf8");
-####    Encode::from_to($oldbody,$encoding,"utf8");
-####    Encode::from_to($oldpost,$encoding,"utf8");
-###  }
 
 ($newpreamble,$newbody,$newpost)=splitdoc($new,'\\\\begin\{document\}','\\\\end\{document\}');
 
-###if ( $newpreamble =~ m/\\usepackage\[(\w*?)\]\{inputenc\}/  ) {
-###  if ($encoding ne $1 ) {
-###    die  "Input encoding in both old and new file must be the same.\n";
-###  }
-###  $newpreamble=Encode::decode($encoding,$newpreamble);
-###  $newbody=Encode::decode($encoding,$newbody);
-###  $newpost=Encode::decode($encoding,$newpost);
-###  #    Encode::from_to($newpreamble,$encoding,"utf8");
-###  #    Encode::from_to($newbody,$encoding,"utf8");
-###  #    Encode::from_to($newpost,$encoding,"utf8");
-###}
 
 if ($flatten) {
   $oldbody=flatten($oldbody,$oldpreamble,$oldfile,$encoding);
   $newbody=flatten($newbody,$newpreamble,$newfile,$encoding);
-###   if ( $debug ) {
-###     open(FILE,">","latexdiff.debug.flatold");
-###     print FILE $oldpreamble,'\\begin{document}',$oldbody,'\\end{document}',$oldpost;
-###     close(FILE);
-###     open(FILE,">","latexdiff.debug.flatnew");
-###     print FILE $newpreamble,'\\begin{document}',$newbody,'\\end{document}',$newpost;
-###     close(FILE);
-###   }
 }
 
 
@@ -732,7 +1075,6 @@ if ( length $oldpreamble && length $newpreamble ) {
   add_safe_commands($newpreamble);
 
   # get a list of packages from preamble if not predefine
-###  %packages=list_packages(@newpreamble) unless %packages;
   %packages=list_packages($newpreamble) unless %packages;
   if ( %packages && $debug ) { my $key ; foreach $key (keys %packages) { print STDERR "DEBUG \\usepackage[",$packages{$key},"]{",$key,"}\n" ;} }
 
@@ -781,27 +1123,16 @@ elsif ( !length $oldpreamble && !length $newpreamble ) {
   print STDERR "Either both texts must have preamble or neither text must have the preamble.\n";
   exit(2);
 }
-### Output preamble: DEBUG
-###foreach $line ( @diffpreamble ) {
-###  print "$line\n";
-###}
 
 # Special: treat all cite commands as safe except in UNDERLINE and FONTSTRIKE mode
 # (there is a conflict between citation and ulem package, see
 # package documentation)
 # Use post-processing
-### Don't do what is stated below as in short deleted sequences one would actually like it as a safecmd
-### Also long arguments of \text.. commands are not line-wrapped when underlined (see documentation of ulem.sty
-### for why; essentially, ulem treats secondary braces as blocks which it cannot break).
-### For this reason we only declare them as safe in the other styles.
-### Because they are text commands their content is still marked up
 # and $packages{"apacite"}!~/natbibpapa/
-###my ($citpat,$citpatsafe);
 
 $ulem = ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/ || defined $packages{"ulem"});
 
 
-###  if (defined $packages{"units"} && ( uc($type) eq "UNDERLINE" || uc($type) eq "FONTSTRIKE" || uc($type) eq "CULINECHBAR") {
 if (defined $packages{"units"}  && $ulem ) {
   # protect inlined maths environments by surrounding with an \mbox
   # this is done to get around an incompatibility between the ulem and units package
@@ -871,41 +1202,28 @@ my ( $citpat);
 
 if ( defined $packages{"apacite"}  ) {
   print STDERR "apacite package detected.\n" if $verbose ;
-###  $citpatsafe=qr/^(?:mask)?(?:full|short)?cite(?:A|author|year)?(?:NP)?$/;
   $citpat='(?:mask)?(?:full|short|no)?cite(?:A|author|year|meta)?(?:NP)?';
 } else {
   # citation command pattern for all other citation schemes
-###  $citpatsafe=qr/^cite.*$/;
   $citpat='(?:cite\w*|nocite)';
 };
 
-###if ( uc($type) ne "UNDERLINE" && uc($type) ne "FONTSTRIKE" && uc($type) ne "CULINECHBAR" ) {
-###  push (@SAFECMDLIST, qr/^cite.*$/);
 if ( ! $ulem ) {
   # modes not using ulem: citation is safe
   push (@SAFECMDLIST, $citpat);
 } else {
   ### Experimental: disable text and emph commands
-###  push (@SAFECMDLIST, qr/^cite.*$/) unless $disablecitmark;
   push(@SAFECMDEXCL, qr/^emph$/, qr/^text..$/);
   # replace \cite{..} by \mbox{\cite{..}} in added or deleted blocks in post-processing
-###  push (@SAFECMDLIST, $citpatsafe) unless $disablecitmark;
   push(@MBOXCMDLIST,$citpat) unless $disablecitmark;
   if ( uc($subtype) eq "COLOR" or uc($subtype) eq "DVIPSCOL" ) {
     # remove \cite command again from list of safe commands
     pop @MBOXCMDLIST;
     # deleted cite commands
-###    $CITE2CMD='(?:cite\w*|nocite)' unless $disablecitmark ; # \cite-type commands which should be reinstated in deleted blocks
-###    $CITE2CMD=$citpat unless $disablecitmark ; # \cite-type commands which should be reinstated in deleted blocks
   }
-### else {
-###    $CITECMD=$citpat unless $disablecitmark ; # \cite commands which need to be protected within an mbox in UNDERLINE and other modes using ulem
-###  }
 }
-###$CITECMD=$citpat if $enablecitmark ; # as above for explicit selection
 push(@MBOXCMDLIST,$citpat) if $enablecitmark ;
 
-###print STDERR "CITECMD:|$CITECMD|\n" if $debug;
 
 if (defined $packages{"amsmath"}  or defined $packages{"amsart"} or defined $packages{"amsbook"} ) {
   print STDERR "amsmath package detected.\n" if $verbose ;
@@ -920,16 +1238,12 @@ foreach $mboxcmd ( @MBOXCMDLIST ) {
 
 
 print STDERR "Preprocessing body.  " if $verbose;
-###my ($oldleadin,$newleadin)=preprocess($oldbody,$newbody);
 preprocess($oldbody,$newbody);
 
 
-###print STDERR "DEBUG PREPROCESS OLD:\n$oldbody\n END PREPROCESS\n";
 # run difference algorithm
 @diffbody=bodydiff($oldbody, $newbody);
 $diffbo=join("",@diffbody);
-###print STDERR "DEBUG NOT POSTPROCESSED\n";
-###print STDERR "DEBUG $diffbo END POSTPROCESS\n";
 if ( $debug ) {
     open(RAWDIFF,">","latexdiff.debug.bodydiff");
     print RAWDIFF $diffbo;
@@ -937,7 +1251,6 @@ if ( $debug ) {
 }
 print STDERR "(",exetime()," s)\n","Postprocessing body. \n " if $verbose;
 postprocess($diffbo);
-####print "POSTPROCESS NEW:\n$newbody\n ";
 $diffall =join("\n",@diffpreamble) ;
 # add visible labels
 if (defined($visiblelabel)) {
@@ -947,7 +1260,6 @@ if (defined($visiblelabel)) {
   $diffbo = "\\begin{verbatim}LATEXDIFF comparison\nOld: $oldlabel\nNew: $newlabel\\end{verbatim}\n$diffbo"   ;
 }
 
-###$diffall .= "$newleadin$diffbo" ;
 $diffall .= "$diffbo" ;
 $diffall .= "\\end{document}$newpost" if length $newpreamble ;
 if ( lc($encoding) ne "utf8" && lc($encoding) ne "ascii" ) {
@@ -957,15 +1269,10 @@ if ( lc($encoding) ne "utf8" && lc($encoding) ne "ascii" ) {
 }
 print $diffall;
 
-###print join("\n",@diffpreamble);
-###print "$newleadin$diffbo";
-###print "\\end{document}$newpost" if length $newpreamble ; 
 
 print STDERR "(",exetime()," s)\n","Done.\n" if $verbose;
-### End of main
 
 
-### Subroutines
 
 ## guess_encoding(filename)
 ## reads the first 20 lines of filename and looks for call of inputenc package
@@ -1062,7 +1369,6 @@ sub list_packages {
 # scans the argument for \newcommand and \DeclareMathOperator,
 # and adds the created commands which are clearly safe to @SAFECMDLIST
 sub add_safe_commands {
-###  my (@preamble)=@_;
   my ($preamble)=@_;
   my $added_command = 1;
 
@@ -1070,7 +1376,6 @@ sub add_safe_commands {
 
   while ($added_command) { 
     $added_command  = 0;
-###    foreach $line ( @preamble ) {
       # get rid of comments
     my $to_test = "";
       # test for \DeclareMathOperator{\foo}{myoperator}
@@ -1087,11 +1392,7 @@ sub add_safe_commands {
     while ( $preamble =~ m/\\(?:new|renew|provide)command\s*{\\(\w*)\}(?:|\[\d*\])\s*\{(${pat6})\}/osg ) {
       my $maybe_to_test  = $1;
       my $should_be_safe = $2;
-###      print STDERR "DEBUG maybe_to_test, should_be_safe: $1 $2\n";
       my $success = 0;
-###        if (($should_be_safe =~ tr/\{/\{/) < ($should_be_safe =~ tr/\}/\}/)) {
-###          # There are more closing braces than opening braces, therefore
-###          # the newcommand is completely on the current line.
       # test if all latex commands inside it are safe
       $success = 1;
       if ($should_be_safe =~ m/\\\\/) {
@@ -1175,16 +1476,12 @@ sub flatten {
      	   $fname = $2; 
            #      # add tex extension unless there is a three letter extension already 
            $fname .= ".tex" unless $fname =~ m|\.\w{3}|;
-###           print STDERR "DEBUG Beg of line match |$1|\n" if defined($1) && $debug ;
            print STDERR "Include file as subfile $fname\n" if $verbose;
-###           print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
            # content of file becomes replacement value (use recursion)
            # now strip away everything outside and including \begin{document} and \end{document} pair#
 	   #             # note: no checking for comments is made
            $subfile=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
            ($subpreamble,$subbody,$subpost)=splitdoc($subfile,'\\\\begin\{document\}','\\\\end\{document\}');
-###           $subfile=~s|^.*\\begin{document}||s; 
-###           $subfile=~s|\\end{document}.*$||s;
 	   $replacement=flatten($subbody, $preamble,$filename,$encoding);
 	   "$begline$replacement";
   }/exgm;
@@ -1265,16 +1562,10 @@ sub splitdoc {
     $pos=pos $text;
     $part1=substr($text,0,$pos-length($2));
     $rest=substr($text,$pos);
-###    $part1=$` . $1 ; # $` is Left of match
-###    $rest=$';  # $' is Right of match
-###    print STDERR "pos $pos length part1 ", length($part1),length($part1a), " length rest ", length($rest),length($rest1a),"\n";
     if ( $rest =~ m/(^[^%]*)($word2)/mg ) {
       $pos=pos $rest;
       $part2=substr($rest,0,$pos-length($2));
       $part3=substr($rest,$pos);
-###      $part2=$` . $1; # $` is Left of match
-###      $part3=$';  # $' is Right of match
-###    print STDERR "length part2 ", length($part2), " length part3 ", length($part3),"\n";
     } 
     else {
       die "$word1 and $word2 not in the correct order or not present as a pair." ;
@@ -1286,30 +1577,9 @@ sub splitdoc {
   return ($part1,$part2,$part3);
 }
 
-### Original splitdoc which did not treat \begin{document} and \end{document} in comments properly
-### sub splitdoc {
-###   my ($text,$word1,$word2)=@_;
-###   my $l1 = length $word1 ;
-###   my $l2 = length $word2 ;
 
-###   my $i = index($text,$word1);
-###   my $j = index($text,$word2);
 
-###   my ($part1,$part2,$part3)=("","","");
 
-###   if ( $i<0 && $j<0) {
-###     # no $word1 or $word2
-###     print STDERR "Old Document not a complete latex file. Assuming it is a tex file with no preamble.\n";
-###     $part2 = $text;
-###   } elsif ( $i>=0 && $j>$i ) {
-###     $part1 = substr($text,0,$i) ; 
-###     $part2 = substr($text,$i+$l1,$j-$i-$l1);
-###     $part3 = substr($text,$j+$l2) unless $j+$l2 >= length $text;
-###   } else {
-###     die "$word1 or $word2 not in the correct order or not present as a pair."
-###   }
-###   return ($part1,$part2,$part3);
-### }
 
 # bodydiff($old,$new)
 sub bodydiff {
@@ -1334,17 +1604,6 @@ sub bodydiff {
   print STDERR "(",exetime()," s)\n","Pass 1: Expanding text commands and merging isolated identities with changed blocks  " if $verbose;
   pass1(\@oldwords, \@newwords);
 
-###  my $token;
-###  $i=0;
-###  foreach $token ( @oldwords ) {
-###    $i++;
-###    print STDERR "OLDP1 $i: $token\n";
-###  }
-###  $i=0;
-###  foreach $token ( @newwords ) {
-###    $i++;
-###    print STDERR "NEWP1 $i: $token\n";
-###  }
 
   print STDERR "(",exetime()," s)\n","Pass 2: inserting DIF tokens and mark up.  " if $verbose;
   if ( $debug ) {
@@ -1392,7 +1651,6 @@ sub splitlatex {
     while ( $string =~ m/$pat/osg ) {
       my $match=$&;
       if ($last + length $& != pos $string  ) {
-### messy section for quick debug, fix so that it doesn't fail even at beginning of file
 	my $pos=pos($string);
 	my $offset=30<$last ? 30 : $last;
 	my $dum=substr($string,$last-$offset,$pos-$last+2*$offset);
@@ -1400,15 +1658,12 @@ sub splitlatex {
 	my $cnt=$#retval;
 	my $i;
 	$dum1 =~ s/\n/ /g;
-###	for ($i=$cnt-3; $i<=$#retval; $i++) { print STDERR "$i: |$retval[$i]|\n"; }
 	unless ($ignorewarnings) {
 	  print STDERR "\n$dum1\n";
 	  print STDERR " " x 30,"^" x ($pos-$last)," " x 30,"\n";
 	  print STDERR "Missing characters near word " . (scalar @retval) . " character index: " . $last . "-" .  pos($string) . " Length: " . length($match) . " Match: |$match| (expected match marked above).\n";
 	}
 	  # put in missing characters `by hand'
-###	print STDERR "DEBUG Before correction |@retval| correct with |",substr($dum,20,$pos-$last-length($match)), "|\n" if $verbose;
-###        print STDERR "DEBUG last $last length ", $last-10,"\n" if $verbose;
 	push (@retval, substr($dum,$offset,$pos-$last-length($match)));
 #       Note: there seems to be a bug in substr with utf8 that made the following line output substr which were too long,
 #             using dum instead appears to work
@@ -1463,7 +1718,6 @@ sub pass1 {
   my ($addblkcnt,$delblkcnt,$matblkcnt)=(0,0,0);
 
   my $adddiscard = sub {
-### print "DISCARD $_[0] $_[1] $cnt $seq1->[$_[0]] $seq2->[$_[1]]\n";
                       if ($cnt > 0 ) {
 			$matblkcnt++;
 			# just after an unchanged block 
@@ -1480,7 +1734,6 @@ sub pass1 {
 			  # We cannot carry out this merging immediately as this
 			  # would change the index numbers of seq1 and seq2 and confuse
 			  # the algorithm, instead we store in @$todo where we have to merge
-###			  print STDERR "Merge identical block $last1,$last2,$cnt,|@$block|",grep( /$wpat/, @$block ),"\n";
                           push(@$todo, [ $last1,$last2,$cnt,@$block ]);
 			}
 			$block = []; 
@@ -1498,21 +1751,11 @@ sub pass1 {
 		    $last2=$_[1] };		      
 
   my $match = sub { $mattokcnt++;
-###print "MATCH $_[0] $_[1] $cnt $seq1->[$_[0]] $seq2->[$_[1]]\n";
                     if ($cnt==0) {   # first word of matching sequence after changed sequence or at beginning of word sequence
 		      $deltextblocks = extracttextblocks($delblock); 
 		      $delblkcnt++ if scalar @$delblock;
 		      $addtextblocks = extracttextblocks($addblock);
 		      $addblkcnt++ if scalar @$addblock;
-###		      print STDERR "DEBUG: match after sequence\n";
-###		      print STDERR "delblock:",scalar @$deltextblocks,"\n";
-###                   for (my $i=0;$i< scalar @$delblock;$i++) {
-###                          my ($token,$index)=@{ $delblock->[$i]};
-###		      print STDERR "|$token| $index\n" };
-###		      print STDERR "addblock:\n";
-###                      for (my $i=0;$i< scalar @$addblock;$i++) {
-###                         my ($token,$index)=@{ $addblock->[$i]} ;
-###		      print STDERR "|$token| $index\n" };
 
 		      $delcmds = extractcommands($delblock);
       		      $addcmds = extractcommands($addblock);
@@ -1531,35 +1774,27 @@ sub pass1 {
 			if (defined($matchindex->[$i])){
 			  $j=$matchindex->[$i];
 			  @delmid=splitlatex($delcmds->[$i][3]);
-### this looks wrong although it seemed to have worked fine previously			  @addmid=splitlatex($addcmds->[$i][3]);
 			  @addmid=splitlatex($addcmds->[$j][3]);
-### old buggy version (but maybe best)			  while (scalar(@$deltextblocks)  && $deltextblocks->[0][0]<$delcmds->[$i][2]) {
 			  while (scalar(@$deltextblocks)  && $deltextblocks->[0][0]<$delcmds->[$i][1]) {
 			    my ($index,$block,$cnt)=@{ shift(@$deltextblocks) };
-###			    print STDERR "DELTEXTBLOCK Index $index Length $cnt |@$block|\n";
 			    push(@$todo, [$index,-1,$cnt,@$block]);
 			  }
 			  push(@$todo, [ $delcmds->[$i][1],-1,-1,$delcmds->[$i][2],@delmid,$delcmds->[$i][4]]);
 
-### old buggy version (but maybe best)			  while (scalar(@$addtextblocks) && $addtextblocks->[0][0]<$addcmds->[$j][2]) {
 			  while (scalar(@$addtextblocks) && $addtextblocks->[0][0]<$addcmds->[$j][1]) {
 			    my ($index,$block,$cnt)=@{ shift(@$addtextblocks) };
-###			    print STDERR "ADDTEXTBLOCK Index $index Length $cnt |@$block|\n";
 			    push(@$todo, [-1,$index,$cnt,@$block]);
 			  }
-### this looks wrong although it seemed to have worked			  push(@$todo, [ -1,$addcmds->[$j][1],-1,$addcmds->[$i][2],@addmid,$addcmds->[$i][4]]);
 			  push(@$todo, [ -1,$addcmds->[$j][1],-1,$addcmds->[$j][2],@addmid,$addcmds->[$j][4]]);
 			}
 		      }
 		      # mop up remaining textblocks
 		      while (scalar(@$deltextblocks)) {
 			my ($index,$block,$cnt)=@{ shift(@$deltextblocks) } ;
-###                        print STDERR "DELTEXTBLOCK Index $index Length $cnt |@$block|\n";
 			push(@$todo, [$index,-1,$cnt,@$block]);
 		      }
 		      while (scalar(@$addtextblocks)) {
 			my ($index,$block,$cnt)=@{ shift(@$addtextblocks) };
-###                        print STDERR "ADDTEXTBLOCK Index $index Length $cnt |@$block|\n";
 			push(@$todo, [-1,$index,$cnt,@$block]);
 		      }
 		      
@@ -1584,7 +1819,6 @@ sub pass1 {
       splice(@$seq1,$last1-$len1,1+$cnt,join("",$seq1->[$last1-$len1],@$block)) if $last1>=0;
       splice(@$seq2,$last2-$len2,1+$cnt,join("",$seq2->[$last2-$len2],@$block)) if $last2>=0;
     } else {
-###      print STDERR "COMD TYPE $last1 $len1 $last2 $len2 Block |@$block|\n",scalar @$seq1," ",scalar @$seq2,"\n";
       splice(@$seq1,$last1-$len1,1,@$block) if $last1>=0;
       splice(@$seq2,$last2-$len2,1,@$block) if $last2>=0;
     }
@@ -1622,7 +1856,6 @@ sub extracttextblocks {
   for ($i=0;$i< scalar @$block;$i++) {
     ($token,$index)=@{ $block->[$i] };
     # store pure text blocks
-### pre-0.3    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d*]+)((?:\[$brat0\]|\{$pat6\})*)/o 
     if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat6\})*)/o 
 				&& iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 				&& !iscmd($1,\@TEXTCMDLIST,\@TEXTCMDEXCL))) {
@@ -1637,7 +1870,6 @@ sub extracttextblocks {
     } else {
       # it is not text
       if (scalar(@$textblock)) {
-###	print STDERR "TEXTBLOCK at index $last, length ", scalar(@$textblock), " |@$textblock|\n"; 
 	push(@$retval,[ $last, $textblock, scalar(@$textblock) ]);
       }
       $textblock=[];
@@ -1678,14 +1910,11 @@ sub extractcommands {
     # $2: \cmd
     # $3: last argument
     # $4: }  + trailing spaces
-### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat6\})*\{)($pat6)(\}\s*)$/so )
     if ( ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat0\]|${extraspace}\{$pat6\})*${extraspace}\{)($pat6)(\}\s*)$/so )
 	 && iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL) ) {
-###      print STDERR "EXTRACTCOMMANDS Match |$1|$2|$3|$4|$index \n";      
       #      push(@$retval,[ $2,$index,$1,$3,$4 ]);
       ($cmd,$open,$mid,$closing) = ($2,$1,$3,$4) ;
       $closing =~ s/\}/\\RIGHTBRACE/ ;
-###      print STDERR "EXTRACTCOMMANDS Match |$cmd|$open|$mid|$closing|$index \n";      
       push(@$retval,[ $cmd,$index,$open,$mid,$closing ]);
     }
   }
@@ -1706,7 +1935,6 @@ sub iscmd {
   }
   return 0 unless $ret;
   foreach $pat ( @$regexexcl ) {
-###    print STDERR "DEBUG iscmd: checking |$cmd| against |$pat|\n";
     return 0 if ( $cmd =~ m/^${pat}$/ );
   }
   return 1;
@@ -1733,23 +1961,19 @@ sub pass2 {
   my $addhunk   = [];
 
   my $discard = sub { $deltokcnt++;
-### print "DISCARD $_[0],$_[1]: $seq1->[$_[0]]\n";
                       push ( @$delhunk, $seq1->[$_[0]]) };
 
   my $add = sub { $addtokcnt++;
-### print "APPEND $_[0],$_[1]: $seq2->[$_[1]]\n";
                   push ( @$addhunk, $seq2->[$_[1]]) };
 
   my $match = sub { $mattokcnt++;
 		    if ( scalar @$delhunk ) {
-### print "MATCH: adding delhunk size ", scalar @$delhunk,"\n" ;
                       $delblkcnt++;
 		      # mark up changes, but comment out commands
                       push @$retval,marktags($DELMARKOPEN,$DELMARKCLOSE,$DELOPEN,$DELCLOSE,$DELCMDOPEN,$DELCMDCLOSE,$DELCOMMENT,$delhunk);
 		      $delhunk = [];
 		    }
                     if ( scalar @$addhunk ) {
-### print "MATCH: adding addhunk size ", scalar @$addhunk,"\n" ;
                       $addblkcnt++;
                       # we mark up changes, but simply quote commands
                       push @$retval,marktags($ADDMARKOPEN,$ADDMARKCLOSE,$ADDOPEN,$ADDCLOSE,"","",$ADDCOMMENT,$addhunk);
@@ -1803,7 +2027,6 @@ sub marktags {
     ### print STDERR "DEBUG MARKTAGS: |$word|\n" if $debug;
     if ( $word =~ s/^%/%$comment/ ) {
       # a comment
-###      print STDERR "MARKTAGS: Add comment |$word|\n";
       if ($cmd==1) {
 	push (@$retval,$closecmd) ;
 	$cmd=-1;
@@ -1851,8 +2074,6 @@ sub marktags {
         #            $2 (the command) is in context2, just treat it as an ordinary command (i.e. comment it open with $opencmd)
         # Because we do not want to disable this command
 	# here we do not use $opencmd and $closecmd($opencmd is empty) 
-###	print STDERR "Detected text but not safe command $2 \n.";
-###	push (@$retval,$closecmd,$open) if $cmd==1 ;
 	if ($cmd==1) {
 	  push (@$retval,$closecmd) ;
 	} elsif ($cmd==0) { 
@@ -1860,7 +2081,6 @@ sub marktags {
 	}
         $command=$1; $commandword=$2; $closingbracket=$4;
 	@argtext=splitlatex($3);   # split textual argument into tokens
-###        print STDERR "DEBUG: command|$command| commandword|$commandword| closingbracket|$closingbracket| argtext|@argtext|";
 	# and mark it up (but we do not need openmark and closemark)
         # insert command with initial arguments, marked-up final argument, and closing bracket
 	if ( $cmdcomment && iscmd($commandword,\@CONTEXT1CMDLIST, \@CONTEXT1CMDEXCL) ) {
@@ -1891,7 +2111,6 @@ sub marktags {
 	push (@$retval,$opencmd) if $cmd==-1 ;
 	push (@$retval,$close,$opencmd) if $cmd==0 ;
 	$word =~ s/\n/\n${opencmd}/sg if $cmdcomment ;   # if opencmd is a comment, repeat this at the beginning of every line
-###        print STDERR "MARKTAGS: Add command |$word|\n";
 	push (@$retval,$word);
 	$cmd=1;
       }
@@ -1918,8 +2137,6 @@ sub marktags {
   push (@$retval,$closecmd) if $cmd==1;
 
   push (@$retval,$closemark) if ($noncomment);
-###  print STDERR "MARKTAGS: BEFORE |@$block|\n";
-###  print STDERR "MARKTAGS: AFTER |@$retval|\n";
   return @$retval;
 }
 
@@ -1927,10 +2144,6 @@ sub marktags {
 # carry out the following pre-processing steps for all arguments:
 # 1. Remove leading white-space
 #    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE and \& to \AMPERSAND
-### pre 1.0.4 BEGINDIF,ENDDIF substitution
-### #. change begin and end commands  within comments to BEGINDIF, ENDDIF
-###    so they don't disturb the pattern matching (if there are several \begin or \end in one line, this 
-###    will still cause a problem
 # #.   Change {,} in comments to \CLEFTBRACE, \CRIGHTBRACE
 # 2. mark all first empty line (in block of several) with \PAR tokens
 # 3. Convert all '\%' into '\PERCENTAGE ' and all '\$' into \DOLLAR to make parsing regular expressions easier
@@ -1951,25 +2164,15 @@ sub marktags {
 #     names or labels but it does not matter because they are converted back in the postprocessing step
 # Returns: leading white space removed in step 1
 sub preprocess {
-###  my @leadin=() ;
   for (@_) { 
-###    s/^(\s*)//s;
-###    push(@leadin,$1);
     #    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE
     s/(?<!\\)\\{/\\QLEFTBRACE /sg;
     s/(?<!\\)\\}/\\QRIGHTBRACE /sg;
     s/(?<!\\)\\&/\\AMPERSAND /sg;
-### pre 1.0.4
-###    # change begin and end commands  within comments such that they
-###    # don't disturb the pattern matching (if there are several \begin or \end in one line
-###    # this substitution is insufficient but that appears unlikely)
-###    s/(%.*)\\begin\{(.*)$/$1\\BEGINDIF\{$2/mg ;
-###    s/(%.*)\\end\{(.*)$/$1\\ENDDIF\{$2/mg ;
 # replace {,} in comments with \\CLEFTBRACE,\\CRIGHTBRACE
     1 while s/((?<!\\)%.*)\{(.*)$/$1\\CLEFTBRACE $2/mg ;
     1 while s/((?<!\\)%.*)\}(.*)$/$1\\CRIGHTBRACE $2/mg ;
 
-###    s/\n(\s*)\n((?:\s*\n)*)/\\PAR\n$2/g ;
     s/\n(\s*?)\n((?:\s*\n)*)/\n$1\\PAR\n$2/g ;
     s/(?<!\\)\\%/\\PERCENTAGE /g ;  # (?<! is negative lookbehind assertion to prevent \\% from being converted
     s/(?<!\\)\\\$/\\DOLLAR /g ;  # (?<! is negative lookbehind assertion to prevent \\$ from being converted
@@ -1998,7 +2201,6 @@ sub preprocess {
     # add final token " STOP"
     $_ .= " STOP"
   }
-###  return(@leadin);
 }
 
 #hashstring=tohash(\%hash,$string)
@@ -2021,7 +2223,6 @@ sub tohash {
     $hstr="-$hstr";
   }
   $hash->{$hstr}=$string;
-###  print STDERR "Hash:$hstr: Content:$string:\n";
   return($hstr);
 }
 
@@ -2069,7 +2270,6 @@ sub fromhash {
 # 2.   If --block-math-markup option set: Convert \MATHBLOCKmath{..} commands back to environments
 #
 #      Convert all PICTUREblock{..} commands back to the appropriate environments
-###0.5: Remove DIFadd, DIFdel, DIFFaddbegin , ... from picture environments
 # 3. Convert DIFadd, DIFdel, DIFFaddbegin , ... into FL varieties
 #    within floats (currently recognised float environments: plate,table,figure
 #    plus starred varieties).
@@ -2103,10 +2303,6 @@ sub postprocess {
     # Replace \RIGHTBRACE by }    
     s/\\RIGHTBRACE/}/g;
 
-###    # change citation commands within comments to protect from processing
-###    if ($CITECMD){
-###      1 while s/(%.*)\\($CITECMD)/$1\\CITEDIF$2/m ;
-###    }
     # Check all deleted blocks: where a deleted block contains a matching \begin and
     #    \end environment (these will be disabled by a %DIFDELCMD statements), enable
     #    these commands again (such that for example displayed math in a deleted equation
@@ -2114,29 +2310,15 @@ sub postprocess {
     #    environments with their display only variety (so that equation numbers in new file and
     #    diff file are identical
     while ( m/\\DIFdelbegin.*?\\DIFdelend/sg ) {
-###    while ( m/\\DIFdelbegin.*?\\DIFdelend/sg ) {
-###      print STDERR "DEBUG Match delblock \n||||$&||||\n at ",pos,"\n";
       $cnt=0;
       $len=length($&);
       $begin=pos($_) - $len;
       $delblock=$&;
-###   A much simpler method for math replacement might follow this strategy (can recycle part of the commands below for following 
-###   this strategy:
-###   1. a Insert aux commands \begin{MATHMODE} or \end{MATHMODE} for all deleted commands opening or closing displayed math mode
-###      b Insert aux commands \begin{MATHARRMODE} or \end{MATHARRMODE} for all deleted commands opening or closing math array mode
-###   2  Replace MATHMODE and MATHARRMODE by correct pairing if appropriate partner  math command is found in text
-###   3  a Replace remaining \begin{MATHMODE}...\end{MATHMODE} pairs with \begin{$MATHREPL}..\end{$MATHREPL}
-###      b Replace remaining \begin{MATHARRMODE}...\end{MATHARRMODE} pairs with \begin{$MATHREPL}..\end{$MATHREPL}
-###   4  Delete all aux command math mode pairs which have simply comments or empty lines between them
-###   As written this won't actually work!
 
 
-###   Most general case: allow all included environments
-###      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{(\w*\*?)\}\s*?\n)(.*?)(\%DIFDELCMD < \s*\\end\{\2\})/$1\\begin{$2}$AUXCMD\n$3\n\\end{$2}$AUXCMD\n$4/sg;
       ### (.*?[^\n]?)\n? construct is necessary to avoid empty lines in math mode, which result in
       ### an error
       # displayed math environments
-###0.5:     $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHREPL}$AUXCMD\n$1$3\n\\end{$MATHREPL}$AUXCMD\n$4/sg;
       if ($mathmarkup == FINE ) {
 	$delblock=~ s/(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHREPL}$AUXCMD\n$1$3\n\\end{$MATHREPL}$AUXCMD\n$4/sg;
 	# also transform the opposite pair \end{displaymath} .. \begin{displaymath} but we have to be careful not to interfere with the results of the transformation in the line directly above
@@ -2178,9 +2360,7 @@ sub postprocess {
         }
 
       # parse $delblock for deleted and reinstated eqnarray* environments - within those reinstate \\ and & commands
-###      while ( $delblock =~ m/\\begin{$MATHARRREPL}$AUXCMD\n.*?\n\\end{$MATHARRREPL}$AUXCMD\n/sg ) {
         while ( $delblock =~ m/\\begin\Q{$MATHARRREPL}$AUXCMD\E\n.*?\n\\end\Q{$MATHARRREPL}$AUXCMD\E\n/sg ) {
-###	      print STDERR "DEBUG Match eqarrayblock $& at ",pos,"\n";
 	  $cnt2=0;
 	  $len2=length($&);
 	  $begin2=pos($delblock) - $len2;
@@ -2198,19 +2378,7 @@ sub postprocess {
 	$delblock=~ s/\\MATHBLOCK($MATHENV)\{($pat6)\}/\\MATHBLOCK$MATHREPL\{$2\}/sg;
 	$delblock=~ s/\\MATHBLOCK($MATHARRENV)\{($pat6)\}/\\MATHBLOCK$MATHARRREPL\{$2\}/sg;
       }
-###      # list making environment
-###      keeping list environments while commenting out the item
-###      command creates more problems than it solves.  For an
-###      ultimate solution one would have to keep the item commands as
-###      well. This will be tackled in the next version together with
-###      other commands such as section which cannot be the argument
-###      of DIFdel but still ought to be kept.
-###      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($LISTENV)\}\s*?\n)(.*?)(\%DIFDELCMD < \s*\\end\{\2\})/$1\\begin{$2}$AUXCMD\n$3\n\\end{$2}$AUXCMD\n$4/sg;
 
-###      $delblock=~ s/\\begin\{$MATHENV}$AUXCMD/\\begin{$MATHREPL}$AUXCMD/g;
-###      $delblock=~ s/\\end\{$MATHENV}$AUXCMD/\\end{$MATHREPL}$AUXCMD/g;
-###      $delblock=~ s/\\begin\{$MATHARRENV}$AUXCMD/\\begin{$MATHARRREPL}$AUXCMD/g;
-###      $delblock=~ s/\\end\{$MATHARRENV}$AUXCMD/\\end{$MATHARRREPL}$AUXCMD/g;
 
 #    b.where one of the commands matching $COUNTERCMD is used as a DIFAUXCMD, add a statement
 #      subtracting one from the respective counter to keep numbering consistent with new file
@@ -2219,7 +2387,6 @@ sub postprocess {
 
 #     c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
       while ( $delblock =~ m/($math)(\s*)/sg ) {
-###	      print STDERR "DEBUG Delblock Match math $& at ",pos,"\n";
 	$cnt2=0;
 	$len2=length($&);
 	$begin2=pos($delblock) - $len2;
@@ -2228,20 +2395,6 @@ sub postprocess {
 	substr($delblock,$begin2,$len2)=$mathblock;
 	pos($delblock) = $begin2 + length($mathblock);
       }
-###      if ($CITE2CMD) {
-######   ${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat6\}))  .*?%%%\n
-###	$delblock=~s/($DELCMDOPEN\s*\\($CITE2CMD)(.*)$DELCMDCLOSE)/
-###	  # Replacement code 
-###	  {my ($aux,$all);
-###	   $aux=$all=$1;
-###	   $aux=~s#\n?($DELCMDOPEN|$DELCMDCLOSE)##g;
-###	   $all."$aux$AUXCMD\n";}/sge;
-###      }
-###      # or protect \cite commands with \mbox
-###      if ($CITECMD) {
-######	$delblock=~s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat6\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-###	$delblock=~s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat6\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-###      } 
       # if MBOXINLINEMATH is set, protect inlined math environments with an extra mbox
       if ( $MBOXINLINEMATH ) {
 	# note additional \newline after command is omitted from output if right at the end of deleted block (otherwise a spurious empty line is generated)
@@ -2259,7 +2412,6 @@ sub postprocess {
       $begin=pos($_) - $len;
       $addblock=$&;
       while ( $addblock =~ m/($math)(\s*)/sg ) {
-###	print STDERR "DEBUG Addblock Match math |$1| (head:NA tail |$2| at ",pos,"\n";
 	$cnt2=0;
 	$len2=length($&);
 	$begin2=pos($addblock) - $len2;
@@ -2268,15 +2420,6 @@ sub postprocess {
 	substr($addblock,$begin2,$len2)=$mathblock;
 	pos($addblock) = $begin2 + length($mathblock);
       }
-###      if ($CITECMD) {
-###	my $addblockbefore=$addblock;
-######	$addblock=~ s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat2\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-###	#(?:mask)?(?:full|short|no)?cite(?:A|author|year|meta)(?:NP)?$/
-###	###my $CITECMD; $CITECMD="cite(?:A)$";
-###	$addblock=~ s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat2\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-###	print STDERR "DEBUG: CITECMD $CITECMD\nDEBUG: addblock before:|$addblockbefore|\n" if $debug;
-###	print STDERR "DEBUG: addblock after: |$addblock|\n" if $debug;
-###      }
       # if MBOXINLINEMATH is set, protect inlined math environments with an extra mbox
       if ( $MBOXINLINEMATH ) {
 	##$addblock=~s/($math)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/sg;
@@ -2287,27 +2430,13 @@ sub postprocess {
       pos = $begin + length($addblock);
     }
 
-### pre-1.0.4:
-###    ### old place for BEGINDIF, ENDDIF replacement
-###    # change begin and end commands  within comments such that they
-###    # don't disturb the pattern matching (if there are several \begin or \end in one line
-###    # this substitution is insufficient but that appears unlikely)
-###    s/(%.*)\\begin\{(.*)$/$1\\BEGINDIF\{$2/mg ;
-###    s/(%.*)\\end\{(.*)$/$1\\ENDDIF\{$2/mg ;
 
-###    # replace {,} in comments with \\CLEFTBRACED,\\CRIGHTBRACED
-###    # This needs to be repeated here to also get rid of DIFdelcmd-protected environments
-###    # note CLEFTBRACED used here vs CLEFTBRACE in initial conversion
-###    # note that this turned out to be a bad idea as it interfered with some other reverse changes assuming the bracket
-###    1 while s/(%.*)\{(.*)$/$1\\CLEFTBRACED $2/mg ;
-###    1 while s/(%.*)\}(.*)$/$1\\CRIGHTBRACED $2/mg ;
 
     # Replace MATHMODE environments from step 1a above by the correct Math environment
 
     # The next line is complicated.  The negative look-ahead insertion makes sure that no \end{$MATHENV} (or other mathematical
     # environments) are between the \begin{$MATHENV} and \end{MATHMODE} commands. This is necessary as the minimal matching 
     # is not globally minimal but only 'locally' (matching is beginning from the left side of the string)
-###    print STDERR "DEBUG: before mathmode replacement\n $_ ------------ \n";
     if ( $mathmarkup == FINE ) {
       1 while s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}((?:.(?!(?:\\end{(?:(?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}|\\begin{MATHMODE})))*?)\\end{MATHMODE}/\\begin{$1}$2\\end{$1}/s;
       1 while s/\\begin{MATHMODE}((?:.(?!\\end{MATHMODE}))*?)\\end{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}/\\begin{$2}$1\\end{$2}/s;
@@ -2345,9 +2474,7 @@ sub postprocess {
     # Convert DIFadd, DIFdel, DIFFaddbegin , ... into  varieties
     #    within floats (currently recognised float environments: plate,table,figure
     #    plus starred varieties).
-### explict negative lookahear    while ( m/(?<!%DIFDELCMD < )\\begin\{($FLOATENV)\}.*?(?<!%DIFDELCMD < )\\end\{\1\}/sg ) {
     while ( m/\\begin\{($FLOATENV)\}.*?\\end\{\1\}/sg ) {
-###      print STDERR "DEBUGL MatchFloat  $& at ",pos,"\n";
       $cnt=0;
       $len=length($&);
       $begin=pos($_) - $len;
@@ -2369,8 +2496,6 @@ sub postprocess {
     # Expand hashes of verb and verbatim environments (note negative look behind assertion to not leak out of DIFDELCMD comments
     s/(\\verb\*?)\{([-\d]*?)\}/"${1}". fromhash(\%verbhash,$2)/esg;
     s/${DELCMDOPEN}\\(verbatim\*?)\{([-\d]*?)\}/"${DELCMDOPEN}\\begin{${1}}".fromhash(\%verbhash,$2,$DELCMDOPEN)."${DELCMDOPEN}\\end{${1}}"/esg;
-### DEBUG    s/${DELCMDOPEN}\\(verbatim\*?)/VERBATIMBLURB/sg;
-###    s/(?<!%\\DIFCMD < )\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
     s/\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
     # Convert '\PERCENTAGE ' back into '\%' (the final question mark catches a special situation where due to a latter pre-processing step the ' ' becomes separated	       
     s/\\PERCENTAGE ?/\\%/g;
@@ -2379,14 +2504,12 @@ sub postprocess {
     # remove all \PAR tokens (taking care to properly keep commented out PAR's
     # from introducing uncommented newlines - next line)
     s/(%DIF < )([^\n]*?)\\PAR\n/$1$2\n$1\n/sg;
-###    s/\\PAR\n/\n\n/sg;
     # convert PAR commands which are on a line by themselves
     s/\n(\s*?)\\PAR\n/\n\n/sg;
     # convert remaining PAR commands (which are preceded by non-white space characters, usually "}" ($ADDCLOSE)
     s/\\PAR\n/\n\n/sg;
 
     #  package specific processing: 
-###    print STDERR keys %packages;
     if ( defined($packages{"endfloat"})) {
       #endfloat: make sure \begin{figure} and \end{figure} are always
       #      on a line by themselves, similarly for table environment
@@ -2399,16 +2522,7 @@ sub postprocess {
       s/(\\(?:begin|end)\{(?:figure|table)\})(.+)$/$1\n$2/mg;
     }
     # undo renaming of the \begin and \end,{,}  and dollars in comments 
-###    s/(%.*)\\BEGINDIF\{(.*)$/$1\\begin\{$2/mg ;
-###    s/(%.*)\\ENDDIF\{(.*)$/$1\\end\{$2/mg ;
-###    # disabled as this turned out to be a bad idea
-###    1 while s/(%.*)\\CLEFTBRACED (.*)$/$1\{$2/mg ;
-###    1 while s/(%.*)\\CRIGHTBRACED (.*)$/$1\}$2/mg ;
     1 while s/(%.*)DOLLARDIF/$1\$/mg ;
-###    # undo renaming of the \cite.. commands in comments 
-###    if ( $CITECMD ) {
-###      1 while s/(%.*)\\CITEDIF($CITECMD)/$1\\$2/mg ;
-###    }
 #   Convert \begin{SQUAREBRACKET} \end{SQUAREBRACKET} into \[ \]
     s/\\end{SQUAREBRACKET}/\\\]/sg;
     s/\\begin{SQUAREBRACKET}/\\\[/sg;
@@ -2460,16 +2574,9 @@ sub preprocess_preamble {
   $titlecmd =~ s/[\$\^]//g; 
   # make sure to not match on comment lines:
   $titlecmdpat=qr/^(?:[^%\n]|\\%)*(\\($titlecmd)$extraspace(?:\[($brat0)\])?(?:\{($pat6)\}))/ms;
-###  print STDERR "DEBUG:",$titlecmdpat,"\n";
   @oldtitlecommands= ( $$oldpreambleref =~ m/$titlecmdpat/g );
   @newtitlecommands= ( $$newpreambleref =~ m/$titlecmdpat/g );
 
-###  { my $cnt =0 ; my $tcmd ;
-###   print STDERR "DEBUG $#oldtitlecommands\n";
-###   foreach $tcmd ( @oldtitlecommands ) {
-###    print STDERR "DEBUG old: $cnt : $tcmd\n";
-###     $cnt++;
-###  } }
 
   while ( @oldtitlecommands ) {
     $line=shift @oldtitlecommands;
@@ -2477,7 +2584,6 @@ sub preprocess_preamble {
     $optarg=shift @oldtitlecommands;
     $arg=shift @oldtitlecommands;
   
-###    print STDERR "DEBUG old line:$line cmd:$cmd optarg:$optarg arg:$arg\n";
     if ( defined($oldhash{$cmd})) {
       warn "$cmd is used twice in preamble of old file. Reverting to pure line diff mode for preamble.\n";
       return;
@@ -2490,7 +2596,6 @@ sub preprocess_preamble {
     $optarg=shift @newtitlecommands;
     $arg=shift @newtitlecommands;
   
-###    print STDERR "DEBUG new line:$line cmd:$cmd optarg:$optarg arg:$arg\n";
     if ( defined($newhash{$cmd})) {
       warn "$cmd is used twice in preamble of new file. Reverting to pure line diff mode for preamble.\n";
       return;
@@ -2516,7 +2621,6 @@ sub preprocess_preamble {
     }
     $argnew=$newhash{$cmd}->[2];
     $argdiff="{" . join("",bodydiff($argold,$argnew)) ."}";
-###    print STDERR "DEBUG cmd:$cmd argnew:$argnew argold:$argold\n";
     if ( length $optargnew ) {
       $optargdiff="[".join("",bodydiff($optargold,$optargnew))."]" ;
       $optargdiff =~ s/\\DIFaddbegin /\\DIFaddbeginFL /g;
@@ -2654,7 +2758,6 @@ sub init_regex_arr_ext {
   }
   else {
     # assume it is a comma-separated list of reg-ex
-###    print STDERR "DEBUG init_regex_arr_ext arg >$arg<\n";
     foreach $regex (split(qr/(?<!\\),/,$arg)) {
       $regex =~ s/\\,/,/g;
       push (@$arr,qr/^$regex$/);
@@ -3670,9 +3773,6 @@ T. Connors, Sebastian Gouezel and many others.
 Thanks to the many people who sent in bug reports, feature suggestions, and other feedback.
 
 =cut
-### scratch Text bits
-###(otherwise readibility is reduced because common words such as "the" and "and" which can be found both in the discarded and added block are considered to be identical text parts and thus not marked up, and added and discarded
-###text parts are interspersed between these common words).
 
 __END__
 %%BEGIN SAFE COMMANDS
