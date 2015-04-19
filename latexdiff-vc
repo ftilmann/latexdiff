@@ -192,7 +192,7 @@ if ( scalar(@revs)>0 ) {
     $diffcmd  = "rcsdiff -u -r";  
     $patchcmd = "patch -R -p0";
   } elsif ( $vc eq "SVN" ) {
-    $diffcmd  = "svn diff -r ";  
+    $diffcmd  = "svn diff --internal-diff -r ";  
     $patchcmd = "patch -R -p0";
   } elsif ( $vc eq "GIT" ) {
     $diffcmd  = "git diff -r --relative --no-prefix ";  

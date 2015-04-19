@@ -316,7 +316,7 @@ to make the markup visible. This is what it looks like:
 If you approve of all the changes in the revision, just continue with 
 \verb|example-rev.tex| for the next revision.  If you like to adopt
 most but not all changes you can use \verb|latexrevise| in the
-following manner.  Simply remove the \verb|\DIFdelbegin| and
+following manner.  Simply edit \verb|example-diff.tex| to remove the \verb|\DIFdelbegin| and
 \verb|\DIFdelend| tags around the text you would like to keep and
 simply remove the text between  \verb|\DIFaddbegin| and
 \verb|\DIFaddend| tags, if you do not wish to keep them.  Say you are happy with all proposed changes for the
@@ -348,7 +348,7 @@ are identical}.
 }
 and run 
 \begin{verbatim}
-latexrevise -a example-rev.tex > example-final.tex
+latexrevise -a example-diff.tex > example-final.tex
 \end{verbatim}
 \verb|example-final.tex| is then almost identical to 
 \verb|example-rev.tex| except for the last paragraph.

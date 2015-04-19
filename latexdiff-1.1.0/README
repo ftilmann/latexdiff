@@ -91,7 +91,7 @@ latexdiff.spec (Author: T. Doerges) spec file for RPM generation
 latexchanges (Author: Jan-Ake Larsson) Wrapper script for applying latexdiff with numbered documen version 
 (see contrib/README.latexchanges for a more detailed description)
 
-Cntributions by the following authors were incorporated into the latexdiff code, or inspired me to 
+Contributions by the following authors were incorporated into the latexdiff code, or inspired me to 
 extend latexdiff in a similar way: J. Paisley, N. Becker, K. Huebner
 
 LICENSE (also see file COPYING)
