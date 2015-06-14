@@ -352,4 +352,16 @@ latexrevise -a example-diff.tex > example-final.tex
 \end{verbatim}
 \verb|example-final.tex| is then almost identical to 
 \verb|example-rev.tex| except for the last paragraph.
+
+\section*{External tools}
+The following is an incomplete list of wrappers written by others providing some added functionality.
+
+\begin{description}
+ \item[latexdiffcite] (Author: Christer van der Meeren)  is a wrapper around latexdiff to make citations diff properly. It works by expanding \verb|\cite| type commands using the bbl or bib file, such that citations are treated just like normal text rather than as atomic in the plain latexdiff. \\
+\verb|https://latexdiffcite.readthedocs.org|
+\item[git-latexdiff] (lead author: Matthieu Moy) is a wrapper (bash scipt) around latexdiff that allows using it to diff two revisions of a LaTeX file under git revision control Similar functionality is provided by \verb|latexdiff-vc --git| with \verb|--flatten| option included with this distribution but git-latexdiff allows more fine-grained control on varous aspects. (Not to be confused with latexdiff-git, which is normally installed as a soft link to latexdiff-vc) \\
+\verb|https://gitorious.org/git-latexdiff/|
+
+\end{description}
+
 \end{document}

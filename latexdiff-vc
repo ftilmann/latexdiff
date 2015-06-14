@@ -25,6 +25,8 @@
 #
 # Detailed usage information at the end of the file
 #
+# TODO/IDEAS: - option to call external pre-processing codes
+#
 # version 1.1.0:
 #
 #      - with option --flatten and version control option, checkout the whole tree into a temporary directory
