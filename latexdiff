@@ -33,6 +33,10 @@
 ###  - user configurable mbox protection (see http://tex.stackexchange.com/questions/218973/how-to-protect-or-mbox-commands-in-latexdiff ), also see email
 #      DONE
 #
+#
+# Version 1.1.1alpha
+#    - patch mhchem: allo ce in equations
+#
 # Version 1.1.0
 #    - treat diacritics (\",\', etc) as safe commands
 #    - treat \_ and \& correctly as safe commands, even if used without spacing to the next word
@@ -134,7 +138,7 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.1.0  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+This is LATEXDIFF 1.1.1alpha  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
   (c) 2004-2015 F J Tilmann
 EOF
 
@@ -848,7 +852,7 @@ if (defined $packages{"glossaries"} ) {
   }
 }
 
-if (defined $packages{"chemformula"} ) {
+if (defined $packages{"chemformula"} or defined $packages{"chemmacros"} ) {
   print STDERR "chemformula package detected.\n" if $verbose ;
   init_regex_arr_ext(\@SAFECMDLIST,'ch');
   push(@UNSAFEMATHCMD,'ch');
@@ -860,7 +864,7 @@ if (defined $packages{"chemformula"} ) {
 if (defined $packages{"mhchem"} ) {
   print STDERR "mhchem package detected.\n" if $verbose ;
   init_regex_arr_ext(\@SAFECMDLIST,'ce');
-  push(@UNSAFEMATHCMD,'cee');
+  push(@UNSAFEMATHCMD,'ce','cee');
   # The next command would be needed to allow highlighting the interior of \cee commands in math environments
   # but the redefinitions in chemformula are too deep to make this viable
   # push(@MATHTEXTCMDLIST,'cee');
@@ -2808,7 +2812,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                        Use of the --packages option disables automatic scanning, so if for any
                        reason package specific parsing needs to be switched off, use --packages=none.
                        The following packages trigger special behaviour:
-                       endfloat hyperref amsmath apacite siunitx cleveref glossaries mhchem chemformula
+                       endfloat hyperref amsmath apacite siunitx cleveref glossaries mhchem chemformula/chemmacros
                        [ Default: scan the preamble for \\usepackage commands to determine
                          loaded packages.]
 
@@ -3147,7 +3151,7 @@ Define most of the glossaries commands as safe, protecting them with \mbox'es wh
 
 Treat C<\ce> as a safe command, i.e. it will be highlighted (note that C<\cee> will not be highlighted in equations as this leads to processing errors)
 
-=item C<chemformula>
+=item C<chemformula> or C<chemmacros>
 
 Treat C<\ch> as a safe command outside equations, i.e. it will be highlighted (note that C<\ch> will not be highlighted in equations as this leads to processing errors)
 
@@ -3659,7 +3663,7 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.1.0
+Version 1.1.1alpha
 Copyright (C) 2004-2015 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
