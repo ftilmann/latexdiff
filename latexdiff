@@ -30,12 +30,9 @@
 ###  - make style that allows (forward and backjumping with hyperref)
 ###  - make style / latexdiff-vc combo that allows only to output pages with changes   DONE
 ###    (remember to update answer on stack exchange: http://tex.stackexchange.com/questions/166049/invisible-markers-in-pdfs-using-pdflatex)
-###  - user configurable mbox protection (see http://tex.stackexchange.com/questions/218973/how-to-protect-or-mbox-commands-in-latexdiff ), also see email
-#      DONE
-#
 #
 # Version 1.1.1alpha
-#    - patch mhchem: allo ce in equations
+#    - patch mhchem: allow ce in equations
 #
 # Version 1.1.0
 #    - treat diacritics (\",\', etc) as safe commands
@@ -2702,7 +2699,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
 --subtype=markstyle
 -s markstyle           Add code to preamble for selected style for bracketing
                        commands (e.g. to mark changes in  margin)
-                       Available styles: SAFE MARGINAL DVIPSCOL COLOR ZLABEL ONLYCHANGEDPAGE (LABEL)*
+                       Available styles: SAFE MARGIN DVIPSCOL COLOR ZLABEL ONLYCHANGEDPAGE (LABEL)*
                        [ Default: SAFE ]
                        * LABEL subtype is deprecated
 
@@ -3060,7 +3057,7 @@ B<-s markstyle>
 Add code to preamble for selected style for bracketing
 commands (e.g. to mark changes in  margin). This option defines
 C<\DIFaddbegin>, C<\DIFaddend>, C<\DIFdelbegin> and C<\DIFdelend> commands.
-Available styles: C<SAFE MARGINAL COLOR DVIPSCOL  ZLABEL ONLYCHANGEDPAGE (LABEL)*>
+Available styles: C<SAFE MARGIN COLOR DVIPSCOL  ZLABEL ONLYCHANGEDPAGE (LABEL)*>
 
 [ Default: C<SAFE> ]
 * Subtype C<LABEL> is deprecated
