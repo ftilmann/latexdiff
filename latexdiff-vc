@@ -90,6 +90,10 @@ GetOptions('revision|r:s' => \@revs,
            'version' => \$version,
 	   'help|h' => \$help);
 
+### print STDERR "DEBUG 1:revs($#revs): " . join(":",@revs) . "\n";
+### print STDERR "DEBUG 1:ARGV($#ARGV): " . join(":",@ARGV) . "\n";
+
+
 $extracomp = join(" ",grep(/BAR/,@ARGV)); # special latexdiff options requiring additional compilation
 
 if ( $help ) {
@@ -127,22 +131,22 @@ if ( $git ) {
 
 # check whether the first file name or first passed-through option for latexdiff got misinterpreted as an option to an empty -r option
 if ( @revs && ( -f $revs[$#revs] || $revs[$#revs] =~ /^-/ ) ) {
-  unshift @ARGV,$revs[$#revs];
+  push @ARGV,$revs[$#revs];
   $revs[$#revs]="";
 }
 # check whether the first file name or first passed-through option for latexdiff got misinterpreted as an option to an empty -d option
 if ( defined($dir) && ( -f $dir || $dir =~ /^-/ ) ) {
-  unshift @ARGV,$dir;
+  push @ARGV,$dir;
   $dir="";
 }
 # check whether the first file name or first passed-through option for latexdiff got misinterpreted as an option to an empty --flatten option
 if ( defined($flatten) && ( -f $flatten || $flatten =~ /^-/ ) ) {
-  unshift @ARGV,$flatten;
+  push @ARGV,$flatten;
   $flatten="";
 }
 
 
-#print "DEBUG: latexdiff-vc command line: ", join(" ",@ARGV), "\n"; 
+print "DEBUG: latexdiff-vc command line: ", join(" ",@ARGV), "\n"; 
 
 $file2=pop @ARGV;
 ( defined($file2) && $file2 =~ /\.(tex|bbl|flt)$/ ) or pod2usage("Must specify at least one tex, bbl or flt file");
@@ -285,7 +289,7 @@ if ( ($vc eq "SVN" || $vc eq "CVS") && scalar(@revs)) {
 ### print STDERR "DEBUG vc: $vc \n";
 ### print STDERR "DEBUG append $append  \n";
 ### print STDERR "DEBUG dir $dir  \n" if ( defined ($dir));
-#exit ; 
+###exit ; 
 
 
 # cycle through all files
@@ -366,7 +370,7 @@ while ( $infile=$file2=shift @files ) {
       die "Abort ... " ;
     }
   }
-  print "Running $latexdiff\n";
+  print "Running: $latexdiff  $options \"$file1\" \"$file2\" > \"$diff\"\n";
   unless ( system("$latexdiff $options \"$file1\" \"$file2\" > \"$diff\"") == 0 ) { 
     print STDERR  "Something went wrong in $latexdiff. Deleting $diff and abort\n" ; unlink $diff ; exit(5) 
   };
