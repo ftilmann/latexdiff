@@ -30,9 +30,11 @@
 ###  - make style that allows (forward and backjumping with hyperref)
 ###  - make style / latexdiff-vc combo that allows only to output pages with changes   DONE
 ###    (remember to update answer on stack exchange: http://tex.stackexchange.com/questions/166049/invisible-markers-in-pdfs-using-pdflatex)
+###  - --flatten option only expands first including command per line if there is more than one
 #
 # Version 1.1.1alpha
 #    - patch mhchem: allow ce in equations
+#    - flatten now also expands \input etc. in the preamble (but not \usepackage!)
 #
 # Version 1.1.0
 #    - treat diacritics (\",\', etc) as safe commands
@@ -255,7 +257,7 @@ $mathmarkup=COARSE;
 
 $verbose=0;
 # output debug and intermediate files, set to 0 in final distribution
-$debug=0; 
+$debug=1; 
 # insert preamble directly after documentclass - experimental feature, set to 0 in final distribution
 # Note that this failed with mini example (or other files, where packages used in latexdiff preamble
 # are called again with incompatible options in preamble of resulting file)
@@ -702,6 +704,10 @@ exetime(1);
 if ($flatten) {
   $oldbody=flatten($oldbody,$oldpreamble,$oldfile,$encoding);
   $newbody=flatten($newbody,$newpreamble,$newfile,$encoding);
+  # flatten preamble
+  $oldpreamble=flatten($oldpreamble,$oldpreamble,$oldfile,$encoding);
+  $newpreamble=flatten($newpreamble,$newpreamble,$newfile,$encoding);
+
 ###   if ( $debug ) {
 ###     open(FILE,">","latexdiff.debug.flatold");
 ###     print FILE $oldpreamble,'\\begin{document}',$oldbody,'\\end{document}',$oldpost;
@@ -1041,18 +1047,24 @@ sub read_file_with_encoding {
 # %packages=list_packages($preamble)
 # scans the arguments for \documentclass,\RequirePackage and \usepackage statements and constructs a hash
 # whose keys are the included packages, and whose values are the associated optional arguments
+# if argument of \usepackage or \RequirePackage is comma separated list, treat as different packages
 sub list_packages {
   my ($preamble)=@_;
   my %packages=();
+  my $pkg;
 
   # remove comments 
   $preamble=~s/(?<!\\)%.*$//mg ;
 
   while ( $preamble =~  m/\\(?:documentclass|usepackage|RequirePackage)(?:\[($brat0)\])?\{(.*?)\}/gs ) {
     if (defined($1)) {
-      $packages{$2}=$1;
+      foreach $pkg ( split /,/,$2 ) {
+	$packages{$pkg}=$1;
+      }
     } else {
-      $packages{$2}="";
+      foreach $pkg ( split /,/,$2 ) {
+	$packages{$pkg}="";
+      }
     }
   }
   return (%packages);
@@ -1143,7 +1155,7 @@ sub flatten {
   print STDERR "DEBUG: includeonly $includeonly\n" if $debug;
 
   # recursively replace \\input and \\include files
-  $text=~s/(^(?:[^%\n]|\\%)*)\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?)}/{ 
+  1 while $text=~s/(^(?:[^%\n]|\\%)*)\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?)}/{ 
 	    $begline=(defined($1)? $1 : "") ;
 	    $fname = $2 if defined($2) ;
 	    $fname = $3 if defined($3) ;
