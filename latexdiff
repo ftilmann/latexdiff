@@ -2036,11 +2036,14 @@ sub preprocess {
     s/(\\verb\*?)(\S)(.*?)\2/"${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
     s/\\begin\{(verbatim\*?)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     # Convert _n or _\cmd into \SUBSCRIPTNB{n} or \SUBSCRIPTNB{\cmd} and _{nnn} into \SUBSCRIPT{nn}
-    1 while s/(?<!\\)_([^{\\]|\\\w+)/\\SUBSCRIPTNB{$1}/g ;
-    1 while s/(?<!\\)_{($pat6)}/\\SUBSCRIPT{$1}/g ;
+    1 while s/(?<!\\)_(\s*([^{\\\s]|\\\w+))/\\SUBSCRIPTNB{$1}/g ;
+    1 while s/(?<!\\)_(\s*{($pat6)})/\\SUBSCRIPT$1/g ;
     # Convert ^n into \SUPERSCRIPTNB{n} and ^{nnn} into \SUPERSCRIPT{nn}
-    1 while s/(?<!\\)\^([^{\\]|\\\w+)/\\SUPERSCRIPTNB{$1}/g ;
-    1 while s/(?<!\\)\^{($pat6)}/\\SUPERSCRIPT{$1}/g ;
+    1 while s/(?<!\\)\^(\s*([^{\\\s]|\\\w+))/\\SUPERSCRIPTNB{$1}/g ;
+    1 while s/(?<!\\)\^(\s*{($pat6)})/\\SUPERSCRIPT$1/g ;  
+    # Convert  \sqrt{n} into \SQRT{n}  and  \sqrt nn into SQRTNB{nn}
+    1 while s/(?<!\\)\\sqrt(\s*([^{\\\s]|\\\w+))/\\SQRTNB{$1}/g ;
+    1 while s/(?<!\\)\\sqrt(\s*{($pat6)})/\\SQRT$1/g ;
     # Convert $$ $$ into \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR}
     s/\$\$(.*?)\$\$/\\begin{DOLLARDOLLAR}$1\\end{DOLLARDOLLAR}/sg;
     # Convert \[ \] into \begin{SQUAREBRACKET} \end{SQUAREBRACKET}
@@ -2478,11 +2481,15 @@ sub postprocess {
 # 4. Convert \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR} into $$ $$
     s/\\begin\{DOLLARDOLLAR\}(.*?)\\end\{DOLLARDOLLAR\}/\$\$$1\$\$/sg;
 # 5. Convert  \SUPERSCRIPTNB{n} into ^n  and  \SUPERSCRIPT{nn} into ^{nnn}
-    1 while s/\\SUPERSCRIPT{($pat6)}/^{$1}/g ;
-    1 while s/\\SUPERSCRIPTNB{($pat0)}/^$1/g ;
+    1 while s/\\SUPERSCRIPT(\s*{($pat6)})/^$1/g ;
+    1 while s/\\SUPERSCRIPTNB{(\s*$pat0)}/^$1/g ;
     # Convert  \SUBSCRIPNB{n} into _n  and  \SUBCRIPT{nn} into _{nnn}
-    1 while s/\\SUBSCRIPT{($pat6)}/_{$1}/g ;
-    1 while s/\\SUBSCRIPTNB{($pat0)}/_$1/g ;
+    1 while s/\\SUBSCRIPT(\s*{($pat6)})/_$1/g ;
+    1 while s/\\SUBSCRIPTNB{(\s*$pat0)}/_$1/g ;
+    # Convert  \SQRT{n} into \sqrt{n}  and  \SQRTNB{nn} into \sqrt nn
+    1 while s/\\SQRT(\s*{($pat6)})/\\sqrt$1/g ;
+    1 while s/\\SQRTNB{(\s*$pat0)}/\\sqrt$1/g ;
+ 
     1 while s/(%.*)\\CRIGHTBRACE (.*)$/$1\}$2/mg ;
     1 while s/(%.*)\\CLEFTBRACE (.*)$/$1\{$2/mg ;
 
@@ -3956,6 +3963,8 @@ _
 AMPERSAND
 (SUPER|SUB)SCRIPTNB
 (SUPER|SUB)SCRIPT
+SQRT
+SQRTNB
 PERCENTAGE
 DOLLAR
 %%END SAFE COMMANDS
