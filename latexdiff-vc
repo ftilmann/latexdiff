@@ -250,7 +250,7 @@ if ( scalar(@revs) == 0 ) {
   if ( $flatten ) {
     pod2usage("Only one root file must be given  if --flatten option is used with version control") if  @files != 1;
     $tempdir='.' if ( $flatten eq "keep-intermediate" );
-    print "flatten tempdir |$tempdir|";
+    print "flatten tempdir |$tempdir|\n";
     if ( $vc eq "SVN" ) {
       my (@infoout)=`svn info`;
       my (@urlline) = grep(/^URL:/, @infoout);
@@ -482,6 +482,7 @@ sub checkout_dir {
   if ( $vc eq "SVN" ) {
     system("svn checkout -r $rev $rootdir $dirname")==0 or die "Something went wrong in executing:  svn checkout -r $rev $rootdir $dirname";
   } elsif ( $vc eq "GIT" ) {
+    $rev="HEAD" if length($rev)==0;
     system("git archive --format=tar $rev | ( cd $dirname ; tar -xf -)")==0 or die "Something went wrong in executing:  git archive --format=tar $rev | ( cd $dirname ; tar -xf -)";
   } elsif ( $vc eq "HG" ) {
     system("hg archive --type files -r $rev $dirname")==0 or die "Something went wrong in executing:  hg archive --type files -r $rev $dirname";
