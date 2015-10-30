@@ -27,6 +27,9 @@
 #
 # TODO/IDEAS: - option to call external pre-processing codes
 #
+# version 1.1.1alpha:
+#     - better detection of RCS system 
+#
 # version 1.1.0:
 #
 #      - with option --flatten and version control option, checkout the whole tree into a temporary directory
@@ -55,9 +58,12 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.1.0
+This is LATEXDIFF-VC 1.1.1alpha
   (c) 2005-2015 F J Tilmann
 EOF
+
+# output debug and intermediate files, set to 0 in final distribution
+my $debug=1; 
 
 
 # Option names
@@ -146,7 +152,7 @@ if ( defined($flatten) && ( -f $flatten || $flatten =~ /^-/ ) ) {
 }
 
 
-print "DEBUG: latexdiff-vc command line: ", join(" ",@ARGV), "\n"; 
+print "DEBUG: latexdiff-vc command line: ", join(" ",@ARGV), "\n" if $debug; 
 
 $file2=pop @ARGV;
 ( defined($file2) && $file2 =~ /\.(tex|bbl|flt)$/ ) or pod2usage("Must specify at least one tex, bbl or flt file");
@@ -164,7 +170,7 @@ if (! $vc && scalar(@revs)>0 ) {
     $vc="GIT";
   } elsif ( $0 =~ /-hg$/ ) {
     $vc="HG";
-  } elsif ( -e "$file2,v" ) {
+  } elsif ( -e "$file2,v" || -d "RCS" ) {
     print STDERR "Guess you are using RCS ...\n";
     $vc="RCS";
   } elsif ( -d ".svn" ) {
@@ -528,7 +534,7 @@ B<latexdiff-vc> [ F<latexdiff-options> ]  [ F<latexdiff-vc-options> ][ B<--posts
 =head1 DESCRIPTION
 
 I<latexdiff-vc> is a wrapper script that applies I<latexdiff> to a
-file, or multiple files under version control (CVS, RCS or SVN), and optionally runs the
+file, or multiple files under version control (git, subversion (SVN), mercurial (hg), CVS, RCS), and optionally runs the
 sequence of C<latex> and C<dvips> or C<pdflatex> commands necessary to
 produce pdf or postscript output of the difference tex file(s). It can
 also be applied to a pair of files to automatise the generation of difference
@@ -543,7 +549,7 @@ file in postscript or pdf format.
 Set the version system. 
 If no version system is specified, latexdiff-vc will venture a guess.
 
-latexdiff-cvs and latexdiff-rcs are variants of latexdiff-vc which default to 
+latexdiff-cvs, latexdiff-rcs etc are variants of latexdiff-vc which default to 
 the respective versioning system. However, this default can still be overridden using the options above.
 
 =item B<-r>, B<-r> F<rev> or B<--revision>, B<--revision=>F<rev>
