@@ -123,7 +123,7 @@ cleanall: clean cleantest
 	\rm -r dist 
 
 test:
-	cd testsuite; verify --run
+	cd testsuite; ./verify --run
 
 
 
