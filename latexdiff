@@ -33,6 +33,7 @@
 # Version 1.1.1alpha
 #    - patch mhchem: allow ce in equations
 #    - flatten now also expands \input etc. in the preamble (but not \usepackage!)
+#    - Better support for Japanese ( contributed by github user kshramt )
 #
 # Version 1.1.0
 #    - treat diacritics (\",\', etc) as safe commands
@@ -577,7 +578,8 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 # such that a\_b is interpreted as a{\_}b by latex but a{\_b} by perl
   my $quotedunderscore='\\\\_';
 # word: sequence of letters or accents followed by letter
-  my $word='(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])+';
+  my $word_ja='\p{Han}+|\p{InHiragana}+|\p{InKatakana}+';
+  my $word='(?:' . $word_ja . '|(?:(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])(?!(?:' . $word_ja . ')))+)';
   my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|]|\\\\(?:[|{}]|\w+))';
 ###  my $word='(?:[-\p{IsL}*]|\\\\[\"\'\`~^][\p{IsL}A-Za-z\*])+';
 ### standard $cmdoptseq without intervening spaces
