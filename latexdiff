@@ -28,8 +28,6 @@
 ###  - add possibility to store configuration options for latexdiff in a file rather than as options
 ###  - use kdiff3 as a merge tool
 ###  - make style that allows (forward and backjumping with hyperref)
-###  - make style / latexdiff-vc combo that allows only to output pages with changes   DONE
-###    (remember to update answer on stack exchange: http://tex.stackexchange.com/questions/166049/invisible-markers-in-pdfs-using-pdflatex)
 ###  - --flatten option only expands first including command per line if there is more than one
 #
 # Version 1.1.1alpha
@@ -156,7 +154,7 @@ my $COUNTERCMD='(?:footnote|part|chapter|section|subsection|subsubsection|paragr
                                         # they will be succeeded by an \addtocounter{...}{-1}
                                         # for the associated counter such that the overall numbers
                                         # should be the same as in the new file
-my @UNSAFEMATHCMD=('qedhere');           # Commands which are definitely unsafe for marking up (amsmath qedhere only tested to not work with UNDERLINE markup)
+my @UNSAFEMATHCMD=('qedhere');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
 ###my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
 ###my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
 my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths expression with \mbox ( to get around compatibility
@@ -257,7 +255,7 @@ $mathmarkup=COARSE;
 
 $verbose=0;
 # output debug and intermediate files, set to 0 in final distribution
-$debug=1; 
+$debug=0; 
 # insert preamble directly after documentclass - experimental feature, set to 0 in final distribution
 # Note that this failed with mini example (or other files, where packages used in latexdiff preamble
 # are called again with incompatible options in preamble of resulting file)
@@ -603,10 +601,10 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 my ($oldfile, $newfile) = @ARGV;
 # check for existence of input files
 if ( ! -e $oldfile ) {
-  die "Input file $oldfile does not exist.";
+  die "Input file $oldfile does not exist";
 }
 if ( ! -e $newfile ) {
-  die "Input file $newfile does not exist.";
+  die "Input file $newfile does not exist";
 }
 
 
@@ -942,9 +940,9 @@ if ( $debug ) {
     print RAWDIFF $diffbo;
     close(RAWDIFF);
 }
-print STDERR "(",exetime()," s)\n","Postprocessing body. \n " if $verbose;
+print STDERR "(",exetime()," s)\n","Postprocessing body. \n" if $verbose;
 postprocess($diffbo);
-####print "POSTPROCESS NEW:\n$newbody\n ";
+####print "POSTPROCESS NEW:\n$newbody\n";
 $diffall =join("\n",@diffpreamble) ;
 # add visible labels
 if (defined($visiblelabel)) {
@@ -1711,6 +1709,7 @@ sub extractcommands {
 sub iscmd {
   my ($cmd,$regexar,$regexexcl)=@_;
   my ($ret)=0;
+###  print STDERR "DEBUG: iscmd($cmd) in @$regexar\n" if $debug;
   foreach $pat ( @$regexar ) {
     if ( $cmd =~ m/^${pat}$/ ) {
       $ret=1 ; 
@@ -1718,10 +1717,12 @@ sub iscmd {
     }
   }
   return 0 unless $ret;
+###  print STDERR "DEBUG: Maybe\n" if $debug;
   foreach $pat ( @$regexexcl ) {
 ###    print STDERR "DEBUG iscmd: checking |$cmd| against |$pat|\n";
     return 0 if ( $cmd =~ m/^${pat}$/ );
   }
+###  print STDERR "DEBUG: Yes\n" if $debug;
   return 1;
 }
 
@@ -1890,7 +1891,7 @@ sub marktags {
 	  # ""
 	  local @SAFECMDLIST=(".*"); 
 	  local @SAFECMDEXCL=('\\','\\\\',@UNSAFEMATHCMD);
-	  ### print STDERR "DEBUG: Command $command argtext ",join(",",@argtext),"\n" if $debug;
+###	  print STDERR "DEBUG: Command $command argtext ",join(",",@argtext),"\n" if $debug;
 	  push(@$retval,$command,marktags("","",$open,$close,"","",$comment,\@argtext)#@argtext
                        ,$closingbracket);
         } else {
@@ -1904,7 +1905,7 @@ sub marktags {
 	push (@$retval,$opencmd) if $cmd==-1 ;
 	push (@$retval,$close,$opencmd) if $cmd==0 ;
 	$word =~ s/\n/\n${opencmd}/sg if $cmdcomment ;   # if opencmd is a comment, repeat this at the beginning of every line
-###        print STDERR "MARKTAGS: Add command |$word|\n";
+        ### print STDERR "MARKTAGS: Add command |$word|\n";
 	push (@$retval,$word);
 	$cmd=1;
       }
@@ -1921,7 +1922,7 @@ sub marktags {
 	###print STDERR "DEBUG Mboxsafecmd detected:$word:\n" if $debug ;
 	push(@$retval,"\\mbox{$AUXCMD\n\\" . $1 . $2 . $3 ."}$AUXCMD\n" );
       } else {
-	# $word is a normal word or a safe command (not in MBOXCMDLIST
+	# $word is a normal word or a safe command (not in MBOXCMDLIST)
 	push (@$retval,$word);
       }
       $cmd=0;
