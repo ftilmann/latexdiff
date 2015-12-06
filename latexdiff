@@ -557,16 +557,16 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 ###   my $pat6 = '(?:[^{}]|\\\{|\\\}|\{'.$pat5.'\})*';
 ### 0.6: Use preprocessing to suppress \{ and \}, so no longer need to account for this in patterns
   my $pat0 = '(?:[^{}])*';
-  my $pat1 = '(?:[^{}]|\{'.$pat0.'\})*';
-  my $pat2 = '(?:[^{}]|\{'.$pat1.'\})*';
-  my $pat3 = '(?:[^{}]|\{'.$pat2.'\})*';
-  my $pat4 = '(?:[^{}]|\{'.$pat3.'\})*';
-  my $pat5 = '(?:[^{}]|\{'.$pat4.'\})*';
-  my $pat6 = '(?:[^{}]|\{'.$pat5.'\})*';
+  my $pat_n = $pat0;
+# if you get "undefined control sequence MATHBLOCKmath" error, inclease this loop
+  for (my $i_pat = 0; $i_pat < 100; ++$i_pat){
+    $pat_n = '(?:[^{}]|\{'.$pat_n.'\})*';
+  }
+
   my $brat0 = '(?:[^\[\]]|\\\[|\\\])*'; 
   my $abrat0 = '(?:[^<>])*';
 
-###print STDERR "DEBUG pat1 $pat1\n      pat2 $pat6\n";
+###print STDERR "DEBUG pat1 $pat1\n      pat2 $pat_n\n";
   my $quotemarks = '(?:\'\')|(?:\`\`)';
   my $punct='[0.,\/\'\`:;\"\?\(\)\[\]!~\p{IsNonAsciiPunct}\p{IsNonAsciiS}]';
   my $number='-?\d*\.\d*';
@@ -583,12 +583,12 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|]|\\\\(?:[|{}]|\w+))';
 ###  my $word='(?:[-\p{IsL}*]|\\\\[\"\'\`~^][\p{IsL}A-Za-z\*])+';
 ### standard $cmdoptseq without intervening spaces
-###pre-0.3  my $cmdoptseq='\\\\[\w\d\*]+(?:\['.$brat0.'\]|\{'. $pat6 . '\}|\(' . $coords .'\))*';
-###  my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:\['.$brat0.'\]|\{'. $pat6 . '\}|\(' . $coords .'\))'.$extraspace.')*';
-  my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat0.'\]|\{'. $pat6 . '\}|\(' . $coords .'\))'.$extraspace.')*';
-###pre-0.3  my $oneletcmd='(?:\\\\.|[_\^])(?:\['.$brat0.'\]|\{'. $pat6 . '\})*';
+###pre-0.3  my $cmdoptseq='\\\\[\w\d\*]+(?:\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))*';
+###  my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
+  my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
+###pre-0.3  my $oneletcmd='(?:\\\\.|[_\^])(?:\['.$brat0.'\]|\{'. $pat_n . '\})*';
   my $backslashnl='\\\\\n';
-  my $oneletcmd='\\\\.\*?(?:\['.$brat0.'\]|\{'. $pat6 . '\})*';
+  my $oneletcmd='\\\\.\*?(?:\['.$brat0.'\]|\{'. $pat_n . '\})*';
 ### the commented out version is simpler but for some reason cannot cope with newline (in spite of s option) - need to include \newline explicitly
 ###  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(].*?\\\\[)]';
   my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(](?:.|\n)*?\\\\[)]';
@@ -950,7 +950,7 @@ $diffall =join("\n",@diffpreamble) ;
 if (defined($visiblelabel)) {
   # Give information right after \begin{document} (or at the beginning of the text for files without preamble
   ### if \date command is used, add information to \date argument, otherwise give right after \begin{document}
-  ###  $diffall=~s/(\\date$extraspace(?:\[$brat0\])?$extraspace)\{($pat6)\}/$1\{$2 \\ LATEXDIFF comparison \\ Old: $oldlabel \\ New: $newlabel \}/  or
+  ###  $diffall=~s/(\\date$extraspace(?:\[$brat0\])?$extraspace)\{($pat_n)\}/$1\{$2 \\ LATEXDIFF comparison \\ Old: $oldlabel \\ New: $newlabel \}/  or
   $diffbo = "\\begin{verbatim}LATEXDIFF comparison\nOld: $oldlabel\nNew: $newlabel\\end{verbatim}\n$diffbo"   ;
 }
 
@@ -1097,7 +1097,7 @@ sub add_safe_commands {
       }
     }
 
-    while ( $preamble =~ m/\\(?:new|renew|provide)command\s*{\\(\w*)\}(?:|\[\d*\])\s*\{(${pat6})\}/osg ) {
+    while ( $preamble =~ m/\\(?:new|renew|provide)command\s*{\\(\w*)\}(?:|\[\d*\])\s*\{(${pat_n})\}/osg ) {
       my $maybe_to_test  = $1;
       my $should_be_safe = $2;
 ###      print STDERR "DEBUG maybe_to_test, should_be_safe: $1 $2\n";
@@ -1483,7 +1483,7 @@ sub pass1 {
 #			print STDERR "Unchanged block $cnt, $last1,$last2 \n";
                         if ($cnt < $MINWORDSBLOCK 
 			    && $cnt==scalar (
-				     grep { /^$wpat/ || ( /^\\((?:[`'^"~=.]|[\w\d@*]+))((?:\[$brat0\]|\{$pat6\})*)/o 
+				     grep { /^$wpat/ || ( /^\\((?:[`'^"~=.]|[\w\d@*]+))((?:\[$brat0\]|\{$pat_n\})*)/o 
 							   && iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 							   && scalar(@dummy=split(" ",$2))<3 ) }
 					     @$block) )  {
@@ -1635,8 +1635,8 @@ sub extracttextblocks {
   for ($i=0;$i< scalar @$block;$i++) {
     ($token,$index)=@{ $block->[$i] };
     # store pure text blocks
-### pre-0.3    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d*]+)((?:\[$brat0\]|\{$pat6\})*)/o 
-    if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat6\})*)/o 
+### pre-0.3    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d*]+)((?:\[$brat0\]|\{$pat_n\})*)/o 
+    if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat_n\})*)/o 
 				&& iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 				&& !iscmd($1,\@TEXTCMDLIST,\@TEXTCMDEXCL))) {
       # we have text or a command which can be treated as text
@@ -1691,8 +1691,8 @@ sub extractcommands {
     # $2: \cmd
     # $3: last argument
     # $4: }  + trailing spaces
-### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat6\})*\{)($pat6)(\}\s*)$/so )
-    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat0\]|${extraspace}\{$pat6\})*${extraspace}\{)($pat6)(\}\s*)$/so )
+### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat_n\})*\{)($pat_n)(\}\s*)$/so )
+    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat0\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
 	 && iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL) ) {
 ###      print STDERR "EXTRACTCOMMANDS Match |$1|$2|$3|$4|$index \n";      
       #      push(@$retval,[ $2,$index,$1,$3,$4 ]);
@@ -1855,8 +1855,8 @@ sub marktags {
 	# $2: cmd
 	# $3: last argument
 	# $4: }  + trailing spaces
-	### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat6\})*\{)($pat6)(\}\s*)$/so )
-      if ( ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat0\]|${extraspace}\{$pat6\})*${extraspace}\{)($pat6)(\}\s*)$/so )
+	### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat_n\})*\{)($pat_n)(\}\s*)$/so )
+      if ( ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat0\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
 	   && (iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL)|| iscmd($2,\@MATHTEXTCMDLIST,\@MATHTEXTCMDEXCL))
            && ( !$cmdcomment || !iscmd($2,\@CONTEXT2CMDLIST, \@CONTEXT2CMDEXCL) )  ) {
 	# Condition 1: word is a command? - if yes, $1,$2,.. will be set as above
@@ -1965,8 +1965,8 @@ sub take_comments_and_enter_from_frac() {
           ### from now on CURRFRAC is the frac we are looking at
           s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)\\frac\{(.*?)\\end\{\1\}/\\begin\{$1\}$2CURRFRAC\{$3\\end\{$1\}/s;
           while( m/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)CURRFRAC\{(.*?)\\end\{\1\}/s ) {
-             if( m/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)CURRFRAC\{($pat6)\}([\s]*(%[^\n]*?)*[\r\n|\r|\n])+[\s]*\{(.*?)\\end{\1}/s ) {
-                   s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)CURRFRAC\{($pat6)\}([\s]*(%[^\n]*?)*[\r\n|\r|\n])+[\s]*\{(.*?)\\end\{\1\}/\\begin\{$1\}$2CURRFRAC\{$3\}\{$6\\end\{$1\}/s;
+             if( m/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)CURRFRAC\{($pat_n)\}([\s]*(%[^\n]*?)*[\r\n|\r|\n])+[\s]*\{(.*?)\\end{\1}/s ) {
+                   s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)CURRFRAC\{($pat_n)\}([\s]*(%[^\n]*?)*[\r\n|\r|\n])+[\s]*\{(.*?)\\end\{\1\}/\\begin\{$1\}$2CURRFRAC\{$3\}\{$6\\end\{$1\}/s;
                } 
               else { # there is no comment or \n between the two brackets {}{}
               ### change CURRFRAC to FRACSTART so we can change them all back to //frac{ when we finish
@@ -2040,13 +2040,13 @@ sub preprocess {
     s/\\begin\{(verbatim\*?)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     # Convert _n or _\cmd into \SUBSCRIPTNB{n} or \SUBSCRIPTNB{\cmd} and _{nnn} into \SUBSCRIPT{nn}
     1 while s/(?<!\\)_(\s*([^{\\\s]|\\\w+))/\\SUBSCRIPTNB{$1}/g ;
-    1 while s/(?<!\\)_(\s*{($pat6)})/\\SUBSCRIPT$1/g ;
+    1 while s/(?<!\\)_(\s*{($pat_n)})/\\SUBSCRIPT$1/g ;
     # Convert ^n into \SUPERSCRIPTNB{n} and ^{nnn} into \SUPERSCRIPT{nn}
     1 while s/(?<!\\)\^(\s*([^{\\\s]|\\\w+))/\\SUPERSCRIPTNB{$1}/g ;
-    1 while s/(?<!\\)\^(\s*{($pat6)})/\\SUPERSCRIPT$1/g ;  
+    1 while s/(?<!\\)\^(\s*{($pat_n)})/\\SUPERSCRIPT$1/g ;  
     # Convert  \sqrt{n} into \SQRT{n}  and  \sqrt nn into SQRTNB{nn}
     1 while s/(?<!\\)\\sqrt(\s*([^{\\\s]|\\\w+))/\\SQRTNB{$1}/g ;
-    1 while s/(?<!\\)\\sqrt(\s*{($pat6)})/\\SQRT$1/g ;
+    1 while s/(?<!\\)\\sqrt(\s*{($pat_n)})/\\SQRT$1/g ;
     # Convert $$ $$ into \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR}
     s/\$\$(.*?)\$\$/\\begin{DOLLARDOLLAR}$1\\end{DOLLARDOLLAR}/sg;
     # Convert \[ \] into \begin{SQUAREBRACKET} \end{SQUAREBRACKET}
@@ -2264,8 +2264,8 @@ sub postprocess {
 #       Convert MATHBLOCKmath commands to their uncounted numbers (e.g. convert equation -> displaymath
 #       (environments defined in $MATHENV will be replaced by $MATHREPL, and  environments in $MATHARRENV
 #       will be replaced by $MATHARRREPL
-	$delblock=~ s/\\MATHBLOCK($MATHENV)\{($pat6)\}/\\MATHBLOCK$MATHREPL\{$2\}/sg;
-	$delblock=~ s/\\MATHBLOCK($MATHARRENV)\{($pat6)\}/\\MATHBLOCK$MATHARRREPL\{$2\}/sg;
+	$delblock=~ s/\\MATHBLOCK($MATHENV)\{($pat_n)\}/\\MATHBLOCK$MATHREPL\{$2\}/sg;
+	$delblock=~ s/\\MATHBLOCK($MATHARRENV)\{($pat_n)\}/\\MATHBLOCK$MATHARRREPL\{$2\}/sg;
       }
 ###      # list making environment
 ###      keeping list environments while commenting out the item
@@ -2283,7 +2283,7 @@ sub postprocess {
 
 #    b.where one of the commands matching $COUNTERCMD is used as a DIFAUXCMD, add a statement
 #      subtracting one from the respective counter to keep numbering consistent with new file
-      $delblock=~ s/\\($COUNTERCMD)((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat6\})*\s*${AUXCMD}\n)/\\$1$2\\addtocounter{$1}{-1}${AUXCMD}\n/sg ;
+      $delblock=~ s/\\($COUNTERCMD)((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat_n\})*\s*${AUXCMD}\n)/\\$1$2\\addtocounter{$1}{-1}${AUXCMD}\n/sg ;
 
 
 #     c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
@@ -2298,7 +2298,7 @@ sub postprocess {
 	pos($delblock) = $begin2 + length($mathblock);
       }
 ###      if ($CITE2CMD) {
-######   ${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat6\}))  .*?%%%\n
+######   ${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat_n\}))  .*?%%%\n
 ###	$delblock=~s/($DELCMDOPEN\s*\\($CITE2CMD)(.*)$DELCMDCLOSE)/
 ###	  # Replacement code 
 ###	  {my ($aux,$all);
@@ -2308,8 +2308,8 @@ sub postprocess {
 ###      }
 ###      # or protect \cite commands with \mbox
 ###      if ($CITECMD) {
-######	$delblock=~s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat6\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-###	$delblock=~s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat6\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
+######	$delblock=~s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat_n\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
+###	$delblock=~s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat_n\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
 ###      } 
       # if MBOXINLINEMATH is set, protect inlined math environments with an extra mbox
       if ( $MBOXINLINEMATH ) {
@@ -2389,12 +2389,12 @@ sub postprocess {
       s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end{\1}$AUXCMD\n/$2/sg;       
     } else {
       #   math modes OFF,WHOLE,COARSE: Convert \MATHBLOCKmath{..} commands back to environments
-      s/\\MATHBLOCK($MATHENV|$MATHARRENV|SQUAREBRACKET)\{($pat6)\}/\\begin{$1}$2\\end{$1}/sg;
+      s/\\MATHBLOCK($MATHENV|$MATHARRENV|SQUAREBRACKET)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
       # convert ARRAYBLOCK.. commands back to environments
-      s/\\ARRAYBLOCK($ARRENV)\{($pat6)\}/\\begin{$1}$2\\end{$1}/sg;
+      s/\\ARRAYBLOCK($ARRENV)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
     }
     #  Convert all PICTUREblock{..} commands back to the appropriate environments
-    s/\\PICTUREBLOCK($PICTUREENV)\{($pat6)\}/\\begin{$1}$2\\end{$1}/sg;
+    s/\\PICTUREBLOCK($PICTUREENV)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
 #0.5:    # Remove all mark up within picture environments
 #     while ( m/\\begin\{($PICTUREENV)\}.*?\\end\{\1\}/sg ) {
 #       $cnt=0;
@@ -2403,10 +2403,10 @@ sub postprocess {
 #       $float=$&;
 #       $float =~ s/\\DIFaddbegin //g;
 #       $float =~ s/\\DIFaddend //g;
-#       $float =~ s/\\DIFadd\{($pat6)\}/$1/g;
+#       $float =~ s/\\DIFadd\{($pat_n)\}/$1/g;
 #       $float =~ s/\\DIFdelbegin //g;
 #       $float =~ s/\\DIFdelend //g;
-#       $float =~ s/\\DIFdel\{($pat6)\}//g;
+#       $float =~ s/\\DIFdel\{($pat_n)\}//g;
 #       $float =~ s/$DELCMDOPEN.*//g;
 #       substr($_,$begin,$len)=$float;
 #       pos = $begin + length($float);
@@ -2484,13 +2484,13 @@ sub postprocess {
 # 4. Convert \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR} into $$ $$
     s/\\begin\{DOLLARDOLLAR\}(.*?)\\end\{DOLLARDOLLAR\}/\$\$$1\$\$/sg;
 # 5. Convert  \SUPERSCRIPTNB{n} into ^n  and  \SUPERSCRIPT{nn} into ^{nnn}
-    1 while s/\\SUPERSCRIPT(\s*{($pat6)})/^$1/g ;
+    1 while s/\\SUPERSCRIPT(\s*{($pat_n)})/^$1/g ;
     1 while s/\\SUPERSCRIPTNB{(\s*$pat0)}/^$1/g ;
     # Convert  \SUBSCRIPNB{n} into _n  and  \SUBCRIPT{nn} into _{nnn}
-    1 while s/\\SUBSCRIPT(\s*{($pat6)})/_$1/g ;
+    1 while s/\\SUBSCRIPT(\s*{($pat_n)})/_$1/g ;
     1 while s/\\SUBSCRIPTNB{(\s*$pat0)}/_$1/g ;
     # Convert  \SQRT{n} into \sqrt{n}  and  \SQRTNB{nn} into \sqrt nn
-    1 while s/\\SQRT(\s*{($pat6)})/\\sqrt$1/g ;
+    1 while s/\\SQRT(\s*{($pat_n)})/\\sqrt$1/g ;
     1 while s/\\SQRTNB{(\s*$pat0)}/\\sqrt$1/g ;
  
     1 while s/(%.*)\\CRIGHTBRACE (.*)$/$1\}$2/mg ;
@@ -2532,7 +2532,7 @@ sub preprocess_preamble {
   # resue in a more complex regex
   $titlecmd =~ s/[\$\^]//g; 
   # make sure to not match on comment lines:
-  $titlecmdpat=qr/^(?:[^%\n]|\\%)*(\\($titlecmd)$extraspace(?:\[($brat0)\])?(?:\{($pat6)\}))/ms;
+  $titlecmdpat=qr/^(?:[^%\n]|\\%)*(\\($titlecmd)$extraspace(?:\[($brat0)\])?(?:\{($pat_n)\}))/ms;
 ###  print STDERR "DEBUG:",$titlecmdpat,"\n";
   @oldtitlecommands= ( $$oldpreambleref =~ m/$titlecmdpat/g );
   @newtitlecommands= ( $$newpreambleref =~ m/$titlecmdpat/g );
