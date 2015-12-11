@@ -556,10 +556,18 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 ###   my $pat5 = '(?:[^{}]|\\\{|\\\}|\{'.$pat4.'\})*';
 ###   my $pat6 = '(?:[^{}]|\\\{|\\\}|\{'.$pat5.'\})*';
 ### 0.6: Use preprocessing to suppress \{ and \}, so no longer need to account for this in patterns
+###  my $pat0 = '(?:[^{}])*';
+###  my $pat1 = '(?:[^{}]|\{'.$pat0.'\})*';
+###  my $pat2 = '(?:[^{}]|\{'.$pat1.'\})*';
+###  my $pat3 = '(?:[^{}]|\{'.$pat2.'\})*';
+###  my $pat4 = '(?:[^{}]|\{'.$pat3.'\})*';
+###  my $pat5 = '(?:[^{}]|\{'.$pat4.'\})*';
+###  my $pat6 = '(?:[^{}]|\{'.$pat5.'\})*';
+
   my $pat0 = '(?:[^{}])*';
   my $pat_n = $pat0;
-# if you get "undefined control sequence MATHBLOCKmath" error, inclease this loop
-  for (my $i_pat = 0; $i_pat < 100; ++$i_pat){
+# if you get "undefined control sequence MATHBLOCKmath" error, increase the maximum value in this loop
+  for (my $i_pat = 0; $i_pat < 20; ++$i_pat){
     $pat_n = '(?:[^{}]|\{'.$pat_n.'\})*';
   }
 

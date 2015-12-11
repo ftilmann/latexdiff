@@ -1,0 +1,33 @@
+\documentclass{article}
+
+\usepackage{amsmath, amssymb}
+
+\usepackage{bm}
+
+\newcommand{\inprod}[2]{\ensuremath{#1 \cdot #2}}
+\newcommand{\dd}[1]{\ensuremath{d#1\,}}
+\newcommand{\pr}[1]{\left(#1\right)}
+\newcommand{\tr}[1]{\ensuremath{\,{}^{t}\!#1}}
+\DeclareMathOperator{\erf}{erf}
+
+\newcommand{\Kst}{\ensuremath{\bm{K}}}
+\newcommand{\hyper}{\ensuremath{\bm{\rho}}}
+
+\begin{document}
+
+\begin{equation}
+  \label{eq:34}
+    p_{\mathrm{cut}}\pr{\bm{a} \mid \hyper, m_{\mathrm{low}}, m_{\mathrm{high}}, \bm{r}}
+    =0+
+    \frac{
+      2p\pr{\bm{a} \mid \hyper}
+      H\pr{\inprod{\bm{r}}{\bm{a}} - m_{\mathrm{down}}}
+      H\pr{m_{\mathrm{up}} - \inprod{\bm{r}}{\bm{a}}}
+    }{
+      \erf{\pr{m_{\mathrm{high}}/\sqrt{2\tr{\bm{r}}\Kst^{-1}\bm{r}}}}
+      -
+      \erf{\pr{m_{\mathrm{low}}/\sqrt{2\tr{\bm{r}}\Kst^{-1}\bm{r}}}}
+    }
+\end{equation}
+\end{document}
+
