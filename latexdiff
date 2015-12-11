@@ -34,6 +34,7 @@
 #    - patch mhchem: allow ce in equations
 #    - flatten now also expands \input etc. in the preamble (but not \usepackage!)
 #    - Better support for Japanese ( contributed by github user kshramt )
+#    - prevent duplicated verbatim hashes (patch contributed by github user therussianjig, issue #36)
 #
 # Version 1.1.0
 #    - treat diacritics (\",\', etc) as safe commands
@@ -2088,17 +2089,18 @@ sub tohash {
 
   @arr=unpack('c*',$string);
 
-  foreach $val (@arr) {
-    $sum += $i*$val;
-    $i++;
-  }
-  $hstr= "$sum";
-  if (defined($hash->{$hstr}) && $string ne $hash->{$hstr}) {
-    warn "Repeated hash value for verbatim mode in spite of different content.";
-    $hstr="-$hstr";
+  while (1) {
+    foreach $val (@arr) {
+      $sum += $i*$val;
+      $i++;
+    }
+    $hstr= "$sum";
+###    $hstr="-$hstr";
+    last unless (defined($hash->{$hstr}) && $string ne $hash->{$hstr});
+    # else found a duplicate HASH need to repeat for a higher hash value
   }
   $hash->{$hstr}=$string;
-###  print STDERR "Hash:$hstr: Content:$string:\n";
+  ###  print STDERR "Hash:$hstr: Content:$string:\n";
   return($hstr);
 }
 
