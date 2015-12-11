@@ -35,6 +35,7 @@
 #    - flatten now also expands \input etc. in the preamble (but not \usepackage!)
 #    - Better support for Japanese ( contributed by github user kshramt )
 #    - prevent duplicated verbatim hashes (patch contributed by github user therussianjig, issue #36)
+#    - disable deleted label commands (fixes issue #31)
 #
 # Version 1.1.0
 #    - treat diacritics (\",\', etc) as safe commands
@@ -156,6 +157,7 @@ my $COUNTERCMD='(?:footnote|part|chapter|section|subsection|subsubsection|paragr
                                         # they will be succeeded by an \addtocounter{...}{-1}
                                         # for the associated counter such that the overall numbers
                                         # should be the same as in the new file
+my $LABELCMD='(?:label)';                # matching commands are disabled within deleted blocks - mostly useful for maths mode, as otherwise it would be fine to just not add those to SAFECMDLIST
 my @UNSAFEMATHCMD=('qedhere');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
 ###my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
 ###my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
@@ -931,6 +933,11 @@ if (defined $packages{"amsmath"}  or defined $packages{"amsart"} or defined $pac
 # add commands in MBOXCMDLIST to SAFECMDLIST
 foreach $mboxcmd ( @MBOXCMDLIST ) {
   init_regex_arr_ext(\@SAFECMDLIST, $mboxcmd);
+}
+
+# check if \label is in SAFECMDLIST, and if yes replace "label" in $LABELCMD by something that never matches (we hope!)
+if ( iscmd("label",\@SAFECMDLIST,\@SAFECMDEXCL) ) {
+  $LABELCMD=~ s/label/NEVERMATCHLABEL/;
 }
 
 
@@ -2294,6 +2301,11 @@ sub postprocess {
 #    b.where one of the commands matching $COUNTERCMD is used as a DIFAUXCMD, add a statement
 #      subtracting one from the respective counter to keep numbering consistent with new file
       $delblock=~ s/\\($COUNTERCMD)((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat_n\})*\s*${AUXCMD}\n)/\\$1$2\\addtocounter{$1}{-1}${AUXCMD}\n/sg ;
+
+#    bb. disable active labels within deleted blocks (as these are not safe commands, this should normally only
+#        happen within deleted maths blocks
+### ^((?:[^%]|\\%)*\s\n?
+      $delblock=~ s/(\\$LABELCMD(?:${extraspace})\{(?:[^{}])*\}[\t ]*)\n?/${DELCMDOPEN}$1${DELCMDCLOSE}/smg ;
 
 
 #     c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
