@@ -166,7 +166,8 @@ my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths express
 
 ### use context2cmd list instead to define TITLECMD
 ###my $TITLECMD='(?:title|author|date|institute)'; # Preamble commands which contain text to be epressed by \maketitle command
-###my $LISTENV='(?:itemize|description|enumerate)'; # list making environments - they will generally be kept
+my $LISTENV='(?:itemize|description|enumerate)'; # list making environments - they will generally be kept
+my $ITEMCMD='item';
 
 # Markup strings
 # If at all possible, do not change these as parts of the program
@@ -2291,7 +2292,10 @@ sub postprocess {
 ###      well. This will be tackled in the next version together with
 ###      other commands such as section which cannot be the argument
 ###      of DIFdel but still ought to be kept.
-###      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($LISTENV)\}\s*?\n)(.*?)(\%DIFDELCMD < \s*\\end\{\2\})/$1\\begin{$2}$AUXCMD\n$3\n\\end{$2}$AUXCMD\n$4/sg;
+      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($LISTENV)\}\s*?(?:\n|$DELCMDCLOSE))(.*?)(\%DIFDELCMD < \s*\\end\{\2\})/{
+	      # block within the search; replacement environment  
+	      "$1\\begin{$2}$AUXCMD\n". restore_item_commands($3). "\n\\end{$2}$AUXCMD\n$4";
+												      }/esg;
 
 ###      $delblock=~ s/\\begin\{$MATHENV}$AUXCMD/\\begin{$MATHREPL}$AUXCMD/g;
 ###      $delblock=~ s/\\end\{$MATHENV}$AUXCMD/\\end{$MATHREPL}$AUXCMD/g;
@@ -2526,6 +2530,24 @@ sub postprocess {
 
   return;
   }
+}
+
+# $out = restore_item_commands($listenviron)
+# short helper function for post-process, which restores deleted \item commands in its argument (as DIFAUXCMDs)
+sub restore_item_commands {
+  my ($string)=@_ ;
+  my ($itemarg,@itemargs);
+  $string =~ s/(\%DIFDELCMD < \s*(\\$ITEMCMD)((?:<$abrat0>)?)((?:\[$brat0\])?)\s*?(?:\n|$DELCMDCLOSE))/
+     # if \item has an []argument, then mark up the argument as deleted)
+     if (length($4)>0) {
+       # use substr to exclude square brackets at end points
+       @itemargs=splitlatex(substr($4,1,length($4)-2));
+       $itemarg="[".join("",marktags("","",$DELOPEN,$DELCLOSE,$DELCMDOPEN,$DELCMDCLOSE,$DELCOMMENT,\@itemargs))."]";
+     } else {
+       $itemarg="";
+     }
+     "$1$2$3$itemarg$AUXCMD\n"/sge;
+  return($string);
 }
 
 
