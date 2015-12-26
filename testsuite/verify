@@ -1,5 +1,5 @@
 #!/bin/csh
-set refversion=1.1.1alpha
+set refversion=1.1.1
 # for comparison with 0.5:
 #set options="-V -t UNDERLINE -s SAFE -f FLOATSAFE  --disable-citation-markup"
 set options="-V -t UNDERLINE -s SAFE -f FLOATSAFE "

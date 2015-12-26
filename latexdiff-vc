@@ -27,9 +27,11 @@
 #
 # TODO/IDEAS: - option to call external pre-processing codes
 #
-# version 1.1.1alpha:
+# version 1.1.1:
 #    - better detection of RCS system 
 #    - undocumented option --debug/--nodebug to override default setting for debug mode (Default: 0)#
+#    - bug fix: --flatten option combined with --pdf caused confusion of old and new file
+#
 # version 1.1.0:
 #
 #      - with option --flatten and version control option, checkout the whole tree into a temporary directory
@@ -58,7 +60,7 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.1.1alpha
+This is LATEXDIFF-VC 1.1.1
   (c) 2005-2015 F J Tilmann
 EOF
 
@@ -658,11 +660,12 @@ or higher are required.
 =head1 BUG REPORTING
 
 Please submit bug reports using the issue tracker of the github repository page I<https://github.com/ftilmann/latexdiff.git>, 
-or send them to I<tilmann -- AT -- gfz-potsdam.de>.  Include the serial number of I<latexdiff-vc>
+or send them to I<tilmann -- AT -- gfz-potsdam.de>.  Include the version number of I<latexdiff-vc>
 (option C<--version>).
 
 =head1 AUTHOR
 
+Version 1.1.1
 Copyright (C) 2005-2015 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
