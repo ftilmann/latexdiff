@@ -464,6 +464,8 @@ foreach $assign ( @config ) {
   $assign=~ m/\s*(\w*)\s*=\s*(\S*)\s*$/ or die "Illegal assignment $assign in configuration list (must be variable=value)";  
   if ( $1 eq "MINWORDSBLOCK" ) { $MINWORDSBLOCK = $2; }
   elsif ( $1 eq "FLOATENV" ) { $FLOATENV = $2 ; }
+  elsif ( $1 eq "ITEMCMD" ) { $ITEMCMD = $2 ; }
+  elsif ( $1 eq "LISTENV" ) { $LISTENV = $2 ; }
   elsif ( $1 eq "PICTUREENV" ) { $PICTUREENV = $2 ; }
   elsif ( $1 eq "MATHENV" ) { $MATHENV = $2 ; }
   elsif ( $1 eq "MATHREPL" ) { $MATHREPL = $2 ; }
@@ -517,6 +519,8 @@ if ($showconfig) {
   print "Configuration variables:\n";
   print "MINWORDSBLOCK=$MINWORDSBLOCK\n";
   print "FLOATENV=$FLOATENV\n";
+  print "ITEMCMD=$ITEMCMD\n";
+  print "LISTENV=$LISTENV\n";
   print "PICTUREENV=$PICTUREENV\n";
   print "MATHENV=$MATHENV\n";
   print "MATHREPL=$MATHREPL\n";
@@ -2035,7 +2039,7 @@ sub preprocess {
   for (@_) { 
 ###    s/^(\s*)//s;
 ###    push(@leadin,$1);
-    #    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE
+    #    Change \{ to \QLEFTBRACE, \} to \QRIGHTBRACE, and \& to \AMPERSAND
     s/(?<!\\)\\{/\\QLEFTBRACE /sg;
     s/(?<!\\)\\}/\\QRIGHTBRACE /sg;
     s/(?<!\\)\\&/\\AMPERSAND /sg;
@@ -2180,6 +2184,8 @@ sub postprocess {
   # second level blocks
   my ($begin2,$cnt2,$len2,$eqarrayblock,$mathblock);
 
+  my (@textparts,@newtextparts,@liststack,$listtype,$listlast);
+
   for (@_) { 
 
     # change $'s in comments to something harmless
@@ -2285,17 +2291,13 @@ sub postprocess {
 	$delblock=~ s/\\MATHBLOCK($MATHENV)\{($pat_n)\}/\\MATHBLOCK$MATHREPL\{$2\}/sg;
 	$delblock=~ s/\\MATHBLOCK($MATHARRENV)\{($pat_n)\}/\\MATHBLOCK$MATHARRREPL\{$2\}/sg;
       }
-###      # list making environment
-###      keeping list environments while commenting out the item
-###      command creates more problems than it solves.  For an
-###      ultimate solution one would have to keep the item commands as
-###      well. This will be tackled in the next version together with
-###      other commands such as section which cannot be the argument
-###      of DIFdel but still ought to be kept.
+      # Reinstate completely deleted list environments. note that items within the 
+      # environment will still be commented out.  They will be restored later
       $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($LISTENV)\}\s*?(?:\n|$DELCMDCLOSE))(.*?)(\%DIFDELCMD < \s*\\end\{\2\})/{
-	      # block within the search; replacement environment  
-	      "$1\\begin{$2}$AUXCMD\n". restore_item_commands($3). "\n\\end{$2}$AUXCMD\n$4";
-												      }/esg;
+	   ###   # block within the search; replacement environment  
+	   ###   "$1\\begin{$2}$AUXCMD\n". restore_item_commands($3). "\n\\end{$2}$AUXCMD\n$4";
+	      "$1\\begin{$2}$AUXCMD\n$3\n\\end{$2}$AUXCMD\n$4";
+	          }/esg;
 
 ###      $delblock=~ s/\\begin\{$MATHENV}$AUXCMD/\\begin{$MATHREPL}$AUXCMD/g;
 ###      $delblock=~ s/\\end\{$MATHENV}$AUXCMD/\\end{$MATHREPL}$AUXCMD/g;
@@ -2381,6 +2383,36 @@ sub postprocess {
       substr($_,$begin,$len)=$addblock;
       pos = $begin + length($addblock);
     }
+
+    # Go through whole text, and by counting list environment commands, find out when we are within a list environment.  
+    # Within those restore deleted \item commands
+    @textparts=split /(?<!$DELCMDOPEN)(\\(?:begin|end)\{$LISTENV\})/ ; 
+    @liststack=();
+    @newtextparts=map { 
+      ### print STDERR ":::::::: $_\n";
+      if ( ($listtype) = m/^\\begin\{($LISTENV)\}$/ ) {
+	print STDERR "DEBUG: postprocess \\begin{$listtype}\n" if $debug;
+	push @liststack,$listtype;
+      } elsif ( ($listtype) = m/^\\end\{($LISTENV)\}$/ ) {
+ 	print STDERR "DEBUG: postprocess \\end{$listtype}\n" if $debug;
+	if (scalar  @liststack > 0) {
+ 	  $listlast=pop(@liststack);
+ 	  ($listtype eq $listlast) or warn "Invalid nesting of list environments: $listlast environment closed by \\end{$listtype}.";
+ 	} else {
+ 	  warn "Invalid nesting of list environments: \\end{$listtype} encountered without matching \\begin{$listtype}.";
+ 	}
+      } else {
+	print STDERR "DEBUG: postprocess \@liststack=(",join(",",@liststack),")\n" if $debug;
+	if (scalar  @liststack > 0 ) {
+	  # we are within a list environment and should replace all item commands 
+	  $_=restore_item_commands($_);
+	}
+	# else: we are outside a list environment and do not need to do anything
+      }
+      $_ } @textparts;     # end of map command
+    # replace the main text with the modified version
+    $_= "@newtextparts";
+
 
 ### pre-1.0.4:
 ###    ### old place for BEGINDIF, ENDDIF replacement
@@ -2908,6 +2940,8 @@ format as new.tex but has all changes relative to old.tex marked up or commented
 -c configfile           Available variables: 
                           MINWORDSBLOCK (integer)
                           FLOATENV (RegEx)
+                          ITEMCMD (RegEx)
+                          LISTENV (RegEx)
                           PICTUREENV (RegEx)
                           MATHENV (RegEx)
                           MATHREPL (String)
@@ -3369,6 +3403,10 @@ C<MINWORDSBLOCK> (integer)
 
 C<FLOATENV> (RegEx)
 
+C<ITEMCMD> (RegEx)
+
+C<LISTENV>  (RegEx)
+
 C<PICTUREENV> (RegEx)
 
 C<MATHENV> (RegEx)
@@ -3670,18 +3708,29 @@ are replaced by their FL variaties.
 
 [ Default: S<C<(?:figure|table|plate)[\w\d*@]*> >]
 
+=item C<ITEMCMD>
+
+Commands representing new item line with list environments.
+
+[ Default: \C<item> ]
+
+=item C<LISTENV>
+
+Environments whose name matches the regular expression in C<LISTENV> are list environments.
+
+[ Default: S<C<(?:itemize|enumerate|description)> >]
+
 =item C<PICTUREENV>
 
 Within environments whose name matches the regular expression in C<PICTUREENV>
 all latexdiff markup is removed (in pathologic cases this might lead to
- inconsistent markup but this situation should be rare).
+inconsistent markup but this situation should be rare).
 
 [ Default: S<C<(?:picture|DIFnomarkup)[\w\d*@]*> >]
 
 =item C<MATHENV>,C<MATHREPL>
 
-If both \begin and \end for a math environment (environment name matching C<MATHENV>
-or \[ and \])
+If both \begin and \end for a math environment (environment name matching C<MATHENV> or \[ and \])
 are within the same deleted block, they are replaced by a \begin and \end commands for C<MATHREPL>
 rather than being commented out.
 
@@ -3735,18 +3784,22 @@ For custom packages you can define the commands which need to be protected by C<
 
 Try options C<--math-markup=whole>.   If even that fails, you can turn off mark up for equations with C<--math-markup=off>.
 
-=item How can I just show the pages 
+=item How can I just show the pages where changes had been made
 
 Use options -C<-s ZLABEL>  (some postprocessing required) or C<-s ONLYCHANGEDPAGE>. C<latexdiff-vc --ps|--pdf> with C<--only-changes> option takes care of
-the post-processing for you (requires zref packages).
+the post-processing for you (requires zref package to be installed).
 
 =back
 
 =head1 BUGS
 
-Option allow-spaces not implemented entirely consistently. It breaks
+=over 10
+
+=item Option allow-spaces not implemented entirely consistently. It breaks
 the rules that number and type of white space does not matter, as
 different numbers of inter-argument spaces are treated as significant.
+
+=back
 
 Please submit bug reports using the issue tracker of the github repository page I<https://github.com/ftilmann/latexdiff.git>, 
 or send them to I<tilmann -- AT -- gfz-potsdam.de>.  Include the serial number of I<latexdiff>
@@ -3800,7 +3853,7 @@ dashbox
 emph
 fbox
 framebox
-hspace
+hspace\*?
 math.*
 makebox
 mbox

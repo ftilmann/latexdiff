@@ -28,8 +28,8 @@
 # TODO/IDEAS: - option to call external pre-processing codes
 #
 # version 1.1.1alpha:
-#     - better detection of RCS system 
-#
+#    - better detection of RCS system 
+#    - undocumented option --debug/--nodebug to override default setting for debug mode (Default: 0)#
 # version 1.1.0:
 #
 #      - with option --flatten and version control option, checkout the whole tree into a temporary directory
@@ -63,7 +63,7 @@ This is LATEXDIFF-VC 1.1.1alpha
 EOF
 
 # output debug and intermediate files, set to 0 in final distribution
-my $debug=1; 
+my $debug=0; 
 
 
 # Option names
@@ -94,11 +94,11 @@ GetOptions('revision|r:s' => \@revs,
 	   'only-changes' => \$onlychanges,
 	   'flatten:s' => \$flatten,
            'version' => \$version,
-	   'help|h' => \$help);
+	   'help|h' => \$help,
+	   'debug!' => \$debug);
 
-### print STDERR "DEBUG 1:revs($#revs): " . join(":",@revs) . "\n";
-### print STDERR "DEBUG 1:ARGV($#ARGV): " . join(":",@ARGV) . "\n";
-
+##print STDERR "DEBUG 1:revs($#revs): " . join(":",@revs) . "\n";
+##print STDERR "DEBUG 1:ARGV($#ARGV): " . join(":",@ARGV) . "\n";
 
 $extracomp = join(" ",grep(/BAR/,@ARGV)); # special latexdiff options requiring additional compilation
 
@@ -147,12 +147,12 @@ if ( defined($dir) && ( -f $dir || $dir =~ /^-/ ) ) {
 }
 # check whether the first file name or first passed-through option for latexdiff got misinterpreted as an option to an empty --flatten option
 if ( defined($flatten) && ( -f $flatten || $flatten =~ /^-/ ) ) {
-  push @ARGV,$flatten;
+  unshift @ARGV,$flatten;
   $flatten="";
 }
 
-
-print "DEBUG: latexdiff-vc command line: ", join(" ",@ARGV), "\n" if $debug; 
+print "DEBUG: PDF $pdf latexdiff-vc command line: ", join(" ",@ARGV), "\n" if $debug; 
+###exit;
 
 $file2=pop @ARGV;
 ( defined($file2) && $file2 =~ /\.(tex|bbl|flt)$/ ) or pod2usage("Must specify at least one tex, bbl or flt file");
@@ -243,7 +243,7 @@ if ( defined($flatten) ) {
 
 # impose ZLABEL subtype if --only-changes option
 if ( $onlychanges ) {
-  push @ldoptions, "-s", "ZLABEL" ;
+  push @ldoptions, "-s", "ZLABEL","-f","IDENTICAL" ;
 }
 
 if ( scalar(@revs) == 0 ) {
@@ -408,44 +408,44 @@ foreach $diff ( @difffiles ) {
   }
 
   if ( $pdf | $postscript ) {
-  print STDERR "PDF: $pdf Postscript: $postscript cwd $cwd\n";
+    print STDERR "PDF: $pdf Postscript: $postscript cwd $cwd\n" if $debug;
 
-  if ( system("grep -q \'^[^%]*\\\\bibliography\' \"$diff\"") == 0 ) { 
-    system("$latexcmd --interaction=batchmode \"$diff\"; bibtex \"$diffbase\";");
-    push @ptmpfiles, "$diffbase.bbl","$diffbase.bbl" ; 
-  }
-
-  # if special needs, as CHANGEBAR
-  if ( $extracomp ) {
-    # print "Extracomp\n";
-    system("$latexcmd --interaction=batchmode \"$diff\";");
-  }
-
-  # final compilation
-  system("$latexcmd --interaction=batchmode \"$diff\";"); # needed if cross-refs
-  system("$latexcmd \"$diff\";"); # final, with possible error messages
-
-  if ( $postscript ) {
-    my $dvi="$diffbase.dvi";
-    my $ps="$diffbase.ps";
-    my $ppoption="";
-
-    if ( $onlychanges ) {
-      $ppoption="-pp ".join(",",findchangedpages("$diffbase.aux"));
+    if ( system("grep -q \'^[^%]*\\\\bibliography{\' \"$diff\"") == 0 ) { 
+      system("$latexcmd --interaction=batchmode \"$diff\"; bibtex \"$diffbase\";");
+      push @ptmpfiles, "$diffbase.bbl","$diffbase.bbl" ; 
     }
-    system("dvips $ppoption -o $ps $dvi");
-    push @ptmpfiles, "$diffbase.aux","$diffbase.log",$dvi ;
-    print "Generated postscript file $ps\n";
-  } 
-  elsif ( $pdf ) {
-    if ( $onlychanges ) {
-      my @pages=findchangedpages("$diffbase.aux");
-      system ("pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"")==0 or 
-               die ("Could not execute <pdftk $diffbase.pdf cat " . join(" ",@pages) . " output $diffbase-changedpage.pdf> . Return code: $?");
-      move("$diffbase-changedpage.pdf","$diffbase.pdf");
+
+    # if special needs, as CHANGEBAR
+    if ( $extracomp ) {
+      # print "Extracomp\n";
+      system("$latexcmd --interaction=batchmode \"$diff\";");
     }
-    push @ptmpfiles, "$diffbase.aux","$diffbase.log";
-  }
+
+    # final compilation
+    system("$latexcmd --interaction=batchmode \"$diff\";"); # needed if cross-refs
+    system("$latexcmd \"$diff\";"); # final, with possible error messages
+
+    if ( $postscript ) {
+      my $dvi="$diffbase.dvi";
+      my $ps="$diffbase.ps";
+      my $ppoption="";
+      
+      if ( $onlychanges ) {
+	$ppoption="-pp ".join(",",findchangedpages("$diffbase.aux"));
+      }
+      system("dvips $ppoption -o $ps $dvi");
+      push @ptmpfiles, "$diffbase.aux","$diffbase.log",$dvi ;
+      print "Generated postscript file $ps\n";
+    } elsif ( $pdf ) {
+      if ( $onlychanges ) {
+	my @pages=findchangedpages("$diffbase.aux");
+	###      print ("Running pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"\n") or 
+	system ("pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"")==0 or 
+	  die ("Could not execute <pdftk $diffbase.pdf cat " . join(" ",@pages) . " output $diffbase-changedpage.pdf> . Return code: $?");
+	move("$diffbase-changedpage.pdf","$diffbase.pdf");
+      }
+      push @ptmpfiles, "$diffbase.aux","$diffbase.log";
+    }
   }
   unlink @ptmpfiles;
   chdir $cwd;
