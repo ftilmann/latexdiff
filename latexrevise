@@ -5,7 +5,7 @@
 #   Copyright (C) 2004  F J Tilmann (tilmann@gfz-potsdam.de)
 #
 # Repository:         https://github.com/ftilmann/latexdiff
-# CTAN page:          http://www.ctan.org/tex-archive/support/latexdiff
+# CTAN page:          http://www.ctan.org/pkg/latexdiff
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
