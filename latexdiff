@@ -28,10 +28,12 @@
 ###  - use kdiff3 as a merge tool
 ###  - make style that allows (forward and backjumping with hyperref)
 ###  - --flatten option only expands first including command per line if there is more than one
+###  - move --show-options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
 # Version 1.2.0alpha:
 #    - highlight new and deleted figures
-#    - bug fix mark up title
+#    - bug fix in title mark-up. Previously deleted commands in title (such as \title, \author or \date) were marked up erroneously
+#    - (minor) bug fixes in new 1.1.1 features: disabled label was commented out twice, additional spaces were introduced before list environment begin and end commands
 #
 # Version 1.1.1
 #    - patch mhchem: allow ce in equations
@@ -2385,7 +2387,7 @@ sub postprocess {
 #    bb. disable active labels within deleted blocks (as these are not safe commands, this should normally only
 #        happen within deleted maths blocks
 ### ^((?:[^%]|\\%)*\s\n?
-      $delblock=~ s/(\\$LABELCMD(?:${extraspace})\{(?:[^{}])*\}[\t ]*)\n?/${DELCMDOPEN}$1${DELCMDCLOSE}/smg ;
+      $delblock=~ s/(?<!$DELCMDOPEN)(\\$LABELCMD(?:${extraspace})\{(?:[^{}])*\}[\t ]*)\n?/${DELCMDOPEN}$1${DELCMDCLOSE}/smg ;
 
 
 #     c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
@@ -2485,7 +2487,8 @@ sub postprocess {
       }
       $_ } @textparts;     # end of map command
     # replace the main text with the modified version
-    $_= "@newtextparts";
+    $_= join("",@newtextparts);
+###    print STDERR "DEBUG: \@newtextparts=",join("@@@@@",@newtextparts);
 
 
 ### pre-1.0.4:
