@@ -13,3 +13,5 @@ latexrevise.aux
 latexrevise.tex
 dist
 latexdiff-?.*.*
+*~
+

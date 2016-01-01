@@ -1,5 +1,14 @@
 *.pdf
 *.log
 *.aux
+*.blg
+*.out
 latexdiff.debug.*
+*%
+*~
+tmp*
+auto
+*-diff.tex
+*-diff-*.*.*.*
+report.txt
 
