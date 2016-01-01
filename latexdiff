@@ -31,6 +31,7 @@
 #
 # Version 1.2.0alpha:
 #    - highlight new and deleted figures
+#    - bug fix mark up title
 #
 # Version 1.1.1
 #    - patch mhchem: allow ce in equations
@@ -841,7 +842,7 @@ if ($graphicsmarkup != NONE ) {
 # adding begin and end marker lines to preamble
 $latexdiffpreamble = "%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF\n" . $ latexdiffpreamble . "%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF\n";
 
-# and return to pramble specific processing
+# and return to preamble specific processing
 if ( length $oldpreamble && length $newpreamble ) {
   print STDERR "Differencing preamble.\n" if $verbose;
 
@@ -2682,7 +2683,7 @@ sub preprocess_preamble {
   $titlecmd =~ s/[\$\^]//g; 
   # make sure to not match on comment lines:
   $titlecmdpat=qr/^(?:[^%\n]|\\%)*(\\($titlecmd)$extraspace(?:\[($brat0)\])?(?:\{($pat_n)\}))/ms;
-###  print STDERR "DEBUG:",$titlecmdpat,"\n";
+  ###print STDERR "DEBUG:",$titlecmdpat,"\n";
   @oldtitlecommands= ( $$oldpreambleref =~ m/$titlecmdpat/g );
   @newtitlecommands= ( $$newpreambleref =~ m/$titlecmdpat/g );
 
@@ -2731,14 +2732,14 @@ sub preprocess_preamble {
       $optargold="";
     }
 
-    if ( defined($oldhash{$cmd}) ) {
+    if ( defined($oldhash{$cmd}->[2]) ) {
       $argold=$oldhash{$cmd}->[2];
     } else {
       $argold="";
     }
     $argnew=$newhash{$cmd}->[2];
     $argdiff="{" . join("",bodydiff($argold,$argnew)) ."}";
-###    print STDERR "DEBUG cmd:$cmd argnew:$argnew argold:$argold\n";
+###    print STDERR "DEBUG cmd:$cmd argnew:$argnew argold:$argold |",defined($newhash{$cmd}),defined($oldhash{$cmd}),"|\n";
     if ( length $optargnew ) {
       $optargdiff="[".join("",bodydiff($optargold,$optargnew))."]" ;
       $optargdiff =~ s/\\DIFaddbegin /\\DIFaddbeginFL /g;
@@ -2764,6 +2765,9 @@ sub preprocess_preamble {
   foreach $cmd ( keys %oldhash ) {
     # if this has already been dealt with above can just skip
     next if defined($newhash{$cmd}) ;
+###    print STDERR "DEBUG old line only cmd: $cmd, line:",$oldhash{$cmd}->[0]," optarg: $oldhash{$cmd}->[1] arg: $oldhash{$cmd}->[2] \n";
+    $argold=$oldhash{$cmd}->[2];
+    $argdiff="{" . join("",bodydiff($argold,"")) ."}";
     if ( defined($oldhash{$cmd}->[1])) {
       $optargold=$oldhash{$cmd}->[1];
       $optargdiff="[".join("",bodydiff($optargold,""))."]" ;
@@ -2773,9 +2777,9 @@ sub preprocess_preamble {
     } else {
       $optargdiff="";
     }
-    $argdiff="{" . join("",bodydiff($argold,"")) ."}";
     $auxline = "\\$cmd$optargdiff$argdiff";
     $auxline =~s/$/$AUXCMD/sg;
+###    print STDERR "DEBUG argold $argold, argdiff: $argdiff  auxline: $auxline";
     push @auxlines,$auxline;
   }
   # add auxcmd comment to highlight added lines
