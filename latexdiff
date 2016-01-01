@@ -29,6 +29,9 @@
 ###  - make style that allows (forward and backjumping with hyperref)
 ###  - --flatten option only expands first including command per line if there is more than one
 #
+# Version 1.2.0alpha:
+#    - highlight new and deleted figures
+#
 # Version 1.1.1
 #    - patch mhchem: allow ce in equations
 #    - flatten now also expands \input etc. in the preamble (but not \usepackage!)
@@ -145,6 +148,8 @@ EOF
 # Configuration variables: these have to be visible from the subroutines
 my $MINWORDSBLOCK=3; # minimum number of tokens to form an independent block
                      # shorter identical blocks will be merged to the previous word
+my $SCALEDELGRAPHICS=0.5; # factor with which deleted figures will be scaled down (i.e. 0.5 implies they are shown at half linear size)
+                      # this is only used for --graphics-markup=BOTH option
 my $FLOATENV='(?:figure|table|plate)[\w\d*@]*' ;   # Environments in which FL variants of defined commands are used
 my $PICTUREENV='(?:picture|tikzpicture|DIFnomarkup)[\w\d*@]*' ;   # Environments in which all change markup is removed
 my $MATHENV='(?:equation[*]?|displaymath|DOLLARDOLLAR)[*]?' ;           # Environments turning on display math mode (code also knows about \[ and \])
@@ -242,6 +247,13 @@ use constant {
   COARSE => 2,
   FINE => 3
 };
+# MNEMNONICS for graphicsmarkup
+my $graphicsmarkup;
+use constant {
+  NONE => 0,
+  NEWONLY => 1,
+  BOTH => 2
+};
 
 my ($mboxcmd);
 
@@ -255,9 +267,9 @@ my ($assign,@config);
 # Hash where keys corresponds to the names of  all included packages (including the documentclass as another package
 # the optional arguments to the package are the values of the hash elements
 my ($pkg,%packages);
+
 # Defaults
 $mathmarkup=COARSE;
-
 $verbose=0;
 # output debug and intermediate files, set to 0 in final distribution
 $debug=0; 
@@ -311,6 +323,7 @@ GetOptions('type|t=s' => \$type,
            'packages=s' => \@packagelist,
 	   'allow-spaces' => \$allowspaces,
            'math-markup=s' => \$mathmarkup,
+           'graphics-markup=s' => \$graphicsmarkup,
            'enable-citation-markup|enforce-auto-mbox' => \$enablecitmark,
            'disable-citation-markup|disable-auto-mbox' => \$disablecitmark,
 	   'verbose|V' => \$verbose,
@@ -318,7 +331,7 @@ GetOptions('type|t=s' => \$type,
 	   'driver=s'=> \$driver,
 	   'flatten' => \$flatten,
 	   'version' => \$version,
-	   'help|h|H' => \$help,
+	   'help|h' => \$help,
 	   'debug!' => \$debug );
 
 if ( $help ) {
@@ -355,10 +368,12 @@ if (defined($mathmarkup)) {
   } elsif ( $mathmarkup eq 'FINE' ){
     $mathmarkup=FINE;
   } elsif ( $mathmarkup !~ m/^[0123]$/ ) {
-    die "Illegal value: ($mathmarkup)  for option--math-markup. Possible values: OFF,WHOLE,COARSE,FINE,0- ";
+    die "latexdiff Illegal value: ($mathmarkup)  for option--math-markup. Possible values: OFF,WHOLE,COARSE,FINE,0-3\n";
   }
   # else use numerical value
 }
+
+
 
 # setting extra preamble commands
 if (defined($preamblefile)) {
@@ -473,6 +488,7 @@ foreach $assign ( @config ) {
   elsif ( $1 eq "MATHARRREPL" ) { $MATHARRREPL = $2 ; }
   elsif ( $1 eq "ARRENV" ) { $ARRENV = $2 ; }
   elsif ( $1 eq "COUNTERCMD" ) { $COUNTERCMD = $2 ; }
+  elsif ( $1 eq "SCALEDELGRAPHICS" ) { $SCALEDELGRAPHICS = $2 ; }
   else { die "Unknown variable $1 in assignment.";}
 }
 
@@ -490,6 +506,8 @@ if ( $mathmarkup == COARSE || $mathmarkup == WHOLE ) {
 foreach $pkg ( @packagelist ) {
   map { $packages{$_}="" } split(/,/,$pkg) ;
 }
+
+
 
 if ($showpreamble) {
   print "\nPreamble commands:\n";
@@ -614,6 +632,9 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 ###  my $math='\$(?:[^$]|\\\$)*\$';
   my $comment='%.*?\n';
   my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
+
+
+
 
 # now we are done setting up and can start working   
 my ($oldfile, $newfile) = @ARGV;
@@ -754,23 +775,74 @@ if ( length $oldpreamble && length $newpreamble ) {
   # Base this assessment on the new preamble
   add_safe_commands($newpreamble);
 
-  # get a list of packages from preamble if not predefine
+  # get a list of packages from preamble if not predefined
 ###  %packages=list_packages(@newpreamble) unless %packages;
   %packages=list_packages($newpreamble) unless %packages;
   if ( %packages && $debug ) { my $key ; foreach $key (keys %packages) { print STDERR "DEBUG \\usepackage[",$packages{$key},"]{",$key,"}\n" ;} }
+}
 
-  if (defined $packages{"hyperref"} ) {
-    # deleted lines should not generate or appear in link names:
-    print STDERR "hyperref package detected.\n" if $verbose ;
-    $latexdiffpreamble =~ s/\{\\DIFadd\}/{\\DIFaddtex}/g;
-    $latexdiffpreamble =~ s/\{\\DIFdel\}/{\\DIFdeltex}/g;
-    $latexdiffpreamble .= join "\n",(extrapream("HYPERREF"),"");
-    ###    $latexdiffpreamble .= '%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
-    ###    $latexdiffpreamble .= '\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}}' . "\n";
-    ###    $latexdiffpreamble .= '\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}}' . "\n";
-    ###    $latexdiffpreamble .= '%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
+# have to return to all processing to properly add preamble additions based on packages found
+if (defined($graphicsmarkup)) {
+  $graphicsmarkup=~tr/a-z/A-Z/;
+  if ( $graphicsmarkup eq 'OFF' or $graphicsmarkup eq 'NONE' ) {
+    $graphicsmarkup=NONE;
+  } elsif ( $graphicsmarkup eq 'NEWONLY' or $graphicsmarkup eq 'NEW-ONLY' ) {
+    $graphicsmarkup=NEWONLY;
+  } elsif ( $graphicsmarkup eq 'BOTH' ) {
+    $graphicsmarkup=BOTH;
+  } elsif ( $graphicsmarkup !~ m/^[012]$/ ) {
+    die "latexdiff Illegal value: ($graphicsmarkup)  for option --highlight-graphics. Possible values: OFF,WHOLE,COARSE,FINE,0-2\n";
   }
+  # else use numerical value
+} else {
+  # Default: no explicit setting in menu
+  if ( defined $packages{"graphicx"} or defined $packages{"graphics"} ) {
+    $graphicsmarkup=NEWONLY; 
+  } else {
+    $graphicsmarkup=NONE;
+  }
+}
 
+if (defined $packages{"hyperref"} ) {
+  # deleted lines should not generate or appear in link names:
+  print STDERR "hyperref package detected.\n" if $verbose ;
+  $latexdiffpreamble =~ s/\{\\DIFadd\}/{\\DIFaddtex}/g;
+  $latexdiffpreamble =~ s/\{\\DIFdel\}/{\\DIFdeltex}/g;
+  $latexdiffpreamble .= join "\n",(extrapream("HYPERREF"),"");
+  ###    $latexdiffpreamble .= '%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
+  ###    $latexdiffpreamble .= '\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}}' . "\n";
+  ###    $latexdiffpreamble .= '\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}}' . "\n";
+  ###    $latexdiffpreamble .= '%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
+}
+
+# add commands for figure highlighting to preamble
+if ($graphicsmarkup != NONE ) {
+  my @matches;
+  # Check if \DIFaddbeginFL definition calls \DIFaddbegin - if so we will issue an error message that graphics highlighting is
+  # is not compatible with this.
+  # (A more elegant solution would be to suppress the redefinitions of the \DIFaddbeginFL etc commands, but for this narrow use case
+  #  I currently don't see this as an efficient use of time)
+  foreach my $cmd ( "DIFaddbegin","DIFaddend","DIFdelbegin","DIFdelend" ) {
+    @matches=( $latexdiffpreamble =~ m/command{\\DIFaddbeginFL}{($pat_n)}/sg ) ;
+    # we look at the last one of the list to take into account possible redefinition but almost always matches should have exactly one elemen
+    if ( $matches[$#matches] =~ m/\\DIFaddbegin/ ) {
+      die "Cannot combine graphics markup with float styles defining \\DIFaddbeginFL in terms of \\DIFaddbegin. Use --graphics-markup=none option or choose a different float style."; 
+      exit 10;
+    }
+  }
+  $latexdiffpreamble .= join "\n",("\\newcommand{\\DIFscaledelfig}{$SCALEDELGRAPHICS}",extrapream("HIGHLIGHTGRAPHICS"),"");
+
+  # only change required for highlighting both is to declare \includegraphics safe, as preamble already contains commands for deleted environment
+  if ( $graphicsmarkup == BOTH ) {
+    init_regex_arr_ext(\@SAFECMDLIST,'includegraphics');
+  }
+}
+
+# adding begin and end marker lines to preamble
+$latexdiffpreamble = "%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF\n" . $ latexdiffpreamble . "%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF\n";
+
+# and return to pramble specific processing
+if ( length $oldpreamble && length $newpreamble ) {
   print STDERR "Differencing preamble.\n" if $verbose;
 
   # insert dummy first line such that line count begins with line 1 (rather than perl's line 0) - just so that line numbers inserted by linediff are correct
@@ -1241,7 +1313,8 @@ sub print_regex_arr {
 # reads line from appendix (end of file after __END__ token)
 sub extrapream {
   my $type;
-  my @retval=("%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF") ;
+  ###my @retval=("%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF") ;
+  my @retval=();
   my ($copy);
 
   while (@_) {
@@ -1278,7 +1351,7 @@ sub extrapream {
       seek DATA,0,0;    # rewind DATA handle to file begin
     }
   }
-  push (@retval,"%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF")  ;
+  ###push (@retval,"%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF")  ;
   return @retval;
 }
 
@@ -2160,8 +2233,8 @@ sub fromhash {
 # 2.   If --block-math-markup option set: Convert \MATHBLOCKmath{..} commands back to environments
 #
 #      Convert all PICTUREblock{..} commands back to the appropriate environments
-###0.5: Remove DIFadd, DIFdel, DIFFaddbegin , ... from picture environments
-# 3. Convert DIFadd, DIFdel, DIFFaddbegin , ... into FL varieties
+###0.5: Remove DIFadd, DIFdel, DIFaddbegin , ... from picture environments
+# 3. Convert DIFadd, DIFdel, DIFaddbegin , ... into FL varieties
 #    within floats (currently recognised float environments: plate,table,figure
 #    plus starred varieties).
 # 4. Remove empty %DIFDELCMD < lines 
@@ -2785,7 +2858,7 @@ sub init_regex_arr_data {
 
 
 # init_regex_arr_ext(\@array,$arg)
-# fills array with regular expressions.
+# appends array with regular expressions.
 # if arg is a file name, then read in list of regular expressions from that file
 # (one expression per line)
 # Otherwise treat arg as a comma separated list of regular expressions
@@ -2947,8 +3020,9 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                           MATHARRREPL (String)
                           MATHENV (RegEx)
                           MATHREPL (String)
-                          MINWORDSBLOCK (integer)
+                          MINWORDSBLOCK (Integer)
                           PICTUREENV (RegEx)
+                          SCALEDELGRAPHICS (Float)
                        This option can be repeated.
 
 
@@ -2999,6 +3073,16 @@ Other configuration options:
                       fine or 3: Detect small change in equations and mark up and fine granularity.
                                This mode is most suitable, if only minor changes to equations are
                                expected, e.g. correction of typos. 
+
+--graphics-markup=level   Change highlight style for graphics embedded with \\includegraphics commands
+                      Possible values for level:
+                      none,off or 0: no highlighting for figures
+                      new-only or 1: surround newly added or changed figures with a blue frame [Default]
+                      both or 2:     highlight new figures with a blue frame and show deleted figures 
+                                at reduced scale, and crossed out with a red diagonal cross. Use configuration
+                                variable SCALEDELGRAPHICS to set size of deleted figures.
+                      Note that changes to the optional parameters will make the figure appear as changed 
+                      to latexdiff, and this figure will thus be highlighted.
 
 --disable-citation-markup 
 --disable-auto-mbox    Suppress citation markup and markup of other vulnerable commands in styles 
@@ -3417,9 +3501,11 @@ C<MATHENV> (RegEx)
 
 C<MATHREPL> (String)
 
-C<MINWORDSBLOCK> (integer)
+C<MINWORDSBLOCK> (Integer)
 
 C<PICTUREENV> (RegEx)
+
+C<SCALEDELGRAPHICS> (Float)
 
 =item B<--show-safecmd>
 
@@ -3477,6 +3563,22 @@ being changed. [Default]
 C<fine> or C<3>: Detect small change in equations and mark up at fine granularity.
 This mode is most suitable, if only minor changes to equations are
 expected, e.g. correction of typos. 
+
+=item B<--graphics-markup=level>
+
+ Change highlight style for graphics embedded with C<\includegraphics> commands.
+                      Possible values for level:
+
+                      C<none, C<off> or C<0>: no highlighting for figures
+
+                      C<new-only> or C<1>: surround newly added or changed figures with a blue frame [Default if graphicx package loaded]
+
+                      C<both> or C<2>:     highlight new figures with a blue frame and show deleted figures at reduced 
+                                scale, and crossed out with a red diagonal cross. Use configuration
+                                variable SCALEDELGRAPHICS to set size of deleted figures.
+
+Note that changes to the optional parameters will make the figure appear as changed 
+to latexdiff, and this figure will thus be highlighted
 
 =item B<--disable-citation-markup> or B<--disable-auto-mbox>
 
@@ -3758,6 +3860,12 @@ all latexdiff markup is removed (in pathologic cases this might lead to
 inconsistent markup but this situation should be rare).
 
 [ Default: S<C<(?:picture|DIFnomarkup)[\w\d*@]*> >]
+
+=item C<SCALEDELGRAPHICS>
+
+If C<--graphics-markup=both> is chosen, C<SCALEDELGRAPHICS> is the factor, by which deleted figures will be scaled (i.e. 0.5 implies they are shown at half linear size).
+
+[ Default: 0.5 ]
 
 =back
 
@@ -4339,6 +4447,51 @@ institute
 \providecommand{\DIFdelbeginFL}{}
 \providecommand{\DIFdelendFL}{}
 %DIF END TRADITIONALSAFE PREAMBLE
+
+% see:
+%  http://tex.stackexchange.com/questions/47351/can-i-redefine-a-command-to-contain-itself 
+
+%DIF HIGHLIGHTGRAPHICS PREAMBLE
+\RequirePackage{settobox}
+\RequirePackage{letltxmacro}
+\newsavebox{\DIFdelgraphicsbox}
+\newlength{\DIFdelgraphicswidth}
+\newlength{\DIFdelgraphicsheight}
+% store original definition of \includegraphics
+\LetLtxMacro{\DIFOincludegraphics}{\includegraphics}
+\newcommand{\DIFaddincludegraphics}[2][]{\colorbox{blue}{\DIFOincludegraphics[#1]{#2}}}
+\newcommand{\DIFdelincludegraphics}[2][]{%
+\sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}%
+\settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox}
+\settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox}
+\scalebox{\DIFscaledelfig}{%
+\parbox[b]{\DIFdelgraphicswidth}{\usebox{\DIFdelgraphicsbox}\\[-\baselineskip] \rule{\DIFdelgraphicswidth}{0em}}\llap{\resizebox{\DIFdelgraphicswidth}{\DIFdelgraphicsheight}{%
+\setlength{\unitlength}{\DIFdelgraphicswidth}%
+\begin{picture}(1,1)%
+\thicklines\linethickness{2pt}
+{\color[rgb]{1,0,0}\put(0,0){\framebox(1,1){}}}%
+{\color[rgb]{1,0,0}\put(0,0){\line( 1,1){1}}}%
+{\color[rgb]{1,0,0}\put(0,1){\line(1,-1){1}}}%
+\end{picture}%
+}\hspace*{3pt}}}
+}
+\LetLtxMacro{\DIFOaddbegin}{\DIFaddbegin}
+\LetLtxMacro{\DIFOaddend}{\DIFaddend}
+\LetLtxMacro{\DIFOdelbegin}{\DIFdelbegin}
+\LetLtxMacro{\DIFOdelend}{\DIFdelend}
+\DeclareRobustCommand{\DIFaddbegin}{\DIFOaddbegin \let\includegraphics\DIFaddincludegraphics}
+\DeclareRobustCommand{\DIFaddend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics}
+\DeclareRobustCommand{\DIFdelbegin}{\DIFOdelbegin \let\includegraphics\DIFdelincludegraphics}
+\DeclareRobustCommand{\DIFdelend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics}
+\LetLtxMacro{\DIFOaddbeginFL}{\DIFaddbeginFL}
+\LetLtxMacro{\DIFOaddendFL}{\DIFaddendFL}
+\LetLtxMacro{\DIFOdelbeginFL}{\DIFdelbeginFL}
+\LetLtxMacro{\DIFOdelendFL}{\DIFdelendFL}
+\DeclareRobustCommand{\DIFaddbeginFL}{\DIFOaddbeginFL \let\includegraphics\DIFaddincludegraphics}
+\DeclareRobustCommand{\DIFaddendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics}
+\DeclareRobustCommand{\DIFdelbeginFL}{\DIFOdelbeginFL \let\includegraphics\DIFdelincludegraphics}
+\DeclareRobustCommand{\DIFdelendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics}
+%DIF END HIGHLIGHTGRAPHICS PREAMBLE
 
 %% SPECIAL PACKAGE PREAMBLE COMMANDS
 
