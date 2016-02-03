@@ -144,7 +144,7 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.1.1  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+This is LATEXDIFF 1.2.0alpha  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
   (c) 2004-2015 F J Tilmann
 EOF
 
@@ -617,7 +617,7 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 # word: sequence of letters or accents followed by letter
   my $word_ja='\p{Han}+|\p{InHiragana}+|\p{InKatakana}+';
   my $word='(?:' . $word_ja . '|(?:(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])(?!(?:' . $word_ja . ')))+)';
-  my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|]|\\\\(?:[|{}]|\w+))';
+  my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|\.]|\\\\(?:[|{}]|\w+))';
 ###  my $word='(?:[-\p{IsL}*]|\\\\[\"\'\`~^][\p{IsL}A-Za-z\*])+';
 ### standard $cmdoptseq without intervening spaces
 ###pre-0.3  my $cmdoptseq='\\\\[\w\d\*]+(?:\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))*';
