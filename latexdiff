@@ -34,6 +34,7 @@
 #    - highlight new and deleted figures
 #    - bug fix in title mark-up. Previously deleted commands in title (such as \title, \author or \date) were marked up erroneously
 #    - (minor) bug fixes in new 1.1.1 features: disabled label was commented out twice, additional spaces were introduced before list environment begin and end commands
+#    - depracation fix: left brace in RegEx now needs to be escaped
 #
 # Version 1.1.1
 #    - patch mhchem: allow ce in equations
@@ -1242,7 +1243,7 @@ sub flatten {
   $bblfile=~s/\.tex$//;
   $bblfile.=".bbl";
 
-  if ( ($includeonly) = ($preamble =~ m/\\includeonly{(.*?)}/ ) ) {
+  if ( ($includeonly) = ($preamble =~ m/\\includeonly\{(.*?)\}/ ) ) {
     $includeonly =~ s/,/|/g;
   } else {
     $includeonly = '.*?';
@@ -1268,7 +1269,7 @@ sub flatten {
 	    "$begline$newpage$replacement$newpage";
           }/exgm;
   # replace bibliography with bbl file if it exists
-  $text=~s/(^(?:[^%\n]|\\%)*)\\bibliography{(.*?)}/{ 
+  $text=~s/(^(?:[^%\n]|\\%)*)\\bibliography\{(.*?)\}/{ 
            if ( -f $bblfile ){
 	     $replacement=read_file_with_encoding(File::Spec->catfile($bblfile), $encoding);
 	   } else {
@@ -1279,7 +1280,7 @@ sub flatten {
 	   "$begline$replacement";
   }/exgm;
   # replace subfile with contents (subfile package)
-  $text=~s/(^(?:[^%\n]|\\%)*)\\subfile{(.*?)}/{ 
+  $text=~s/(^(?:[^%\n]|\\%)*)\\subfile\{(.*?)\}/{ 
            $begline=(defined($1)? $1 : "") ;
      	   $fname = $2; 
            #      # add tex extension unless there is a three letter extension already 
@@ -2311,7 +2312,7 @@ sub postprocess {
 	# also transform the opposite pair \end{displaymath} .. \begin{displaymath} but we have to be careful not to interfere with the results of the transformation in the line directly above
 	### pre-0.42 obsolete version which did not work on eqnarray test      $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHENV)\}\s*?\n)(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/$1\\end{$MATHREPL}$AUXCMD\n$3\n\\begin{$MATHREPL}$AUXCMD\n$4/sg;
 	###0.5:      $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
-	$delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
+	$delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end\{MATHMODE\}$AUXCMD\n$1$3\n\\begin\{MATHMODE\}$AUXCMD\n$4/sg;
   
         # now look for unpaired %DIFDELCMD < \begin{MATHENV}; if found add \begin{$MATHREPL} and insert \end{$MATHREPL} 
         # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
@@ -2320,8 +2321,8 @@ sub postprocess {
         }
         # now look for unpaired %DIFDELCMD < \end{MATHENV}; if found add \end{MATHMODE} and insert \begin{MATHMODE} 
         # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
-        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end{MATHMODE}$AUXCMD\n/sg ) {
-	  $delblock =~ s/(\\DIFdelend$)/\\begin{MATHMODE}$AUXCMD\n$1/s ;
+        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end\{MATHMODE\}$AUXCMD\n/sg ) {
+	  $delblock =~ s/(\\DIFdelend$)/\\begin\{MATHMODE\}$AUXCMD\n$1/s ;
 	}
 
 
@@ -2614,27 +2615,27 @@ sub postprocess {
 ###      1 while s/(%.*)\\CITEDIF($CITECMD)/$1\\$2/mg ;
 ###    }
 #   Convert \begin{SQUAREBRACKET} \end{SQUAREBRACKET} into \[ \]
-    s/\\end{SQUAREBRACKET}/\\\]/sg;
-    s/\\begin{SQUAREBRACKET}/\\\[/sg;
+    s/\\end\{SQUAREBRACKET\}/\\\]/sg;
+    s/\\begin\{SQUAREBRACKET\}/\\\[/sg;
 # 4. Convert \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR} into $$ $$
     s/\\begin\{DOLLARDOLLAR\}(.*?)\\end\{DOLLARDOLLAR\}/\$\$$1\$\$/sg;
 # 5. Convert  \SUPERSCRIPTNB{n} into ^n  and  \SUPERSCRIPT{nn} into ^{nnn}
-    1 while s/\\SUPERSCRIPT(\s*{($pat_n)})/^$1/g ;
-    1 while s/\\SUPERSCRIPTNB{(\s*$pat0)}/^$1/g ;
+    1 while s/\\SUPERSCRIPT(\s*\{($pat_n)\})/^$1/g ;
+    1 while s/\\SUPERSCRIPTNB\{(\s*$pat0)\}/^$1/g ;
     # Convert  \SUBSCRIPNB{n} into _n  and  \SUBCRIPT{nn} into _{nnn}
-    1 while s/\\SUBSCRIPT(\s*{($pat_n)})/_$1/g ;
-    1 while s/\\SUBSCRIPTNB{(\s*$pat0)}/_$1/g ;
+    1 while s/\\SUBSCRIPT(\s*\{($pat_n)\})/_$1/g ;
+    1 while s/\\SUBSCRIPTNB\{(\s*$pat0)\}/_$1/g ;
     # Convert  \SQRT{n} into \sqrt{n}  and  \SQRTNB{nn} into \sqrt nn
-    1 while s/\\SQRT(\s*{($pat_n)})/\\sqrt$1/g ;
-    1 while s/\\SQRTNB{(\s*$pat0)}/\\sqrt$1/g ;
+    1 while s/\\SQRT(\s*\{($pat_n)\})/\\sqrt$1/g ;
+    1 while s/\\SQRTNB\{(\s*$pat0)\}/\\sqrt$1/g ;
  
     1 while s/(%.*)\\CRIGHTBRACE (.*)$/$1\}$2/mg ;
     1 while s/(%.*)\\CLEFTBRACE (.*)$/$1\{$2/mg ;
 
 
 #    Change \QLEFTBRACE, \QRIGHTBRACE to \{,\}
-    s/\\QLEFTBRACE /\\{/sg;
-    s/\\QRIGHTBRACE /\\}/sg;
+    s/\\QLEFTBRACE /\\\{/sg;
+    s/\\QRIGHTBRACE /\\\}/sg;
     s/\\AMPERSAND /\\&/sg;
 
   return;

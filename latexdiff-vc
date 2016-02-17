@@ -3,7 +3,7 @@
 # latexdiff-vc  - wrapper script for applying latexdiff to rcs managed files
 #                 and for automatised creation of postscript or pdf from difference file
 #
-#   Copyright (C) 2005-13  F J Tilmann (tilmann@gfz-potsdam.de)
+#   Copyright (C) 2005-16  F J Tilmann (tilmann@gfz-potsdam.de)
 #
 # Repository:         https://github.com/ftilmann/latexdiff
 # CTAN page:          http://www.ctan.org/pkg/latexdiff
@@ -26,6 +26,9 @@
 # Detailed usage information at the end of the file
 #
 # TODO/IDEAS: - option to call external pre-processing codes
+#             - choose type of latex processor / bibtex (luatex, xekatex etc)
+# versio 1.2.0:
+#    - depracation fix: left brace in RegEx now needs to be escaped
 #
 # version 1.1.1:
 #    - better detection of RCS system 
@@ -462,10 +465,10 @@ sub findchangedpages {
   my %start;
   open(AUX,$auxfile) or die ("Could open aux file $auxfile . System error: $!");
   while (<AUX>) {
-    if (m/\\zref\@newlabel{DIFchgb(\d*)}{.*\\abspage{(\d*)}}/ ) { 
+    if (m/\\zref\@newlabel\{DIFchgb(\d*)\}\{.*\\abspage{(\d*)\}\}/ ) { 
       $start{$1}=$2; $pages{$2}=1;
     }
-    if (m/\\zref\@newlabel{DIFchge(\d*)}{.*\\abspage{(\d*)}}/) { 
+    if (m/\\zref\@newlabel\{DIFchge(\d*)\}\{.*\\abspage{(\d*)\}\}/) { 
       if (defined($start{$1})) {
 	for ($j=$start{$1}; $j<=$2; $j++) {
 	  $pages{$j}=1;
