@@ -2117,8 +2117,8 @@ sub preprocess {
 ###    s/^(\s*)//s;
 ###    push(@leadin,$1);
     #    Change \{ to \QLEFTBRACE, \} to \QRIGHTBRACE, and \& to \AMPERSAND
-    s/(?<!\\)\\{/\\QLEFTBRACE /sg;
-    s/(?<!\\)\\}/\\QRIGHTBRACE /sg;
+    s/(?<!\\)\\\{/\\QLEFTBRACE /sg;
+    s/(?<!\\)\\\}/\\QRIGHTBRACE /sg;
     s/(?<!\\)\\&/\\AMPERSAND /sg;
 ### pre 1.0.4
 ###    # change begin and end commands  within comments such that they
@@ -2517,9 +2517,9 @@ sub postprocess {
       1 while s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}((?:.(?!(?:\\end{(?:(?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}|\\begin{MATHMODE})))*?)\\end{MATHMODE}/\\begin{$1}$2\\end{$1}/s;
       1 while s/\\begin{MATHMODE}((?:.(?!\\end{MATHMODE}))*?)\\end{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}/\\begin{$2}$1\\end{$2}/s;
       # convert remaining \begin{MATHMODE} \end{MATHMODE} (and not containing & or \\ )into MATHREPL environments
-      s/\\begin{MATHMODE}((?:(.(?!(?<!\\)\&|\\\\))*)?)\\end{MATHMODE}/\\begin{$MATHREPL}$1\\end{$MATHREPL}/sg;
+      s/\\begin\{MATHMODE\}((?:(.(?!(?<!\\)\&|\\\\))*)?)\\end\{MATHMODE\}/\\begin{$MATHREPL}$1\\end{$MATHREPL}/sg;
       # others into MATHARRREPL
-      s/\\begin{MATHMODE}(.*?)\\end{MATHMODE}/\\begin{$MATHARRREPL}$1\\end{$MATHARRREPL}/sg;
+      s/\\begin\{MATHMODE\}(.*?)\\end\{MATHMODE\}/\\begin{$MATHARRREPL}$1\\end{$MATHARRREPL}/sg;
 
       # now look for AUXCMD math-mode pairs which have only comments (or empty lines between them), and remove the added commands
       s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end{\1}$AUXCMD\n/$2/sg;       
