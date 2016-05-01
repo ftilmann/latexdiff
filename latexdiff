@@ -3,7 +3,7 @@
 # latexdiff - differences two latex files on the word level
 #             and produces a latex file with the differences marked up.
 #
-#   Copyright (C) 2004-12  F J Tilmann (tilmann@gfz-potsdam.de)
+#   Copyright (C) 2004-16  F J Tilmann (tilmann@gfz-potsdam.de)
 #
 # Repository/issue tracker:   https://github.com/ftilmann/latexdiff
 # CTAN page:          http://www.ctan.org/pkg/latexdiff
@@ -35,6 +35,7 @@
 #    - bug fix in title mark-up. Previously deleted commands in title (such as \title, \author or \date) were marked up erroneously
 #    - (minor) bug fixes in new 1.1.1 features: disabled label was commented out twice, additional spaces were introduced before list environment begin and end commands
 #    - depracation fix: left brace in RegEx now needs to be escaped
+#    - add type PDFCOMMENT based on issue #49 submitted by github user peci1
 #
 # Version 1.1.1
 #    - patch mhchem: allow ce in equations
@@ -146,7 +147,7 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 my ($versionstring)=<<EOF ;
 This is LATEXDIFF 1.2.0alpha  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
-  (c) 2004-2015 F J Tilmann
+  (c) 2004-2016 F J Tilmann
 EOF
 
 # Configuration variables: these have to be visible from the subroutines
@@ -2922,7 +2923,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
 --type=markupstyle
 -t markupstyle         Add code to preamble for selected markup style
                        Available styles: UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
-                                         CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD
+                                         CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD PDFCOMMENT
                        [ Default: UNDERLINE ]
 
 --subtype=markstyle
@@ -3289,7 +3290,7 @@ C<\DIFadd> and C<\DIFdel> commands.
 Available styles: 
 
 C<UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
-CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD>
+CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD PDFCOMMENT>
 
 [ Default: C<UNDERLINE> ]
 
@@ -3727,6 +3728,10 @@ No visible markup (but generic markup commands will still be inserted.
 =item C<BOLD>
 
 Added text is set in bold face, discarded is not shown.
+
+=item C<PDFCOMMENT>
+
+The pdfcomment package is used to underlne new text, and mark deletions with a PDF comment. Note that this markup might appear differently or not at all based on the pdf viewer used. The viewer with best support for pdf markup is probably acroread. This style is only recommended if the number of differences is small. 
 
 =back
 
@@ -4300,6 +4305,12 @@ institute
 \providecommand{\DIFadd}[1]{{\bf #1}}
 \providecommand{\DIFdel}[1]{}
 %DIF END BOLD PREAMBLE
+
+%DIF PDFCOMMENT PREAMBLE
+\RequirePackage{pdfcomment} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{\pdfmarkupcomment[author=ADD:,markup=Underline]{#1}{}}
+\providecommand{\DIFdel}[1]{\pdfcomment[icon=Insert,author=DEL:,hspace=12pt]{#1}}
+%DIF END PDFCOMMENT PREAMBLE
 
 %% SUBTYPES (Markers for beginning and end of changed blocks)
 
