@@ -35,7 +35,8 @@
 #    - bug fix in title mark-up. Previously deleted commands in title (such as \title, \author or \date) were marked up erroneously
 #    - (minor) bug fixes in new 1.1.1 features: disabled label was commented out twice, additional spaces were introduced before list environment begin and end commands
 #    - depracation fix: left brace in RegEx now needs to be escaped
-#    - add type PDFCOMMENT based on issue #49 submitted by github user peci1
+#    - add type PDFCOMMENT based on issue #49 submitted by github user peci1 (Martin Pecka)
+#    - make utf8 the default encoding
 #
 # Version 1.1.1
 #    - patch mhchem: allow ce in equations
@@ -282,6 +283,7 @@ $debug=0;
 # Note that this failed with mini example (or other files, where packages used in latexdiff preamble
 # are called again with incompatible options in preamble of resulting file)
 $earlylatexdiffpreamble=0;
+
 
 # define character properties
 sub IsNonAsciiPunct { return <<'END'    # Unicode punctuation but excluding ASCII punctuation
@@ -1074,7 +1076,7 @@ print STDERR "(",exetime()," s)\n","Done.\n" if $verbose;
 
 ## guess_encoding(filename)
 ## reads the first 20 lines of filename and looks for call of inputenc package
-## if found, return the option of this package (encoding), otherwise return ascii
+## if found, return the option of this package (encoding), otherwise return utf8
 sub guess_encoding {
   my ($filename)=@_;
   my ($i,$enc);
@@ -1089,7 +1091,8 @@ sub guess_encoding {
     last if (++$i > 20 ); # scan at most 20 non-comment lines
   }
   close(FH);
-  return("ascii");
+  ### return("ascii");
+  return("utf8");
 }
 
 
