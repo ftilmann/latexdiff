@@ -3734,7 +3734,7 @@ Added text is set in bold face, discarded is not shown.
 
 =item C<PDFCOMMENT>
 
-The pdfcomment package is used to underlne new text, and mark deletions with a PDF comment. Note that this markup might appear differently or not at all based on the pdf viewer used. The viewer with best support for pdf markup is probably acroread. This style is only recommended if the number of differences is small. 
+The pdfcomment package is used to underline new text, and mark deletions with a PDF comment. Note that this markup might appear differently or not at all based on the pdf viewer used. The viewer with best support for pdf markup is probably acroread. This style is only recommended if the number of differences is small. 
 
 =back
 
@@ -4481,7 +4481,7 @@ institute
 \newlength{\DIFdelgraphicsheight}
 % store original definition of \includegraphics
 \LetLtxMacro{\DIFOincludegraphics}{\includegraphics}
-\newcommand{\DIFaddincludegraphics}[2][]{\colorbox{blue}{\DIFOincludegraphics[#1]{#2}}}
+\newcommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}}
 \newcommand{\DIFdelincludegraphics}[2][]{%
 \sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}%
 \settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox}
