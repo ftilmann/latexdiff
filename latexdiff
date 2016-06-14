@@ -1258,7 +1258,7 @@ sub flatten {
 	    $fname = $2 if defined($2) ;
 	    $fname = $3 if defined($3) ;
             #      # add tex extension unless there is a three letter extension already 
-            $fname .= ".tex" unless $fname =~ m|\.\w{3}|;
+            $fname .= ".tex" unless $fname =~ m|\.\w{3}$|;
             print STDERR "DEBUG Beg of line match |$1|\n" if defined($1) && $debug ;
             print STDERR "Include file $fname\n" if $verbose;
             print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
