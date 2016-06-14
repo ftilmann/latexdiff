@@ -136,7 +136,7 @@ my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox
 my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
 my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths expression with \mbox ( to get around compatibility
                       # problems between some maths packages and ulem package
-
+my $TABLEENV='(?:tabular|table|longtable)[\w\d*@]*' ;   # Environments in which '&', '\\' and '\hline' are considered safe-commands
 
 # Markup strings
 # If at all possible, do not change these as parts of the program
@@ -404,6 +404,7 @@ foreach $assign ( @config ) {
   elsif ( $1 eq "MATHARRREPL" ) { $MATHARRREPL = $2 ; }
   elsif ( $1 eq "ARRENV" ) { $ARRENV = $2 ; }
   elsif ( $1 eq "COUNTERCMD" ) { $COUNTERCMD = $2 ; }
+  elsif ( $1 eq "TABLEENV" ) { $TABLEENV = $2 ; }
   else { die "Unknown variable $1 in assignment.";}
 }
 
@@ -452,6 +453,7 @@ if ($showconfig) {
   print "MATHARRREPL=$MATHARRREPL\n";
   print "ARRENV=$ARRENV\n";
   print "COUNTERCMD=$COUNTERCMD\n";
+  print "TABLEENV=$TABLEENV\n";
 }
 if ($showconfig || $showtext || $showsafe || $showpreamble) {
   exit 0; }
@@ -1679,7 +1681,7 @@ sub fromhash {
 # Note have to manually synchronize substitution commands below and 
 # DIF.. command names in the header
 sub postprocess {
-  my ($begin,$len,$cnt,$float,$delblock,$addblock);
+  my ($begin,$len,$cnt,$float,$table,$delblock,$addblock);
   # second level blocks
   my ($begin2,$cnt2,$len2,$eqarrayblock,$mathblock);
 
@@ -1960,6 +1962,21 @@ sub postprocess {
     s/\\QLEFTBRACE /\\{/sg;
     s/\\QRIGHTBRACE /\\}/sg;
 
+    # quick and dirty hack to keep intact table layout when removing complete rows by
+    #    reinstate deleted & and \\ commands within table environments 
+    #    (currently recognised table environments: table,tabular,longtable plus starred varieties).
+    while ( m/\\begin\{($TABLEENV)\}.*?\\end\{\1\}/sg ) {
+      $cnt=0;
+      $len=length($&);
+      $begin=pos($_) - $len;
+      $table=$&;
+      $table =~ s/\%DIFDELCMD < \s*(\&|\\\\)/$1\n/sg ;
+      $table =~ s/\%DIFDELCMD < \s*(\\hline)/$1\n/sg ;
+      substr($_,$begin,$len)=$table;
+      pos = $begin + length($table);
+    }
+    
+    
   return;
   }
 }
