@@ -30,7 +30,7 @@
 ###  - --flatten option only expands first including command per line if there is more than one
 ###  - move --show-options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
-# Version 1.2.0alpha:
+# Version 1.2.0:
 #    - highlight new and deleted figures
 #    - bug fix in title mark-up. Previously deleted commands in title (such as \title, \author or \date) were marked up erroneously
 #    - (minor) bug fixes in new 1.1.1 features: disabled label was commented out twice, additional spaces were introduced before list environment begin and end commands
@@ -147,7 +147,7 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.2.0alpha  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+This is LATEXDIFF 1.2.0  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
   (c) 2004-2016 F J Tilmann
 EOF
 
@@ -3953,7 +3953,7 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.1.1
+Version 1.2.0
 Copyright (C) 2004-2015 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
