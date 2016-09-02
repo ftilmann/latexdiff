@@ -1,0 +1,35 @@
+% from http://tex.stackexchange.com/questions/327403/latexdiff-doesnt-work-with-certain-markupstyles
+\documentclass{article}
+\usepackage[american]{babel}
+\usepackage[acronym,shortcuts]{glossaries}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{natbib}
+\usepackage{siunitx}
+
+% Move figures to the end
+\usepackage{endfloat}
+
+% Acronyms
+\newacronym{MNA}{MNA}{my nice acronym}
+% ------------------------------------
+\begin{document}
+\section{My section}
+\label{sec:mysec}
+As any dedicated reader can clearly see, the Ideal of practical reason is a representation of, as far as I know, the things). This is nonsense.
+The paralogisms of practical reason are what first give \cref{fig:myfig} rise to the architectonic of practical reason. As will easily be shown in the next section, reason would \SIrange{0}{1}{}.
+%
+\begin{align}
+    A(\omega) = J(\omega) + 1
+\end{align}
+%
+%
+\begin{figure}[t]
+    \centering
+    \caption{Necessity depends on, when thus treated as the practical employment of
+    the never-ending regress in the series of empirical conditions, time.}
+    \label{fig:myfig}
+\end{figure}
+%
+My final comment
+\end{document}

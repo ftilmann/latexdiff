@@ -1,0 +1,37 @@
+% from http://tex.stackexchange.com/questions/327403/latexdiff-doesnt-work-with-certain-markupstyles
+\documentclass{article}
+\usepackage[american]{babel}
+\usepackage[acronym,shortcuts]{glossaries}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{natbib}
+\usepackage{siunitx}
+
+% Move figures to the end
+\usepackage{endfloat}
+
+% Acronyms
+\newacronym{MNA}{MNA}{my nice acronym}
+% ------------------------------------
+\begin{document}
+\section{My section}
+\label{sec:mysec}
+As any dedicated reader can clearly see, the Ideal of practical reason is a representation of, as far as I know, the things \cref{sec:mysec}).
+The paralogisms of practical reason are what first give rise to the architectonic of practical reason. As will easily be shown in the next section \ac{MNA}, reason would not be enough \citep{latexcompanion} \SIrange{0}{2}{}.
+%
+\begin{align}
+    A(\omega) = J(\omega) + 2
+\end{align}
+%
+My final comment
+\bibliographystyle{apalike}
+%
+\begin{thebibliography}{}
+\bibitem[Gossens et~al., 1993]{latexcompanion}
+Michel Goossens, Frank Mittelbach, and Alexander Samarin.
+\newblock The \LaTeX\ Companion.
+\newblock {Addison-Wesley, Reading, Massachusetts}, 1993.
+\end{thebibliography}
+%
+\end{document} 
+
