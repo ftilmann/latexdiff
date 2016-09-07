@@ -2604,7 +2604,7 @@ sub postprocess {
       # split lines with remaining characters before float environment conmmand
       s/^([^%]+)(\\(?:begin|end)\{(?:figure|table)\})/$1\n$2/mg;
       # split lines with remaining characters after float environment conmmand
-      s/(\\(?:begin|end)\{(?:figure|table)\})(.+)((?:%.*)?)$/$1\n$2$3/mg;
+      s/^((?:[^%]+)\\(?:begin|end)\{(?:figure|table)\}(?:\[[a-zA-Z]+\])?)(.+)((?:%.*)?)$/$1\n$2$3/mg;
     }
 
     # Convert '\PERCENTAGE ' back into '\%' (the final question mark catches a special situation where due to a latter pre-processing step the ' ' becomes separated	       
