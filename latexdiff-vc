@@ -156,7 +156,7 @@ if ( defined($flatten) && ( -f $flatten || $flatten =~ /^-/ ) ) {
   $flatten="";
 }
 
-print "DEBUG: PDF $pdf latexdiff-vc command line: ", join(" ",@ARGV), "\n" if $debug; 
+print STDERR "DEBUG: PDF $pdf latexdiff-vc command line: ", join(" ",@ARGV), "\n" if $debug; 
 ###exit;
 
 $file2=pop @ARGV;
@@ -261,7 +261,7 @@ if ( scalar(@revs) == 0 ) {
   if ( $flatten ) {
     pod2usage("Only one root file must be given  if --flatten option is used with version control") if  @files != 1;
     $tempdir='.' if ( $flatten eq "keep-intermediate" );
-    print "flatten tempdir |$tempdir|\n";
+    print STDERR "flatten tempdir |$tempdir|\n";
     if ( $vc eq "SVN" ) {
       my (@infoout)=`svn info`;
       my (@urlline) = grep(/^URL:/, @infoout);
@@ -381,7 +381,7 @@ while ( $infile=$file2=shift @files ) {
       die "Abort ... " ;
     }
   }
-  print "Running: $latexdiff  $options \"$file1\" \"$file2\" > \"$diff\"\n";
+  print STDERR "Running: $latexdiff  $options \"$file1\" \"$file2\" > \"$diff\"\n";
   unless ( system("$latexdiff $options \"$file1\" \"$file2\" > \"$diff\"") == 0 ) { 
     print STDERR  "Something went wrong in $latexdiff. Deleting $diff and abort\n" ; unlink $diff ; exit(5) 
   };
@@ -440,7 +440,7 @@ foreach $diff ( @difffiles ) {
       }
       system("dvips $ppoption -o $ps $dvi");
       push @ptmpfiles, "$diffbase.aux","$diffbase.log",$dvi ;
-      print "Generated postscript file $ps\n";
+      print STDERR "Generated postscript file $ps\n";
     } elsif ( $pdf ) {
       if ( $onlychanges ) {
 	my @pages=findchangedpages("$diffbase.aux");
