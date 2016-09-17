@@ -2048,15 +2048,15 @@ sub marktags {
 sub take_comments_and_enter_from_frac() {
       ###*************take the \n and % between frac and {}***********
       ###notice all of the substitution are made none global
-      while( m/\\begin{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\frac(([\s]*%[^\n]*?)*[\r\n|\r|\n])+\{(.*?)\\end{\1}/s ) {
+      while( m/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\frac(([\s]*%[^\n]*?)*[\r\n|\r|\n])+\{(.*?)\\end{\1}/s ) {
 	### if there isn't any % or \n in the pattern $2 then there should be an \\end{...} in $2
 	if( $2 !~ m/\\end{$1}/s ) {
 	  ### take out % and \n from the next match only (none global)
-		s/\\begin{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\frac(([\s]*%[^\n]*?)*[\r\n|\r|\n])+\{(.*?)\\end{\1}/\\begin{$1}$2\\frac{$5\\end{$1}/s;
+		s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\frac(([\s]*%[^\n]*?)*[\r\n|\r|\n])+\{(.*?)\\end{\1}/\\begin{$1}$2\\frac{$5\\end{$1}/s;
 	}
 	else{
 	  ###there are no more % and \n in $2, we want to find the next one so we clear the begin-end from the pattern
-		s/\\begin{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\end{\1}/MATHBLOCK$1$2MATHBLOCKEND/s;
+		s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\end{\1}/MATHBLOCK$1$2MATHBLOCKEND/s;
 	}
       }
       ###cleaning up
@@ -2075,13 +2075,13 @@ sub take_comments_and_enter_from_frac() {
                } 
               else { # there is no comment or \n between the two brackets {}{}
               ### change CURRFRAC to FRACSTART so we can change them all back to //frac{ when we finish
-                   s/\\begin{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)CURRFRAC\{(.*?)\\end{\1}/\\begin{$1}$2FRACSTART\{$3\\end{$1}/s;
+                   s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)CURRFRAC\{(.*?)\\end{\1}/\\begin{$1}$2FRACSTART\{$3\\end{$1}/s;
               }
             }
         }
         else{
           ###there are no more frac in $2, we want to find the next one so we clear the begin-end from the pattern
-          s/\\begin{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\end{\1}/MATHBLOCK$1$2MATHBLOCKEND/s;
+          s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\end{\1}/MATHBLOCK$1$2MATHBLOCKEND/s;
         }
         
       }
@@ -2158,16 +2158,16 @@ sub preprocess {
     s/(?<!\\)\\\[/\\begin{SQUAREBRACKET}/sg;
     s/\\\]/\\end{SQUAREBRACKET}/sg;
     # Convert all picture environmentent (\begin{PICTUREENV} .. \end{PICTUREENV} \PICTUREBLOCKenv
-    s/\\begin{($PICTUREENV)}(.*?)\\end{\1}/\\PICTUREBLOCK$1\{$2\}/sg;
+    s/\\begin\{($PICTUREENV)}(.*?)\\end{\1}/\\PICTUREBLOCK$1\{$2\}/sg;
     #    For --block-math-markup option -convert all \begin{MATH} .. \end{MATH}
     #    into \MATHBLOCKMATH{...} commands, where MATH is any valid math environment
     #    Also convert all array environments into ARRAYBLOCK environments
     if ( $mathmarkup != FINE ) {
-      s/\\begin{($ARRENV)}(.*?)\\end{\1}/\\ARRAYBLOCK$1\{$2\}/sg;
+      s/\\begin\{($ARRENV)}(.*?)\\end{\1}/\\ARRAYBLOCK$1\{$2\}/sg;
       
       take_comments_and_enter_from_frac();
       
-      s/\\begin{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\end{\1}/\\MATHBLOCK$1\{$2\}/sg;
+      s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\end{\1}/\\MATHBLOCK$1\{$2\}/sg;
     }
     # add final token " STOP"
     $_ .= " STOP"
@@ -2521,15 +2521,15 @@ sub postprocess {
     # is not globally minimal but only 'locally' (matching is beginning from the left side of the string)
 ###    print STDERR "DEBUG: before mathmode replacement\n $_ ------------ \n";
     if ( $mathmarkup == FINE ) {
-      1 while s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}((?:.(?!(?:\\end{(?:(?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}|\\begin{MATHMODE})))*?)\\end{MATHMODE}/\\begin{$1}$2\\end{$1}/s;
-      1 while s/\\begin{MATHMODE}((?:.(?!\\end{MATHMODE}))*?)\\end{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}/\\begin{$2}$1\\end{$2}/s;
+      1 while s/\\begin\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}((?:.(?!(?:\\end{(?:(?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}|\\begin\{MATHMODE})))*?)\\end{MATHMODE}/\\begin{$1}$2\\end{$1}/s;
+      1 while s/\\begin\{MATHMODE}((?:.(?!\\end{MATHMODE}))*?)\\end{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}/\\begin{$2}$1\\end{$2}/s;
       # convert remaining \begin{MATHMODE} \end{MATHMODE} (and not containing & or \\ )into MATHREPL environments
       s/\\begin\{MATHMODE\}((?:(.(?!(?<!\\)\&|\\\\))*)?)\\end\{MATHMODE\}/\\begin{$MATHREPL}$1\\end{$MATHREPL}/sg;
       # others into MATHARRREPL
       s/\\begin\{MATHMODE\}(.*?)\\end\{MATHMODE\}/\\begin{$MATHARRREPL}$1\\end{$MATHARRREPL}/sg;
 
       # now look for AUXCMD math-mode pairs which have only comments (or empty lines between them), and remove the added commands
-      s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end{\1}$AUXCMD\n/$2/sg;       
+      s/\\begin\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end{\1}$AUXCMD\n/$2/sg;       
     } else {
       #   math modes OFF,WHOLE,COARSE: Convert \MATHBLOCKmath{..} commands back to environments
       s/\\MATHBLOCK($MATHENV|$MATHARRENV|SQUAREBRACKET)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
@@ -4334,7 +4334,7 @@ institute
 \providecommand{\DIFaddend}{\protect\marginpar{]}}
 \providecommand{\DIFdelbegin}{\protect\marginpar{d[}}
 \providecommand{\DIFdelend}{\protect\marginpar{]}}
-%DIF END BRACKET PREAMBLE
+%DIF END MARGIN PREAMBLE
 
 %DIF DVIPSCOL PREAMBLE
 %Note: only works with dvips converter
