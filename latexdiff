@@ -834,7 +834,7 @@ if ($graphicsmarkup != NONE ) {
   #  I currently don't see this as an efficient use of time)
   ### The foreach loop does not make sense here. I don't know why I put this in -  (F Tilmann)
   ###foreach my $cmd ( "DIFaddbegin","DIFaddend","DIFdelbegin","DIFdelend" ) {
-  @matches=( $latexdiffpreamble =~ m/command\{\\DIFaddbeginFL}{($pat_n)}/sg ) ;
+  @matches=( $latexdiffpreamble =~ m/command\{\\DIFaddbeginFL}\{($pat_n)}/sg ) ;
   # we look at the last one of the list to take into account possible redefinition but almost always matches should have exactly one element
   if ( $matches[$#matches] =~ m/\\DIFaddbegin/ ) {
     die "Cannot combine graphics markup with float styles defining \\DIFaddbeginFL in terms of \\DIFaddbegin. Use --graphics-markup=none option or choose a different float style."; 
