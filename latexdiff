@@ -3461,11 +3461,12 @@ entry for B<--exclude-safecmd> directly above for further details.
 =item B<--replace-context1cmd=replace-file> 
 
 =item B<--append-context1cmd=append-file> or
+
 =item B<--append-context1cmd="cmd1,cmd2,...">
 
 Replace or append to the list of regex matching commands
 whose last argument is text but which require a particular
-context to work, e.g. \caption will only work within a figure
+context to work, e.g. C<\caption> will only work within a figure
 or table.  These commands behave like text commands, except when 
 they occur in a deleted section, when they are disabled, but their
 argument is shown as deleted text.
@@ -3473,6 +3474,7 @@ argument is shown as deleted text.
 =item B<--replace-context2cmd=replace-file> 
 
 =item B<--append-context2cmd=append-file> or
+
 =item B<--append-context2cmd="cmd1,cmd2,...">
 
 As corresponding commands for context1.  The only difference is that
@@ -3485,7 +3487,7 @@ their arguments.
 =item B<--append-mboxsafecmd=append-file> or B<--append-mboxsafecmd="cmd1,cmd2,...">
 
 Define safe commands, which additionally need to be protected by encapsulating
-in an \\mbox{..}. This is sometimes needed to get around incompatibilities 
+in an C<\mbox{..}>. This is sometimes needed to get around incompatibilities 
 between external packages and the ulem package, which is  used for highlighting
 in the default style UNDERLINE as well as CULINECHBAR CFONTSTRIKE
 
