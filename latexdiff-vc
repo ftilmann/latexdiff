@@ -336,12 +336,12 @@ if ( $onlychanges ) {
 
 if ( scalar(@revs) == 0 ) {
   pod2usage("When -r option is not used, two .tex files (old and new) must be given on the command line") unless @files==2;
-  warn "Option -flatten should normally be combined with -r option (Results will probably not be as expected)" if $flatten;
+  warn "Option -flatten should normally be combined with -r option (Results will probably not be as expected)" if defined($flatten);
     #  compare two files
   $file1=shift @files ;
 } else {
   # revision control
-  if ( $flatten ) {
+  if ( defined($flatten) ) {
     pod2usage("Only one root file must be given  if --flatten option is used with version control") if  @files != 1;
     $tempdir='.' if ( $flatten eq "keep-intermediate" );
     print STDERR "flatten tempdir |$tempdir|\n";
