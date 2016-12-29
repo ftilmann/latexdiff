@@ -32,6 +32,7 @@
 #
 # Version 1.2.1a
 #    - bug fix: deleted figures when endfloat package was activated
+#    - bug fix: alignat environment now always processed correctly (fix issues #65)
 #
 # Version 1.2.0:
 #    - highlight new and deleted figures
@@ -845,7 +846,7 @@ if ($graphicsmarkup != NONE ) {
 
   # only change required for highlighting both is to declare \includegraphics safe, as preamble already contains commands for deleted environment
   if ( $graphicsmarkup == BOTH ) {
-    init_regex_arr_ext(\@SAFECMDLIST,'includegraphics');
+    init_regex_arr_list(\@SAFECMDLIST,'includegraphics');
   }
 }
 
@@ -921,11 +922,11 @@ if (defined $packages{"siunitx"} ) {
   # this is done to get around an incompatibility between the ulem and siunitx package
   print STDERR "siunitx package detected.\n" if $verbose ;
   my $mboxcmds='SI,ang,numlist,numrange,SIlist,SIrange';
-  init_regex_arr_ext(\@SAFECMDLIST,'num,si');
+  init_regex_arr_list(\@SAFECMDLIST,'num,si');
   if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
-    init_regex_arr_ext(\@MBOXCMDLIST,$mboxcmds);
+    init_regex_arr_list(\@MBOXCMDLIST,$mboxcmds);
   } else {
-    init_regex_arr_ext(\@SAFECMDLIST,$mboxcmds);
+    init_regex_arr_list(\@SAFECMDLIST,$mboxcmds);
   }
 }
 
@@ -935,9 +936,9 @@ if (defined $packages{"cleveref"} ) {
   print STDERR "cleveref package detected.\n" if $verbose ;
   my $mboxcmds='[Cc]ref(?:range)?\*?,labelcref,(?:lc)?name[cC]refs?' ;
   if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
-    init_regex_arr_ext(\@MBOXCMDLIST,$mboxcmds);
+    init_regex_arr_list(\@MBOXCMDLIST,$mboxcmds);
   } else {
-    init_regex_arr_ext(\@SAFECMDLIST,$mboxcmds);
+    init_regex_arr_list(\@SAFECMDLIST,$mboxcmds);
   }
 }
 
@@ -946,17 +947,17 @@ if (defined $packages{"glossaries"} ) {
   # this is done to get around an incompatibility between ulem and glossaries package 
   print STDERR "glossaries package detected.\n" if $verbose ;
   my $mboxcmds='[gG][lL][sS](?:|pl|disp|link|first|firstplural|desc|user[iv][iv]?[iv]?),[aA][cC][rR](?:long|longpl|full|fullpl),[aA][cC][lfp]?[lfp]?';
-  init_regex_arr_ext(\@SAFECMDLIST,'[gG][lL][sS](?:(?:entry)?(?:text|plural|name|symbol)|displaynumberlist|entryfirst|entryfirstplural|entrydesc|entrydescplural|entrysymbolplural|entryuser[iv][iv]?[iv]?|entrynumberlist|entrydisplaynumberlist|entrylong|entrylongpl|entryshort|entryshortpl|entryfull|entryfullpl),[gG]lossentry(?:name|desc|symbol),[aA][cC][rR](?:short|shortpl),[aA]csp?');
+  init_regex_arr_list(\@SAFECMDLIST,'[gG][lL][sS](?:(?:entry)?(?:text|plural|name|symbol)|displaynumberlist|entryfirst|entryfirstplural|entrydesc|entrydescplural|entrysymbolplural|entryuser[iv][iv]?[iv]?|entrynumberlist|entrydisplaynumberlist|entrylong|entrylongpl|entryshort|entryshortpl|entryfull|entryfullpl),[gG]lossentry(?:name|desc|symbol),[aA][cC][rR](?:short|shortpl),[aA]csp?');
   if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
-    init_regex_arr_ext(\@MBOXCMDLIST,$mboxcmds);
+    init_regex_arr_list(\@MBOXCMDLIST,$mboxcmds);
   } else {
-    init_regex_arr_ext(\@SAFECMDLIST,$mboxcmds);
+    init_regex_arr_list(\@SAFECMDLIST,$mboxcmds);
   }
 }
 
 if (defined $packages{"chemformula"} or defined $packages{"chemmacros"} ) {
   print STDERR "chemformula package detected.\n" if $verbose ;
-  init_regex_arr_ext(\@SAFECMDLIST,'ch');
+  init_regex_arr_list(\@SAFECMDLIST,'ch');
   push(@UNSAFEMATHCMD,'ch');
   # The next command would be needed to allow highlighting the interior of \ch commands in math environments
   # but the redefinitions in chemformula are too deep to make this viable
@@ -965,7 +966,7 @@ if (defined $packages{"chemformula"} or defined $packages{"chemmacros"} ) {
 
 if (defined $packages{"mhchem"} ) {
   print STDERR "mhchem package detected.\n" if $verbose ;
-  init_regex_arr_ext(\@SAFECMDLIST,'ce');
+  init_regex_arr_list(\@SAFECMDLIST,'ce');
   push(@UNSAFEMATHCMD,'ce','cee');
   # The next command would be needed to allow highlighting the interior of \cee commands in math environments
   # but the redefinitions in chemformula are too deep to make this viable
@@ -1020,7 +1021,7 @@ if (defined $packages{"amsmath"}  or defined $packages{"amsart"} or defined $pac
 
 # add commands in MBOXCMDLIST to SAFECMDLIST
 foreach $mboxcmd ( @MBOXCMDLIST ) {
-  init_regex_arr_ext(\@SAFECMDLIST, $mboxcmd);
+  init_regex_arr_list(\@SAFECMDLIST, $mboxcmd);
 }
 
 # check if \label is in SAFECMDLIST, and if yes replace "label" in $LABELCMD by something that never matches (we hope!)
@@ -1180,53 +1181,45 @@ sub list_packages {
 # scans the argument for \newcommand and \DeclareMathOperator,
 # and adds the created commands which are clearly safe to @SAFECMDLIST
 sub add_safe_commands {
-###  my (@preamble)=@_;
   my ($preamble)=@_;
-  my $added_command = 1;
 
+  # get rid of comments
   $preamble=~s/(?<!\\)%.*$//mg ;
 
-  while ($added_command) { 
-    $added_command  = 0;
-###    foreach $line ( @preamble ) {
-      # get rid of comments
-    my $to_test = "";
-      # test for \DeclareMathOperator{\foo}{myoperator}
-    while ( $preamble =~ m/\DeclareMathOperator\s*\*?\{\\(\w*?)\}/osg) {
-      $to_test=$1;
-      if ($to_test ne "" and not iscmd($to_test,\@SAFECMDLIST,\@SAFECMDEXCL) and not iscmd($to_test, \@SAFECMDEXCL, []))  {
-        # one should add $to_test to the list of safe commands.
-        init_regex_arr_ext(\@SAFECMDLIST, $to_test);
-        $added_command = 1;
-        print STDERR "Adding $to_test to the list of safe commands\n" if $verbose;
+  my $to_test = "";
+  # test for \DeclareMathOperator{\foo}{myoperator}
+  while ( $preamble =~ m/\DeclareMathOperator\s*\*?\{\\(\w*?)\}/osg) {
+    $to_test=$1;
+    if ($to_test ne "" and not iscmd($to_test,\@SAFECMDLIST,\@SAFECMDEXCL) and not iscmd($to_test, \@SAFECMDEXCL, [])) {
+      # one should add $to_test to the list of safe commands.
+      init_regex_arr_list(\@SAFECMDLIST, $to_test);
+      print STDERR "Adding $to_test to the list of safe commands\n" if $verbose;
+    }
+  }
+
+  while ( $preamble =~ m/\\(?:new|renew|provide)command\s*{\\(\w*)\}(?:|\[\d*\])\s*\{(${pat_n})\}/osg ) {
+    my $maybe_to_test  = $1;
+    my $should_be_safe = $2;
+    print STDERR "DEBUG Checking new command: maybe_to_test, should_be_safe: $1 $2\n" if $debug;
+    my $success = 0;
+    # test if all latex commands inside it are safe
+    $success = 1;
+    if ($should_be_safe =~ m/\\\\/) {
+      $success = 0;
+    } else {
+      while ($should_be_safe =~ m/\\(\w+)/g) {
+	###	  print STDERR "DEBUG: Testing command $1 " if $debug;
+	$success = 0 unless iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL); ### or $1 eq "";
+	###        print STDERR " success=$success\n" if $debug;
       }
     }
-
-    while ( $preamble =~ m/\\(?:new|renew|provide)command\s*{\\(\w*)\}(?:|\[\d*\])\s*\{(${pat_n})\}/osg ) {
-      my $maybe_to_test  = $1;
-      my $should_be_safe = $2;
-###      print STDERR "DEBUG maybe_to_test, should_be_safe: $1 $2\n";
-      my $success = 0;
-###        if (($should_be_safe =~ tr/\{/\{/) < ($should_be_safe =~ tr/\}/\}/)) {
-###          # There are more closing braces than opening braces, therefore
-###          # the newcommand is completely on the current line.
-      # test if all latex commands inside it are safe
-      $success = 1;
-      if ($should_be_safe =~ m/\\\\/) {
-	$success = 0;
-      } else {
-	while ($should_be_safe =~ m/\\(\w+)/g) {
-	  $success = 0 unless iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL); ### or $1 eq "";
-	}
-      }
-      ###      }
-      $to_test = $maybe_to_test if $success;
-      
-      if ($to_test ne "" and not iscmd($to_test,\@SAFECMDLIST,\@SAFECMDEXCL) and not iscmd($to_test, \@SAFECMDEXCL, []))  {
-#        # one should add $to_test to the list of safe commands.
-        init_regex_arr_ext(\@SAFECMDLIST, $to_test);
-        $added_command = 1;
-        print STDERR "Adding $to_test to the list of safe commands\n" if $verbose;
+    ###      }
+    if ($success) {
+      $to_test = $maybe_to_test;
+      if (  not iscmd($to_test,\@SAFECMDLIST,\@SAFECMDEXCL) and not iscmd($to_test, \@SAFECMDEXCL, [])) {
+	#        # one should add $to_test to the list of safe commands.
+	init_regex_arr_list(\@SAFECMDLIST, $to_test);
+	print STDERR "Adding $to_test to the list of safe commands\n" if $verbose;
       }
     }
   }
@@ -2127,9 +2120,11 @@ sub preprocess {
 ###    s/^(\s*)//s;
 ###    push(@leadin,$1);
     #    Change \{ to \QLEFTBRACE, \} to \QRIGHTBRACE, and \& to \AMPERSAND
+###    print STDERR "Preprocess 0\n" if $debug;
     s/(?<!\\)\\\{/\\QLEFTBRACE /sg;
     s/(?<!\\)\\\}/\\QRIGHTBRACE /sg;
     s/(?<!\\)\\&/\\AMPERSAND /sg;
+###    print STDERR "Preprocess 2\n" if $debug;
 ### pre 1.0.4
 ###    # change begin and end commands  within comments such that they
 ###    # don't disturb the pattern matching (if there are several \begin or \end in one line
@@ -2138,8 +2133,9 @@ sub preprocess {
 ###    s/(%.*)\\end\{(.*)$/$1\\ENDDIF\{$2/mg ;
 # replace {,} in comments with \\CLEFTBRACE,\\CRIGHTBRACE
     1 while s/((?<!\\)%.*)\{(.*)$/$1\\CLEFTBRACE $2/mg ;
+###    print STDERR "Preprocess 3\n" if $debug;
     1 while s/((?<!\\)%.*)\}(.*)$/$1\\CRIGHTBRACE $2/mg ;
-
+###    print STDERR "Preprocess 10\n" if $debug;
 ###    s/\n(\s*)\n((?:\s*\n)*)/\\PAR\n$2/g ;
     s/\n(\s*?)\n((?:\s*\n)*)/\n$1\\PAR\n$2/g ;
     s/(?<!\\)\\%/\\PERCENTAGE /g ;  # (?<! is negative lookbehind assertion to prevent \\% from being converted
@@ -2165,6 +2161,8 @@ sub preprocess {
     #    For --block-math-markup option -convert all \begin{MATH} .. \end{MATH}
     #    into \MATHBLOCKMATH{...} commands, where MATH is any valid math environment
     #    Also convert all array environments into ARRAYBLOCK environments
+###    print STDERR "Preprocess 20\n" if $debug;
+
     if ( $mathmarkup != FINE ) {
       s/\\begin\{($ARRENV)}(.*?)\\end\{\1}/\\ARRAYBLOCK$1\{$2\}/sg;
       print STDERR "vvvvvvvvvvvvvvvvvv\n$_\nvvvvvvvvvvvvvvvv\n" if $debug;
@@ -2175,6 +2173,8 @@ sub preprocess {
 
       s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)\\end\{\1\}/\\MATHBLOCK$1\{$2\}/sg;
     }
+###    print STDERR "Preprocess 30\n" if $debug;
+
     # add final token " STOP"
     $_ .= " STOP"
   }
@@ -2887,25 +2887,41 @@ sub init_regex_arr_data {
 # Otherwise treat arg as a comma separated list of regular expressions
 sub init_regex_arr_ext {
   my ($arr,$arg)=@_;
-  my $regex;
-  if ( -f $ arg ) {
-    open(FILE,"$arg") or die ("Couldn't open $arg: $!");
-    while (<FILE>) {
-      chomp;
-      next if /^\s*#/ || /^\s*%/ || /^\s*$/ ;
-      push (@$arr,qr/^$_$/);
-    }
-    close(FILE);
-  }
-  else {
-    # assume it is a comma-separated list of reg-ex
-###    print STDERR "DEBUG init_regex_arr_ext arg >$arg<\n";
-    foreach $regex (split(qr/(?<!\\),/,$arg)) {
-      $regex =~ s/\\,/,/g;
-      push (@$arr,qr/^$regex$/);
-    }
+  if ( -f $arg ) {
+    init_regex_arr_file($arr,$arg);
+  } else {
+    init_regex_arr_list($arr,$arg);
   }
 }
+
+# init_regex_arr_file(\@array,$fname)
+# appends array with regular expressions.
+# Read in list of regular expressions from $fname
+# (one expression per line)
+sub init_regex_arr_file {
+  my ($arr,$fname)=@_;
+  open(FILE,"$fname") or die ("Couldn't open $fname: $!");
+  while (<FILE>) {
+    chomp;
+    next if /^\s*#/ || /^\s*%/ || /^\s*$/ ;
+    push (@$arr,qr/^$_$/);
+  }
+  close(FILE);
+}
+
+# init_regex_arr_list(\@array,$arg)
+# appends array with regular expressions.
+# read from comma separated list of regular expressions ($arg)
+sub init_regex_arr_list {
+  my ($arr,$arg)=@_;
+  my $regex;
+  ###    print STDERR "DEBUG init_regex_arr_list arg >$arg<\n" if $debug;
+  foreach $regex (split(qr/(?<!\\),/,$arg)) {
+    $regex =~ s/\\,/,/g;
+    push (@$arr,qr/^$regex$/);
+  }
+}
+
 
 #exetime() returns time since last execution of this command
 #exetime(1) resets this time
