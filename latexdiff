@@ -36,6 +36,7 @@
 #    - bug fix: avoid processing of commands as potential files in routine init_regex_arr (fix issue #70 )
 #    - minimal feature enhancement: treat '@' as allowed character in commands (strictly speaking requires prior \makeatletter statement, but always assuming it to be 
 #       @       a letter if it is part of a command name will usually lead to the correct behaviour (see http://tex.stackexchange.com/questions/346651/latexdiff-and-let)
+#    - new feature/bug fix: --flatten option \endinput in included files now respected but only if \endinput stands right at the beginning of the line.
 #
 # Version 1.2.0:
 #    - highlight new and deleted figures
@@ -1229,6 +1230,19 @@ sub add_safe_commands {
 }
 
 
+# helper function for flatten
+# remove \endinput at beginning of line and everything
+# following it, # if \endinput is not at the beginning of
+# the line, nothing will be removed. It is assumed that
+# this case is most common when \endinput is part of a
+# conditional clause.  The file will only be processed
+# correctly if the conditional is always false,
+# i.e. \endinput # not actually reached
+sub remove_endinput {
+  # s/// operates on default input
+  $_[0] =~ s/^\\endinput.*\Z//ms ;
+  return($_[0]);
+}
 
 # flatten($text,$preamble,$filename,$encoding)
 # expands \input and \include commands within text
@@ -1268,6 +1282,7 @@ sub flatten {
             # content of file becomes replacement value (use recursion), add \newpage if the command was include
             ###$replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
 	    $replacement=flatten(read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding), $preamble,$filename,$encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
+	    $replacement = remove_endinput($replacement); 
 	    # \include always starts a new page; use explicit \newpage command to simulate this
 	    $newpage=(defined($3)? " \\newpage " : "") ;
 	    "$begline$newpage$replacement$newpage";
@@ -1300,6 +1315,7 @@ sub flatten {
 ###           $subfile=~s|^.*\\begin{document}||s; 
 ###           $subfile=~s|\\end{document}.*$||s;
 	   $replacement=flatten($subbody, $preamble,$filename,$encoding);
+	   $replacement = remove_endinput($replacement); 
 	   "$begline$replacement";
   }/exgm;
 
