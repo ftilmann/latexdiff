@@ -35,7 +35,7 @@
 #    - bug fix: alignat environment now always processed correctly (fix issues #65)
 #    - bug fix: avoid processing of commands as potential files in routine init_regex_arr (fix issue #70 )
 #    - minimal feature enhancement: treat '@' as allowed character in commands (strictly speaking requires prior \makeatletter statement, but always assuming it to be 
-@       a letter if it is part of a command name will usually lead to the correct behaviour (see http://tex.stackexchange.com/questions/346651/latexdiff-and-let)
+#       @       a letter if it is part of a command name will usually lead to the correct behaviour (see http://tex.stackexchange.com/questions/346651/latexdiff-and-let)
 #
 # Version 1.2.0:
 #    - highlight new and deleted figures
