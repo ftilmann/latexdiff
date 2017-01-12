@@ -36,7 +36,8 @@
 #    - bug fix: avoid processing of commands as potential files in routine init_regex_arr (fix issue #70 )
 #    - minimal feature enhancement: treat '@' as allowed character in commands (strictly speaking requires prior \makeatletter statement, but always assuming it to be 
 #       @       a letter if it is part of a command name will usually lead to the correct behaviour (see http://tex.stackexchange.com/questions/346651/latexdiff-and-let)
-#    - new feature/bug fix: --flatten option \endinput in included files now respected but only if \endinput stands right at the beginning of the line.
+#    - new feature/bug fix: --flatten option \endinput in included files now respected but only if \endinput stands right at the beginning of the line (issue #77)
+#    - bug fix: flatten would incorrectly attempt to process commented out \include commands (from discussion in issue #77 )
 #
 # Version 1.2.0:
 #    - highlight new and deleted figures
@@ -1270,7 +1271,7 @@ sub flatten {
   print STDERR "DEBUG: includeonly $includeonly\n" if $debug;
 
   # recursively replace \\input and \\include files
-  1 while $text=~s/(^(?:[^%\n]|\\%)*)\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?)}/{ 
+  1 while $text=~s/(^(?:[^%\n]|\\%)*)(?:\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?)})/{ 
 	    $begline=(defined($1)? $1 : "") ;
 	    $fname = $2 if defined($2) ;
 	    $fname = $3 if defined($3) ;
