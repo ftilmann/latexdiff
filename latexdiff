@@ -1271,7 +1271,7 @@ sub flatten {
   print STDERR "DEBUG: includeonly $includeonly\n" if $debug;
 
   # recursively replace \\input and \\include files
-  1 while $text=~s/(^(?:[^%\n]|\\%)*)(?:\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?)})/{ 
+  1 while $text=~s/(^(?:[^%\n]|\\%)*)(?:\\input\{(.*?)\}|\\include\{(${includeonly}(?:\.tex)?)\})/{ 
 	    $begline=(defined($1)? $1 : "") ;
 	    $fname = $2 if defined($2) ;
 	    $fname = $3 if defined($3) ;
@@ -2185,11 +2185,11 @@ sub preprocess {
 
     if ( $mathmarkup != FINE ) {
       s/\\begin\{($ARRENV)}(.*?)\\end\{\1}/\\ARRAYBLOCK$1\{$2\}/sg;
-      print STDERR "vvvvvvvvvvvvvvvvvv\n$_\nvvvvvvvvvvvvvvvv\n" if $debug;
+###      print STDERR "vvvvvvvvvvvvvvvvvv\n$_\nvvvvvvvvvvvvvvvv\n" if $debug;
       
       take_comments_and_enter_from_frac();
       
-      print STDERR "^^^^^^^^^^^^^^^^^^\n$_\n^^^^^^^^^^^^^^^^^\n" if $debug;
+###      print STDERR "^^^^^^^^^^^^^^^^^^\n$_\n^^^^^^^^^^^^^^^^^\n" if $debug;
 
       s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)\\end\{\1\}/\\MATHBLOCK$1\{$2\}/sg;
     }
