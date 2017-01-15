@@ -38,6 +38,7 @@
 #       @       a letter if it is part of a command name will usually lead to the correct behaviour (see http://tex.stackexchange.com/questions/346651/latexdiff-and-let)
 #    - new feature/bug fix: --flatten option \endinput in included files now respected but only if \endinput stands right at the beginning of the line (issue #77)
 #    - bug fix: flatten would incorrectly attempt to process commented out \include commands (from discussion in issue #77 )
+#    - introduce an invisible space (\hspace{0pt} behind \mbox{..} auxiliary commands (not in math mode), to allow line breaks between added and deleted citations (change should not cause adverse behaviour otherwise)
 #
 # Version 1.2.0:
 #    - highlight new and deleted figures
@@ -2058,7 +2059,7 @@ sub marktags {
       if ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)(.*?)(\s*)$/s &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL)) {
 	# $word is a safe command in MBOXCMDLIST
 	###print STDERR "DEBUG Mboxsafecmd detected:$word:\n" if $debug ;
-	push(@$retval,"\\mbox{$AUXCMD\n\\" . $1 . $2 . $3 ."}$AUXCMD\n" );
+	push(@$retval,"\\mbox{$AUXCMD\n\\" . $1 . $2 . $3 ."}\\hspace{0pt}$AUXCMD\n" );
       } else {
 	# $word is a normal word or a safe command (not in MBOXCMDLIST)
 	push (@$retval,$word);
