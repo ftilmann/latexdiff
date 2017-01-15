@@ -525,46 +525,11 @@ foreach $pkg ( @packagelist ) {
 
 
 
-if ($showpreamble) {
-  print "\nPreamble commands:\n";
-  print $latexdiffpreamble ;
-}
-
-if ($showsafe) {
-  print "\nCommands safe within scope of $ADDOPEN $ADDCLOSE and $DELOPEN $DELCLOSE (unless excluded):\n";
-  print_regex_arr(@SAFECMDLIST);
-  print "\nCommands not safe within scope of $ADDOPEN $ADDCLOSE and $DELOPEN $DELCLOSE :\n";
-  print_regex_arr(@SAFECMDEXCL);
-}
-
-if ($showtext) {
-  print "\nCommands with last argument textual (unless excluded) and safe in every context:\n";
-  print_regex_arr(@TEXTCMDLIST);
-  print "\nContext1 commands (last argument textual, command will be disabled in deleted passages, last argument will be shown as plain text):\n";
-  print_regex_arr(@CONTEXT1CMDLIST);
-  print "\nContext2 commands (last argument textual, command and its argument will be disabled in deleted passages):\n";
-  print_regex_arr(@CONTEXT2CMDLIST);  
-  print "\nExclude list of Commands with last argument not textual (overrides patterns above):\n";
-  print_regex_arr(@TEXTCMDEXCL);
-}
-
-
-if ($showconfig) {
-  print "Configuration variables:\n";
-  print "ARRENV=$ARRENV\n";
-  print "COUNTERCMD=$COUNTERCMD\n";
-  print "FLOATENV=$FLOATENV\n";
-  print "ITEMCMD=$ITEMCMD\n";
-  print "LISTENV=$LISTENV\n";
-  print "MATHARRENV=$MATHARRENV\n";
-  print "MATHARRREPL=$MATHARRREPL\n";
-  print "MATHENV=$MATHENV\n";
-  print "MATHREPL=$MATHREPL\n";
-  print "MINWORDSBLOCK=$MINWORDSBLOCK\n";
-  print "PICTUREENV=$PICTUREENV\n";
-}
 if ($showconfig || $showtext || $showsafe || $showpreamble) {
-  exit 0; }
+  show_configuration();
+  exit 0; 
+}
+
 if ( @ARGV != 2 ) { 
   print STDERR "2 and only 2 non-option arguments required.  Write latexdiff -h to get help\n";
   exit(2);
@@ -1083,6 +1048,58 @@ print STDERR "(",exetime()," s)\n","Done.\n" if $verbose;
 
 
 ### Subroutines
+
+# show_configuration
+# note that this is not encapsulated but uses variables from the main program 
+# It is provided for convenience because in the future it is planned to allow output
+# to be modified based on what packages are read etc - this works only if the input files are actually red
+# whether or not additional files are provided
+sub show_configuration {
+  if ($showpreamble) {
+    print "\nPreamble commands:\n";
+    print $latexdiffpreamble ;
+  }
+
+  if ($showsafe) {
+    print "\nsafecmd: Commands safe within scope of $ADDOPEN $ADDCLOSE and $DELOPEN $DELCLOSE (unless excluded):\n";
+    print_regex_arr(@SAFECMDLIST);
+    print "\nsafecmd-exlude: Commands not safe within scope of $ADDOPEN $ADDCLOSE and $DELOPEN $DELCLOSE :\n";
+    print_regex_arr(@SAFECMDEXCL);
+    print "\nmboxsafecmd:  Commands safe only if they are surrounded by \\mbox command:\n";
+    print_regex_arr(@MBOXCMDLIST);
+    print "\nnmboxsafecmd: Commands not safe:\n";
+    print_regex_arr(@MBOXCMDEXCL);
+  }
+
+  if ($showtext) {
+    print "\nCommands with last argument textual (unless excluded) and safe in every context:\n";
+    print_regex_arr(@TEXTCMDLIST);
+    print "\nContext1 commands (last argument textual, command will be disabled in deleted passages, last argument will be shown as plain text):\n";
+    print_regex_arr(@CONTEXT1CMDLIST);
+    print "\nContext2 commands (last argument textual, command and its argument will be disabled in deleted passages):\n";
+    print_regex_arr(@CONTEXT2CMDLIST);  
+    print "\nExclude list of Commands with last argument not textual (overrides patterns above):\n";
+    print_regex_arr(@TEXTCMDEXCL);
+  }
+
+
+  if ($showconfig) {
+    print "Configuration variables:\n";
+    print "ARRENV=$ARRENV\n";
+    print "COUNTERCMD=$COUNTERCMD\n";
+    print "FLOATENV=$FLOATENV\n";
+    print "ITEMCMD=$ITEMCMD\n";
+    print "LISTENV=$LISTENV\n";
+    print "MATHARRENV=$MATHARRENV\n";
+    print "MATHARRREPL=$MATHARRREPL\n";
+    print "MATHENV=$MATHENV\n";
+    print "MATHREPL=$MATHREPL\n";
+    print "MINWORDSBLOCK=$MINWORDSBLOCK\n";
+    print "PICTUREENV=$PICTUREENV\n";
+  }
+}
+
+
 
 ## guess_encoding(filename)
 ## reads the first 20 lines of filename and looks for call of inputenc package
