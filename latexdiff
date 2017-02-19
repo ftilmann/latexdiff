@@ -31,14 +31,16 @@
 ###  - move --show-options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
 # Version 1.2.1a
-#    - bug fix: deleted figures when endfloat package was activated
+#    - refactoring: set default configuration variables in a hash, and those that correspond to lists 
+#    - feature: option --add-to-config used to amend configuration variables, which are regex pattern lists
+#    - bug fix: deleted figures when endfloat package is activated
 #    - bug fix: alignat environment now always processed correctly (fix issues #65)
 #    - bug fix: avoid processing of commands as potential files in routine init_regex_arr (fix issue #70 )
 #    - minimal feature enhancement: treat '@' as allowed character in commands (strictly speaking requires prior \makeatletter statement, but always assuming it to be 
 #       @       a letter if it is part of a command name will usually lead to the correct behaviour (see http://tex.stackexchange.com/questions/346651/latexdiff-and-let)
 #    - new feature/bug fix: --flatten option \endinput in included files now respected but only if \endinput stands right at the beginning of the line (issue #77)
 #    - bug fix: flatten would incorrectly attempt to process commented out \include commands (from discussion in issue #77 )
-#    - introduce an invisible space (\hspace{0pt} behind \mbox{..} auxiliary commands (not in math mode), to allow line breaks between added and deleted citations (change should not cause adverse behaviour otherwise)
+#    - introduce an invisible space (\hspace{0pt} after \mbox{..} auxiliary commands (not in math mode), to allow line breaks between added and deleted citations (change should not cause adverse behaviour otherwise)
 #
 # Version 1.2.0:
 #    - highlight new and deleted figures
@@ -161,23 +163,65 @@ This is LATEXDIFF 1.2.1a  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
   (c) 2004-2016 F J Tilmann
 EOF
 
-# Configuration variables: these have to be visible from the subroutines
-my $MINWORDSBLOCK=3; # minimum number of tokens to form an independent block
-                     # shorter identical blocks will be merged to the previous word
-my $SCALEDELGRAPHICS=0.5; # factor with which deleted figures will be scaled down (i.e. 0.5 implies they are shown at half linear size)
-                      # this is only used for --graphics-markup=BOTH option
-my $FLOATENV='(?:figure|table|plate)[\w\d*@]*' ;   # Environments in which FL variants of defined commands are used
-my $PICTUREENV='(?:picture|tikzpicture|DIFnomarkup)[\w\d*@]*' ;   # Environments in which all change markup is removed
-my $MATHENV='(?:equation[*]?|displaymath|DOLLARDOLLAR)[*]?' ;           # Environments turning on display math mode (code also knows about \[ and \])
-my $MATHREPL='displaymath';  # Environment introducing deleted maths blocks
-my $MATHARRENV='(?:eqnarray|align|alignat|gather|multline|flalign)[*]?' ;           # Environments turning on eqnarray math mode
-my $MATHARRREPL='eqnarray*';  # Environment introducing deleted maths blocks
-my $ARRENV='(?:aligned|array|[pbvBV]?matrix|smallmatrix|cases|split)'; # Environments making arrays in math mode.  The underlining style does not cope well with those - as a result in-text math environments are surrounded by \mbox{ } if any of these commands is used in an inline math block
-my $COUNTERCMD='(?:footnote|part|chapter|section|subsection|subsubsection|paragraph|subparagraph)';  # textcmds which are associated with a counter
+# Hash with defaults for configuration variables. These marked undef have default values constructed from list defined in the DATA block
+# (under tag CONFIG)
+my %CONFIG=(
+   MINWORDSBLOCK => 3, # minimum number of tokens to form an independent block
+                        # shorter identical blocks will be merged to the previous word
+   SCALEDELGRAPHICS => 0.5, # factor with which deleted figures will be scaled down (i.e. 0.5 implies they are shown at half linear size)
+                             # this is only used for --graphics-markup=BOTH option
+   FLOATENV => undef ,   # Environments in which FL variants of defined commands are used
+   PICTUREENV => undef ,   # Environments in which all change markup is removed
+   MATHENV => undef ,           # Environments turning on display math mode (code also knows about \[ and \])
+   MATHREPL => 'displaymath',  # Environment introducing deleted maths blocks
+   MATHARRENV => undef ,           # Environments turning on eqnarray math mode
+   MATHARRREPL => 'eqnarray*',  # Environment introducing deleted maths blocks
+   ARRENV => undef , # Environments making arrays in math mode.  The underlining style does not cope well with those - as a result in-text math environments are surrounded by \mbox{ } if any of these commands is used in an inline math block
+   COUNTERCMD => undef,
+                                        # COUNTERCMD textcmds which are associated with a counter
                                         # If any of these commands occur in a deleted block
                                         # they will be succeeded by an \addtocounter{...}{-1}
                                         # for the associated counter such that the overall numbers
                                         # should be the same as in the new file
+   LISTENV => undef ,  # list making environments - they will generally be kept
+   ITEMCMD => 'item'                    # command marking item in a list environment
+);
+# Configuration variables: these have to be visible from the subroutines
+my ($ARRENV,
+    $COUNTERCMD,
+    $FLOATENV,
+    $ITEMCMD,
+    $LISTENV,
+    $MATHARRENV,
+    $MATHARRREPL,
+    $MATHENV,
+    $MATHREPL,
+    $MINWORDSBLOCK,
+    $PICTUREENV,
+    $SCALEDELGRAPHICS
+);
+
+# my $MINWORDSBLOCK=3; # minimum number of tokens to form an independent block
+#                      # shorter identical blocks will be merged to the previous word
+# my $SCALEDELGRAPHICS=0.5; # factor with which deleted figures will be scaled down (i.e. 0.5 implies they are shown at half linear size)
+#                       # this is only used for --graphics-markup=BOTH option
+# my $FLOATENV='(?:figure|table|plate)[\w\d*@]*' ;   # Environments in which FL variants of defined commands are used
+# my $PICTUREENV='(?:picture|tikzpicture|DIFnomarkup)[\w\d*@]*' ;   # Environments in which all change markup is removed
+# my $MATHENV='(?:equation[*]?|displaymath|DOLLARDOLLAR)[*]?' ;           # Environments turning on display math mode (code also knows about \[ and \])
+# my $MATHREPL='displaymath';  # Environment introducing deleted maths blocks
+# my $MATHARRENV='(?:eqnarray|align|alignat|gather|multline|flalign)[*]?' ;           # Environments turning on eqnarray math mode
+# my $MATHARRREPL='eqnarray*';  # Environment introducing deleted maths blocks
+# my $ARRENV='(?:aligned|array|[pbvBV]?matrix|smallmatrix|cases|split)'; # Environments making arrays in math mode.  The underlining style does not cope well with those - as a result in-text math environments are surrounded by \mbox{ } if any of these commands is used in an inline math block
+# my $COUNTERCMD='(?:footnote|part|chapter|section|subsection|subsubsection|paragraph|subparagraph)';  # textcmds which are associated with a counter
+#                                         # If any of these commands occur in a deleted block
+#                                         # they will be succeeded by an \addtocounter{...}{-1}
+#                                         # for the associated counter such that the overall numbers
+#                                         # should be the same as in the new file
+# my $LISTENV='(?:itemize|description|enumerate)'; # list making environments - they will generally be kept
+# my $ITEMCMD='item';   # command marking item in a list environment
+
+
+
 my $LABELCMD='(?:label)';                # matching commands are disabled within deleted blocks - mostly useful for maths mode, as otherwise it would be fine to just not add those to SAFECMDLIST
 my @UNSAFEMATHCMD=('qedhere');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
 ###my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
@@ -187,8 +231,6 @@ my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths express
 
 ### use context2cmd list instead to define TITLECMD
 ###my $TITLECMD='(?:title|author|date|institute)'; # Preamble commands which contain text to be epressed by \maketitle command
-my $LISTENV='(?:itemize|description|enumerate)'; # list making environments - they will generally be kept
-my $ITEMCMD='item';
 
 # Markup strings
 # If at all possible, do not change these as parts of the program
@@ -238,7 +280,8 @@ my @MBOXCMDEXCL=();           # all the patterns in MBOXCMDLIST will be appended
 
 my ($i,$j,$l);
 my ($old,$new);
-my ($line);
+my ($line,$key);
+my (@dumlist);
 my ($newpreamble,$oldpreamble);
 my (@newpreamble,@oldpreamble,@diffpreamble,@diffbody);
 my ($latexdiffpreamble);
@@ -273,7 +316,7 @@ use constant {
 
 my ($mboxcmd);
 
-my (@configlist,@labels,
+my (@configlist,@addtoconfiglist,@labels,
     @appendsafelist,@excludesafelist,
     @appendmboxsafelist,@excludemboxsafelist,
     @appendtextlist,@excludetextlist,
@@ -315,6 +358,7 @@ GetOptions('type|t=s' => \$type,
 	   'subtype|s=s' => \$subtype, 
 	   'floattype|f=s' => \$floattype, 
 	   'config|c=s' => \@configlist,
+	   'add-to-config|c=s' => \@addtoconfiglist,
 	   'preamble|p=s' => \$preamblefile,
 	   'encoding|e=s' => \$encoding,
 	   'label|L=s' => \@labels,
@@ -494,19 +538,63 @@ foreach $config ( @configlist ) {
 foreach $assign ( @config ) {
 ###    print STDERR "assign:|$assign|\n";
   $assign=~ m/\s*(\w*)\s*=\s*(\S*)\s*$/ or die "Illegal assignment $assign in configuration list (must be variable=value)";  
-  if ( $1 eq "MINWORDSBLOCK" ) { $MINWORDSBLOCK = $2; }
-  elsif ( $1 eq "FLOATENV" ) { $FLOATENV = $2 ; }
-  elsif ( $1 eq "ITEMCMD" ) { $ITEMCMD = $2 ; }
-  elsif ( $1 eq "LISTENV" ) { $LISTENV = $2 ; }
-  elsif ( $1 eq "PICTUREENV" ) { $PICTUREENV = $2 ; }
-  elsif ( $1 eq "MATHENV" ) { $MATHENV = $2 ; }
-  elsif ( $1 eq "MATHREPL" ) { $MATHREPL = $2 ; }
-  elsif ( $1 eq "MATHARRENV" ) { $MATHARRENV = $2 ; }
-  elsif ( $1 eq "MATHARRREPL" ) { $MATHARRREPL = $2 ; }
-  elsif ( $1 eq "ARRENV" ) { $ARRENV = $2 ; }
-  elsif ( $1 eq "COUNTERCMD" ) { $COUNTERCMD = $2 ; }
-  elsif ( $1 eq "SCALEDELGRAPHICS" ) { $SCALEDELGRAPHICS = $2 ; }
-  else { die "Unknown variable $1 in assignment.";}
+  exists $CONFIG{$1} or die "Unknown configuration variable $1.";
+  $CONFIG{$1}=$2;
+}
+
+my @addtoconfig=();
+foreach $config ( @addtoconfiglist ) {
+  if (-f $config || lc $config eq '/dev/null' ) {
+    open(FILE,$config) or die ("Couldn't open addd-to-config file $config: $!");
+    while (<FILE>) {
+      chomp;
+      next if /^\s*#/ || /^\s*%/ || /^\s*$/ ;
+      push (@addtoconfig,$_);
+    }
+    close(FILE);
+  }
+  else {
+#    foreach ( split(",",$config) ) {
+#      push @addtoconfig,$_;
+#    }
+     push @addtoconfig,split(",",$config)
+  }
+}
+
+# initialise default lists from DATA
+# for those configuration variables, which have not been set explicitly, initiate from list in document
+foreach $key ( keys(%CONFIG) ) {
+  if (!defined $CONFIG{$key}) {
+    @dumlist=();
+    init_regex_arr_data(\@dumlist,"$key CONFIG");
+    $CONFIG{$key}=join(";",@dumlist)
+  }
+}
+
+
+###  print STDERR "configuration: |$config|  , #@config#\n";
+foreach $assign ( @addtoconfig ) {
+###    print STDERR "assign:|$assign|\n";
+  $assign=~ m/\s*(\w*)\s*=\s*(\S*)\s*$/ or die "Illegal assignment $assign in configuration list (must be variable=value)";  
+  exists $CONFIG{$1} or die "Unknown configuration variable $1.";
+  $CONFIG{$1}.=";$2";
+}
+
+# Map from hash to variables (we do this to have more concise code later, change from comma-separeted list)
+foreach  ( keys(%CONFIG) ) {
+  if ( $_ eq "MINWORDSBLOCK" ) { $MINWORDSBLOCK = $CONFIG{$_}; }
+  elsif ( $_ eq "FLOATENV" ) { $FLOATENV = liststringtoregex($CONFIG{$_}) ; }
+  elsif ( $_ eq "ITEMCMD" ) { $ITEMCMD = $CONFIG{$_} ; }
+  elsif ( $_ eq "LISTENV" ) { $LISTENV = liststringtoregex($CONFIG{$_}) ; }
+  elsif ( $_ eq "PICTUREENV" ) { $PICTUREENV = liststringtoregex($CONFIG{$_}) ; }
+  elsif ( $_ eq "MATHENV" ) { $MATHENV = liststringtoregex($CONFIG{$_}) ; }
+  elsif ( $_ eq "MATHREPL" ) { $MATHREPL = $CONFIG{$_} ; }
+  elsif ( $_ eq "MATHARRENV" ) { $MATHARRENV = liststringtoregex($CONFIG{$_}) ; }
+  elsif ( $_ eq "MATHARRREPL" ) { $MATHARRREPL = $CONFIG{$_} ; }
+  elsif ( $_ eq "ARRENV" ) { $ARRENV = liststringtoregex($CONFIG{$_}) ; }
+  elsif ( $_ eq "COUNTERCMD" ) { $COUNTERCMD = liststringtoregex($CONFIG{$_}) ; }
+  elsif ( $_ eq "SCALEDELGRAPHICS" ) { $SCALEDELGRAPHICS = $CONFIG{$_} ; }
+  else { die "Unknown configuration variable $_.";}
 }
 
 if ( $mathmarkup == COARSE || $mathmarkup == WHOLE ) {
@@ -1049,6 +1137,18 @@ print STDERR "(",exetime()," s)\n","Done.\n" if $verbose;
 
 
 ### Subroutines
+# liststringtoregex(liststring)
+# expands string with semi-colon separated list into a regular expression corresponding 
+# matching any of the elements
+sub liststringtoregex {
+  my ($liststring)=@_;
+  my @elements=split(";",$liststring);
+  if ( @elements) {
+    return('(?:(?:' . join(')|(?:',@elements) .'))');
+  } else {
+    return "";
+  }
+}
 
 # show_configuration
 # note that this is not encapsulated but uses variables from the main program 
@@ -2903,16 +3003,32 @@ sub linediff {
 # init_regex_arr_data(\@array,"TOKEN INIT")
 # scans DATA file handel for line "%% TOKEN INIT" line
 # then appends each line not beginning with % into array (as a quoted regex)
+# This is used for command lists and configuration variables, but the processing is slightly 
+# different: 
+# For lists, the regular expression is extended to include beginning (^) and end ($) markers, to require full-string matching
+# For configuration variables (and all others), simply an unadorned list is copied
 sub init_regex_arr_data {
   my ($arr,$token)=@_;
-  my ($copy);
+  my $copy=0;
+  my ($mode);
+  if ($token =~ m/COMMANDS/ ) { 
+    $mode=0;
+  } else {
+    $mode=1;
+  }
+
   while (<DATA>) {
     if ( m/^%%BEGIN $token\s*$/ ) {
-      $copy=1; }
-    elsif ( m/^%%END $token\s*/ )  {
+      $copy=1; 
+      next;
+    } elsif ( m/^%%END $token\s*$/ )  {
       last; }
     chomp;
-    push (@$arr,qr/^$_$/) if ( $copy && !/^%/ ) ;
+    if ( $mode==0 ) {
+      push (@$arr,qr/^$_$/) if ( $copy && !/^%/ ) ;
+    } elsif ($mode==1) {
+      push (@$arr,"$_") if ( $copy && !/^%/ ) ;
+    }
   }
   seek DATA,0,0;    # rewind DATA handle to file begin
 }
@@ -3102,6 +3218,14 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                           SCALEDELGRAPHICS (Float)
                        This option can be repeated.
 
+--add-to-config  varenv1=pattern1,varenv2=pattern2
+                       For configuration variables containing a regular expression (essentially those ending
+                       in ENV, and COUNTERCMD) this provides an alternative way to modify the configuration 
+                       variables. Instead of setting the complete pattern, with this option it is possible to add an
+                       alternative pattern. varenv must be one of the variables listed above that take a regular
+                       expression as argument, and pattern is any regular expression (which might need to be 
+                       protected from the shell by quotation). Several patterns can be added at once by using semi-colons
+                       to separate them, e.g. --add-to-config "LISTENV=myitemize;myenumerate,COUNTERCMD=endnote"
 
 --packages=pkg1,pkg2,..
                        Tell latexdiff that .tex file is processed with the packages in list 
@@ -3586,6 +3710,16 @@ C<PICTUREENV> (RegEx)
 
 C<SCALEDELGRAPHICS> (Float)
 
+=item B<--add-to-config varenv1=pattern1,varenv2=pattern2,...>
+
+For configuration variables, which are a regular expression (essentially those ending
+in ENV, and COUNTERCMD, see list above) this provides an alternative way to modify the configuration 
+variables. Instead of setting the complete pattern, with this option it is possible to add an
+alternative pattern. C<varenv> must be one of the variables listed above that take a regular
+expression as argument, and pattern is any regular expression (which might need to be 
+protected from the shell by quotation). Several patterns can be added at once by using semi-colons
+to separate them, e.g. C<--add-to-config "LISTENV=myitemize;myenumerate,COUNTERCMD=endnote">
+
 =item B<--show-safecmd>
 
 Print list of RegEx matching and excluding safe commands.
@@ -3646,15 +3780,16 @@ expected, e.g. correction of typos.
 =item B<--graphics-markup=level>
 
  Change highlight style for graphics embedded with C<\includegraphics> commands.
-                      Possible values for level:
 
-                      C<none, C<off> or C<0>: no highlighting for figures
+Possible values for level:
 
-                      C<new-only> or C<1>: surround newly added or changed figures with a blue frame [Default if graphicx package loaded]
+C<none>, C<off> or C<0>: no highlighting for figures
 
-                      C<both> or C<2>:     highlight new figures with a blue frame and show deleted figures at reduced 
-                                scale, and crossed out with a red diagonal cross. Use configuration
-                                variable SCALEDELGRAPHICS to set size of deleted figures.
+C<new-only> or C<1>: surround newly added or changed figures with a blue frame [Default if graphicx package loaded]
+
+C<both> or C<2>:     highlight new figures with a blue frame and show deleted figures at reduced 
+scale, and crossed out with a red diagonal cross. Use configuration
+variable SCALEDELGRAPHICS to set size of deleted figures.
 
 Note that changes to the optional parameters will make the figure appear as changed 
 to latexdiff, and this figure will thus be highlighted
@@ -4303,8 +4438,62 @@ date
 institute
 %%END CONTEXT2 COMMANDS 
 
+%% CONFIGURATION variabe defaults
+%%BEGIN LISTENV CONFIG
+itemize
+description
+enumerate
+%%END LISTENV CONFIG
 
-%% TYPES (Commands for highlighting changed blocks)
+%%BEGIN FLOATENV CONFIG
+figure[\w\d*@]*
+table[\w\d*@]*
+plate[\w\d*@]*
+%%END FLOATENV CONFIG
+
+%%BEGIN PICTUREENV CONFIG
+picture[\w\d*@]*
+tikzpicture[\w\d*@]*
+DIFnomarkup
+%%END PICTUREENV CONFIG
+
+%%BEGIN MATHENV CONFIG
+equation[*]?
+displaymath
+DOLLARDOLLAR
+%%END MATHENV CONFIG
+
+%%BEGIN MATHARRENV CONFIG
+eqnarray[*]?
+align[*]?
+alignat[*]?
+gather[*]?
+multline[*]?
+flalign[*]?
+%%END MATHARRENV CONFIG
+
+%%BEGIN ARRENV CONFIG
+aligned
+array
+[pbvBV]?matrix
+smallmatrix
+cases
+split
+%%END ARRENV CONFIG
+
+%%BEGIN COUNTERCMD CONFIG
+footnote
+part
+chapter
+section
+subsection
+subsubsection
+paragraph
+subparagraph
+%%END COUNTERCMD CONFIG
+
+
+%%% TYPES (Commands for highlighting changed blocks)
 
 %DIF UNDERLINE PREAMBLE
 \RequirePackage[normalem]{ulem}

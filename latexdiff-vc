@@ -344,7 +344,7 @@ if ( scalar(@revs) == 0 ) {
   if ( defined($flatten) ) {
     pod2usage("Only one root file must be given  if --flatten option is used with version control") if  @files != 1;
     $tempdir='.' if ( $flatten eq "keep-intermediate" );
-    print STDERR "flatten tempdir |$tempdir|\n";
+    print STDERR "flatten tempdir |$tempdir|\n" if $debug;
     if ( $vc eq "SVN" ) {
       my (@infoout)=`svn info`;
       my (@urlline) = grep(/^URL:/, @infoout);

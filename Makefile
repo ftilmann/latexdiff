@@ -1,5 +1,5 @@
 # Makefile for preparing files for distribution
-VERSION=1.2.0
+VERSION=1.2.1a
 
 
 .PHONY: distribution release test mkdirs clean cleanall cleantest webmanual
