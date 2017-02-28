@@ -454,7 +454,11 @@ while ( $infile=$file2=shift @files ) {
   system("mkdir -p $dirname") unless ( -e $dirname );
 
   # Remaining options are passed to latexdiff
-  $options = "\'" . join("\' \'",@ldoptions) . "\'";
+  if (scalar(@ldoptions) > 0 ) {
+    $options = "\'" . join("\' \'",@ldoptions) . "\'";
+  } else {
+    $options = "";
+  }
    
   if ( -e $diff && ! $force ) {
     print STDERR "OK to overwrite existing file $diff (y/n)? ";
