@@ -5,7 +5,9 @@ up significant differences between them (i.e. a diff for latex files).
   Various options are available for visual markup using standard latex 
 packages such as "color.sty". Changes not directly affecting visible 
 text, for example in formatting commands, are still marked in 
-the latex source.
+the latex source. Note that only files conforming to latex syntax will 
+be processed correctly, not generic TeX files. Some further 
+minor restrictions apply, see documentation.
  
 A rudimentary revision facilility is provided by another Perl script,
 latexrevise, which accepts or rejects all changes.  Manual
