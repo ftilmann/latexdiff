@@ -28,9 +28,13 @@
 ###  - use kdiff3 as a merge tool
 ###  - make style that allows (forward and backjumping with hyperref)
 ###  - --flatten option only expands first including command per line if there is more than one
-###  - move --show-options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
+###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
 # Version 1.2.1a
+#    - treat lstlisting and comment as equivalent to verbatim environment
+#      make environments that are treated like verbatim environments configurable (config variable VERBATIMENV)
+#      treat lstinlne as equivalent to verb command
+#      partially addresses issue #38
 #    - refactoring: set default configuration variables in a hash, and those that correspond to lists 
 #    - feature: option --add-to-config used to amend configuration variables, which are regex pattern lists
 #    - bug fix: deleted figures when endfloat package is activated
@@ -184,6 +188,7 @@ my %CONFIG=(
                                         # for the associated counter such that the overall numbers
                                         # should be the same as in the new file
    LISTENV => undef ,  # list making environments - they will generally be kept
+   VERBATIMENV => undef,    # Environments whose content should be treated as verbatim text 
    ITEMCMD => 'item'                    # command marking item in a list environment
 );
 # Configuration variables: these have to be visible from the subroutines
@@ -198,7 +203,8 @@ my ($ARRENV,
     $MATHREPL,
     $MINWORDSBLOCK,
     $PICTUREENV,
-    $SCALEDELGRAPHICS
+    $SCALEDELGRAPHICS,
+    $VERBATIMENV
 );
 
 # my $MINWORDSBLOCK=3; # minimum number of tokens to form an independent block
@@ -592,6 +598,7 @@ foreach  ( keys(%CONFIG) ) {
   elsif ( $_ eq "MATHARRENV" ) { $MATHARRENV = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "MATHARRREPL" ) { $MATHARRREPL = $CONFIG{$_} ; }
   elsif ( $_ eq "ARRENV" ) { $ARRENV = liststringtoregex($CONFIG{$_}) ; }
+  elsif ( $_ eq "VERBATIMENV" ) { $VERBATIMENV = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "COUNTERCMD" ) { $COUNTERCMD = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "SCALEDELGRAPHICS" ) { $SCALEDELGRAPHICS = $CONFIG{$_} ; }
   else { die "Unknown configuration variable $_.";}
@@ -780,6 +787,15 @@ $new=read_file_with_encoding($newfile,$encoding);
 
 # reset time
 exetime(1);
+### if ( $debug ) {
+###     open(RAWDIFF,">","latexdiff.debug.oldfile");
+###     print RAWDIFF $old;
+###     close(RAWDIFF);
+###     open(RAWDIFF,">","latexdiff.debug.newfile");
+###     print RAWDIFF $new;
+###     close(RAWDIFF);
+### }
+### print STDERR "DEBUG: before splitting old ",length($old),"\n" if $debug;
 ($oldpreamble,$oldbody,$oldpost)=splitdoc($old,'\\\\begin\{document\}','\\\\end\{document\}');
 
 ###if ( $oldpreamble =~ m/\\usepackage\[(\w*?)\]\{inputenc\}/  ) {
@@ -793,7 +809,7 @@ exetime(1);
 ####    Encode::from_to($oldbody,$encoding,"utf8");
 ####    Encode::from_to($oldpost,$encoding,"utf8");
 ###  }
-
+###print STDERR "DEBUG: before splitting new ",length($old),"\n" if $debug;
 ($newpreamble,$newbody,$newpost)=splitdoc($new,'\\\\begin\{document\}','\\\\end\{document\}');
 
 ###if ( $newpreamble =~ m/\\usepackage\[(\w*?)\]\{inputenc\}/  ) {
@@ -1142,7 +1158,7 @@ print STDERR "(",exetime()," s)\n","Done.\n" if $verbose;
 # matching any of the elements
 sub liststringtoregex {
   my ($liststring)=@_;
-  my @elements=split(";",$liststring);
+  my @elements=grep /\S/,split(";",$liststring);
   if ( @elements) {
     return('(?:(?:' . join(')|(?:',@elements) .'))');
   } else {
@@ -2237,8 +2253,8 @@ sub take_comments_and_enter_from_frac() {
 # 2. mark all first empty line (in block of several) with \PAR tokens
 # 3. Convert all '\%' into '\PERCENTAGE ' and all '\$' into \DOLLAR to make parsing regular expressions easier
 # 4. Convert all \verb|some verbatim text| commands (where | can be an arbitrary character)
-#    into \verb{hash}
-# 5. Convert \begin{verbatim} some verbatim text \end{verbatim} into \verbatim{hash}
+#    into \verb{hash}  (also lstinline)
+# 5. Convert \begin{verbatim} some verbatim text \end{verbatim} into \verbatim{hash}  (not only verbatim, all patterns matching VERBATIMENV)
 # 6. Convert _n into \SUBSCRIPTNB{n} and _{nnn} into \SUBSCRIPT{nn}
 # 7. Convert ^n into \SUPERSCRIPTNB{n} and ^{nnn} into \SUPERSCRIPT{nn}
 # 8. a. Convert $$ $$ into \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR}
@@ -2278,8 +2294,9 @@ sub preprocess {
     s/\n(\s*?)\n((?:\s*\n)*)/\n$1\\PAR\n$2/g ;
     s/(?<!\\)\\%/\\PERCENTAGE /g ;  # (?<! is negative lookbehind assertion to prevent \\% from being converted
     s/(?<!\\)\\\$/\\DOLLAR /g ;  # (?<! is negative lookbehind assertion to prevent \\$ from being converted
-    s/(\\verb\*?)(\S)(.*?)\2/"${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
-    s/\\begin\{(verbatim\*?)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
+    s/(\\verb\*?|lstinline)(\S)(.*?)\2/"${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
+###    s/\\begin\{(verbatim\*?)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
+    s/\\begin\{($VERBATIMENV)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     # Convert _n or _\cmd into \SUBSCRIPTNB{n} or \SUBSCRIPTNB{\cmd} and _{nnn} into \SUBSCRIPT{nn}
     1 while s/(?<!\\)_(\s*([^{\\\s]|\\\w+))/\\SUBSCRIPTNB{$1}/g ;
     1 while s/(?<!\\)_(\s*{($pat_n)})/\\SUBSCRIPT$1/g ;
@@ -2723,11 +2740,13 @@ sub postprocess {
     s/^\Q${DELCMDOPEN}\E\n//msg;
 
     # Expand hashes of verb and verbatim environments (note negative look behind assertion to not leak out of DIFDELCMD comments
-    s/(\\verb\*?)\{([-\d]*?)\}/"${1}". fromhash(\%verbhash,$2)/esg;
-    s/${DELCMDOPEN}\\(verbatim\*?)\{([-\d]*?)\}/"${DELCMDOPEN}\\begin{${1}}".fromhash(\%verbhash,$2,$DELCMDOPEN)."${DELCMDOPEN}\\end{${1}}"/esg;
+    s/(\\verb\*?|lstinline)\{([-\d]*?)\}/"${1}". fromhash(\%verbhash,$2)/esg;
+###    s/${DELCMDOPEN}\\(verbatim\*?)\{([-\d]*?)\}/"${DELCMDOPEN}\\begin{${1}}".fromhash(\%verbhash,$2,$DELCMDOPEN)."${DELCMDOPEN}\\end{${1}}"/esg;
+    s/${DELCMDOPEN}\\($VERBATIMENV)\{([-\d]*?)\}/"${DELCMDOPEN}\\begin{${1}}".fromhash(\%verbhash,$2,$DELCMDOPEN)."${DELCMDOPEN}\\end{${1}}"/esg;
 ### DEBUG    s/${DELCMDOPEN}\\(verbatim\*?)/VERBATIMBLURB/sg;
 ###    s/(?<!%\\DIFCMD < )\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
-    s/\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
+###    s/\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
+    s/\\($VERBATIMENV)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
     # remove all \PAR tokens (taking care to properly keep commented out PAR's
     # from introducing uncommented newlines - next line)
     s/(%DIF < )([^\n]*?)\\PAR\n/$1$2\n$1\n/sg;
@@ -3846,7 +3865,7 @@ labels like this C<-L labelold -L labelnew>.
 
 Suppress inclusion of old and new file names as comment in output file
 
-=item B<--visble-label>
+=item B<--visible-label>
 
 Include old and new filenames (or labels set with C<--label> option) as 
 visible output.
@@ -4492,6 +4511,11 @@ paragraph
 subparagraph
 %%END COUNTERCMD CONFIG
 
+%%BEGIN VERBATIMENV CONFIG
+verbatim[*]?
+lstlisting
+comment
+%%END VERBATIMENV CONFIG
 
 %%% TYPES (Commands for highlighting changed blocks)
 

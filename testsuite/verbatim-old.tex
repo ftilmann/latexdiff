@@ -1,0 +1,114 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{color}
+
+\begin{document}
+
+We start with a draft text, \verb|example-draft.tex|, listed here in
+full but also included in the distribution (except that the ``verbatim'' environment had
+to be renamed to ``Verbatim'' for the listing).
+{\scriptsize
+\begin{verbatim}
+\documentclass[12pt,a4paper]{article}
+
+\setlength{\topmargin}{-0.2in}
+\setlength{\textheight}{9.5in}
+\setlength{\oddsidemargin}{0.0in}
+
+\setlength{\textwidth}{6.5in}
+
+\title{latexdiff Example - Draft version}
+\author{F Tilmann}
+
+\begin{Document}
+\maketitle
+
+\section*{Introduction}
+
+This is an extremely simple document that showcases some of latexdiff features.
+Type
+\begin{Verbatim}
+latexdiff -t UNDERLINE example-draft.tex example-rev.tex > example-diff.tex
+\end{Verbatim}
+to create the difference file.  You can inspect this file directly. Then run either 
+\begin{Verbatim}
+pdflatex example-diff.tex
+xpdf example-diff.pdf
+\end{Verbatim}
+or
+\begin{Verbatim}
+latex example-diff.tex
+dvips -o example-diff.ps example-diff.dvi
+gv example-diff.ps
+\end{Verbatim}
+to display the markup. Of course, instead of \verb|xpdf| you can use 
+\verb|okular, evince, acroread| or any other pdf or postscript viewer.
+
+\section*{Another section title}
+
+A paragraph with a line only in the draft document.  More things 
+could be said were it not for the constraints of time and space.
+
+More things could be said were it not for the constraints of time and space.
+
+And here is a tipo. 
+
+Here is a table:
+
+\begin{tabular}{ll}
+Name & Description \\
+\hline
+Gandalf & Grey \\
+Saruman & White
+\end{tabular}
+
+And sometimes a whole paragraph gets completely rewritten. In this
+case latexdiff marks up the whole paragraph even if some words in it
+are identical.
+No change, no markup!
+\end{Document}
+\end{verbatim}
+}
+We can now edit
+this text as we would do with any other latex file to create
+a new revision of the text, \verb|example-rev.tex|.
+\newpage
+A now an example making use of the \lstinline|listings| package.
+
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+We simply take a small subroutine of latexdif as an example:
+\lstset{language=perl}
+%\lstset{commentstyle=\color{gray}}
+\begin{lstlisting}[commentstyle=\color{gray}]
+# init_regex_arr_ext(\@array,$arg)
+# appends array with regular expressions.
+# if arg is a file name, then read in list of regular expressions from that file
+# (one expression per line)
+# Otherwise treat arg as a comma separated list of regular expressions
+sub init_regex_arr_ext {
+  my ($arr,$arg)=@_;
+  if ( -f $arg ) {
+    init_regex_arr_file($arr,$arg);
+  } else {
+    init_regex_arr_list($arr,$arg);
+  }
+}
+
+# init_regex_arr_file(\@array,$fname)
+# appends array with regular expressions.
+# Read in list of regular expressions from $fname
+# (one expression per line)
+sub init_regex_arr_file {
+  my ($arr,$fname)=@_;
+  open(FILE,"$fname") or die ("Couldn't open $fname: $!");
+  while (<FILE>) {
+    chomp;
+    next if /^\s*#/ || /^\s*%/ || /^\s*$/ ;
+    push (@$arr,qr/^$_$/);
+  }
+  close(FILE);
+}
+\end{lstlisting}
+
+\end{document}
+
