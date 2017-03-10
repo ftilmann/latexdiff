@@ -31,6 +31,8 @@
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
 # Version 1.2.1a
+#    - bug fix: when deleted \item commands are followed immediately by unsafe commands, they were not restored properly
+#      (thanks to J. Protze for pull request) (pull request #89)
 #    - treat lstlisting and comment as equivalent to verbatim environment
 #      make environments that are treated like verbatim environments configurable (config variable VERBATIMENV)
 #      treat lstinlne as equivalent to verb command
