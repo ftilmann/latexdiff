@@ -2819,7 +2819,7 @@ sub postprocess {
 sub restore_item_commands {
   my ($string)=@_ ;
   my ($itemarg,@itemargs);
-  $string =~ s/(\%DIFDELCMD < \s*(\\$ITEMCMD)((?:<$abrat0>)?)((?:\[$brat0\])?)\s*((?:$cmdoptseq)?)\s*?(?:\n|$DELCMDCLOSE))/
+  $string =~ s/(\%DIFDELCMD < \s*(\\$ITEMCMD)((?:<$abrat0>)?)((?:\[$brat0\])?)\s*((?:${cmdoptseq}\s*?)*)(?:\n|$DELCMDCLOSE))/
      # if \item has an []argument, then mark up the argument as deleted)
      if (length($4)>0) {
        # use substr to exclude square brackets at end points
@@ -2828,7 +2828,7 @@ sub restore_item_commands {
      } else {
        $itemarg="";
      }
-     "$2$3$itemarg$AUXCMD\n".((length($5)>0) ? "%DIFDELCMD $5 $DELCMDCLOSE\n" : "")
+     "$1$2$3$itemarg$AUXCMD\n";  ###.((length($5)>0) ? "%DIFDELCMD $5 $DELCMDCLOSE\n" : "")
      /sge;
   return($string);
 }
