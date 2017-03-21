@@ -31,6 +31,7 @@
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
 # Version 1.2.1a
+#    - bug fix: protecting inline math expressions for mbox did not work as intended (see stack exchange question: http://tex.stackexchange.com/questions/359412/compiling-the-latexdiff-when-adding-a-subscript-before-a-pmatrix-environment-cau)
 #    - bug fix: when deleted \item commands are followed immediately by unsafe commands, they were not restored properly
 #      (thanks to J. Protze for pull request) (pull request #89)
 #    - treat lstlisting and comment as equivalent to verbatim environment
@@ -2443,6 +2444,7 @@ sub postprocess {
     # Replace \RIGHTBRACE by }    
     s/\\RIGHTBRACE/}/g;
 
+
 ###    # change citation commands within comments to protect from processing
 ###    if ($CITECMD){
 ###      1 while s/(%.*)\\($CITECMD)/$1\\CITEDIF$2/m ;
@@ -2559,16 +2561,18 @@ sub postprocess {
 #        happen within deleted maths blocks
 ### ^((?:[^%]|\\%)*\s\n?
       $delblock=~ s/(?<!$DELCMDOPEN)(\\$LABELCMD(?:${extraspace})\{(?:[^{}])*\}[\t ]*)\n?/${DELCMDOPEN}$1${DELCMDCLOSE}/smg ;
+      # previous line causes trouble as by issue #90 I might need to modify this
+###      print STDERR "<<<$delblock>>>\n" if $debug;
 
 
 #     c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
       while ( $delblock =~ m/($math)(\s*)/sg ) {
-###	      print STDERR "DEBUG Delblock Match math $& at ",pos,"\n";
+#	      print STDERR "DEBUG Delblock Match math $& at ",pos,"\n";
 	$cnt2=0;
 	$len2=length($&);
 	$begin2=pos($delblock) - $len2;
 	$mathblock="%\n\\mbox{$AUXCMD\n$1\n}$AUXCMD\n";
-        next unless $mathblock =~ m/\{$ARRENV\}/ ;
+        next unless ( $mathblock =~ /ARRAYBLOCK/ or $mathblock =~ m/\{$ARRENV\}/ );
 	substr($delblock,$begin2,$len2)=$mathblock;
 	pos($delblock) = $begin2 + length($mathblock);
       }
@@ -2591,11 +2595,14 @@ sub postprocess {
 	# note additional \newline after command is omitted from output if right at the end of deleted block (otherwise a spurious empty line is generated)
 	$delblock=~s/($math)(?:[\s\n]*)?/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/sg;
       }
-
 #     splice in modified delblock
       substr($_,$begin,$len)=$delblock;
       pos = $begin + length($delblock);
     }
+
+    ### print STDERR "<<<$_>>>\n" if $debug;
+
+
     # make the array modification in added blocks
     while ( m/\\DIFaddbegin.*?\\DIFaddend/sg ) {
       $cnt=0;
@@ -2608,7 +2615,7 @@ sub postprocess {
 	$len2=length($&);
 	$begin2=pos($addblock) - $len2;
 	$mathblock="%\n\\mbox{$AUXCMD\n$1\n}$AUXCMD\n";
-        next unless $mathblock =~ m/\{$ARRENV\}/ ;
+        next unless ( $mathblock =~ /ARRAYBLOCK/ or $mathblock =~ m/\{$ARRENV\}/) ;
 	substr($addblock,$begin2,$len2)=$mathblock;
 	pos($addblock) = $begin2 + length($mathblock);
       }
