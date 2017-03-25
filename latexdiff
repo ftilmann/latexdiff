@@ -928,6 +928,11 @@ if ($graphicsmarkup != NONE ) {
   }
 }
 
+# If listings is being used and latexdiffpreamble uses color markup
+if (defined($packages{"listings"} and $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/)) {
+  $latexdiffpreamble .= join "\n",(extrapream("LISTINGS"),"");
+}
+
 # adding begin and end marker lines to preamble
 $latexdiffpreamble = "%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF\n" . $ latexdiffpreamble . "%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF\n";
 
@@ -2276,6 +2281,15 @@ sub preprocess {
   for (@_) { 
 ###    s/^(\s*)//s;
 ###    push(@leadin,$1);
+
+
+    # change in \verb and similar commands - note that I introduce an extra space here so that the 
+    #       already hashed variants do not trigger again
+    # transform \lstinline{...}
+    s/\\lstinline((?:\[$brat0\])?\{(?:.*?)\})/"\\HASHlstinline{". tohash(\%verbhash,"$1") ."}"/esg;
+    s/\\lstinline((?:\[$brat0\])?(\S).*?\2)/"\\HASHlstinline{". tohash(\%verbhash,"$1") ."}"/esg;
+    s/\\(verb\*?|lstinline)(\S)(.*?)\2/"\\HASH${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
+
     #    Change \{ to \QLEFTBRACE, \} to \QRIGHTBRACE, and \& to \AMPERSAND
 ###    print STDERR "Preprocess 0\n" if $debug;
     s/(?<!\\)\\\{/\\QLEFTBRACE /sg;
@@ -2297,7 +2311,6 @@ sub preprocess {
     s/\n(\s*?)\n((?:\s*\n)*)/\n$1\\PAR\n$2/g ;
     s/(?<!\\)\\%/\\PERCENTAGE /g ;  # (?<! is negative lookbehind assertion to prevent \\% from being converted
     s/(?<!\\)\\\$/\\DOLLAR /g ;  # (?<! is negative lookbehind assertion to prevent \\$ from being converted
-    s/(\\verb\*?|lstinline)(\S)(.*?)\2/"${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
 ###    s/\\begin\{(verbatim\*?)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     s/\\begin\{($VERBATIMENV)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     # Convert _n or _\cmd into \SUBSCRIPTNB{n} or \SUBSCRIPTNB{\cmd} and _{nnn} into \SUBSCRIPT{nn}
@@ -2749,7 +2762,6 @@ sub postprocess {
     s/^\Q${DELCMDOPEN}\E\n//msg;
 
     # Expand hashes of verb and verbatim environments (note negative look behind assertion to not leak out of DIFDELCMD comments
-    s/(\\verb\*?|lstinline)\{([-\d]*?)\}/"${1}". fromhash(\%verbhash,$2)/esg;
 ###    s/${DELCMDOPEN}\\(verbatim\*?)\{([-\d]*?)\}/"${DELCMDOPEN}\\begin{${1}}".fromhash(\%verbhash,$2,$DELCMDOPEN)."${DELCMDOPEN}\\end{${1}}"/esg;
     s/${DELCMDOPEN}\\($VERBATIMENV)\{([-\d]*?)\}/"${DELCMDOPEN}\\begin{${1}}".fromhash(\%verbhash,$2,$DELCMDOPEN)."${DELCMDOPEN}\\end{${1}}"/esg;
 ### DEBUG    s/${DELCMDOPEN}\\(verbatim\*?)/VERBATIMBLURB/sg;
@@ -2818,6 +2830,8 @@ sub postprocess {
     s/\\QLEFTBRACE /\\\{/sg;
     s/\\QRIGHTBRACE /\\\}/sg;
     s/\\AMPERSAND /\\&/sg;
+    # expand \verb and friends inline arguments
+    s/\\HASH(verb\*?|lstinline)\{([-\d]*?)\}/"\\${1}". fromhash(\%verbhash,$2)/esg;
 
   return;
   }
@@ -4812,4 +4826,20 @@ comment
 %DIF HYPERREF PREAMBLE
 \providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}}
 \providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}}
-%DIF END HYPERREF PACKAGE
+%DIF END HYPERREF PREAMBLE
+
+%DIF LISTINGS PREAMBLE
+\lstdefinelanguage{codediff}{
+  moredelim=**[is][\color{red}]{*!----}{----!*},
+  moredelim=**[is][\color{blue}]{*!++++}{++++!*}
+}
+\lstdefinestyle{codediff}{
+	belowcaptionskip=.25\baselineskip,
+	language=codediff,
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	keepspaces=true,
+}
+\def\DIFaddverb{\lstinline[style=codediff,basicstyle=\ttfamily\color{blue}]}
+\def\DIFaddverb{\lstinline[style=codediff,basicstyle=\ttfamily\color{red}]}
+%DIF END LISTINGS PREAMBLE
