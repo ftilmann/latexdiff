@@ -31,6 +31,8 @@
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
 # Version 1.2.1a
+#    - improved markup: process lstinline commands in listings package correctly
+#      for styles using colour, \verb and \lstinline arguments are marked up with colour (blue for added, red for deleted)
 #    - bug fix: protecting inline math expressions for mbox did not work as intended (see stack exchange question: http://tex.stackexchange.com/questions/359412/compiling-the-latexdiff-when-adding-a-subscript-before-a-pmatrix-environment-cau)
 #    - bug fix: when deleted \item commands are followed immediately by unsafe commands, they were not restored properly
 #      (thanks to J. Protze for pull request) (pull request #89)
@@ -2286,9 +2288,11 @@ sub preprocess {
     # change in \verb and similar commands - note that I introduce an extra space here so that the 
     #       already hashed variants do not trigger again
     # transform \lstinline{...}
-    s/\\lstinline((?:\[$brat0\])?\{(?:.*?)\})/"\\HASHlstinline{". tohash(\%verbhash,"$1") ."}"/esg;
-    s/\\lstinline((?:\[$brat0\])?(\S).*?\2)/"\\HASHlstinline{". tohash(\%verbhash,"$1") ."}"/esg;
-    s/\\(verb\*?|lstinline)(\S)(.*?)\2/"\\HASH${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
+#    s/\\lstinline(\[$brat0\])?(\{(?:.*?)\})/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
+#    s/\\lstinline(\[$brat0\])?((\S).*?\2)/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
+    s/\\lstinline((?:\[$brat0\])?)(\{(?:.*?)\})/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
+    s/\\lstinline((?:\[$brat0\])?)((\S).*?\3)/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
+    s/\\(verb\*?|lstinline)(\S)(.*?)\2/"\\DIF${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
 
     #    Change \{ to \QLEFTBRACE, \} to \QRIGHTBRACE, and \& to \AMPERSAND
 ###    print STDERR "Preprocess 0\n" if $debug;
@@ -2608,6 +2612,14 @@ sub postprocess {
 	# note additional \newline after command is omitted from output if right at the end of deleted block (otherwise a spurious empty line is generated)
 	$delblock=~s/($math)(?:[\s\n]*)?/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/sg;
       }
+      ###if ( defined($packages{"listings"} and $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/))   { 
+      ###  #     change included verbatim environments
+      ###  $delblock =~ s/\\DIFverb\{/\\DIFDIFdelverb\{/g;
+      ###  $delblock =~ s/\\DIFlstinline/\\DIFDIFdellstinline/g;
+      ###}
+      # Mark deleted verbose commands
+      $delblock =~ s/(${DELCMDOPEN}\\DIF((?:verb\*?|lstinline(?:\[$brat0\])?)\{([-\d]*?)\}\s*).*)$/%\n\\DIFDIFdel$2${AUXCMD}\n$1/gm;
+
 #     splice in modified delblock
       substr($_,$begin,$len)=$delblock;
       pos = $begin + length($delblock);
@@ -2646,6 +2658,11 @@ sub postprocess {
 	##$addblock=~s/($math)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/sg;
 	$addblock=~s/($math)(?:[\s\n]*)?/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/sg;
       }
+      ###if ( defined($packages{"listings"} and $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/))   { 
+	# mark added verbatim commands
+      $addblock =~ s/\\DIFverb/\\DIFDIFaddverb/g;
+      $addblock =~ s/\\DIFlstinline/\\DIFDIFaddlstinline/g;
+      ###}
 #     splice in modified addblock
       substr($_,$begin,$len)=$addblock;
       pos = $begin + length($addblock);
@@ -2830,8 +2847,21 @@ sub postprocess {
     s/\\QLEFTBRACE /\\\{/sg;
     s/\\QRIGHTBRACE /\\\}/sg;
     s/\\AMPERSAND /\\&/sg;
+    # Highligh added inline verbatim commands if possible
+    if ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/ )   { 
+      # wrap added verb commands with color commands
+      s/\\DIFDIFadd((?:verb\*?|lstinline(?:\[$brat0\])?)\{[-\d]*?\}[\s\n]*)/\{\\color{blue}$AUXCMD\n\\DIF$1%\n\}$AUXCMD\n/sg;
+      s/\\DIFDIFdel((?:verb\*?|lstinline(?:\[$brat0\])?)\{[-\d]*?\}[\s\n]*$AUXCMD)/\{\\color{red}${AUXCMD}\n\\DIF$1\n\}${AUXCMD}/sg;
+    } else {
+      # currently if colour markup is not used just remove the added mark
+      s/\\DIFDIFadd(verb\*?|lstinline)/\\DIF$1/sg;
+      s/\\DIFDIFdel((?:verb\*?|lstinline(?:\[$brat0\])?)\{[-\d]*?\}[\s\n]*$AUXCMD\n)//sg;
+    }
     # expand \verb and friends inline arguments
-    s/\\HASH(verb\*?|lstinline)\{([-\d]*?)\}/"\\${1}". fromhash(\%verbhash,$2)/esg;
+    s/\\DIF((?:DIFadd|DIFdel)?(?:verb\*?|lstinline(?:\[$brat0\])?))\{([-\d]*?)\}/"\\${1}". fromhash(\%verbhash,$2)/esg;
+    # add basicstyle color{blue} to added lstinline commands
+    # finally add the comment to the ones not having an optional argument before
+    ###s/\\DIFaddlstinline(?!\[)/\\lstinline\n[basicstyle=\\color{blue}]$AUXCMD\n/g;
 
   return;
   }
@@ -4840,6 +4870,4 @@ comment
 	columns=fullflexible,
 	keepspaces=true,
 }
-\def\DIFaddverb{\lstinline[style=codediff,basicstyle=\ttfamily\color{blue}]}
-\def\DIFaddverb{\lstinline[style=codediff,basicstyle=\ttfamily\color{red}]}
 %DIF END LISTINGS PREAMBLE

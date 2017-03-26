@@ -73,7 +73,17 @@ We can now edit
 this text as we would do with any other latex file to create
 a new revision of the text, \verb|example-rev.tex|.
 \newpage
-A now an example making use of the \lstinline|listings| package.
+And now an example making use of the \lstinline|listings| package.
+
+Einige Spezialf\"alle von L\"oschungen zu testen: \verb|vertikale Balken|.
+% Fall von doppelter Klammer auf, wird nicht richtig behandelt, wenn color code verwendet wird
+
+lstlisting: \lstinline{Gepaarte Klammern sind möglich mit % Kommentarzeichen}
+
+Und mit Optionen: \lstinline[basicstyle=\footnotesize]{int i;}
+
+Eine andere Variante:   \lstinline[basicstyle=\footnotesize]$float x;$ 
+
 
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 We simply take a small subroutine of latexdif as an example:

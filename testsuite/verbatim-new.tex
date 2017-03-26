@@ -74,6 +74,12 @@ this text to the draft version.
 \newpage
 A now an example making use of the \lstinline|listings| package.
 
+Some new verbatim listings to test odd variants: \verb|vertical bars|.
+% Note that \verb with two opening braces no longer works as it interferes with colored markup
+In lstlisting we can actually use paired braces \lstinline{Listing brackets by braces % with comment character}.
+And even options with lstlisting are possible: \lstinline[basicstyle=\footnotesize]{var i:integer;} 
+Another variant of this: \lstinline[basicstyle=\footnotesize]$var x:float;$ 
+
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 We simply take a small subroutine of latexdif as an example:
 \lstset{language=perl}
