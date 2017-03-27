@@ -31,6 +31,7 @@
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
 # Version 1.2.1a
+#    - add "DeclareOldFontCommand" to styles using \bf or \sf old style font commands (fixies issue #92 )
 #    - improved markup: process lstinline commands in listings package correctly
 #      for styles using colour, \verb and \lstinline arguments are marked up with colour (blue for added, red for deleted)
 #    - bug fix: protecting inline math expressions for mbox did not work as intended (see stack exchange question: http://tex.stackexchange.com/questions/359412/compiling-the-latexdiff-when-adding-a-subscript-before-a-pmatrix-environment-cau)
@@ -4583,24 +4584,28 @@ comment
 %DIF CTRADITIONAL PREAMBLE
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
 \RequirePackage[stable]{footmisc}
+\DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
 \providecommand{\DIFadd}[1]{{\protect\color{blue} \sf #1}}
 \providecommand{\DIFdel}[1]{{\protect\color{red} [..\footnote{removed: #1} ]}}
 %DIF END CTRADITIONAL PREAMBLE
 
 %DIF TRADITIONAL PREAMBLE
 \RequirePackage[stable]{footmisc}
+\DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
 \providecommand{\DIFadd}[1]{{\sf #1}}
 \providecommand{\DIFdel}[1]{{[..\footnote{removed: #1} ]}}
 %DIF END TRADITIONAL PREAMBLE
 
 %DIF CFONT PREAMBLE
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
+\DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
 \providecommand{\DIFadd}[1]{{\protect\color{blue} \sf #1}}
 \providecommand{\DIFdel}[1]{{\protect\color{red} \scriptsize #1}}
 %DIF END CFONT PREAMBLE
 
 %DIF FONTSTRIKE PREAMBLE
 \RequirePackage[normalem]{ulem}
+\DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
 \providecommand{\DIFadd}[1]{{\sf #1}}
 \providecommand{\DIFdel}[1]{{\footnotesize \sout{#1}}}
 %DIF END FONTSTRIKE PREAMBLE
@@ -4639,6 +4644,7 @@ comment
 %DIF END INVISIBLE PREAMBLE
 
 %DIF BOLD PREAMBLE
+\DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
 \providecommand{\DIFadd}[1]{{\bf #1}}
 \providecommand{\DIFdel}[1]{}
 %DIF END BOLD PREAMBLE
