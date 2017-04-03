@@ -28,6 +28,7 @@
 # TODO/IDEAS: - option to call external pre-processing codes
 #             - choose type of latex processor / bibtex (luatex, xelatex etc)
 # version 1.2.1:
+#    - bug fix: --hg option was not recognised (partially fixes github issue #93 )
 #    - wrap passed-through options to latexdiff in quotation marks (fix github issue #58 )
 #    - program names for latexdiff, latex, dvips, bibtex configurable (fixes issue #40)
 #
@@ -160,6 +161,10 @@ if ( $svn ) {
 if ( $git ) {
   die "Cannot specify more than one of --cvs, --rcs, --svn --git or --hg." if ($vc);
   $vc="GIT";
+}
+if ( $hg ) {
+  die "Cannot specify more than one of --cvs, --rcs, --svn --git or --hg." if ($vc);
+  $vc="HG";
 }
 
 if ( $pdf ) {
