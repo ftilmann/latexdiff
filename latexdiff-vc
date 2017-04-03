@@ -382,6 +382,11 @@ if ( ($vc eq "SVN" || $vc eq "CVS") && scalar(@revs)) {
   length($revs[0]) > 0 or $revs[0]="HEAD";
 }
 
+if ($vc eq "HG" && scalar(@revs)) {
+  length($revs[$#revs]) > 0 or $revs[$#revs]="tip";
+  length($revs[0]) > 0 or $revs[0]="tip";
+}
+
 ### print STDERR "DEBUG revs($#revs): " . join(":",@revs) . "\n";
 ### print STDERR "DEBUG Files($#files): $file1 " . join(":",@files) . "\n";
 print STDERR "DEBUG LDOptions($#ldoptions): " . join(":",@ldoptions) . "\n" if $debug;
