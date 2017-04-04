@@ -302,7 +302,7 @@ if ( scalar(@revs)>0 ) {
     # $diffcmd  = "git diff ";
     # $patchcmd = "patch -R -p1";
   } elsif ( $vc eq "HG" ) {
-    $diffcmd  = "hg diff -r";
+    $diffcmd  = "hg diff --root . -r";
     $patchcmd = "patch -R -p1";
   } else {
     print STDERR "Unknown versioning system $vc \n";
