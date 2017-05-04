@@ -99,7 +99,7 @@ dist/example/example-draft.tex: example-draft.tex
 dist/example/example-rev.tex: example-rev.tex
 	cp $< $@
 
-dist/README: README
+dist/README: do.not.README.yet
 	cp $< $@
 
 dist/COPYING: COPYING
