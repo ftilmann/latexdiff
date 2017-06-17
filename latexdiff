@@ -731,18 +731,30 @@ if ( ! -e $newfile ) {
 
 
 # set the labels to be included into the file
+# first find out which file name is longer for correct alignment
+my ($diff,$oldlabel_n_spaces,$newlabel_n_spaces);
+$oldlabel_n_spaces = 0;
+$newlabel_n_spaces = 0;
+$diff = length($newfile) - length($oldfile);
+if ($diff > 0) {
+  $oldlabel_n_spaces = $diff;
+}
+if ($diff < 0) {
+  $newlabel_n_spaces = abs($diff);
+}
+
 my ($oldtime,$newtime,$oldlabel,$newlabel);
 if (defined($labels[0])) {
   $oldlabel=$labels[0] ;
 } else {
   $oldtime=localtime((stat($oldfile))[9]); 
-  $oldlabel="$oldfile   " . " "x(length($newfile)-length($oldfile)) . $oldtime;
+  $oldlabel="$oldfile   " . " "x($oldlabel_n_spaces) . $oldtime;
 }
 if (defined($labels[1])) {
   $newlabel=$labels[1] ;
 } else {
   $newtime=localtime((stat($newfile))[9]);
-  $newlabel="$newfile   " . " "x(length($oldfile)-length($newfile)) . $newtime;
+  $newlabel="$newfile   " . " "x($newlabel_n_spaces) . $newtime;
 }
 
 $encoding=guess_encoding($newfile) unless defined($encoding);
