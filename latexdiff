@@ -30,7 +30,7 @@
 ###  - --flatten option only expands first including command per line if there is more than one
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
-# Version 1.2.1a
+# Version 1.2.1 (22 June 2017)
 #    - add "DeclareOldFontCommand" to styles using \bf or \sf old style font commands (fixies issue #92 )
 #    - improved markup: process lstinline commands in listings package correctly
 #      for styles using colour, \verb and \lstinline arguments are marked up with colour (blue for added, red for deleted)
@@ -169,8 +169,8 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.2.1a  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
-  (c) 2004-2016 F J Tilmann
+This is LATEXDIFF 1.2.1  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+  (c) 2004-2017 F J Tilmann
 EOF
 
 # Hash with defaults for configuration variables. These marked undef have default values constructed from list defined in the DATA block
@@ -4241,8 +4241,8 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.2.1alpha
-Copyright (C) 2004-2015 Frederik Tilmann
+Version 1.2.1
+Copyright (C) 2004-2017 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License Version 3
