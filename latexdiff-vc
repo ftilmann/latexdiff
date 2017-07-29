@@ -27,7 +27,7 @@
 #
 # TODO/IDEAS: - option to call external pre-processing codes
 #             - choose type of latex processor / bibtex (luatex, xelatex etc)
-# version 1.2.1:
+# version 1.2.1 (22 June 2017):
 #    - update: use qpdf (instead of pdftk) to select particular pages of output (pull request #102 submited by Tom Scogland via github). This was necessary because pdftk is being deprecated. pdftk is still used as a fall-back
 #    - bug fix: --hg option was not recognised (partially fixes github issue #93 )
 #    - wrap passed-through options to latexdiff in quotation marks (fix github issue #58 )
@@ -69,8 +69,8 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.2.1a
-  (c) 2005-2016 F J Tilmann
+This is LATEXDIFF-VC 1.2.1
+  (c) 2005-2017 F J Tilmann
 EOF
 
 # output debug and intermediate files, set to 0 in final distribution
@@ -812,8 +812,8 @@ or send them to I<tilmann -- AT -- gfz-potsdam.de>.  Include the version number 
 
 =head1 AUTHOR
 
-Version 1.2.0
-Copyright (C) 2005-2016 Frederik Tilmann
+Version 1.2.1
+Copyright (C) 2005-2017 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License Version 3
