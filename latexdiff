@@ -29,6 +29,8 @@
 ###  - make style that allows (forward and backjumping with hyperref)
 ###  - --flatten option only expands first including command per line if there is more than one
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
+# Version 1.2.2a:
+#
 #
 # Version 1.2.1 (22 June 2017)
 #    - add "DeclareOldFontCommand" to styles using \bf or \sf old style font commands (fixies issue #92 )
@@ -169,7 +171,7 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.2.1  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+This is LATEXDIFF 1.2.2a  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
   (c) 2004-2017 F J Tilmann
 EOF
 
@@ -2742,7 +2744,7 @@ sub postprocess {
       s/\\begin\{MATHMODE\}(.*?)\\end\{MATHMODE\}/\\begin{$MATHARRREPL}$1\\end{$MATHARRREPL}/sg;
 
       # now look for AUXCMD math-mode pairs which have only comments (or empty lines between them), and remove the added commands
-      s/\\begin\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end{\1}$AUXCMD\n/$2/sg;       
+      s/\\begin\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)\}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end\{\1\}$AUXCMD\n/$2/sg;       
     } else {
       #   math modes OFF,WHOLE,COARSE: Convert \MATHBLOCKmath{..} commands back to environments
       s/\\MATHBLOCK($MATHENV|$MATHARRENV|SQUAREBRACKET)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
@@ -3187,8 +3189,9 @@ sub usage {
   die <<"EOF"; 
 Usage: $0 [options] old.tex new.tex > diff.tex
 
-Compares two latex files and writes tex code to stdout, which has the same
-format as new.tex but has all changes relative to old.tex marked up or commented.
+Compares two latex files and writes tex code to stdout, which has the same format as new.tex but 
+has all changes relative to old.tex marked up or commented. Note that old.tex and new.tex need to
+be real files (not pipes or similar) as they are opened twice. 
 
 --type=markupstyle
 -t markupstyle         Add code to preamble for selected markup style
@@ -3436,7 +3439,8 @@ between them (i.e., ignoring the number of white spaces and position
 of line breaks), and adds special commands to highlight the
 differences.  Where visual highlighting is not possible, e.g. for changes
 in the formatting, the differences are
-nevertheless marked up in the source.
+nevertheless marked up in the source. Note that old.tex and new.tex need to
+be real files (not pipes or similar) as they are opened twice (unless C<--encoding> option is used)
 
 The program treats the preamble differently from the main document.
 Differences between the preambles are found using line-based
@@ -3604,6 +3608,7 @@ obtained by executing
 
 C<perl -MEncode -e 'print join ("\n",Encode->encodings( ":all" )) ;' >
 
+If this option is used, then old.tex, new.tex are only opened once.
 [Default encoding is utf8 unless the first few lines of the preamble contain
 an invocation C<\usepackage[..]{inputenc}> in which case the 
 encoding chosen by this command is asssumed. Note that ASCII (standard
@@ -4241,7 +4246,7 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.2.1
+Version 1.2.2a
 Copyright (C) 2004-2017 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
