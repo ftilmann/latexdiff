@@ -948,8 +948,8 @@ if ($graphicsmarkup != NONE ) {
   }
 }
 
-# If listings is being used and latexdiffpreamble uses color markup
-if (defined($packages{"listings"} and $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/)) {
+# If listings is being used and latexdiffpreamble uses color and ulem markup
+if (defined($packages{"listings"} and $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/) and $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/ ) {
   $latexdiffpreamble .= join "\n",(extrapream("LISTINGS"),"");
 }
 
@@ -2330,13 +2330,13 @@ sub preprocess {
     1 while s/((?<!\\)%.*)\}(.*)$/$1\\CRIGHTBRACE $2/mg ;
 ###    print STDERR "Preprocess 10\n" if $debug;
 ###    s/\n(\s*)\n((?:\s*\n)*)/\\PAR\n$2/g ;
-    s/\n(\s*?)\n((?:\s*\n)*)/\n$1\\PAR\n$2/g ;
     s/(?<!\\)\\%/\\PERCENTAGE /g ;  # (?<! is negative lookbehind assertion to prevent \\% from being converted
     s/(?<!\\)\\\$/\\DOLLAR /g ;  # (?<! is negative lookbehind assertion to prevent \\$ from being converted
 ###    s/\\begin\{(verbatim\*?)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     s/\\begin\{($VERBATIMENV)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     s/\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"\\begin{$1}". linecomment($2) . "\\end{$1}"/esg;
     # Convert _n or _\cmd into \SUBSCRIPTNB{n} or \SUBSCRIPTNB{\cmd} and _{nnn} into \SUBSCRIPT{nn}
+    s/\n(\s*?)\n((?:\s*\n)*)/\n$1\\PAR\n$2/g ;
     1 while s/(?<!\\)_(\s*([^{\\\s]|\\\w+))/\\SUBSCRIPTNB{$1}/g ;
     1 while s/(?<!\\)_(\s*{($pat_n)})/\\SUBSCRIPT$1/g ;
     # Convert ^n into \SUPERSCRIPTNB{n} and ^{nnn} into \SUPERSCRIPT{nn}
@@ -2376,12 +2376,29 @@ sub preprocess {
 }
 
 
-#expanded=linecomment($string)
-#preface all lines with verbatim marker (usually 
+# $expanded=linecomment($string)
+#preface all lines with verbatim marker (usually DIFVRB)
 sub linecomment { 
   my @verbatimlines=split("\n",$_[0]);
-  return(join("%$VERBCOMMENT",@verbatimlines));
+  return(join("\n%$VERBCOMMENT",@verbatimlines)."\n");
 }
+
+# $simple=reverselinecomment($string)
+# remove DIFVRB comments but leave changed lines
+sub reverselinecomment {
+  my ($verbatimtext)=@_;
+  $verbatimtext=~ s/%$VERBCOMMENT//g;
+  # remove part of the markup in changed lines
+  # if any of these substitution was made, then there was at least
+  # one changed line, and we have to extend the style
+  if ( $verbatimtext=~ s/$VERBCOMMENT//g ) {
+    unless ( $verbatimtext =~ s/^(\s*)\[(.*?)\]/$1\[$2,alsolanguage=DIFcode\]/ ) {
+      $verbatimtext = "[alsolanguage=DIFcode]\n" . $verbatimtext;
+    }
+  }
+  return($verbatimtext);
+}
+
 
 #hashstring=tohash(\%hash,$string)
 # creates a hash value based on string and stores in %hash
@@ -2496,9 +2513,9 @@ sub postprocess {
     # Check all deleted blocks: where a deleted block contains a matching \begin and
     #    \end environment (these will be disabled by a %DIFDELCMD statements), enable
     #    these commands again (such that for example displayed math in a deleted equation
-    #    is properly within math mode.  For math mode environments replace numbered equation
+    #    is properly within math mode).  For math mode environments replace numbered equation
     #    environments with their display only variety (so that equation numbers in new file and
-    #    diff file are identical
+    #    diff file are identical)
     while ( m/\\DIFdelbegin.*?\\DIFdelend/sg ) {
 ###    while ( m/\\DIFdelbegin.*?\\DIFdelend/sg ) {
 ###      print STDERR "DEBUG Match delblock \n||||$&||||\n at ",pos,"\n";
@@ -2811,7 +2828,11 @@ sub postprocess {
 ### DEBUG    s/${DELCMDOPEN}\\(verbatim\*?)/VERBATIMBLURB/sg;
 ###    s/(?<!%\\DIFCMD < )\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
 ###    s/\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
+    s/\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"\\begin{$1}". reverselinecomment($2) . "\\end{$1}"/esg;
+
     s/\\($VERBATIMENV)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
+
+
     # remove all \PAR tokens (taking care to properly keep commented out PAR's
     # from introducing uncommented newlines - next line)
     s/(%DIF < )([^\n]*?)\\PAR\n/$1$2\n$1\n/sg;
@@ -4605,11 +4626,11 @@ subparagraph
 
 %%BEGIN VERBATIMENV CONFIG
 verbatim[*]?
-lstlisting
 comment
 %%END VERBATIMENV CONFIG
 
 %%BEGIN VERBATIMLINEENV CONFIG
+lstlisting
 %%END VERBATIMLINEENV CONFIG
 
 %%% TYPES (Commands for highlighting changed blocks)
@@ -4905,15 +4926,16 @@ comment
 %DIF END HYPERREF PREAMBLE
 
 %DIF LISTINGS PREAMBLE
-\lstdefinelanguage{codediff}{
-  moredelim=**[is][\color{red}]{*!----}{----!*},
-  moredelim=**[is][\color{blue}]{*!++++}{++++!*}
+\lstdefinelanguage{DIFcode}{
+  moredelim=[il][\color{red}\sout]{\%DIF\ <\ },
+  moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ }
 }
-\lstdefinestyle{codediff}{
+\lstdefinestyle{DIFverbatimstyle}{
 	belowcaptionskip=.25\baselineskip,
-	language=codediff,
+	language=DIFcode,
 	basicstyle=\ttfamily,
 	columns=fullflexible,
-	keepspaces=true,
+	keepspaces=true
 }
+\lstnewenvironment{DIFverbatim}{\lstset{style=codediff}}{}
 %DIF END LISTINGS PREAMBLE
