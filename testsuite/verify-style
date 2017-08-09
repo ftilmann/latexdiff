@@ -1,6 +1,7 @@
 #!/bin/csh
 #alias latexdiff ../latexdiff
 set sample = example
+# set sample = verbatim
 # NOT including -t option
 set options="-V -s SAFE -f FLOATSAFE"
 

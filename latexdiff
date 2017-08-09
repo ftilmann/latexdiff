@@ -30,7 +30,7 @@
 ###  - --flatten option only expands first including command per line if there is more than one
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 # Version 1.2.2a:
-#
+#    - line-by-line markup of verbatim type environments, requires the listing package
 #
 # Version 1.2.1 (22 June 2017)
 #    - add "DeclareOldFontCommand" to styles using \bf or \sf old style font commands (fixies issue #92 )
@@ -948,9 +948,50 @@ if ($graphicsmarkup != NONE ) {
   }
 }
 
-# If listings is being used and latexdiffpreamble uses color and ulem markup
-if (defined($packages{"listings"} and $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/) and $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/ ) {
-  $latexdiffpreamble .= join "\n",(extrapream("LISTINGS"),"");
+$ulem = ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/ || defined $packages{"ulem"});
+
+
+# If listings is being used or can be found in the latexdiff search path, add to the preamble auxiliary code to enable line-by-line markup
+if ( defined($packages{"listings"}) or !system("kpsewhich listings.sty") ) {
+  my @listingpreamble=extrapream("LISTINGS");
+  my @listingDIFcode=();
+  my $replaced;
+  # note that in case user supplies preamblefile the type might not reflect well the 
+  @listingDIFcode=extrapream("-nofail","DIFCODE_" . $type) unless defined($preamblefile);
+  if (!(@listingDIFcode)) {
+    # if listingDIFcode is empty try to guess a suitable one from the preamble
+    if ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/ and $ulem ) {
+      @listingDIFcode=extrapream("DIFCODE_UNDERLINE");
+    } elsif ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/ ) {
+      # only colour used
+      @listingDIFcode=extrapream("DIFCODE_CFONT");
+    } else {
+      # fall-back solution
+      @listingDIFcode=extrapream("DIFCODE_BOLD");
+    }
+  }
+  # now splice it in 
+  $replaced=0;
+  ###print STDERR "DEBUG: listingDIFcode: ",join("\n",@listingDIFcode),"|||\n" if $debug;
+
+  @listingpreamble=grep { 
+    # only replace if this has not been done already (use short-circuit property of and)
+    if (!$replaced and $_ =~ s/^.*%DIFCODE TEMPLATE.*$/join("\n",@listingDIFcode)/e ) {      
+      ###print STDERR "DEBUG: Replaced text $_\n" if $debug;
+      $replaced=1;
+      1;
+    } else {
+      # return false for those lines matching %DIFCODE TEMPLATE (so that they are not included in output)
+      not m/%DIFCODE TEMPLATE/;
+    }
+  } @listingpreamble;
+  ###  print STDERR "DEBUG: listingpreamble @listingpreamble\n";
+  $latexdiffpreamble .= join "\n",(@listingpreamble,"");
+} else {
+  print STDERR "WARNING: listings package not detected. Disabling mark-up in verbatim environments \n" ;
+  # if listings does not exist disable line-by-line markup and treat all verbatim environments as opaque
+  $VERBATIMENV = liststringtoregex($CONFIG{VERBATIMENV}.";".$CONFIG{VERBATIMLINEENV});
+  $VERBATIMLINEENV = "";
 }
 
 # adding begin and end marker lines to preamble
@@ -1007,8 +1048,6 @@ elsif ( !length $oldpreamble && !length $newpreamble ) {
 ### Because they are text commands their content is still marked up
 # and $packages{"apacite"}!~/natbibpapa/
 ###my ($citpat,$citpatsafe);
-
-$ulem = ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/ || defined $packages{"ulem"});
 
 
 ###  if (defined $packages{"units"} && ( uc($type) eq "UNDERLINE" || uc($type) eq "FONTSTRIKE" || uc($type) eq "CULINECHBAR") {
@@ -1197,7 +1236,7 @@ sub liststringtoregex {
 # show_configuration
 # note that this is not encapsulated but uses variables from the main program 
 # It is provided for convenience because in the future it is planned to allow output
-# to be modified based on what packages are read etc - this works only if the input files are actually red
+# to be modified based on what packages are read etc - this works only if the input files are actually read
 # whether or not additional files are provided
 sub show_configuration {
   if ($showpreamble) {
@@ -1241,6 +1280,9 @@ sub show_configuration {
     print "MATHREPL=$MATHREPL\n";
     print "MINWORDSBLOCK=$MINWORDSBLOCK\n";
     print "PICTUREENV=$PICTUREENV\n";
+    print "SCALEDELGRAPHICS=$SCALEDELGRAPHICS\n";
+    print "VERBATIMENV=$VERBATIMENV\n";
+    print "VERBATIMLINEENV=$VERBATIMLINEENV\n";
   }
 }
 
@@ -1496,17 +1538,31 @@ sub print_regex_arr {
 }
 
 
-# @lines=extrapream($type)
-# reads line from appendix (end of file after __END__ token)
+# @lines=extrapream($type,...)
+# reads line from appendix or external file
+# (end of file after __END__ token)
+# if $type is a filename, it will read the file instead of reading from the appendix
+# otherwise it will screen appendix for line "%DIF $TYPE" and copy everything up to line
+# '%DIF END $TYPE' (where $TYPE is upcased version of $type)
+# extrapream('-nofail',$type) will---instead of failing---simply return nothing if 
+# it does not find the matching line in a appendix (do not use -nofail option with multiple types!)
 sub extrapream {
-  my $type;
+  my @types=@_;
+  my ($type,$arg);
+  my $nofail=0;
   ###my @retval=("%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF") ;
   my @retval=();
   my ($copy);
 
-  while (@_) {
+###  while (@_) {
+  foreach $arg ( @types ) {
+    if ( $arg eq '-nofail' ) {
+      $nofail=1;
+      next;
+    }
+    $type=$arg;
     $copy=0;
-    $type=shift ;
+###    $type=shift ;
     if ( -f $type || lc $type eq '/dev/null' ) {
       open (FILE,$type) or die "Cannot open preamble file $type: $!";
       print STDERR "Reading preamble file $type\n" if $verbose ;
@@ -1518,25 +1574,31 @@ sub extrapream {
 	  push (@retval,"$_ %DIF PREAMBLE"); 
 	}
       }
-    } 
-    else {    # not (-f $type)
-      $type=uc($type);   # upcase argument
-      print STDERR "Preamble Internal Type $type\n" if $verbose;
-      while (<DATA>) {
-	if ( m/^%DIF $type/ ) {
-	  $copy=1; }
-	elsif ( m/^%DIF END $type/ ) {
-	  last; }
-	chomp;
-	push (@retval,"$_ %DIF PREAMBLE") if $copy;
-      }
-      if ( $copy == 0 ) {
-	print STDERR "\nPreamble style $type not implemented.\n";
-        print STDERR "Write latexdiff -h to get help with available styles\n";
-        exit(2);
-      }
-      seek DATA,0,0;    # rewind DATA handle to file begin
-    }
+    } else {    # not (-f $type)
+       $type=uc($type);   # upcase argument
+       print STDERR "Preamble Internal Type $type\n" if $verbose;
+       # save filehandle position (before first read this points to line after __END__)
+       # but seek DATA,0,0 resets it to the beginning of the file
+       # see https://stackoverflow.com/questions/4459601/how-can-i-use-data-twice
+       my $data_start = tell DATA;
+       while (<DATA>) {
+	 if ( m/^%DIF $type/ ) {
+	   $copy=1; 
+	 } elsif ( m/^%DIF END $type/ ) {
+	   last; 
+	 }
+	 chomp;
+	 push (@retval,"$_ %DIF PREAMBLE") if $copy;
+       }
+       if ( $copy == 0 ) {
+	 unless ($nofail) {
+	   print STDERR "\nPreamble style $type not implemented.\n";
+	   print STDERR "Write latexdiff -h to get help with available styles\n";
+	   exit(2);
+	 }
+       }
+       seek DATA,$data_start,0;    # rewind DATA handle to beginning of data record
+     }
   }
   ###push (@retval,"%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF")  ;
   return @retval;
@@ -2384,9 +2446,21 @@ sub linecomment {
 }
 
 # $simple=reverselinecomment($string)
-# remove DIFVRB comments but leave changed lines
+# remove DIFVRB comments but leave changed lines marked 
 sub reverselinecomment {
   my ($verbatimtext)=@_;
+  # remove markup added by latexdiff
+  # (this should occur only if the actual verbatim environment was changed)
+  # (note that this destroys some information on old file 
+  #  in theory I could save it by moving it out of the verbatim environment
+  #  but this requires more bookkeeping and is probably not necessary)
+  $verbatimtext =~ s/\\DIFaddbegin //g;
+  $verbatimtext =~ s/\\DIFaddend //g;
+  $verbatimtext =~ s/\\DIFdelbegin //g;
+  $verbatimtext =~ s/\\DIFdelend //g;
+  $verbatimtext =~ s/$DELCMDOPEN.*//g;
+
+  # remove mark 
   $verbatimtext=~ s/%$VERBCOMMENT//g;
   # remove part of the markup in changed lines
   # if any of these substitution was made, then there was at least
@@ -2828,7 +2902,10 @@ sub postprocess {
 ### DEBUG    s/${DELCMDOPEN}\\(verbatim\*?)/VERBATIMBLURB/sg;
 ###    s/(?<!%\\DIFCMD < )\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
 ###    s/\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
-    s/\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"\\begin{$1}". reverselinecomment($2) . "\\end{$1}"/esg;
+    # revert changes to verbatim environments for line diffs (and add code to mark up changes)
+    s/(?<!%DIFDELCMD < )\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"\\begin{$1}". reverselinecomment($2) . "\\end{$1}"/esg;
+    # where changes have occurred in verbatim environment, change verbatim to DIFverbatim to allow mark-up
+    s/(?<!%DIFDELCMD < )\\begin\{(verbatim[*]?)\}(\[$brat0\].*?)\\end\{\1\}/\\begin{DIF$1}$2\\end{DIF$1}/sg;
 
     s/\\($VERBATIMENV)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
 
@@ -4625,12 +4702,12 @@ subparagraph
 %%END COUNTERCMD CONFIG
 
 %%BEGIN VERBATIMENV CONFIG
-verbatim[*]?
 comment
 %%END VERBATIMENV CONFIG
 
 %%BEGIN VERBATIMLINEENV CONFIG
 lstlisting
+verbatim[*]?
 %%END VERBATIMLINEENV CONFIG
 
 %%% TYPES (Commands for highlighting changed blocks)
@@ -4926,16 +5003,85 @@ lstlisting
 %DIF END HYPERREF PREAMBLE
 
 %DIF LISTINGS PREAMBLE
+\RequirePackage{listings}
+\RequirePackage{color}
 \lstdefinelanguage{DIFcode}{
-  moredelim=[il][\color{red}\sout]{\%DIF\ <\ },
-  moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ }
+  % note that the definitions in the following two lines are overwritten dependent on the markup type selected %DIFCODE TEMPLATE
+  morecomment=[il]{\%DIF\ <\ },          %DIFCODE TEMPLATE
+  moredelim=[il][\bfseries]{\%DIF\ >\ }  %DIFCODE TEMPLATE
 }
 \lstdefinestyle{DIFverbatimstyle}{
-	belowcaptionskip=.25\baselineskip,
 	language=DIFcode,
 	basicstyle=\ttfamily,
 	columns=fullflexible,
 	keepspaces=true
 }
-\lstnewenvironment{DIFverbatim}{\lstset{style=codediff}}{}
+\lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{}
+\lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{}
 %DIF END LISTINGS PREAMBLE
+
+%DIF DIFCODE_UNDERLINE
+  moredelim=[il][\color{red}\sout]{\%DIF\ <\ },
+  moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ }
+%DIF END DIFCODE_UNDERLINE
+
+%DIF DIFCODE_CTRADITIONAL
+  moredelim=[il][\color{red}\scriptsize]{\%DIF\ <\ },
+  moredelim=[il][\color{blue}\sffamily]{\%DIF\ >\ }
+%DIF END DIFCODE_CTRADITIONAL
+
+%DIF DIFCODE_TRADITIONAL
+  moredelim=[il][\color{white}\tiny]{\%DIF\ <\ },
+  moredelim=[il][\sffamily]{\%DIF\ >\ }
+%DIF END DIFCODE_TRADITIONAL
+
+%DIF DIFCODE_CFONT
+  moredelim=[il][\color{red}\scriptsize]{\%DIF\ <\ },
+  moredelim=[il][\color{blue}\sffamily]{\%DIF\ >\ }
+%DIF END DIFCODE_CFONT
+
+%DIF DIFCODE_FONTSTRIKE
+  moredelim=[il][\scriptsize \sout]{\%DIF\ <\ },
+  moredelim=[il][\sffamily]{\%DIF\ >\ }
+%DIF END DIFCODE_FONTSTRIKE
+
+%DIF DIFCODE_INVISIBLE
+  moredelim=[il][\color{white}\tiny]{\%DIF\ <\ },
+  moredelim=[il]{\%DIF\ >\ }
+%DIF END DIFCODE_INVISIBLE
+
+%DIF DIFCODE_CHANGEBAR
+  moredelim=[il][\color{white}\tiny]{\%DIF\ <\ },
+  moredelim=[il]{\%DIF\ >\ }
+%DIF END DIFCODE_CHANGEBAR
+
+%DIF DIFCODE_CCHANGEBAR
+  moredelim=[il][\color{red}]{\%DIF\ <\ },
+  moredelim=[il][\color{blue}]{\%DIF\ >\ }
+%DIF END DIFCODE_CCHANGEBAR
+
+%DIF DIFCODE_CULINECHBAR
+  moredelim=[il][\color{red}\sout]{\%DIF\ <\ },
+  moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ }
+%DIF END DIFCODE_CULINECHBAR
+
+%DIF DIFCODE_CFONTCBHBAR
+  moredelim=[il][\color{red}\scriptsize]{\%DIF\ <\ },
+  moredelim=[il][\color{blue}\sffamily]{\%DIF\ >\ }
+%DIF END DIFCODE_CFONTCBHBAR
+
+%DIF DIFCODE_BOLD
+  % unfortunately \bfseries cannot be combined with ttfamily without extra packages
+  % also morecomment=[il] is broken as of v1.5b of listings at least
+  % workaround: plot in white with tiny font
+  % morecomment=[il]{\%DIF\ <\ },
+  moredelim=[il][\color{white}\tiny]{\%DIF\ <\ },
+  moredelim=[il][\sffamily\bfseries]{\%DIF\ >\ }
+%DIF END DIFCODE_BOLD
+
+%DIF DIFCODE_PDFCOMMENT
+  
+  moredelim=[il][\color{white}\tiny]{\%DIF\ <\ },
+  moredelim=[il][\sffamily\bfseries]{\%DIF\ >\ }
+%DIF END DIFCODE_PDFCOMMENT
+
