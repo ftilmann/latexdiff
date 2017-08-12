@@ -101,7 +101,7 @@ sub init_regex_arr_ext {
 # (one expression per line)
 sub init_regex_arr_file {
   my ($arr,$fname)=@_;
-  open(FILE,"$fname") or die ("Couldn't open $fname: $!");
+  open(FILE,"$fname")
   while (<FILE>) {
     chomp;
     next if /^\s*#/ || /^\s*%/ || /^\s*$/ ;

@@ -8,7 +8,7 @@ We start with a draft text, \verb|example-draft.tex|, listed here in
 full but also included in the distribution (except that the ``verbatim'' environment had
 to be renamed to ``Verbatim'' for the listing).
 {\scriptsize
-\begin{verbatim}
+\begin{verbatim*}
 \documentclass[12pt,a4paper]{article}
 
 \setlength{\topmargin}{-0.2in}
@@ -67,7 +67,7 @@ case latexdiff marks up the whole paragraph even if some words in it
 are identical.
 No change, no markup!
 \end{Document}
-\end{verbatim}
+\end{verbatim*}
 }
 We can now edit
 this text as we would do with any other latex file to create
@@ -120,5 +120,31 @@ sub init_regex_arr_file {
 }
 \end{lstlisting}
 
+As a last test I have a short verbatim environment, which is deleted:
+\begin{verbatim}  blub %bla
+    print STDOUT q
+    Just another Perl hacker,
+   
+    unless $spring
+\end{verbatim}
+(source : Larry Wall perl poetry)
+
+A longer deleted lstlisting 
+\begin{lstlisting}[commentstyle=\color{gray}]  bla %blub
+#!/usr/bin/perl -ws
+# generates a tex file file-ref.tex which will generate the reference list.
+
+use English; 
+
+if (defined($h)  ) {  usage(); }
+
+if (scalar @ARGV == 0 ) {
+  $tex=STDOUT ; 
+} else {
+  $outname=$ARGV[0];
+  $outname=~s/\.rtf// ;
+  open($tex,">",$outname . "-ref.tex") or die "Could not open output file ${outname}-ref.tex";
+}
+\end{lstlisting}  same line stuff
 \end{document}
 
