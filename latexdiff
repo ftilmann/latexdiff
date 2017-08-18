@@ -29,9 +29,12 @@
 ###  - make style that allows (forward and backjumping with hyperref)
 ###  - --flatten option only expands first including command per line if there is more than one
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
+#
 # Version 1.2.2a:
+#    - now allows nested angular brackets, and is no longer confused by escaped curly braces
 #    - verbatim and lstlisting environments are marked-up with line-by-line in a similar style to non-verbatim text (requires the listing package to be installed)
 #       (see new configuration variable VERBATIMLINEENV)
+#
 # Version 1.2.1 (22 June 2017)
 #    - add "DeclareOldFontCommand" to styles using \bf or \sf old style font commands (fixies issue #92 )
 #    - improved markup: process lstinline commands in listings package correctly
@@ -687,14 +690,16 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $pat_n = $pat0;
 # if you get "undefined control sequence MATHBLOCKmath" error, increase the maximum value in this loop
   for (my $i_pat = 0; $i_pat < 20; ++$i_pat){
-    $pat_n = '(?:[^{}]|\{'.$pat_n.'\})*';
+    $pat_n = '(?:[^{}]|\{'.$pat_n.'\}|\\\{|\\\})*';
+    ###  $pat_n = '(?:[^{}]|\{'.$pat_n.'\})*';
   }
 
   my $brat0 = '(?:[^\[\]]|\\\[|\\\])*'; 
-#  my $brat_n = $brat0;
-#  for (my $i_pat = 0; $i_pat < 4; ++$i_pat){
-#    $brat_n = '(?:[^\[\]]|\\\[|\\\])|\['.$brat_n.'\])*';
-#  }
+  my $brat_n = $brat0;
+  for (my $i_pat = 0; $i_pat < 4; ++$i_pat){
+    $brat_n = '(?:[^\[\]]|\['.$brat_n.'\]|\\\[|\\\])*';
+    ###  $brat_n = '(?:[^\[\]]|\['.$brat_n.'\])*';   # Version not taking into account escaped \[ and \]
+  }
   my $abrat0 = '(?:[^<>])*';
 
 ###print STDERR "DEBUG pat1 $pat1\n      pat2 $pat_n\n";
@@ -716,10 +721,10 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 ### standard $cmdoptseq without intervening spaces
 ###pre-0.3  my $cmdoptseq='\\\\[\w\d\*]+(?:\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))*';
 ###  my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
-  my $cmdoptseq='\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
+  my $cmdoptseq='\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
 ###pre-0.3  my $oneletcmd='(?:\\\\.|[_\^])(?:\['.$brat0.'\]|\{'. $pat_n . '\})*';
   my $backslashnl='\\\\\n';
-  my $oneletcmd='\\\\.\*?(?:\['.$brat0.'\]|\{'. $pat_n . '\})*';
+  my $oneletcmd='\\\\.\*?(?:\['.$brat_n.'\]|\{'. $pat_n . '\})*';
 ### the commented out version is simpler but for some reason cannot cope with newline (in spite of s option) - need to include \newline explicitly
 ###  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(].*?\\\\[)]';
   my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(](?:.|\n)*?\\\\[)]';
@@ -957,7 +962,7 @@ if ($graphicsmarkup != NONE ) {
   }
 }
 
-$ulem = ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/ || defined $packages{"ulem"});
+$ulem = ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{ulem\}/ || defined $packages{"ulem"});
 
 
 # If listings is being used or can be found in the latexdiff search path, add to the preamble auxiliary code to enable line-by-line markup
@@ -969,9 +974,9 @@ if ( defined($packages{"listings"}) or `kpsewhich listings.sty` ne "" ) {
   @listingDIFcode=extrapream("-nofail","DIFCODE_" . $type) unless defined($preamblefile);
   if (!(@listingDIFcode)) {
     # if listingDIFcode is empty try to guess a suitable one from the preamble
-    if ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/ and $ulem ) {
+    if ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{color\}/ and $ulem ) {
       @listingDIFcode=extrapream("DIFCODE_UNDERLINE");
-    } elsif ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/ ) {
+    } elsif ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{color\}/ ) {
       # only colour used
       @listingDIFcode=extrapream("DIFCODE_CFONT");
     } else {
@@ -1380,7 +1385,7 @@ sub list_packages {
   # remove comments 
   $preamble=~s/(?<!\\)%.*$//mg ;
 
-  while ( $preamble =~  m/\\(?:documentclass|usepackage|RequirePackage)(?:\[($brat0)\])?\{(.*?)\}/gs ) {
+  while ( $preamble =~  m/\\(?:documentclass|usepackage|RequirePackage)(?:\[($brat_n)\])?\{(.*?)\}/gs ) {
     if (defined($1)) {
       foreach $pkg ( split /,/,$2 ) {
 	$packages{$pkg}=$1;
@@ -1835,7 +1840,7 @@ sub pass1 {
 #			print STDERR "Unchanged block $cnt, $last1,$last2 \n";
                         if ($cnt < $MINWORDSBLOCK 
 			    && $cnt==scalar (
-				     grep { /^$wpat/ || ( /^\\((?:[`'^"~=.]|[\w\d@*]+))((?:\[$brat0\]|\{$pat_n\})*)/o 
+				     grep { /^$wpat/ || ( /^\\((?:[`'^"~=.]|[\w\d@*]+))((?:\[$brat_n\]|\{$pat_n\})*)/o 
 							   && iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 							   && scalar(@dummy=split(" ",$2))<3 ) }
 					     @$block) )  {
@@ -1987,8 +1992,8 @@ sub extracttextblocks {
   for ($i=0;$i< scalar @$block;$i++) {
     ($token,$index)=@{ $block->[$i] };
     # store pure text blocks
-### pre-0.3    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d*]+)((?:\[$brat0\]|\{$pat_n\})*)/o 
-    if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat_n\})*)/o 
+### pre-0.3    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d*]+)((?:\[$brat_n\]|\{$pat_n\})*)/o 
+    if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat_n\]${extraspace}|${extraspace}\{$pat_n\})*)/o 
 				&& iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 				&& !iscmd($1,\@TEXTCMDLIST,\@TEXTCMDEXCL))) {
       # we have text or a command which can be treated as text
@@ -2044,7 +2049,7 @@ sub extractcommands {
     # $3: last argument
     # $4: }  + trailing spaces
 ### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat_n\})*\{)($pat_n)(\}\s*)$/so )
-    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat0\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
+    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat_n\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
 	 && iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL) ) {
 ###      print STDERR "EXTRACTCOMMANDS Match |$1|$2|$3|$4|$index \n";      
       #      push(@$retval,[ $2,$index,$1,$3,$4 ]);
@@ -2208,7 +2213,7 @@ sub marktags {
 	# $3: last argument
 	# $4: }  + trailing spaces
 	### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat_n\})*\{)($pat_n)(\}\s*)$/so )
-      if ( ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat0\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
+      if ( ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat_n\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
 	   && (iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL)|| iscmd($2,\@MATHTEXTCMDLIST,\@MATHTEXTCMDEXCL))
            && ( !$cmdcomment || !iscmd($2,\@CONTEXT2CMDLIST, \@CONTEXT2CMDEXCL) )  ) {
 	# Condition 1: word is a command? - if yes, $1,$2,.. will be set as above
@@ -2379,8 +2384,8 @@ sub preprocess {
     # transform \lstinline{...}
 #    s/\\lstinline(\[$brat0\])?(\{(?:.*?)\})/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
 #    s/\\lstinline(\[$brat0\])?((\S).*?\2)/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
-    s/\\lstinline((?:\[$brat0\])?)(\{(?:.*?)\})/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
-    s/\\lstinline((?:\[$brat0\])?)((\S).*?\3)/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
+    s/\\lstinline((?:\[$brat_n\])?)(\{(?:.*?)\})/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
+    s/\\lstinline((?:\[$brat_n\])?)((\S).*?\3)/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
     s/\\(verb\*?|lstinline)(\S)(.*?)\2/"\\DIF${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
 
     #    Change \{ to \QLEFTBRACE, \} to \QRIGHTBRACE, and \& to \AMPERSAND
@@ -2453,7 +2458,7 @@ sub linecomment {
   my @verbatimlines=split("\n",$_[0]);
   # the first line needs special treatment - we do want to retain optional arguments as is but wrap the remainder also with VERBCOMMENT
   ### print STDERR "DEBUG: before verbatimlines[0] = ",$verbatimlines[0],"\n";
-  $verbatimlines[0]=~s/^((?:\s*\[$brat0\])?\s*)([^\s\[].*)/ defined($2) ? ( "$1\%$VERBCOMMENT$2" ) : ( $1 )/e;
+  $verbatimlines[0]=~s/^((?:\s*\[$brat_n\])?\s*)([^\s\[].*)/ defined($2) ? ( "$1\%$VERBCOMMENT$2" ) : ( $1 )/e;
   ### print STDERR "DEBUG: after  verbatimlines[0] = ",$verbatimlines[0],"\n";
   return(join("\n%$VERBCOMMENT",@verbatimlines)."\n");
 }
@@ -2483,7 +2488,7 @@ sub reverselinecomment {
    if ( $verbatimtext=~ s/$VERBCOMMENT//g ) {
     # in the next line we add ~alsolanguage~ modifier, but also deletes the rest of the line after the optional argument, as lstlisting commands gets sometimes
     # very confused by what is there   (and othertimes seems to ignore this anyway)
-    unless ( $verbatimtext =~ s/^(\s*)\[($brat0)\](.*)\n/$1\[$2,alsolanguage=DIFcode\]\n/ ) {
+    unless ( $verbatimtext =~ s/^(\s*)\[($brat_n)\](.*)\n/$1\[$2,alsolanguage=DIFcode\]\n/ ) {
       if ( $verbatimtext =~ m/^\s*\n/ ) {
 	$verbatimtext = "[alsolanguage=DIFcode]" . $verbatimtext;
       } else {
@@ -2715,7 +2720,7 @@ sub postprocess {
 
 #    b.where one of the commands matching $COUNTERCMD is used as a DIFAUXCMD, add a statement
 #      subtracting one from the respective counter to keep numbering consistent with new file
-      $delblock=~ s/\\($COUNTERCMD)((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat_n\})*\s*${AUXCMD}\n)/\\$1$2\\addtocounter{$1}{-1}${AUXCMD}\n/sg ;
+      $delblock=~ s/\\($COUNTERCMD)((?:${extraspace}\[$brat_n\]${extraspace}|${extraspace}\{$pat_n\})*\s*${AUXCMD}\n)/\\$1$2\\addtocounter{$1}{-1}${AUXCMD}\n/sg ;
 
 #    bb. disable active labels within deleted blocks (as these are not safe commands, this should normally only
 #        happen within deleted maths blocks
@@ -2755,13 +2760,13 @@ sub postprocess {
 	# note additional \newline after command is omitted from output if right at the end of deleted block (otherwise a spurious empty line is generated)
 	$delblock=~s/($math)(?:[\s\n]*)?/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/sg;
       }
-      ###if ( defined($packages{"listings"} and $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/))   { 
+      ###if ( defined($packages{"listings"} and $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{color\}/))   { 
       ###  #     change included verbatim environments
       ###  $delblock =~ s/\\DIFverb\{/\\DIFDIFdelverb\{/g;
       ###  $delblock =~ s/\\DIFlstinline/\\DIFDIFdellstinline/g;
       ###}
       # Mark deleted verbose commands
-      $delblock =~ s/(${DELCMDOPEN}\\DIF((?:verb\*?|lstinline(?:\[$brat0\])?)\{([-\d]*?)\}\s*).*)$/%\n\\DIFDIFdel$2${AUXCMD}\n$1/gm;
+      $delblock =~ s/(${DELCMDOPEN}\\DIF((?:verb\*?|lstinline(?:\[$brat_n\])?)\{([-\d]*?)\}\s*).*)$/%\n\\DIFDIFdel$2${AUXCMD}\n$1/gm;
 
 #     splice in modified delblock
       substr($_,$begin,$len)=$delblock;
@@ -2933,7 +2938,7 @@ sub postprocess {
 #   s/$DELCMDOPEN\\begin\{($VERBATIMLINEENV)\}$extraspace(?:\[$brat0\])?$DELCMDCLOSE(.*?)$DELCMDOPEN\\end\{\1\}$DELCMDCLOSE/"\\begin{$1}". reverselinecomment($2) . "\\end{$1}"/esg;
 ##    s/$DELCMDOPEN\\begin\{($VERBATIMLINEENV)\}($extraspace(?:\[$brat0\])?\s*)(?:\n|$DELCMDOPEN)*$DELCMDCLOSE((?:\%$DELCOMMENT$VERBCOMMENT.*?\n)*)($DELCMDOPEN\\end\{\1\}(?:\n|\s|$DELCMDOPEN)*$DELCMDCLOSE)/"SUBSTITUTION: \\begin{$1}$2 INTERIOR: |$3| END: |$4|"/esg;
      s/ # Deleted \begin command of verbatim environment (Captures $1: whole deleted command, $2: environment, $3: optional arguments with white space
-          (\Q$DELCMDOPEN\E\\begin\{($VERBATIMLINEENV)\}(\Q$extraspace\E(?:\[$brat0\])?\s*)(?:\n|\Q$DELCMDOPEN\E)*\Q$DELCMDCLOSE\E)
+          (\Q$DELCMDOPEN\E\\begin\{($VERBATIMLINEENV)\}(\Q$extraspace\E(?:\[$brat_n\])?\s*)(?:\n|\Q$DELCMDOPEN\E)*\Q$DELCMDCLOSE\E)
         # Interior of deleted verbatim environment should consist entirely of delete DIFVRB comments, i.e. match only lines beginning with % DIF < DIFVRB
         #   Captures: $4: all lines combined
           ((?:\%\Q$DELCOMMENT$VERBCOMMENT\E.*?\n)*)
@@ -2951,7 +2956,7 @@ sub postprocess {
     # where changes have occurred in verbatim environment, change verbatim to DIFverbatim to allow mark-up
     # (I use the presence of optional paramater to verbatim environment as the marker - normal verbatim 
     # environment does not take optional arguments)
-    s/(?<!$DELCMDOPEN)\\begin\{(verbatim[*]?)\}(\[$brat0\].*?)\\end\{\1\}/\\begin{DIF$1}$2\\end{DIF$1}/sg;
+    s/(?<!$DELCMDOPEN)\\begin\{(verbatim[*]?)\}(\[$brat_n\].*?)\\end\{\1\}/\\begin{DIF$1}$2\\end{DIF$1}/sg;
 
     s/\\($VERBATIMENV)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
 
@@ -3019,17 +3024,17 @@ sub postprocess {
     s/\\QRIGHTBRACE /\\\}/sg;
     s/\\AMPERSAND /\\&/sg;
     # Highligh added inline verbatim commands if possible
-    if ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{color\}/ )   { 
+    if ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{color\}/ )   { 
       # wrap added verb commands with color commands
-      s/\\DIFDIFadd((?:verb\*?|lstinline(?:\[$brat0\])?)\{[-\d]*?\}[\s\n]*)/\{\\color{blue}$AUXCMD\n\\DIF$1%\n\}$AUXCMD\n/sg;
-      s/\\DIFDIFdel((?:verb\*?|lstinline(?:\[$brat0\])?)\{[-\d]*?\}[\s\n]*$AUXCMD)/\{\\color{red}${AUXCMD}\n\\DIF$1\n\}${AUXCMD}/sg;
+      s/\\DIFDIFadd((?:verb\*?|lstinline(?:\[$brat_n\])?)\{[-\d]*?\}[\s\n]*)/\{\\color{blue}$AUXCMD\n\\DIF$1%\n\}$AUXCMD\n/sg;
+      s/\\DIFDIFdel((?:verb\*?|lstinline(?:\[$brat_n\])?)\{[-\d]*?\}[\s\n]*$AUXCMD)/\{\\color{red}${AUXCMD}\n\\DIF$1\n\}${AUXCMD}/sg;
     } else {
       # currently if colour markup is not used just remove the added mark
       s/\\DIFDIFadd(verb\*?|lstinline)/\\DIF$1/sg;
-      s/\\DIFDIFdel((?:verb\*?|lstinline(?:\[$brat0\])?)\{[-\d]*?\}[\s\n]*$AUXCMD\n)//sg;
+      s/\\DIFDIFdel((?:verb\*?|lstinline(?:\[$brat_n\])?)\{[-\d]*?\}[\s\n]*$AUXCMD\n)//sg;
     }
     # expand \verb and friends inline arguments
-    s/\\DIF((?:DIFadd|DIFdel)?(?:verb\*?|lstinline(?:\[$brat0\])?))\{([-\d]*?)\}/"\\${1}". fromhash(\%verbhash,$2)/esg;
+    s/\\DIF((?:DIFadd|DIFdel)?(?:verb\*?|lstinline(?:\[$brat_n\])?))\{([-\d]*?)\}/"\\${1}". fromhash(\%verbhash,$2)/esg;
     # add basicstyle color{blue} to added lstinline commands
     # finally add the comment to the ones not having an optional argument before
     ###s/\\DIFaddlstinline(?!\[)/\\lstinline\n[basicstyle=\\color{blue}]$AUXCMD\n/g;
@@ -3043,7 +3048,7 @@ sub postprocess {
 sub restore_item_commands {
   my ($string)=@_ ;
   my ($itemarg,@itemargs);
-  $string =~ s/(\%DIFDELCMD < \s*(\\$ITEMCMD)((?:<$abrat0>)?)((?:\[$brat0\])?)\s*((?:${cmdoptseq}\s*?)*)(?:\n|$DELCMDCLOSE))/
+  $string =~ s/(\%DIFDELCMD < \s*(\\$ITEMCMD)((?:<$abrat0>)?)((?:\[$brat_n\])?)\s*((?:${cmdoptseq}\s*?)*)(?:\n|$DELCMDCLOSE))/
      # if \item has an []argument, then mark up the argument as deleted)
      if (length($4)>0) {
        # use substr to exclude square brackets at end points
@@ -3083,7 +3088,7 @@ sub preprocess_preamble {
   # resue in a more complex regex
   $titlecmd =~ s/[\$\^]//g; 
   # make sure to not match on comment lines:
-  $titlecmdpat=qr/^(?:[^%\n]|\\%)*(\\($titlecmd)$extraspace(?:\[($brat0)\])?(?:\{($pat_n)\}))/ms;
+  $titlecmdpat=qr/^(?:[^%\n]|\\%)*(\\($titlecmd)$extraspace(?:\[($brat_n)\])?(?:\{($pat_n)\}))/ms;
   ###print STDERR "DEBUG:",$titlecmdpat,"\n";
   @oldtitlecommands= ( $$oldpreambleref =~ m/$titlecmdpat/g );
   @newtitlecommands= ( $$newpreambleref =~ m/$titlecmdpat/g );
