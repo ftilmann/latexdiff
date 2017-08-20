@@ -3,6 +3,7 @@
 *.aux
 *.blg
 *.out
+*.dvi
 latexdiff.debug.*
 *%
 *~

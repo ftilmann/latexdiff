@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage{verbatim}
+%\usepackage{sverb}
+\usepackage{listings}
+
+\title{Test document for flattening verbatim environments}
+
+\begin{document}
+\noindent Some C code through verbatim input:
+\verbatiminput{test.c}
+\noindent Starred variant:
+\verbatiminput*{test.c}
+
+
+
+% commented out for now as full support for sverb is more complex
+%\noindent Through sverb:
+%\verbinput{test.c}
+
+\noindent And through listings without highlighting:
+\lstinputlisting{test.c}
+
+\noindent With syntax highlighting:
+\lstinputlisting[language=C]{test.c}
+
+\end{document}
+
+

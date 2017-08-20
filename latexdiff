@@ -31,9 +31,12 @@
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
 # Version 1.2.2a:
-#    - now allows nested angular brackets, and is no longer confused by escaped curly braces
+#    - improved pattern matching: now allows nested angular brackets, and is no longer confused by escaped curly braces
 #    - verbatim and lstlisting environments are marked-up with line-by-line in a similar style to non-verbatim text (requires the listing package to be installed)
 #       (see new configuration variable VERBATIMLINEENV)
+#    - --flatten now supports \verbatiminput and \lstlistinput 
+#   Bug fixes:
+#    - pattern matching of \verb and \lstinline commands had an error which meant they would trigger on commands beginning with \verb.
 #
 # Version 1.2.1 (22 June 2017)
 #    - add "DeclareOldFontCommand" to styles using \bf or \sf old style font commands (fixies issue #92 )
@@ -1471,7 +1474,7 @@ sub remove_endinput {
 # encoding is the encoding
 sub flatten {
   my ($text,$preamble,$filename,$encoding)=@_;
-  my ($includeonly,$dirname,$fname,$newpage,$replacement,$begline,$bblfile,$subfile);
+  my ($includeonly,$dirname,$fname,$newpage,$replacement,$begline,$bblfile,$subfile,$command,$verbenv,$verboptions);
   my ($subpreamble,$subbody,$subpost);
   require File::Basename ; 
   require File::Spec ; 
@@ -1517,6 +1520,7 @@ sub flatten {
 	   $begline=(defined($1)? $1 : "") ;
 	   "$begline$replacement";
   }/exgm;
+
   # replace subfile with contents (subfile package)
   $text=~s/(^(?:[^%\n]|\\%)*)\\subfile\{(.*?)\}/{ 
            $begline=(defined($1)? $1 : "") ;
@@ -1537,6 +1541,32 @@ sub flatten {
 	   $replacement = remove_endinput($replacement); 
 	   "$begline$replacement";
   }/exgm;
+
+  # replace \verbatiminput and \lstlistinginput
+  $text=~s/(^(?:[^%\n]|\\%)*)\\(verbatiminput\*?|lstinputlisting)$extraspace(\[$brat_n\])?$extraspace\{(.*?)\}/{ 
+     $begline=(defined($1)? $1 : "") ;
+     $command = $2 ;
+     $fname = $4 ;
+     $verboptions = defined($3)? $3 : "" ;									       
+     if ($command eq 'verbatiminput' ) {
+       $verbenv = "verbatim" ;
+     } elsif ($command eq 'verbatiminput*' ) {
+       $verbenv = "verbatim*" ;
+     } elsif ($command eq 'lstinputlisting' ) {
+       $verbenv = "lstlisting" ;
+     } else {
+       die "Internal errorL Unexpected verbatim input type $command.\n";
+     } 
+     print STDERR "DEBUG Beg of line match |$begline|\n" if $debug ;
+     print STDERR "Include file $fname  verbatim\n" if $verbose;
+     print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
+     # content of file becomes replacement value (do not use recursion), add \newpage if the command was include
+     ###$replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
+     $replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
+     # Add a new line if it not already there (note that the matching operator needs to use different delimiters, as we are still inside an outer scope that takes precedence
+     $replacement .= "\n" unless  $replacement =~ m(\n$)  ;
+     "$begline\\begin{$verbenv}$verboptions\n$replacement\\end{$verbenv}\n";
+    }/exgm;
 
   return($text);
 }
@@ -2385,8 +2415,8 @@ sub preprocess {
 #    s/\\lstinline(\[$brat0\])?(\{(?:.*?)\})/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
 #    s/\\lstinline(\[$brat0\])?((\S).*?\2)/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
     s/\\lstinline((?:\[$brat_n\])?)(\{(?:.*?)\})/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
-    s/\\lstinline((?:\[$brat_n\])?)((\S).*?\3)/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
-    s/\\(verb\*?|lstinline)(\S)(.*?)\2/"\\DIF${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
+    s/\\lstinline((?:\[$brat_n\])?)(([^\s\w]).*?\3)/"\\DIFlstinline". $1 ."{". tohash(\%verbhash,"$2") ."}"/esg;
+    s/\\(verb\*?|lstinline)([^\s\w])(.*?)\2/"\\DIF${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
 
     #    Change \{ to \QLEFTBRACE, \} to \QRIGHTBRACE, and \& to \AMPERSAND
 ###    print STDERR "Preprocess 0\n" if $debug;
