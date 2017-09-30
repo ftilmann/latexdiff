@@ -656,11 +656,13 @@ file in postscript or pdf format.
 
 =item B<--rcs>, B<--svn>, B<--cvs>, B<--git> or B<--hg>
 
-Set the version system. 
+Set the version control system used. 
 If no version system is specified, latexdiff-vc will venture a guess.
 
 latexdiff-cvs, latexdiff-rcs etc are variants of latexdiff-vc which default to 
 the respective versioning system. However, this default can still be overridden using the options above.
+
+Note that hg needs to support the C<--root> option (version >= 2.9)
 
 =item B<-r>, B<-r> F<rev> or B<--revision>, B<--revision=>F<rev>
 
