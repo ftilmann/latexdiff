@@ -28,6 +28,7 @@
 ###  - use kdiff3 as a merge tool
 ###  - make style that allows (forward and backjumping with hyperref)
 ###  - --flatten option only expands first including command per line if there is more than one
+###    --flatten if file not found, don't fail, simply warn and leave input (or equivalent command)
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
 # Version 1.2.2a:
@@ -1509,6 +1510,7 @@ sub flatten {
 	    $newpage=(defined($3)? " \\newpage " : "") ;
 	    "$begline$newpage$replacement$newpage";
           }/exgm;
+
   # replace bibliography with bbl file if it exists
   $text=~s/(^(?:[^%\n]|\\%)*)\\bibliography\{(.*?)\}/{ 
            if ( -f $bblfile ){
@@ -2861,7 +2863,7 @@ sub postprocess {
  	  $listlast=pop(@liststack);
  	  ($listtype eq $listlast) or warn "Invalid nesting of list environments: $listlast environment closed by \\end{$listtype}.";
  	} else {
- 	  warn "Invalid nesting of list environments: \\end{$listtype} encountered without matching \\begin{$listtype}.";
+ 	  warn "WARNING: Invalid nesting of list environments: \\end{$listtype} encountered without matching \\begin{$listtype}.\n";
  	}
       } else {
 	print STDERR "DEBUG: postprocess \@liststack=(",join(",",@liststack),")\n" if $debug;
@@ -3095,6 +3097,7 @@ sub restore_item_commands {
 
 # @auxlines=preprocess_preamble($oldpreamble,$newpreamble);
   # pre-process preamble by looking for commands used in \maketitle (title, author, date etc commands) 
+  # the list of commands is defined in CONTEXT2CMD 
   # if found then use a bodydiff to mark up content, and replace the corresponding commands 
   # in both preambles by marked up version to 'fool' the linediff (such that only body is marked
   # up.
@@ -3111,6 +3114,12 @@ sub preprocess_preamble {
   my  %oldhash  = ();
   my  %newhash  = ();
   my ($line,$cmd,$optarg,$arg,$optargnew,$optargold,$optargdiff,$argold,$argnew,$argdiff,$auxline);
+
+  my $warnmsgdetail = <<EOF ;
+     This should not occur for standard styles, but can occur for some specifiy styles, document classes,
+     e.g. journal house styles.
+     Workaround: Use --replace-context2cmd option to specifically set those commands, which are not repeated.
+EOF
 
   # resuse context2cmdlist to define these commands to  look out for in preamble
   $titlecmd = "(?:".join("|",@CONTEXT2CMDLIST).")";
@@ -3135,10 +3144,11 @@ sub preprocess_preamble {
     $cmd=shift @oldtitlecommands;
     $optarg=shift @oldtitlecommands;
     $arg=shift @oldtitlecommands;
-  
+
 ###    print STDERR "DEBUG old line:$line cmd:$cmd optarg:$optarg arg:$arg\n";
     if ( defined($oldhash{$cmd})) {
-      warn "$cmd is used twice in preamble of old file. Reverting to pure line diff mode for preamble.\n";
+      warn "WARNING: $cmd is used twice in preamble of old file. Reverting to pure line diff mode for preamble.\n";
+      print STDERR $warnmsgdetail;
       return;
     }
     $oldhash{$cmd}=[ $line, $optarg, $arg ];
@@ -3152,6 +3162,7 @@ sub preprocess_preamble {
 ###    print STDERR "DEBUG new line:$line cmd:$cmd optarg:$optarg arg:$arg\n";
     if ( defined($newhash{$cmd})) {
       warn "$cmd is used twice in preamble of new file. Reverting to pure line diff mode for preamble.\n";
+      print STDERR $warnmsgdetail;
       return;
     }
     $newhash{$cmd}=[ $line, $optarg, $arg ];
@@ -3469,6 +3480,9 @@ be real files (not pipes or similar) as they are opened twice.
                        As corresponding commands for context1.  The only difference is that
                        context2 commands are completely disabled in deleted sections, including
                        their arguments.
+                       context2 commands are also the only commands in the preamble, whose argument will 
+                       be processed in word-by-word mode (which only works, if they occur no more than
+		       once in the preamble).
 
 --exclude-mboxsafecmd=exclude-file
 --exclude-mboxsafecmd="cmd1,cmd2,..."
@@ -3947,6 +3961,11 @@ argument is shown as deleted text.
 As corresponding commands for context1.  The only difference is that
 context2 commands are completely disabled in deleted sections, including
 their arguments.
+
+context2 commands are also the only commands in the preamble, whose argument will be processed in 
+word-by-word mode (which only works, if they occur no more than once in the preamble). The algorithm currently cannot cope with repeated context2 commands in the preamble, as they occur e.g. for the C<\author> argument in some journal styles (not in the standard styles, though
+If such a repetition is detected, the whole preamble will be processed in line-by-line mode. In such a case, use C<--replace-context2cmd> option to just select the commands, which should be processed and are not used repeatedly in the preamble. 
+
 
 
 =item B<--exclude-mboxsafecmd=exclude-file> or B<--exclude-mboxsafecmd="cmd1,cmd2,...">
