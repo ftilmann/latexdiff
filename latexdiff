@@ -1909,15 +1909,17 @@ sub pass1 {
 ###		      print STDERR "DEBUG: match after sequence\n";
 ###		      print STDERR "delblock:",scalar @$deltextblocks,"\n";
 ###                   for (my $i=0;$i< scalar @$delblock;$i++) {
-###                          my ($token,$index)=@{ $delblock->[$i]};
-###		      print STDERR "|$token| $index\n" };
+###                         my ($token,$index)=@{ $delblock->[$i]};
+###			    print STDERR "|$token| $index\n" };
 ###		      print STDERR "addblock:\n";
-###                      for (my $i=0;$i< scalar @$addblock;$i++) {
-###                         my ($token,$index)=@{ $addblock->[$i]} ;
-###		      print STDERR "|$token| $index\n" };
+###                   for (my $i=0;$i< scalar @$addblock;$i++) {
+###			my ($token,$index)=@{ $addblock->[$i]} ;
+###			print STDERR "|$token| $index\n" };
 
+		      # make a list of all TEXTCMDLIST commands in deleted and added blocks
 		      $delcmds = extractcommands($delblock);
       		      $addcmds = extractcommands($addblock);
+		      # now find those text commands, which are found in both deleted and added blocks, and expand them
 		      # keygen(third argument of _longestCommonSubsequence) implies to sort on command (0th elements of $addcmd elements)
 		      # the calling format for longestCommonSubsequence has changed between versions of
 		      # Algorithm::Diff so we need to check which one we are using
@@ -3009,7 +3011,7 @@ sub postprocess {
       #      on a line by themselves, similarly for table environment
       print STDERR "endfloat package detected.\n" if $verbose ;
       # eliminate whitespace before and after
-      s/^(\s*)(\\(?:begin|end)\{(?:figure|table)\})(\s*)$/$2/mg;
+      s/^(\s*)(\\(?:end|begin)\{(?:figure|table)\})(\s*?)$/$2/mg;
       # split lines with remaining characters before float environment conmmand
       s/^([^%]+)(\\(?:begin|end)\{(?:figure|table)\})/$1\n$2/mg;
       # split lines with remaining characters after float environment conmmand
