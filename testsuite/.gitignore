@@ -12,4 +12,6 @@ auto
 *-diff.tex
 *-diff-*.*.*.*
 report.txt
+*.fff
+*.ttt
 

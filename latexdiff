@@ -22,7 +22,7 @@
 #
 # Detailed usage information at the end of the file
 #
-# ToDo:
+### ToDo:
 ###  
 ###  - add possibility to store configuration options for latexdiff in a file rather than as options
 ###  - use kdiff3 as a merge tool
@@ -33,6 +33,7 @@
 #
 # Version 1.2.2a:
 #    - improved pattern matching: now allows nested angular brackets, and is no longer confused by escaped curly braces
+#    - improved pattern matching in COARSE mode: occasionally, the closing bracket or some other elements would be matched in an 'unnatural' way due to another sequence being more minimal in the computational sense, sometimes even causing errors due to tokens moving in or out of the scope of math environments. This is now discouraged by adding internal \DIFANCHOR commands (which are removed again in post-processing) (fixes issues reported via email by li_ruomeng . 
 #    - verbatim and lstlisting environments are marked-up with line-by-line in a similar style to non-verbatim text (requires the listing package to be installed)
 #       (see new configuration variable VERBATIMLINEENV)
 #    - --flatten now supports \verbatiminput and \lstlistinput 
@@ -2398,7 +2399,7 @@ sub take_comments_and_enter_from_frac() {
 # 8. a. Convert $$ $$ into \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR}
 #    b. Convert \[ \] into \begin{SQUAREBRACKET} \end{SQUAREBRACKET}
 # 9. Convert all picture environmentent (\begin{PICTUREENV} .. \end{PICTUREENV} \PICTUREBLOCKenv
-#     For --block-math-markup option -convert all \begin{MATH} .. \end{MATH}
+#     For math-mode COARSE,WHOLE or NONE option -convert all \begin{MATH} .. \end{MATH}
 #    into \MATHBLOCKmath{...} commands, where MATH/math is any valid math environment
 
 # 10. Add final token STOP to the very end.  This is put in because the algorithm works better if the last token is identical.  This is removed again in postprocessing.
@@ -2462,20 +2463,26 @@ sub preprocess {
     s/\\\]/\\end{SQUAREBRACKET}/sg;
     # Convert all picture environmentent (\begin{PICTUREENV} .. \end{PICTUREENV} \PICTUREBLOCKenv
     s/\\begin\{($PICTUREENV)}(.*?)\\end\{\1}/\\PICTUREBLOCK$1\{$2\}/sg;
-    #    For --block-math-markup option -convert all \begin{MATH} .. \end{MATH}
+    #    For math-mode COARSE,WHOLE or NONE option -convert all \begin{MATH} .. \end{MATH}
     #    into \MATHBLOCKMATH{...} commands, where MATH is any valid math environment
     #    Also convert all array environments into ARRAYBLOCK environments
 ###    print STDERR "Preprocess 20\n" if $debug;
 
     if ( $mathmarkup != FINE ) {
-      s/\\begin\{($ARRENV)}(.*?)\\end\{\1}/\\ARRAYBLOCK$1\{$2\}/sg;
+      # DIFANCHORARRB and DIFANCHORARRE, DIFANCHORMATHB and DIFANCHORMATHE markers are inserted here to encourage the matching algorithm
+      # to always match up the closing brace. Otherwise sometimes one ends up with a situation where
+      # the closing brace is deleted and added at another point. The deleted closing brace is then 
+      # prevented by a %DIFDELCMD, leading to material leaking in or out of the math environment.
+      # The anchors are removed in post-processing again. (note that they are simple text to cause least amount of complications
+      # Admittedly, this is something of a hack and will not always work. If it does not, then one needs to 
+      # resort to WHOLE or FINE, or NONE math mode processing.
+      s/\\begin\{($ARRENV)}(.*?)\\end\{\1}/\\ARRAYBLOCK$1\{$2\\DIFANCHORARRB \}\\DIFANCHORARRE /sg;
 ###      print STDERR "vvvvvvvvvvvvvvvvvv\n$_\nvvvvvvvvvvvvvvvv\n" if $debug;
-      
-      take_comments_and_enter_from_frac();
-      
-###      print STDERR "^^^^^^^^^^^^^^^^^^\n$_\n^^^^^^^^^^^^^^^^^\n" if $debug;
 
-      s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)\\end\{\1\}/\\MATHBLOCK$1\{$2\}/sg;
+      take_comments_and_enter_from_frac();
+
+###      print STDERR "^^^^^^^^^^^^^^^^^^\n$_\n^^^^^^^^^^^^^^^^^\n" if $debug;
+      s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)\\end\{\1\}/\\MATHBLOCK$1\{$2\\DIFANCHORMATHB \}\\DIFANCHORMATHE /sg;
     }
 ###    print STDERR "Preprocess 30\n" if $debug;
 
@@ -2604,7 +2611,7 @@ sub fromhash {
 #    c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
 #    d. place \cite commands in mbox'es (for UNDERLINE style)
 #     
-# 2.   If --block-math-markup option set: Convert \MATHBLOCKmath{..} commands back to environments
+# 2.   If math-mode COARSE,WHOLE or NONE option set: Convert \MATHBLOCKmath{..} commands back to environments
 #
 #      Convert all PICTUREblock{..} commands back to the appropriate environments
 ###0.5: Remove DIFadd, DIFdel, DIFaddbegin , ... from picture environments
@@ -2640,9 +2647,14 @@ sub postprocess {
 
     # Remove final STOP token
     s/ STOP$//;
+    # Replace \RIGHTBRACE in comments by \MBLOCKRIGHTBRACE
+    # the only way to get these is as %DIFDELCMD < \RIGHTBRACE construction
+    # This essentially marks closing right braces of MATHBLOCK environments, which did not get matched
+    # up. This case should be rare, so I just leave this in the diff file output. Not really elegant
+    # but can still be dealt with later if it results in problems. 
+    s/%DIFDELCMD < \\RIGHTBRACE/%DIFDELCMD < \\MBLOCKRIGHTBRACE/g ;
     # Replace \RIGHTBRACE by }    
     s/\\RIGHTBRACE/}/g;
-
 
 ###    # change citation commands within comments to protect from processing
 ###    if ($CITECMD){
@@ -2917,7 +2929,11 @@ sub postprocess {
       s/\\MATHBLOCK($MATHENV|$MATHARRENV|SQUAREBRACKET)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
       # convert ARRAYBLOCK.. commands back to environments
       s/\\ARRAYBLOCK($ARRENV)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
+      # get rid of the DIFANCHOR markers, first the delete comments, then everywhere
+      s/%DIFDELCMD < \\DIFANCHOR(?:MATH|ARR)[BE] (?:\n%DIFDELCMD < )?%%%\n//g ;
+      s/\\DIFANCHOR(?:MATH|ARR)[BE] //g;
     }
+
     #  Convert all PICTUREblock{..} commands back to the appropriate environments
     s/\\PICTUREBLOCK($PICTUREENV)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
 #0.5:    # Remove all mark up within picture environments
