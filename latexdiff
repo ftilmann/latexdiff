@@ -2446,8 +2446,10 @@ sub preprocess {
 ###    s/\\begin\{(verbatim\*?)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     s/\\begin\{($VERBATIMENV)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     s/\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"\\begin{$1}". linecomment($2) . "\\end{$1}"/esg;
-    # Convert _n or _\cmd into \SUBSCRIPTNB{n} or \SUBSCRIPTNB{\cmd} and _{nnn} into \SUBSCRIPT{nn}
+
+    # mark all first empty line (in block of several) with \PAR tokens
     s/\n(\s*?)\n((?:\s*\n)*)/\n$1\\PAR\n$2/g ;
+    # Convert _n or _\cmd into \SUBSCRIPTNB{n} or \SUBSCRIPTNB{\cmd} and _{nnn} into \SUBSCRIPT{nn}
     1 while s/(?<!\\)_(\s*([^{\\\s]|\\\w+))/\\SUBSCRIPTNB{$1}/g ;
     1 while s/(?<!\\)_(\s*{($pat_n)})/\\SUBSCRIPT$1/g ;
     # Convert ^n into \SUPERSCRIPTNB{n} and ^{nnn} into \SUPERSCRIPT{nn}
@@ -2991,7 +2993,7 @@ sub postprocess {
           (\Q$DELCMDOPEN\E\\begin\{($VERBATIMLINEENV)\}(\Q$extraspace\E(?:\[$brat_n\])?\s*)(?:\n|\Q$DELCMDOPEN\E)*\Q$DELCMDCLOSE\E)
         # Interior of deleted verbatim environment should consist entirely of delete DIFVRB comments, i.e. match only lines beginning with % DIF < DIFVRB
         #   Captures: $4: all lines combined
-          ((?:\%\Q$DELCOMMENT$VERBCOMMENT\E.*?\n)*)
+          ((?:\%\Q$DELCOMMENT$VERBCOMMENT\E[^\n]*?\n)*)
         # Deleted \end command of verbatim environment. Note that the type is forced to match the opening. Captures: $5: Whole deleted environment
           (\Q$DELCMDOPEN\E\\end\{\2\}(?:\n|\s|\Q$DELCMDOPEN\E)*\Q$DELCMDCLOSE\E)
       / # Substitution part 
