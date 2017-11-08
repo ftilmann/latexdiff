@@ -387,7 +387,7 @@ GetOptions('type|t=s' => \$type,
 	   'subtype|s=s' => \$subtype, 
 	   'floattype|f=s' => \$floattype, 
 	   'config|c=s' => \@configlist,
-	   'add-to-config|c=s' => \@addtoconfiglist,
+	   'add-to-config=s' => \@addtoconfiglist,
 	   'preamble|p=s' => \$preamblefile,
 	   'encoding|e=s' => \$encoding,
 	   'label|L=s' => \@labels,
@@ -696,6 +696,10 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 # if you get "undefined control sequence MATHBLOCKmath" error, increase the maximum value in this loop
   for (my $i_pat = 0; $i_pat < 20; ++$i_pat){
     $pat_n = '(?:[^{}]|\{'.$pat_n.'\}|\\\\\{|\\\\\})*';
+    # Actually within the text body, quoted braces are replaced in pre-processing. The only place where 
+    # the last part of the pattern matters is when processing the arguments of context2cmds in the preamble
+    # and these contain a \{ or \} combination, probably rare.
+    # It should thus be fine to use the simpler version below.
     ###  $pat_n = '(?:[^{}]|\{'.$pat_n.'\})*';
   }
 
