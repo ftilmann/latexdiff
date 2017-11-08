@@ -328,7 +328,7 @@ while( $file1=pop @ARGV ) {
 }
 
 if ( length $configlatexdiff >0 ) {
-  push @ldoptions, "--config $configlatexdiff";
+  push @ldoptions, "--config=$configlatexdiff";
 }
 
 if ( defined($flatten) ) {
