@@ -695,7 +695,7 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $pat_n = $pat0;
 # if you get "undefined control sequence MATHBLOCKmath" error, increase the maximum value in this loop
   for (my $i_pat = 0; $i_pat < 20; ++$i_pat){
-    $pat_n = '(?:[^{}]|\{'.$pat_n.'\}|\\\{|\\\})*';
+    $pat_n = '(?:[^{}]|\{'.$pat_n.'\}|\\\\\{|\\\\\})*';
     ###  $pat_n = '(?:[^{}]|\{'.$pat_n.'\})*';
   }
 
