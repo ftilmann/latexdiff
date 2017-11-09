@@ -3051,7 +3051,8 @@ sub postprocess {
 ###    # disabled as this turned out to be a bad idea
 ###    1 while s/(%.*)\\CLEFTBRACED (.*)$/$1\{$2/mg ;
 ###    1 while s/(%.*)\\CRIGHTBRACED (.*)$/$1\}$2/mg ;
-    1 while s/(%.*)DOLLARDIF/$1\$/mg ;
+    # although we only renamed $ in comments to DOLLARDIFF, we might have lost the % in unchanged verbatim blocks, so rename all
+    s/DOLLARDIF/\$/g;
 ###    # undo renaming of the \cite.. commands in comments 
 ###    if ( $CITECMD ) {
 ###      1 while s/(%.*)\\CITEDIF($CITECMD)/$1\\$2/mg ;
