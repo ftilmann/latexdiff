@@ -2426,9 +2426,9 @@ sub preprocess {
 
     # Mark inline-verb in commented lines to be COMMENTverb (no hashing, no marking with color)
     1 while s/((?<!\\)%.*)\\(verb\*?|$LSTINLINEENV)/$1\\COMMENT$2/mg;
-    s/\\($LSTINLINEENV)((?:\[$brat_n\])?)(\{(?:.*?)\})/"\\DIF${1}". $2 ."{". tohash(\%verbhash,"$3") ."}"/esg;
-    s/\\($LSTINLINEENV)((?:\[$brat_n\])?)(([^\s\w]).*?\3)/"\\DIF${1}". $2 ."{". tohash(\%verbhash,"$3") ."}"/esg;
-    s/\\(verb\*?|$LSTINLINEENV)([^\s\w])(.*?)\2/"\\DIF${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
+    s/\\($LSTINLINEENV)((?:\[$brat_n\])?)(\{(?:.*?)\})/"\\DIF${1}". $2 ."{". tohash(\%verbhash,"$3") ."}"/eg;
+    s/\\($LSTINLINEENV)((?:\[$brat_n\])?)(([^\s\w]).*?\3)/"\\DIF${1}". $2 ."{". tohash(\%verbhash,"$3") ."}"/eg;
+    s/\\(verb\*?|$LSTINLINEENV)([^\s\w])(.*?)\2/"\\DIF${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/eg;
 
     #    Change \{ to \QLEFTBRACE, \} to \QRIGHTBRACE, and \& to \AMPERSAND
 ###    print STDERR "Preprocess 0\n" if $debug;
@@ -3088,12 +3088,12 @@ sub postprocess {
       # if there is a comment, that we did not catch with COMMENTverb, just ignore the diff
       1 while s/(\%.*)\\DIFDIF(?:add|del)(verb\*?|$LSTINLINEENV)/$1\\DIF$2/mg;
       # wrap added verb commands with color commands
-      s/\\DIFDIFadd((?:verb\*?|$LSTINLINEENV(?:\[$brat_n\])?)\{[-\d]*?\}[\s\n]*)/\{\\color{blue}$AUXCMD\n\\DIF$1%\n\}$AUXCMD\n/sg;
-      s/\\DIFDIFdel((?:verb\*?|$LSTINLINEENV(?:\[$brat_n\])?)\{[-\d]*?\}[\s\n]*$AUXCMD)/\{\\color{red}${AUXCMD}\n\\DIF$1\n\}${AUXCMD}/sg;
+      s/\\DIFDIFadd((?:verb\*?|$LSTINLINEENV(?:\[$brat_n\])?)\{[-\d]*?\}[\s\n]*)/\{\\color{blue}$AUXCMD\n\\DIF$1%\n\}$AUXCMD\n/g;
+      s/\\DIFDIFdel((?:verb\*?|$LSTINLINEENV(?:\[$brat_n\])?)\{[-\d]*?\}[\s\n]*$AUXCMD)/\{\\color{red}${AUXCMD}\n\\DIF$1\n\}${AUXCMD}/g;
     } else {
       # currently if colour markup is not used just remove the added mark
-      s/\\DIFDIFadd(verb\*?|$LSTINLINEENV)/\\DIF$1/sg;
-      s/\\DIFDIFdel((?:verb\*?|$LSTINLINEENV(?:\[$brat_n\])?)\{[-\d]*?\}[\s\n]*$AUXCMD\n)//sg;
+      s/\\DIFDIFadd(verb\*?|$LSTINLINEENV)/\\DIF$1/g;
+      s/\\DIFDIFdel((?:verb\*?|$LSTINLINEENV(?:\[$brat_n\])?)\{[-\d]*?\}[\s\n]*$AUXCMD\n)//g;
     }
     # expand \verb and friends inline arguments
 #    1 while s/\\DIF((?:DIFadd|DIFdel)?(?:verb\*?|$LSTINLINEENV(?:\[$brat_n\])?))\{([-\d]*?)\}/"\\${1}". fromhash(\%verbhash,$2)/meg;
