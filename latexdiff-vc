@@ -404,7 +404,8 @@ while ( $infile=$file2=shift @files ) {
   print STDERR "Working on  $infile \n";
   if ( scalar(@revs) == 1 ) {
     if ( defined($flatten) ) {
-       my $olddir=$tempdir . "/latexdiff-vc-$revs[0]";
+       (my $revs0 = $revs[0]) =~ s/[^\w]/-/g; # needed so that latex doesn't get stuck with ~ et al
+       my $olddir=$tempdir . "/latexdiff-vc-$revs0";
        print STDERR "Checking out old dir into: $olddir (rev: $revs[0])\n";
        checkout_dir($revs[0],$olddir);
 ###       print STDERR "DEBUG olddir $olddir";
@@ -424,12 +425,14 @@ while ( $infile=$file2=shift @files ) {
      }
   } elsif ( scalar(@revs) == 2 ) {
     if ( defined($flatten) ) {
-      my $olddir=$tempdir . "/latexdiff-vc-$revs[0]";
+      (my $revs0 = $revs[0]) =~ s/[^\w]/-/g; # needed so that latex doesn't get stuck with ~ et al
+      my $olddir=$tempdir . "/latexdiff-vc-$revs0";
       print STDERR "Checking out old dir into: $olddir (rev: $revs[0])\n";
       checkout_dir($revs[0],$olddir);
       $file1=$olddir ."/".$infile;
 
-      my $newdir=$tempdir . "/latexdiff-vc-$revs[1]";
+      (my $revs1 = $revs[1]) =~ s/[^\w]/-/g; # needed so that latex doesn't get stuck with ~ et al
+      my $newdir=$tempdir . "/latexdiff-vc-$revs1";
       print STDERR "Checking out new dir into: $newdir\n";
       checkout_dir($revs[1],$newdir);
       $file2=$newdir ."/".$infile;
@@ -477,6 +480,20 @@ while ( $infile=$file2=shift @files ) {
     unless ($answer =~ /^y/i ) {
       unlink @tmpfiles;
       die "Abort ... " ;
+    }
+  }
+  if (1) { # !TODO! Replace with a suited check (or remove check)
+    if ( system("grep -q \'^[^%]*\\\\bibliography{\' \"$file1\"") == 0 ) {
+      print "DEBUG: Running bibtex on $file1\n" if $debug;
+      (my $file1base = $file1) =~ s/\.tex$//i;
+      my $file1path = dirname $file1;
+      system("cd '$file1path'; $CFG{LATEX} --interaction=batchmode '$file1'; $CFG{BIBTEX} '$file1base'");
+    }
+    if ( system("grep -q \'^[^%]*\\\\bibliography{\' \"$file2\"") == 0 ) {
+      print "DEBUG: Running bibtex on $file2\n" if $debug;
+      (my $file2base = $file2) =~ s/\.tex$//i;
+      my $file2path = dirname $file2;
+      system("cd '$file2path'; $CFG{LATEX} --interaction=batchmode '$file2'; $CFG{BIBTEX} '$file2base'");
     }
   }
   print STDERR "Running: $CFG{LATEXDIFF}  $options \"$file1\" \"$file2\" > \"$diff\"\n";
