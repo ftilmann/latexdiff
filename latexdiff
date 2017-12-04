@@ -731,6 +731,8 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 ###pre-0.3  my $cmdoptseq='\\\\[\w\d\*]+(?:\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))*';
 ###  my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
   my $cmdoptseq='\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
+### Handle tex \def macro: \def\MAKRONAME#1[#2]#3{DEFINITION}
+  my $defseq='\\\\def\\\\[\w\d@\*]+(?:#\d+|\[#\d+\])+(?:\{'. $pat_n . '\})?';
 ###pre-0.3  my $oneletcmd='(?:\\\\.|[_\^])(?:\['.$brat0.'\]|\{'. $pat_n . '\})*';
   my $backslashnl='\\\\\n';
   my $oneletcmd='\\\\.\*?(?:\['.$brat_n.'\]|\{'. $pat_n . '\})*';
@@ -741,8 +743,9 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 ## the current maths command cannot cope with newline within the math expression
 ### my $math='\$(?:[^$]|\\\$)*?\$|\\[(].*?\\[)]';
 ###  my $math='\$(?:[^$]|\\\$)*\$';
-  my $comment='%.*?\n';
-  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
+###  my $comment='%.*?\n';
+  my $comment='%[^\n]*\n';
+  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|${defseq}|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
 
 
 
