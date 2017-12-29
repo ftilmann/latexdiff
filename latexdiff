@@ -28,7 +28,6 @@
 ###  - use kdiff3 as a merge tool
 ###  - make style that allows (forward and backjumping with hyperref)
 ###  - --flatten option only expands first including command per line if there is more than one
-###    --flatten if file not found, don't fail, simply warn and leave input (or equivalent command)
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 #
 # Version 1.2.2a:
@@ -36,7 +35,8 @@
 #    - improved pattern matching in COARSE mode: occasionally, the closing bracket or some other elements would be matched in an 'unnatural' way due to another sequence being more minimal in the computational sense, sometimes even causing errors due to tokens moving in or out of the scope of math environments. This is now discouraged by adding internal \DIFANCHOR commands (which are removed again in post-processing) (fixes issues reported via email by li_ruomeng . 
 #    - verbatim and lstlisting environments are marked-up with line-by-line in a similar style to non-verbatim text (requires the listing package to be installed)
 #       (see new configuration variable VERBATIMLINEENV)
-#    - --flatten now supports \verbatiminput and \lstlistinput 
+#    - --flatten: now supports \verbatiminput and \lstlistinput 
+     - --flatten: if file is not found, do not fail, simply warn and leave command unexpanded (inspired by issue #112).  Don't warn if file name contains #[0-9] as it is then most likely an argument within a command definition rather than an actual file (applies to \input, \subfile, \include commands)
 #   Bug fixes:
 #    - pattern matching of \verb and \lstinline commands had an error which meant they would trigger on commands beginning with \verb.
 #
@@ -1483,7 +1483,7 @@ sub remove_endinput {
 # encoding is the encoding
 sub flatten {
   my ($text,$preamble,$filename,$encoding)=@_;
-  my ($includeonly,$dirname,$fname,$newpage,$replacement,$begline,$bblfile,$subfile,$command,$verbenv,$verboptions);
+  my ($includeonly,$dirname,$fname,$newpage,$fullfile,$filecontent,$replacement,$begline,$bblfile,$subfile,$command,$verbenv,$verboptions);
   my ($subpreamble,$subbody,$subpost);
   require File::Basename ; 
   require File::Spec ; 
@@ -1501,21 +1501,30 @@ sub flatten {
   print STDERR "DEBUG: includeonly $includeonly\n" if $debug;
 
   # recursively replace \\input and \\include files
-  1 while $text=~s/(^(?:[^%\n]|\\%)*)(?:\\input\{(.*?)\}|\\include\{(${includeonly}(?:\.tex)?)\})/{ 
+  $text =~ s/(^(?:[^%\n]|\\%)*)(\\input\{(.*?)\}|\\include\{(${includeonly}(?:\.tex)?)\})/{ 
 	    $begline=(defined($1)? $1 : "") ;
-	    $fname = $2 if defined($2) ;
 	    $fname = $3 if defined($3) ;
+	    $fname = $4 if defined($4) ;
             #      # add tex extension unless there is a three or four letter extension already 
             $fname .= ".tex" unless $fname =~ m|\.\w{3,4}$|;
+            $fullfile = File::Spec->catfile($dirname,$fname);
             print STDERR "DEBUG Beg of line match |$1|\n" if defined($1) && $debug ;
             print STDERR "Include file $fname\n" if $verbose;
-            print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
+            print STDERR "DEBUG looking for file ",$fullfile, "\n" if $debug;
             # content of file becomes replacement value (use recursion), add \newpage if the command was include
-            ###$replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
-	    $replacement=flatten(read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding), $preamble,$filename,$encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
-	    $replacement = remove_endinput($replacement); 
-	    # \include always starts a new page; use explicit \newpage command to simulate this
-	    $newpage=(defined($3)? " \\newpage " : "") ;
+            if ( -f $fullfile ) {
+	      # If file exists, replace input or include command with expanded input
+	      $replacement=flatten(read_file_with_encoding($fullfile, $encoding), $preamble,$filename,$encoding) or die "Could not open file ",$fullfile,": $!";
+	      $replacement = remove_endinput($replacement); 
+	      # \include always starts a new page; use explicit \newpage command to simulate this
+	      $newpage=(defined($4)? " \\newpage " : "") ;
+	    } else {
+	      # if file does not exist, do not expand include or input command (do not warn if fname contains #[0-9] as it is then likely part of a command definition
+              # and is not meant to be expanded directly 
+	      print STDERR "WARNING: Could not find included file ",$fullfile,". I will continue but not expand |$2|\n" unless $fname =~ m(#[0-9]) ;
+	      $replacement = $2 ;   # i.e. just the original command again -> make no change file does not exist
+	      $newpage="";
+	    }
 	    "$begline$newpage$replacement$newpage";
           }/exgm;
 
@@ -1539,16 +1548,25 @@ sub flatten {
            $fname .= ".tex" unless $fname =~ m|\.\w{3,4}|;
 ###           print STDERR "DEBUG Beg of line match |$1|\n" if defined($1) && $debug ;
            print STDERR "Include file as subfile $fname\n" if $verbose;
-###           print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
+###           print STDERR "DEBUG looking for file |",File::Spec->catfile($dirname,$fname), "|\n" if $debug;
            # content of file becomes replacement value (use recursion)
            # now strip away everything outside and including \begin{document} and \end{document} pair#
 	   #             # note: no checking for comments is made
-           $subfile=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
-           ($subpreamble,$subbody,$subpost)=splitdoc($subfile,'\\\\begin\{document\}','\\\\end\{document\}');
-###           $subfile=~s|^.*\\begin{document}||s; 
-###           $subfile=~s|\\end{document}.*$||s;
-	   $replacement=flatten($subbody, $preamble,$filename,$encoding);
-	   $replacement = remove_endinput($replacement); 
+           $fullfile=File::Spec->catfile($dirname,$fname);
+           if ( -f $fullfile) {
+	     # if file exists, expand \subfile command by contents of file
+	     $subfile=read_file_with_encoding($fullfile,$encoding) or die "Could not open included subfile ",$fullfile,": $!";
+	     ($subpreamble,$subbody,$subpost)=splitdoc($subfile,'\\\\begin\{document\}','\\\\end\{document\}');
+	     ###           $subfile=~s|^.*\\begin{document}||s; 
+	     ###           $subfile=~s|\\end{document}.*$||s;
+	     $replacement=flatten($subbody, $preamble,$filename,$encoding);
+	     ### $replacement = remove_endinput($replacement); 
+	   } else {
+	      # if file does not exist, do not expand subfile
+	      print STDERR "WARNING: Could not find subfile ",$fullfile,". I will continue but not expand |$2|\n" unless $fname =~ m(#[0-9]) ;
+	      $replacement = "\\subfile\{$2\}" ;   # i.e. just the original command again -> make no change file does not exist
+	    }
+
 	   "$begline$replacement";
   }/exgm;
 
@@ -3054,6 +3072,8 @@ sub postprocess {
 ###    # disabled as this turned out to be a bad idea
 ###    1 while s/(%.*)\\CLEFTBRACED (.*)$/$1\{$2/mg ;
 ###    1 while s/(%.*)\\CRIGHTBRACED (.*)$/$1\}$2/mg ;
+
+###    1 while s/(%.*)DOLLARDIF/$1\$/mg ;
     # although we only renamed $ in comments to DOLLARDIFF, we might have lost the % in unchanged verbatim blocks, so rename all
     s/DOLLARDIF/\$/g;
 ###    # undo renaming of the \cite.. commands in comments 

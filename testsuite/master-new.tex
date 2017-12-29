@@ -3,6 +3,15 @@
 \includeonly{delequ-slave-new}
 
 \begin{document}
+
+\newcommand{\includesvg}[1]{%
+    \executeiffilenewer{./pics/#1.svg}{./pics/#1.pdf}%
+    {inkscape -z -D --file=./pics/#1.svg %
+      --export-pdf=./pics/#1.pdf --export-latex}%
+    \input{./pics/#1.pdf_tex}%
+  }
+
+
 \textbf{delequ}
 \include{delequ-slave-new}
 
