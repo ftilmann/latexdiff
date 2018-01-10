@@ -36,7 +36,7 @@
 #    - verbatim and lstlisting environments are marked-up with line-by-line in a similar style to non-verbatim text (requires the listing package to be installed)
 #       (see new configuration variable VERBATIMLINEENV)
 #    - --flatten: now supports \verbatiminput and \lstlistinput 
-     - --flatten: if file is not found, do not fail, simply warn and leave command unexpanded (inspired by issue #112).  Don't warn if file name contains #[0-9] as it is then most likely an argument within a command definition rather than an actual file (applies to \input, \subfile, \include commands)
+#     - --flatten: if file is not found, do not fail, simply warn and leave command unexpanded (inspired by issue #112).  Don't warn if file name contains #[0-9] as it is then most likely an argument within a command definition rather than an actual file (applies to \input, \subfile, \include commands)
 #   Bug fixes:
 #    - pattern matching of \verb and \lstinline commands had an error which meant they would trigger on commands beginning with \verb.
 #
