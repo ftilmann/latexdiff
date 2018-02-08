@@ -335,6 +335,10 @@ if ( defined($flatten) ) {
   push @ldoptions, "--flatten" ;
 }
 
+if ( defined($debug) && $debug ) {
+  push @ldoptions, "--debug" ;
+}
+
 # impose ZLABEL subtype if --only-changes option
 if ( $onlychanges ) {
   push @ldoptions, "-s", "ZLABEL","-f","IDENTICAL" ;
