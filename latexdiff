@@ -422,7 +422,7 @@ GetOptions('type|t=s' => \$type,
 	   'flatten' => \$flatten,
 	   'version' => \$version,
 	   'help|h' => \$help,
-	   'debug!' => \$debug );
+	   'debug!' => \$debug ) or die "Use latexdiff -h to get help.\n" ;
 
 if ( $help ) {
   usage() ;
