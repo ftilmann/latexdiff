@@ -207,6 +207,7 @@ my %CONFIG=(
    LISTENV => undef ,  # list making environments - they will generally be kept
    VERBATIMENV => undef,      # Environments whose content should be treated as verbatim text and not be touched
    VERBATIMLINEENV => undef,  # Environments whose content should be treated as verbatim text and processed in line diff mode
+   CUSTOMDIFCMD => undef,# Custom dif command. Is defined in the document as a \DELcommand and \ADDcommand version to be replaced by the diff
    ITEMCMD => 'item'                    # command marking item in a list environment
 );
 # Configuration variables: these have to be visible from the subroutines
@@ -223,7 +224,8 @@ my ($ARRENV,
     $PICTUREENV,
     $SCALEDELGRAPHICS,
     $VERBATIMENV,
-    $VERBATIMLINEENV
+    $VERBATIMLINEENV,
+    $CUSTOMDIFCMD
     );
 
 # my $MINWORDSBLOCK=3; # minimum number of tokens to form an independent block
@@ -624,6 +626,7 @@ foreach  ( keys(%CONFIG) ) {
   elsif ( $_ eq "ARRENV" ) { $ARRENV = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "VERBATIMENV" ) { $VERBATIMENV = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "VERBATIMLINEENV" ) { $VERBATIMLINEENV = liststringtoregex($CONFIG{$_}) ; }
+  elsif ( $_ eq "CUSTOMDIFCMD" ) { $CUSTOMDIFCMD = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "COUNTERCMD" ) { $COUNTERCMD = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "SCALEDELGRAPHICS" ) { $SCALEDELGRAPHICS = $CONFIG{$_} ; }
   else { die "Unknown configuration variable $_.";}
@@ -1310,6 +1313,7 @@ sub show_configuration {
     print "SCALEDELGRAPHICS=$SCALEDELGRAPHICS\n";
     print "VERBATIMENV=$VERBATIMENV\n";
     print "VERBATIMLINEENV=$VERBATIMLINEENV\n";
+    print "CUSTOMDIFCMD=$CUSTOMDIFCMD\n";
   }
 }
 
@@ -2841,6 +2845,9 @@ sub postprocess {
       ###}
       # Mark deleted verbose commands
       $delblock =~ s/(${DELCMDOPEN}\\DIF((?:verb\*?|lstinline(?:\[$brat_n\])?)\{([-\d]*?)\}\s*).*)$/%\n\\DIFDIFdel$2${AUXCMD}\n$1/gm;
+      if( $CUSTOMDIFCMD ) {
+        $delblock =~ s/(${DELCMDOPEN}.*)\\($CUSTOMDIFCMD)/$1${DELCMDCLOSE}\\DEL$2/gm;
+      }
 
 #     splice in modified delblock
       substr($_,$begin,$len)=$delblock;
@@ -2884,6 +2891,9 @@ sub postprocess {
 	# mark added verbatim commands
       $addblock =~ s/\\DIFverb/\\DIFDIFaddverb/g;
       $addblock =~ s/\\DIFlstinline/\\DIFDIFaddlstinline/g;
+      if( $CUSTOMDIFCMD ) {
+        $addblock =~ s/\\($CUSTOMDIFCMD)/\\ADD$1/g;
+      }
       ###}
 #     splice in modified addblock
       substr($_,$begin,$len)=$addblock;
@@ -3561,6 +3571,7 @@ be real files (not pipes or similar) as they are opened twice.
                           SCALEDELGRAPHICS (Float)
                           VERBATIMENV (RegEx)
                           VERBATIMLINEENV (RegEx)
+                          CUSTOMDIFCMD (RegEx)
                        This option can be repeated.
 
 --add-to-config  varenv1=pattern1,varenv2=pattern2
@@ -4871,6 +4882,9 @@ comment
 lstlisting
 verbatim[*]?
 %%END VERBATIMLINEENV CONFIG
+
+%%BEGIN CUSTOMDIFCMD CONFIG
+%%END CUSTOMDIFCMD CONFIG
 
 %%% TYPES (Commands for highlighting changed blocks)
 
