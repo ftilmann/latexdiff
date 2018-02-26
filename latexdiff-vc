@@ -544,19 +544,26 @@ foreach $diff ( @difffiles ) {
     } elsif ( $run ) {
       if ( $onlychanges ) {
 	my @pages=findchangedpages("$diffbase.aux");
-	###      print ("Running pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"\n") or 
+        my $gs = `which gs`;
+        $gs =~ s/^\s+|\s+$//g;
         my $qpdf = `which qpdf`;
         $qpdf =~ s/^\s+|\s+$//g;
         my $pdftk = `which pdftk`;
         $pdftk =~ s/^\s+|\s+$//g;
-        if (-x $qpdf) {
-          system("qpdf --linearize \"$diffbase.pdf\" --pages \"$diffbase.pdf\" " . join(",", @pages) . " -- \"$diffbase-changedpage.pdf\" ") == 0
-            or die("could not execute qpdf to strip pages. Return code: $?");
+        my $command;
+        if (-x $gs) {
+          $command="gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -sPageList=" . join(",", @pages) . " -sOutputFile=\"$diffbase-changedpage.pdf\" \"$diffbase.pdf\"";
         } elsif (-x $pdftk) {
-          system ("pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"")==0 or
-            die ("Could not execute <pdftk $diffbase.pdf cat " . join(" ",@pages) . " output $diffbase-changedpage.pdf> . Return code: $?");
+          $command="pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"";
+        } elsif (-x $qpdf) {
+          $command="qpdf --linearize \"$diffbase.pdf\" --pages \"$diffbase.pdf\" " . join(",", @pages) . " -- \"$diffbase-changedpage.pdf\" ";
+        } else {
+          die ("could not find any of gs, pdftk or qpdf");
         }
-	move("$diffbase-changedpage.pdf","$diffbase.pdf");
+        print "Executing ".$command;
+        system($command) == 0
+          or die("could not execute <".$command."> to strip pages. Return code: $?");
+	copy("$diffbase-changedpage.pdf","$diffbase.pdf");
       }
       push @ptmpfiles, "$diffbase.aux","$diffbase.log";
     }
