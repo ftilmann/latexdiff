@@ -3021,7 +3021,7 @@ sub postprocess {
         #   Captures: $4: all lines combined
           ((?:\%\Q$DELCOMMENT$VERBCOMMENT\E[^\n]*?\n)*)
         # Deleted \end command of verbatim environment. Note that the type is forced to match the opening. Captures: $5: Whole deleted environment
-          (\Q$DELCMDOPEN\E\\end\{\2\}(?:\n|\s|\Q$DELCMDOPEN\E)*\Q$DELCMDCLOSE\E)
+          (\Q$DELCMDOPEN\E\\end\{\2\})
       / # Substitution part 
             $1                   # Leave expression as is 
             . "$AUXCMD NEXT\n"   # Mark the following line as an auxiliary command
