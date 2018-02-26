@@ -326,7 +326,7 @@ my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblel
     $replacecontext1,$appendcontext1,
     $replacecontext2,$appendcontext2,
     $help,$verbose,$driver,$version,$ignorewarnings,
-    $enablecitmark,$disablecitmark,$allowspaces,$flatten,$debug,$earlylatexdiffpreamble);  ###$disablemathmark,
+    $enablecitmark,$disablecitmark,$allowspaces,$flatten,$nolinks,$debug,$earlylatexdiffpreamble);  ###$disablemathmark,
 my ($mboxsafe);
 # MNEMNONICS for mathmarkup
 my $mathmarkup;
@@ -421,6 +421,7 @@ GetOptions('type|t=s' => \$type,
 	   'ignore-warnings' => \$ignorewarnings,
 	   'driver=s'=> \$driver,
 	   'flatten' => \$flatten,
+	   'no-links' => \$nolinks,
 	   'version' => \$version,
 	   'help|h' => \$help,
 	   'debug!' => \$debug ) or die "Use latexdiff -h to get help.\n" ;
@@ -945,6 +946,9 @@ if (defined $packages{"hyperref"} ) {
   $latexdiffpreamble =~ s/\{\\DIFadd\}/{\\DIFaddtex}/g;
   $latexdiffpreamble =~ s/\{\\DIFdel\}/{\\DIFdeltex}/g;
   $latexdiffpreamble .= join "\n",(extrapream("HYPERREF"),"");
+  if($nolinks){
+    $latexdiffpreamble .= "\n\\hypersetup{bookmarks=false}";
+  }
   ###    $latexdiffpreamble .= '%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
   ###    $latexdiffpreamble .= '\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}}' . "\n";
   ###    $latexdiffpreamble .= '\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}}' . "\n";
@@ -1052,6 +1056,9 @@ if ( length $oldpreamble && length $newpreamble ) {
     push @diffpreamble,$latexdiffpreamble;
   }
   push @diffpreamble,'\begin{document}';
+  if (defined $packages{"hyperref"} && $nolinks) {
+    push @diffpreamble, '\begin{NoHyper}';
+  }
 }
 elsif ( !length $oldpreamble && !length $newpreamble ) {
   @diffpreamble=();
@@ -1230,6 +1237,9 @@ if (defined($visiblelabel)) {
 
 ###$diffall .= "$newleadin$diffbo" ;
 $diffall .= "$diffbo" ;
+if (defined $packages{"hyperref"} && $nolinks) {
+  $diffall .= "\\end{NoHyper}\n";
+}
 $diffall .= "\\end{document}$newpost" if length $newpreamble ;
 if ( lc($encoding) ne "utf8" && lc($encoding) ne "ascii" ) {
   print STDERR "Encoding output file to $encoding\n" if $verbose;
@@ -3649,6 +3659,8 @@ Miscelleneous options
                        [Default: use the filename and modification dates for the label]
 
 --no-label             Suppress inclusion of old and new file names as comment in output file
+
+--no-links             Suppress generation of hyperrefs, used for minimal diffs
 
 --visible-label         Include old and new filenames (or labels set with --label option) as 
                        visible output
