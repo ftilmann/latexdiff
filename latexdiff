@@ -2129,7 +2129,7 @@ sub extractcommands {
 sub iscmd {
   my ($cmd,$regexar,$regexexcl)=@_;
   my ($ret)=0;
-###  print STDERR "DEBUG: iscmd($cmd) in @$regexar\n" if $debug;
+  ### print STDERR "DEBUG: iscmd($cmd) in @$regexar, \n---------\n excluding @$regexexcl or @TEXTCMDEXCL safe @SAFECMDEXCL \n" if $debug;
   foreach $pat ( @$regexar ) {
     if ( $cmd =~ m/^${pat}$/ ) {
       $ret=1 ; 
@@ -2139,7 +2139,8 @@ sub iscmd {
   return 0 unless $ret;
 ###  print STDERR "DEBUG: Maybe\n" if $debug;
   foreach $pat ( @$regexexcl ) {
-###    print STDERR "DEBUG iscmd: checking |$cmd| against |$pat|\n";
+###    print STDERR "DEBUG iscmd: checking |$cmd| against |$pat|\n" if $debug;
+###    print STDERR "DEBUG MATCH\n" if ($debug && $cmd =~ m/^${pat}$/);
     return 0 if ( $cmd =~ m/^${pat}$/ );
   }
 ###  print STDERR "DEBUG: Yes\n" if $debug;
@@ -3351,9 +3352,9 @@ sub init_regex_arr_data {
   my $copy=0;
   my ($mode);
   if ($token =~ m/COMMANDS/ ) { 
-    $mode=0;
+    $mode=0;  # Reading command list 
   } else {
-    $mode=1;
+    $mode=1;  # Reading configuration variables
   }
 
   while (<DATA>) {
@@ -3364,6 +3365,7 @@ sub init_regex_arr_data {
       last; }
     chomp;
     if ( $mode==0 ) {
+#      print STDERR "DEBUG init_regex_arr_data regex >$_<\n" if ($debug && $copy);
       push (@$arr,qr/^$_$/) if ( $copy && !/^%/ ) ;
     } elsif ($mode==1) {
       push (@$arr,"$_") if ( $copy && !/^%/ ) ;
@@ -3411,6 +3413,7 @@ sub init_regex_arr_list {
   ###    print STDERR "DEBUG init_regex_arr_list arg >$arg<\n" if $debug;
   foreach $regex (split(qr/(?<!\\),/,$arg)) {
     $regex =~ s/\\,/,/g;
+    print STDERR "DEBUG init_regex_arr_list regex >$regex<\n" if $debug;
     push (@$arr,qr/^$regex$/);
   }
 }
