@@ -21,6 +21,7 @@ mkdirs: dist
 release: latexdiff-$(VERSION).tar.gz
 
 dist: latexdiff-$(VERSION)
+	[ ! -e dist ] || rm dist
 	ln -s latexdiff-$(VERSION) dist
 
 webmanual: htdocs/latexdiff-man.pdf
