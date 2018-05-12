@@ -40,6 +40,7 @@
 #     - added to textcmds: \intertext
 #   Bug fixes:
 #    - pattern matching of \verb and \lstinline commands had an error which meant they would trigger on commands beginning with \verb.
+#    - new config variable CUSTOMDIFCMD to allow defining special versions of  commands  in added or deleted blocks (Pull request by jprotze
 #
 # Version 1.2.1 (22 June 2017)
 #    - add "DeclareOldFontCommand" to styles using \bf or \sf old style font commands (fixies issue #92 )
@@ -606,13 +607,13 @@ foreach $key ( keys(%CONFIG) ) {
 
 ###  print STDERR "configuration: |$config|  , #@config#\n";
 foreach $assign ( @addtoconfig ) {
-###    print STDERR "assign:|$assign|\n";
+  ###print STDERR "assign:|$assign|\n";
   $assign=~ m/\s*(\w*)\s*=\s*(\S*)\s*$/ or die "Illegal assignment $assign in configuration list (must be variable=value)";  
   exists $CONFIG{$1} or die "Unknown configuration variable $1.";
   $CONFIG{$1}.=";$2";
 }
 
-# Map from hash to variables (we do this to have more concise code later, change from comma-separeted list)
+# Map from hash to variables (we do this to have more concise code later, change from comma-separated list)
 foreach  ( keys(%CONFIG) ) {
   if ( $_ eq "MINWORDSBLOCK" ) { $MINWORDSBLOCK = $CONFIG{$_}; }
   elsif ( $_ eq "FLOATENV" ) { $FLOATENV = liststringtoregex($CONFIG{$_}) ; }
@@ -4056,6 +4057,8 @@ C<ARRENV> (RegEx)
 
 C<COUNTERCMD> (RegEx)
 
+C<CUSTODIFCMD> (RegEx)
+
 C<FLOATENV> (RegEx)
 
 C<ITEMCMD> (RegEx)
@@ -4076,10 +4079,11 @@ C<PICTUREENV> (RegEx)
 
 C<SCALEDELGRAPHICS> (Float)
 
+
 =item B<--add-to-config varenv1=pattern1,varenv2=pattern2,...>
 
 For configuration variables, which are a regular expression (essentially those ending
-in ENV, and COUNTERCMD, see list above) this provides an alternative way to modify the configuration 
+in ENV, COUNTERCMD and CUSTOMDIFCMD, see list above) this option provides an alternative way to modify the configuration 
 variables. Instead of setting the complete pattern, with this option it is possible to add an
 alternative pattern. C<varenv> must be one of the variables listed above that take a regular
 expression as argument, and pattern is any regular expression (which might need to be 
@@ -4395,6 +4399,25 @@ numbering in the new file.
 [ Default: C<COUNTERCMD>=C<(?:footnote|part|section|subsection> ...
 
 C<|subsubsection|paragraph|subparagraph)>  ]
+
+=item C<CUSTOMDIFCMD>
+
+This option is for advanced users and allows definition of special versions of commands, which do not work as safe commands.
+
+Commands in C<CUSTOMDIFCMD> that occur in added or deleted blocks will be given an ADD or DEL prefix.
+The prefixed versions of the command must be defined in the preamble, either by putting them 
+in the preamble of at least the new file, or by creating a custom preamble file (Option --preamble).
+For example the command C<\blindtext> (from package blindtext) does not interact well with underlining, so that 
+for the standard markup type, it is not satisfactory to define it as a safe command. Instead, a customised versions
+without underlining can be defined in the preamble:
+
+C<\newcommand{\DELblindtext}{{\color{red}\blindtext}}>
+
+C<\newcommand{\ADDblindtext}{{\color{blue}\blindtext}}>
+
+and then latexdiff should be invoked with the option C<-c CUSTOMDIFCMD=blindtext>.
+
+[ Default: none ]
 
 =item C<FLOATENV>
 
