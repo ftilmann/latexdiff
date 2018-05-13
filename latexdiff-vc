@@ -27,6 +27,8 @@
 #
 # TODO/IDEAS: - option to call external pre-processing codes
 #             - choose type of latex processor / bibtex (luatex, xelatex etc)
+# version 1.2.2a 
+#    - option only-changes with hyperref will suppress hyperrefs (pull request jprotze_
 # version 1.2.1 (22 June 2017):
 #    - update: use qpdf (instead of pdftk) to select particular pages of output (pull request #102 submited by Tom Scogland via github). This was necessary because pdftk is being deprecated. pdftk is still used as a fall-back
 #    - bug fix: --hg option was not recognised (partially fixes github issue #93 )

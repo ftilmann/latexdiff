@@ -38,9 +38,11 @@
 #    - --flatten: now supports \verbatiminput and \lstlistinput 
 #     - --flatten: if file is not found, do not fail, simply warn and leave command unexpanded (inspired by issue #112).  Don't warn if file name contains #[0-9] as it is then most likely an argument within a command definition rather than an actual file (applies to \input, \subfile, \include commands)
 #     - added to textcmds: \intertext
+#    - new config variable CUSTOMDIFCMD to allow defining special versions of  commands  in added or deleted blocks (Pull request by github user jprotze)
+#    - added option -no-links (mostly for use by latexdiff-vc in only-changes modes) (Pull request by github user jprotze)
 #   Bug fixes:
 #    - pattern matching of \verb and \lstinline commands had an error which meant they would trigger on commands beginning with \verb.
-#    - new config variable CUSTOMDIFCMD to allow defining special versions of  commands  in added or deleted blocks (Pull request by jprotze
+
 #
 # Version 1.2.1 (22 June 2017)
 #    - add "DeclareOldFontCommand" to styles using \bf or \sf old style font commands (fixies issue #92 )
@@ -3675,8 +3677,6 @@ Miscelleneous options
 
 --no-label             Suppress inclusion of old and new file names as comment in output file
 
---no-links             Suppress generation of hyperrefs, used for minimal diffs
-
 --visible-label         Include old and new filenames (or labels set with --label option) as 
                        visible output
 
@@ -3702,6 +3702,12 @@ Miscelleneous options
 
 --version              Show version number.
 
+Internal options:
+These options are mostly for automated use by latexdiff-vc. They can be used directly, but
+the API should be considered less stable than for the other options.
+
+--no-links             Suppress generation of hyperreferences, used for minimal diffs 
+                       (option --only-changes of latexdiff-vc).
 EOF
 }
 
@@ -4260,6 +4266,18 @@ Show version number
 
 =back
 
+
+=head2 Internal options
+
+=over 4
+
+These options are mostly for automated use by latexdiff-vc. They can be used directly, but the API should be considered less stable than for the other options.
+
+=item B<--no-links>
+
+Suppress generation of hyperreferences, used for minimal diffs (option --only-changes of latexdiff-vc)
+
+=back
 
 
 =head2 Predefined styles 
