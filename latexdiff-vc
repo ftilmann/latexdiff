@@ -341,7 +341,7 @@ if ( defined($debug) && $debug ) {
 
 # impose ZLABEL subtype if --only-changes option
 if ( $onlychanges ) {
-  push @ldoptions, "-s", "ZLABEL","-f","IDENTICAL" ;
+  push @ldoptions, "-s", "ZLABEL","-f","IDENTICAL","--no-links" ;
 }
 
 if ( scalar(@revs) == 0 ) {
