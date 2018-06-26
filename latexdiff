@@ -4269,9 +4269,9 @@ Show version number
 
 =head2 Internal options
 
-=over 4
-
 These options are mostly for automated use by latexdiff-vc. They can be used directly, but the API should be considered less stable than for the other options.
+
+=over 4
 
 =item B<--no-links>
 
