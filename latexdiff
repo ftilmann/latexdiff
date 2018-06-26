@@ -4853,6 +4853,7 @@ parbox
 raisebox
 savebox
 sbox
+shortintertext
 shortstack
 signature
 text.*
