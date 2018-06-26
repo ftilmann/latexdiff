@@ -4866,6 +4866,7 @@ sqrt
 %%BEGIN CONTEXT1 COMMANDS
 % Regex matching commands with a text argument (leave out the \), which will fail out of context. These commands behave like text commands, except when they occur in a deleted section, where they are disabled, but their argument is shown as deleted text.
 caption
+subcaption
 %%END CONTEXT1 COMMANDS 
 
 %%BEGIN CONTEXT2 COMMANDS
