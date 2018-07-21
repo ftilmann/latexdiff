@@ -3473,7 +3473,7 @@ be real files (not pipes or similar) as they are opened twice.
 --type=markupstyle
 -t markupstyle         Add code to preamble for selected markup style
                        Available styles: UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
-                                         CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD PDFCOMMENT
+                                         CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCHBAR BOLD PDFCOMMENT
                        [ Default: UNDERLINE ]
 
 --subtype=markstyle
@@ -3861,7 +3861,7 @@ C<\DIFadd> and C<\DIFdel> commands.
 Available styles: 
 
 C<UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
-CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD PDFCOMMENT>
+CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCHBAR BOLD PDFCOMMENT>
 
 [ Default: C<UNDERLINE> ]
 
@@ -5299,10 +5299,10 @@ verbatim[*]?
   moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ }
 %DIF END DIFCODE_CULINECHBAR
 
-%DIF DIFCODE_CFONTCBHBAR
+%DIF DIFCODE_CFONTCHBAR
   moredelim=[il][\color{red}\scriptsize]{\%DIF\ <\ },
   moredelim=[il][\color{blue}\sffamily]{\%DIF\ >\ }
-%DIF END DIFCODE_CFONTCBHBAR
+%DIF END DIFCODE_CFONTCHBAR
 
 %DIF DIFCODE_BOLD
   % unfortunately \bfseries cannot be combined with ttfamily without extra packages
