@@ -1224,11 +1224,8 @@ preprocess($oldbody,$newbody);
 $diffbo=join("",@diffbody);
 ###print STDERR "DEBUG NOT POSTPROCESSED\n";
 ###print STDERR "DEBUG $diffbo END POSTPROCESS\n";
-if ( $debug ) {
-    open(RAWDIFF,">","latexdiff.debug.bodydiff");
-    print RAWDIFF $diffbo;
-    close(RAWDIFF);
-}
+writedebugfile($diffbo,"bodydiff");
+
 print STDERR "(",exetime()," s)\n","Postprocessing body. \n" if $verbose;
 postprocess($diffbo);
 ####print "POSTPROCESS NEW:\n$newbody\n";
@@ -2629,6 +2626,18 @@ sub fromhash {
   return $retstr;
 }
 
+# writedebugfile(string, label)
+# if $debug set writes <string> to file latexdiff.debug.<label>
+# otherwise do nothing
+sub writedebugfile {
+  my ($string,$label)=@_;
+  if ( $debug ) {
+    open(RAWDIFF,">","latexdiff.debug." . $label);
+    print RAWDIFF $string;
+    close(RAWDIFF);
+  }
+}
+
 
 # postprocess($string, ..)
 # carry out the following post-processing steps for all arguments:
@@ -2687,7 +2696,6 @@ sub postprocess {
   my (@textparts,@newtextparts,@liststack,$listtype,$listlast);
 
   for (@_) { 
-
     # change $'s in comments to something harmless
     1 while s/(%.*)\$/$1DOLLARDIF/mg ;
 
@@ -2712,30 +2720,31 @@ sub postprocess {
     #    is properly within math mode).  For math mode environments replace numbered equation
     #    environments with their display only variety (so that equation numbers in new file and
     #    diff file are identical)
+
     while ( m/\\DIFdelbegin.*?\\DIFdelend/sg ) {
-###    while ( m/\\DIFdelbegin.*?\\DIFdelend/sg ) {
-###      print STDERR "DEBUG Match delblock \n||||$&||||\n at ",pos,"\n";
+      ###    while ( m/\\DIFdelbegin.*?\\DIFdelend/sg ) {
+      ###      print STDERR "DEBUG Match delblock \n||||$&||||\n at ",pos,"\n";
       $cnt=0;
       $len=length($&);
       $begin=pos($_) - $len;
       $delblock=$&;
-###   A much simpler method for math replacement might follow this strategy (can recycle part of the commands below for following 
-###   this strategy:
-###   1. a Insert aux commands \begin{MATHMODE} or \end{MATHMODE} for all deleted commands opening or closing displayed math mode
-###      b Insert aux commands \begin{MATHARRMODE} or \end{MATHARRMODE} for all deleted commands opening or closing math array mode
-###   2  Replace MATHMODE and MATHARRMODE by correct pairing if appropriate partner  math command is found in text
-###   3  a Replace remaining \begin{MATHMODE}...\end{MATHMODE} pairs with \begin{$MATHREPL}..\end{$MATHREPL}
-###      b Replace remaining \begin{MATHARRMODE}...\end{MATHARRMODE} pairs with \begin{$MATHREPL}..\end{$MATHREPL}
-###   4  Delete all aux command math mode pairs which have simply comments or empty lines between them
-###   As written this won't actually work!
+      ###   A much simpler method for math replacement might follow this strategy (can recycle part of the commands below for following 
+      ###   this strategy:
+      ###   1. a Insert aux commands \begin{MATHMODE} or \end{MATHMODE} for all deleted commands opening or closing displayed math mode
+      ###      b Insert aux commands \begin{MATHARRMODE} or \end{MATHARRMODE} for all deleted commands opening or closing math array mode
+      ###   2  Replace MATHMODE and MATHARRMODE by correct pairing if appropriate partner  math command is found in text
+      ###   3  a Replace remaining \begin{MATHMODE}...\end{MATHMODE} pairs with \begin{$MATHREPL}..\end{$MATHREPL}
+      ###      b Replace remaining \begin{MATHARRMODE}...\end{MATHARRMODE} pairs with \begin{$MATHREPL}..\end{$MATHREPL}
+      ###   4  Delete all aux command math mode pairs which have simply comments or empty lines between them
+      ###   As written this won't actually work!
 
 
-###   Most general case: allow all included environments
-###      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{(\w*\*?)\}\s*?\n)(.*?)(\%DIFDELCMD < \s*\\end\{\2\})/$1\\begin{$2}$AUXCMD\n$3\n\\end{$2}$AUXCMD\n$4/sg;
+      ###   Most general case: allow all included environments
+      ###      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{(\w*\*?)\}\s*?\n)(.*?)(\%DIFDELCMD < \s*\\end\{\2\})/$1\\begin{$2}$AUXCMD\n$3\n\\end{$2}$AUXCMD\n$4/sg;
       ### (.*?[^\n]?)\n? construct is necessary to avoid empty lines in math mode, which result in
       ### an error
       # displayed math environments
-###0.5:     $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHREPL}$AUXCMD\n$1$3\n\\end{$MATHREPL}$AUXCMD\n$4/sg;
+      ###0.5:     $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHREPL}$AUXCMD\n$1$3\n\\end{$MATHREPL}$AUXCMD\n$4/sg;
       if ($mathmarkup == FINE ) {
 	$delblock=~ s/(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHREPL}$AUXCMD\n$1$3\n\\end{$MATHREPL}$AUXCMD\n$4/sg;
 	# also transform the opposite pair \end{displaymath} .. \begin{displaymath} but we have to be careful not to interfere with the results of the transformation in the line directly above
@@ -2768,7 +2777,7 @@ sub postprocess {
         # now look for unpaired %DIFDELCMD < \begin{MATHARRENV}; if found add \begin{$MATHARRREPL} and insert \end{$MATHARRREPL} 
         # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
         if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\begin{$MATHARRREPL}$AUXCMD\n/sg ) {
-           $delblock =~ s/(\\DIFdelend$)/\\end{$MATHARRREPL}$AUXCMD\n$1/s ;
+	  $delblock =~ s/(\\DIFdelend$)/\\end{$MATHARRREPL}$AUXCMD\n$1/s ;
         }
         # now look for unpaired %DIFDELCMD < \end{MATHENV}; if found add \end{MATHMODE} and insert \begin{MATHMODE} 
         # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
@@ -2776,10 +2785,10 @@ sub postprocess {
 	  $delblock =~ s/(\\DIFdelend$)/\\begin{MATHMODE}$AUXCMD\n$1/s ;
         }
 
-      # parse $delblock for deleted and reinstated eqnarray* environments - within those reinstate \\ and & commands
-###      while ( $delblock =~ m/\\begin{$MATHARRREPL}$AUXCMD\n.*?\n\\end{$MATHARRREPL}$AUXCMD\n/sg ) {
+	# parse $delblock for deleted and reinstated eqnarray* environments - within those reinstate \\ and & commands
+	###      while ( $delblock =~ m/\\begin{$MATHARRREPL}$AUXCMD\n.*?\n\\end{$MATHARRREPL}$AUXCMD\n/sg ) {
         while ( $delblock =~ m/\\begin\Q{$MATHARRREPL}$AUXCMD\E\n.*?\n\\end\Q{$MATHARRREPL}$AUXCMD\E\n/sg ) {
-###	      print STDERR "DEBUG Match eqarrayblock $& at ",pos,"\n";
+	  ###	      print STDERR "DEBUG Match eqarrayblock $& at ",pos,"\n";
 	  $cnt2=0;
 	  $len2=length($&);
 	  $begin2=pos($delblock) - $len2;
@@ -2791,40 +2800,40 @@ sub postprocess {
 	  pos($delblock) = $begin2 + length($eqarrayblock);
 	}
       } elsif ( $mathmarkup == COARSE || $mathmarkup == WHOLE ) {
-#       Convert MATHBLOCKmath commands to their uncounted numbers (e.g. convert equation -> displaymath
-#       (environments defined in $MATHENV will be replaced by $MATHREPL, and  environments in $MATHARRENV
-#       will be replaced by $MATHARRREPL
+	#       Convert MATHBLOCKmath commands to their uncounted numbers (e.g. convert equation -> displaymath
+	#       (environments defined in $MATHENV will be replaced by $MATHREPL, and  environments in $MATHARRENV
+	#       will be replaced by $MATHARRREPL
 	$delblock=~ s/\\MATHBLOCK($MATHENV)\{($pat_n)\}/\\MATHBLOCK$MATHREPL\{$2\}/sg;
 	$delblock=~ s/\\MATHBLOCK($MATHARRENV)\{($pat_n)\}/\\MATHBLOCK$MATHARRREPL\{$2\}/sg;
       }
       # Reinstate completely deleted list environments. note that items within the 
       # environment will still be commented out.  They will be restored later
       $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($LISTENV)\}\s*?(?:\n|$DELCMDCLOSE))(.*?)(\%DIFDELCMD < \s*\\end\{\2\})/{
-	   ###   # block within the search; replacement environment  
-	   ###   "$1\\begin{$2}$AUXCMD\n". restore_item_commands($3). "\n\\end{$2}$AUXCMD\n$4";
-	      "$1\\begin{$2}$AUXCMD\n$3\n\\end{$2}$AUXCMD\n$4";
-	          }/esg;
+															###   # block within the search; replacement environment  
+															###   "$1\\begin{$2}$AUXCMD\n". restore_item_commands($3). "\n\\end{$2}$AUXCMD\n$4";
+															"$1\\begin{$2}$AUXCMD\n$3\n\\end{$2}$AUXCMD\n$4";
+														       }/esg;
 
-###      $delblock=~ s/\\begin\{$MATHENV}$AUXCMD/\\begin{$MATHREPL}$AUXCMD/g;
-###      $delblock=~ s/\\end\{$MATHENV}$AUXCMD/\\end{$MATHREPL}$AUXCMD/g;
-###      $delblock=~ s/\\begin\{$MATHARRENV}$AUXCMD/\\begin{$MATHARRREPL}$AUXCMD/g;
-###      $delblock=~ s/\\end\{$MATHARRENV}$AUXCMD/\\end{$MATHARRREPL}$AUXCMD/g;
+      ###      $delblock=~ s/\\begin\{$MATHENV}$AUXCMD/\\begin{$MATHREPL}$AUXCMD/g;
+      ###      $delblock=~ s/\\end\{$MATHENV}$AUXCMD/\\end{$MATHREPL}$AUXCMD/g;
+      ###      $delblock=~ s/\\begin\{$MATHARRENV}$AUXCMD/\\begin{$MATHARRREPL}$AUXCMD/g;
+      ###      $delblock=~ s/\\end\{$MATHARRENV}$AUXCMD/\\end{$MATHARRREPL}$AUXCMD/g;
 
-#    b.where one of the commands matching $COUNTERCMD is used as a DIFAUXCMD, add a statement
-#      subtracting one from the respective counter to keep numbering consistent with new file
+      #    b.where one of the commands matching $COUNTERCMD is used as a DIFAUXCMD, add a statement
+      #      subtracting one from the respective counter to keep numbering consistent with new file
       $delblock=~ s/\\($COUNTERCMD)((?:${extraspace}\[$brat_n\]${extraspace}|${extraspace}\{$pat_n\})*\s*${AUXCMD}\n)/\\$1$2\\addtocounter{$1}{-1}${AUXCMD}\n/sg ;
 
-#    bb. disable active labels within deleted blocks (as these are not safe commands, this should normally only
-#        happen within deleted maths blocks
-### ^((?:[^%]|\\%)*\s\n?
-      $delblock=~ s/(?<!$DELCMDOPEN)(\\$LABELCMD(?:${extraspace})\{(?:[^{}])*\}[\t ]*)\n?/${DELCMDOPEN}$1${DELCMDCLOSE}/smg ;
-      # previous line causes trouble as by issue #90 I might need to modify this
-###      print STDERR "<<<$delblock>>>\n" if $debug;
+      #    bb. disable active labels within deleted blocks (i.e. those not commented out) (as these are not safe commands, this should normally only
+      #        happen within deleted maths blocks
+      ###      $delblock=~ s/(?<!$DELCMDOPEN)(\\$LABELCMD(?:${extraspace})\{(?:[^{}])*\}[\t ]*)\n?/${DELCMDOPEN}$1${DELCMDCLOSE}/smg ;
+      ###      previous line caused trouble as by issue #90 I might need to modify this
+      $delblock=~ s/^([^%]*)(\\$LABELCMD(?:${extraspace})\{(?:[^{}])*\}[\t ]*)\n?/$1${DELCMDOPEN}$2${DELCMDCLOSE}/smg ;
+      ###      print STDERR "<<<$delblock>>>\n" if $debug;
 
 
-#     c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
+      #     c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
       while ( $delblock =~ m/($math)(\s*)/sg ) {
-#	      print STDERR "DEBUG Delblock Match math $& at ",pos,"\n";
+	#	      print STDERR "DEBUG Delblock Match math $& at ",pos,"\n";
 	$cnt2=0;
 	$len2=length($&);
 	$begin2=pos($delblock) - $len2;
@@ -2833,20 +2842,20 @@ sub postprocess {
 	substr($delblock,$begin2,$len2)=$mathblock;
 	pos($delblock) = $begin2 + length($mathblock);
       }
-###      if ($CITE2CMD) {
-######   ${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat_n\}))  .*?%%%\n
-###	$delblock=~s/($DELCMDOPEN\s*\\($CITE2CMD)(.*)$DELCMDCLOSE)/
-###	  # Replacement code 
-###	  {my ($aux,$all);
-###	   $aux=$all=$1;
-###	   $aux=~s#\n?($DELCMDOPEN|$DELCMDCLOSE)##g;
-###	   $all."$aux$AUXCMD\n";}/sge;
-###      }
-###      # or protect \cite commands with \mbox
-###      if ($CITECMD) {
-######	$delblock=~s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat_n\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-###	$delblock=~s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat_n\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-###      } 
+      ###      if ($CITE2CMD) {
+      ######   ${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat_n\}))  .*?%%%\n
+      ###	$delblock=~s/($DELCMDOPEN\s*\\($CITE2CMD)(.*)$DELCMDCLOSE)/
+      ###	  # Replacement code 
+      ###	  {my ($aux,$all);
+      ###	   $aux=$all=$1;
+      ###	   $aux=~s#\n?($DELCMDOPEN|$DELCMDCLOSE)##g;
+      ###	   $all."$aux$AUXCMD\n";}/sge;
+      ###      }
+      ###      # or protect \cite commands with \mbox
+      ###      if ($CITECMD) {
+      ######	$delblock=~s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat_n\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
+      ###	$delblock=~s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat_n\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
+      ###      } 
       # if MBOXINLINEMATH is set, protect inlined math environments with an extra mbox
       if ( $MBOXINLINEMATH ) {
 	# note additional \newline after command is omitted from output if right at the end of deleted block (otherwise a spurious empty line is generated)
@@ -2859,14 +2868,15 @@ sub postprocess {
       ###}
       # Mark deleted verbose commands
       $delblock =~ s/(${DELCMDOPEN}\\DIF((?:verb\*?|lstinline(?:\[$brat_n\])?)\{([-\d]*?)\}\s*).*)$/%\n\\DIFDIFdel$2${AUXCMD}\n$1/gm;
-      if( $CUSTOMDIFCMD ) {
+      if ( $CUSTOMDIFCMD ) {
         $delblock =~ s/(${DELCMDOPEN}.*)\\($CUSTOMDIFCMD)/$1${DELCMDCLOSE}\\DEL$2/gm;
       }
 
-#     splice in modified delblock
+      #     splice in modified delblock
       substr($_,$begin,$len)=$delblock;
       pos = $begin + length($delblock);
     }
+    ###writedebugfile($_,'postprocess');
 
     ### print STDERR "<<<$_>>>\n" if $debug;
 
