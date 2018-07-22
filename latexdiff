@@ -22,15 +22,17 @@
 #
 # Detailed usage information at the end of the file
 #
-### ToDo:
+### ToDo (ideas):
 ###  
 ###  - add possibility to store configuration options for latexdiff in a file rather than as options
 ###  - use kdiff3 as a merge tool
 ###  - make style that allows (forward and backjumping with hyperref)
 ###  - --flatten option only expands first including command per line if there is more than one
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
-#
+###  - change meaning of --packages option such that this packages are used in addition of automatically detected packages (possibly introduce option --only-packages that overrides automatic choices completely
+
 # Version 1.2.2a:
+#    - treat options to \documentclass as potential package names (some packages allow implicit loading of or imply selected packages
 #    - improved pattern matching: now allows nested angular brackets, and is no longer confused by escaped curly braces
 #    - improved pattern matching in COARSE mode: occasionally, the closing bracket or some other elements would be matched in an 'unnatural' way due to another sequence being more minimal in the computational sense, sometimes even causing errors due to tokens moving in or out of the scope of math environments. This is now discouraged by adding internal \DIFANCHOR commands (which are removed again in post-processing) (fixes issues reported via email by li_ruomeng . 
 #    - verbatim and lstlisting environments are marked-up with line-by-line in a similar style to non-verbatim text (requires the listing package to be installed)
@@ -1422,6 +1424,15 @@ sub list_packages {
 	$packages{$pkg}="";
       }
     }
+  }
+
+  # sometimes, class options are defined in such a way that they imply the loading and/or presence of a package
+  # so we also treat all class options as 'packages.
+  if ( $preamble =~  m/\\documentclass\s*\[($brat_n)\]\s*\{.*?\}/s ) {
+     foreach $pkg ( split /,/,$1 ) {
+       $pkg =~ s/\s//g ;   # remove space and newline characters
+       $packages{$pkg}="" unless exists($packages{$pkg});
+     }
   }
   return (%packages);
 }
