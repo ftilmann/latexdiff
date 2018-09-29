@@ -44,7 +44,8 @@
 #    - added option -no-links (mostly for use by latexdiff-vc in only-changes modes) (Pull request by github user jprotze)
 #   Bug fixes:
 #    - pattern matching of \verb and \lstinline commands had an error which meant they would trigger on commands beginning with \verb.
-
+#    - In description environments, mark up item descriptions by effectively reating the insides of item commannds as text commands (fixes #161)
+#
 #
 # Version 1.2.1 (22 June 2017)
 #    - add "DeclareOldFontCommand" to styles using \bf or \sf old style font commands (fixies issue #92 )
@@ -2154,21 +2155,25 @@ sub extractcommands {
 sub iscmd {
   my ($cmd,$regexar,$regexexcl)=@_;
   my ($ret)=0;
-  ### print STDERR "DEBUG: iscmd($cmd) in @$regexar, \n---------\n excluding @$regexexcl or @TEXTCMDEXCL safe @SAFECMDEXCL \n" if $debug;
+###  print STDERR "DEBUG: iscmd($cmd) in @$regexar, \n---------\n excluding @$regexexcl or @TEXTCMDEXCL safe @SAFECMDEXCL \n" if $debug;
+  print STDERR "DEBUG: iscmd($cmd)=" if $debug;
   foreach $pat ( @$regexar ) {
     if ( $cmd =~ m/^${pat}$/ ) {
       $ret=1 ; 
       last;
     }
   }
+  print STDERR "0\n" if ($debug && !$ret) ;
   return 0 unless $ret;
 ###  print STDERR "DEBUG: Maybe\n" if $debug;
   foreach $pat ( @$regexexcl ) {
 ###    print STDERR "DEBUG iscmd: checking |$cmd| against |$pat|\n" if $debug;
 ###    print STDERR "DEBUG MATCH\n" if ($debug && $cmd =~ m/^${pat}$/);
+    print STDERR "0\n" if ( $debug && $cmd =~ m/^${pat}$/) ;
     return 0 if ( $cmd =~ m/^${pat}$/ );
   }
 ###  print STDERR "DEBUG: Yes\n" if $debug;
+  print STDERR "1\n" if $debug;
   return 1;
 }
 
@@ -2286,7 +2291,7 @@ sub marktags {
     }
     # negative lookahead pattern (?!) in second clause is put in to avoid matching \( .. \) patterns
     # also note that second pattern will match \\
-    ### print STDERR "DEBUG marktags: Considering word |$word|\n";
+    print STDERR "DEBUG marktags: Considering word |$word|\n" if $debug;
     if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
       ###print STDERR "DEBUG MARKTAGS is a non-safe command ($1)\n" if $debug;
       ###    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\([\w*@\\% ]+)/ && !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
@@ -2706,6 +2711,9 @@ sub postprocess {
 
   my (@textparts,@newtextparts,@liststack,$listtype,$listlast);
 
+  my (@itemargs, $itemarg);
+
+
   for (@_) { 
     # change $'s in comments to something harmless
     1 while s/(%.*)\$/$1DOLLARDIF/mg ;
@@ -2929,6 +2937,11 @@ sub postprocess {
       if( $CUSTOMDIFCMD ) {
         $addblock =~ s/\\($CUSTOMDIFCMD)/\\ADD$1/g;
       }
+      # markup the optional arguments of \item
+      $addblock =~ s/(\\$ITEMCMD$extraspace(?:<$abrat0>)?$extraspace)\[($brat_n)\]/
+	@itemargs=splitlatex(substr($2,0,length($2)));
+        $itemarg="[".join("",marktags("","",$ADDOPEN,$ADDCLOSE,"","",$ADDCOMMENT,\@itemargs))."]";
+      "$1$itemarg"/sge;   # old substitution: $1\[$ADDOPEN$2$ADDCLOSE\]
       ###}
 #     splice in modified addblock
       substr($_,$begin,$len)=$addblock;
@@ -3174,7 +3187,7 @@ sub postprocess {
 sub restore_item_commands {
   my ($string)=@_ ;
   my ($itemarg,@itemargs);
-  $string =~ s/(\%DIFDELCMD < \s*(\\$ITEMCMD)((?:<$abrat0>)?)((?:\[$brat_n\])?)\s*((?:${cmdoptseq}\s*?)*)(?:\n|$DELCMDCLOSE))/
+  $string =~ s/(\%DIFDELCMD < \s*(\\$ITEMCMD$extraspace)((?:<$abrat0>)?$extraspace)((?:\[$brat_n\])?)\s*((?:${cmdoptseq}\s*?)*)(?:\n|$DELCMDCLOSE))/
      # if \item has an []argument, then mark up the argument as deleted)
      if (length($4)>0) {
        # use substr to exclude square brackets at end points
