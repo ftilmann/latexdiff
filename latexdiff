@@ -36,7 +36,7 @@
 #    - improved pattern matching: now allows nested angular brackets, and is no longer confused by escaped curly braces
 #    - improved pattern matching in COARSE mode: occasionally, the closing bracket or some other elements would be matched in an 'unnatural' way due to another sequence being more minimal in the computational sense, sometimes even causing errors due to tokens moving in or out of the scope of math environments. This is now discouraged by adding internal \DIFANCHOR commands (which are removed again in post-processing) (fixes issues reported via email by li_ruomeng . 
 #    - verbatim and lstlisting environments are marked-up with line-by-line in a similar style to non-verbatim text (requires the listing package to be installed)
-#       (see new configuration variable VERBATIMLINEENV)
+#       (see new configuration variable VERBATIMLINEENV) (several issues and pull requests by jprotze)
 #    - --flatten: now supports \verbatiminput and \lstlistinput 
 #     - --flatten: if file is not found, do not fail, simply warn and leave command unexpanded (inspired by issue #112).  Don't warn if file name contains #[0-9] as it is then most likely an argument within a command definition rather than an actual file (applies to \input, \subfile, \include commands)
 #     - added to textcmds: \intertext
@@ -2599,9 +2599,7 @@ sub reverselinecomment {
     # I therefore have to introduce an artificial '-' character at the end of empty added or deleted lines
     $verbatimtext =~ s/($DELCOMMENT\s*)$/$1-/mg;
     $verbatimtext = "\\DIFmodbegin\n\\begin{${environment}}${verbatimtext}\\end{${environment}}\n\\DIFmodend"
-  }
-  else
-  {
+  } else {
     $verbatimtext = "\\begin{${environment}}${verbatimtext}\\end{${environment}}"
   }
   ###print STDERR "NEW VERBATIMTEXT: |$verbatimtext|\n";
