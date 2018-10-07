@@ -36,7 +36,7 @@
 #    - improved pattern matching: now allows nested angular brackets, and is no longer confused by escaped curly braces
 #    - improved pattern matching in COARSE mode: occasionally, the closing bracket or some other elements would be matched in an 'unnatural' way due to another sequence being more minimal in the computational sense, sometimes even causing errors due to tokens moving in or out of the scope of math environments. This is now discouraged by adding internal \DIFANCHOR commands (which are removed again in post-processing) (fixes issues reported via email by li_ruomeng . 
 #    - verbatim and lstlisting environments are marked-up with line-by-line in a similar style to non-verbatim text (requires the listing package to be installed)
-#       (see new configuration variable VERBATIMLINEENV)
+#       (see new configuration variable VERBATIMLINEENV) (several issues and pull requests by jprotze)
 #    - --flatten: now supports \verbatiminput and \lstlistinput 
 #     - --flatten: if file is not found, do not fail, simply warn and leave command unexpanded (inspired by issue #112).  Don't warn if file name contains #[0-9] as it is then most likely an argument within a command definition rather than an actual file (applies to \input, \subfile, \include commands)
 #     - added to textcmds: \intertext
@@ -2563,10 +2563,10 @@ sub linecomment {
   return(join("\n%$VERBCOMMENT",@verbatimlines)."\n");
 }
 
-# $simple=reverselinecomment($string)
+# $simple=reverselinecomment($env $string)
 # remove DIFVRB comments but leave changed lines marked 
 sub reverselinecomment {
-  my ($verbatimtext)=@_;
+  my ($environment, $verbatimtext)=@_;
   ###print STDERR "OLD VERBATIMTEXT: |$verbatimtext|\n";
   # remove markup added by latexdiff
   # (this should occur only if the type of verbatim environment was changed)
@@ -2585,7 +2585,7 @@ sub reverselinecomment {
   # remove part of the markup in changed lines
   # if any of these substitution was made, then there was at least
   # one changed line, and we have to extend the style
-   if ( $verbatimtext=~ s/$VERBCOMMENT//g ) {
+  if ( $verbatimtext=~ s/$VERBCOMMENT//g ) {
     # in the next line we add ~alsolanguage~ modifier, but also deletes the rest of the line after the optional argument, as lstlisting commands gets sometimes
     # very confused by what is there   (and othertimes seems to ignore this anyway)
     unless ( $verbatimtext =~ s/^(\s*)\[($brat_n)\](.*)\n/$1\[$2,alsolanguage=DIFcode\]\n/ ) {
@@ -2598,6 +2598,9 @@ sub reverselinecomment {
     # There is a bug in listings package (at least v1.5b) for empty comments where the actual comment command is not made invisible
     # I therefore have to introduce an artificial '-' character at the end of empty added or deleted lines
     $verbatimtext =~ s/($DELCOMMENT\s*)$/$1-/mg;
+    $verbatimtext = "\\DIFmodbegin\n\\begin{${environment}}${verbatimtext}\\end{${environment}}\n\\DIFmodend"
+  } else {
+    $verbatimtext = "\\begin{${environment}}${verbatimtext}\\end{${environment}}"
   }
   ###print STDERR "NEW VERBATIMTEXT: |$verbatimtext|\n";
   return($verbatimtext);
@@ -3069,7 +3072,7 @@ sub postprocess {
 ###    s/(?<!%\\DIFCMD < )\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
 ###    s/\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
     # revert changes to verbatim environments for line diffs (and add code to mark up changes)
-    s/(?<!$DELCMDOPEN)\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"\\begin{$1}". reverselinecomment($2) . "\\end{$1}"/esg;
+    s/(?<!$DELCMDOPEN)\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"". reverselinecomment($1, $2) .""/esg;
 #    # we do the same for deleted environments but additionally reinstate the framing commands
 #   s/$DELCMDOPEN\\begin\{($VERBATIMLINEENV)\}$extraspace(?:\[$brat0\])?$DELCMDCLOSE(.*?)$DELCMDOPEN\\end\{\1\}$DELCMDCLOSE/"\\begin{$1}". reverselinecomment($2) . "\\end{$1}"/esg;
 ##    s/$DELCMDOPEN\\begin\{($VERBATIMLINEENV)\}($extraspace(?:\[$brat0\])?\s*)(?:\n|$DELCMDOPEN)*$DELCMDCLOSE((?:\%$DELCOMMENT$VERBCOMMENT.*?\n)*)($DELCMDOPEN\\end\{\1\}(?:\n|\s|$DELCMDOPEN)*$DELCMDCLOSE)/"SUBSTITUTION: \\begin{$1}$2 INTERIOR: |$3| END: |$4|"/esg;
@@ -3083,9 +3086,9 @@ sub postprocess {
       / # Substitution part 
             $1                   # Leave expression as is 
             . "$AUXCMD NEXT\n"   # Mark the following line as an auxiliary command
-            . "\\begin{$2}"    # reinstate the original environment without options
-            . reverselinecomment("$3$4")   # modify the body to change the markup; reverselinecomment parses for options
-            . "\\end{$2} $AUXCMD\n"  # close the auxiliary environment
+            . ""    # reinstate the original environment without options
+            . reverselinecomment($2, "$3$4")   # modify the body to change the markup; reverselinecomment parses for options
+            . " $AUXCMD\n"  # close the auxiliary environment
             . $5               # and again leave the original deleted closing environment as is
       /esgx;  # Modifiers of substitution command
 ###    s/\Q$DELCMDOPEN\E\\begin\{($VERBATIMLINEENV)\}/"SUBSTITUTION"/esgx;
@@ -5068,6 +5071,8 @@ verbatim[*]?
 \providecommand{\DIFaddend}{}
 \providecommand{\DIFdelbegin}{}
 \providecommand{\DIFdelend}{}
+\providecommand{\DIFmodbegin}{}
+\providecommand{\DIFmodend}{}
 %DIF END SAFE PREAMBLE
 
 %DIF MARGIN PREAMBLE
@@ -5075,6 +5080,8 @@ verbatim[*]?
 \providecommand{\DIFaddend}{\protect\marginpar{]}}
 \providecommand{\DIFdelbegin}{\protect\marginpar{d[}}
 \providecommand{\DIFdelend}{\protect\marginpar{]}}
+\providecommand{\DIFmodbegin}{\protect\marginpar{m[}}
+\providecommand{\DIFmodend}{\protect\marginpar{]}}
 %DIF END MARGIN PREAMBLE
 
 %DIF DVIPSCOL PREAMBLE
@@ -5085,6 +5092,8 @@ verbatim[*]?
 \providecommand{\DIFaddend}{\protect\nogroupcolor{black}}
 \providecommand{\DIFdelbegin}{\protect\nogroupcolor{red}}
 \providecommand{\DIFdelend}{\protect\nogroupcolor{black}}
+\providecommand{\DIFmodbegin}{}
+\providecommand{\DIFmodend}{}
 %DIF END DVIPSCOL PREAMBLE
 
 %DIF COLOR PREAMBLE
@@ -5093,6 +5102,8 @@ verbatim[*]?
 \providecommand{\DIFaddend}{\protect\color{black}}
 \providecommand{\DIFdelbegin}{\protect\color{red}}
 \providecommand{\DIFdelend}{\protect\color{black}}
+\providecommand{\DIFmodbegin}{}
+\providecommand{\DIFmodend}{}
 %DIF END COLOR PREAMBLE
 
 %DIF LABEL PREAMBLE
@@ -5126,6 +5137,8 @@ verbatim[*]?
 \providecommand{\DIFaddend}{\global\advance\DIFcountere 1\relax\label{DIFchge\the\DIFcountere}}
 \providecommand{\DIFdelbegin}{\global\advance\DIFcounterb 1\relax\label{DIFchgb\the\DIFcounterb}}
 \providecommand{\DIFdelend}{\global\advance\DIFcountere 1\relax\label{DIFchge\the\DIFcountere}}
+\providecommand{\DIFmodbegin}{\global\advance\DIFcounterb 1\relax\label{DIFchgb\the\DIFcounterb}}
+\providecommand{\DIFmodend}{\global\advance\DIFcountere 1\relax\label{DIFchge\the\DIFcountere}}
 %DIF END LABEL PREAMBLE
 
 %DIF ZLABEL PREAMBLE
@@ -5159,6 +5172,8 @@ verbatim[*]?
 \providecommand{\DIFaddend}{\global\advance\DIFcountere 1\relax\zlabel{DIFchge\the\DIFcountere}}
 \providecommand{\DIFdelbegin}{\global\advance\DIFcounterb 1\relax\zlabel{DIFchgb\the\DIFcounterb}}
 \providecommand{\DIFdelend}{\global\advance\DIFcountere 1\relax\zlabel{DIFchge\the\DIFcountere}}
+\providecommand{\DIFmodbegin}{\global\advance\DIFcounterb 1\relax\zlabel{DIFchgb\the\DIFcounterb}}
+\providecommand{\DIFmodend}{\global\advance\DIFcountere 1\relax\zlabel{DIFchge\the\DIFcountere}}
 %DIF END ZLABEL PREAMBLE
 
 %DIF ONLYCHANGEDPAGE PREAMBLE
@@ -5183,6 +5198,8 @@ verbatim[*]?
 \providecommand{\DIFaddend}{\global\booltrue{DIFkeeppage}\global\boolfalse{DIFchange}}
 \providecommand{\DIFdelbegin}{\global\booltrue{DIFkeeppage}\global\booltrue{DIFchange}}
 \providecommand{\DIFdelend}{\global\booltrue{DIFkeeppage}\global\boolfalse{DIFchange}}
+\providecommand{\DIFmodbegin}{\global\booltrue{DIFkeeppage}\global\booltrue{DIFchange}}
+\providecommand{\DIFmodend}{\global\booltrue{DIFkeeppage}\global\boolfalse{DIFchange}}
 %DIF END ONLYCHANGEDPAGE PREAMBLE
 
 %% FLOAT TYPES 
