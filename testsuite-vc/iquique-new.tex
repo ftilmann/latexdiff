@@ -1,0 +1,1643 @@
+% flatex input: [Iquique_DFG.tex]
+\documentclass[11pt]{article}
+\usepackage{ifthen}
+\newboolean{draft}
+% Uncomment for draft version (1.5 line spacing; \showfile and \note commands enabled)
+\setboolean{draft}{true}
+% Uncomment for proof version (Single line spacing; \showfile and \note commands disabled)
+%\setboolean{draft}{false}
+
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2.7cm]{geometry} % see geometry.pdf on how to lay out the page. There's lots.
+\geometry{a4paper} % or letter or a5paper or ... etc
+%\usepackage[utf8]{inputenc}
+\usepackage[xdvi]{graphicx}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage[english]{babel}
+\usepackage[right]{eurosym}
+\usepackage{sidecap}
+%\usepackage{currfile}
+\providecommand{\currfilename}{}
+\usepackage{color}
+\usepackage{textcomp}
+%\usepackage{comment}
+\usepackage{multicol}
+\usepackage{tikz}
+\usepackage{gantt}
+\renewcommand{\floatpagefraction}{0.55}
+
+\usepackage{datetime}
+
+\usepackage{helvet}
+\renewcommand*{\familydefault}{\sfdefault}
+\usepackage{sansmath}
+\sansmath
+
+
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+
+
+% Commands for draft version
+\ifthenelse{\boolean{draft}}{
+\newcommand{\showfile}{{\bf \tt \color{blue} \currfilename}}
+\newcommand{\note}[1]{{\it \color{red} #1}}
+\newcommand{\noteft}[1]{{\it \color{magenta} FT:#1}}
+\renewcommand{\baselinestretch}{1.5}
+}{
+% Final version
+\newcommand{\note}[1]{}
+\newcommand{\noteft}[1]{}
+\newcommand{\showfile}{}
+%\renewcommand{\baselinestretch}{1.5}
+}
+
+\renewcommand{\bibname}{Referencedsfgg}
+\setcounter{secnumdepth}{4}
+
+
+
+% \geometry{landscape} % rotated page geometry
+
+\def\newblock{\hskip .11em plus .33em minus .07em}
+
+
+% See the ``Article customise'' template for come common customisations
+
+\title{Antrag auf Sachbeihilfe \\[\baselineskip]
+Bündelantrag \\
+{\LARGE \textbf{P}isagua-Iquique \textbf{E}arthquake \textbf{S}equence, a \textbf{C}h\textbf{A}nce for \textbf{D}etailed \textbf{O}bservations of \textbf{S}eismogenesis
+(PESCADOS)} \\[\baselineskip]
+{\bfseries Project 3: \\
+Disentangling roles of stress, pore pressure and shaking from wavefields recorded during the 2014 Northern Chile earthquake sequence
+}}
+%\author{C. Sens-Schönfelder}
+%\date{\note{\today\ \  \currenttime}} % delete this line to display the current date
+\date{} % for comparison purporses time should not be appear.
+
+%%% BEGIN DOCUMENT
+\begin{document}
+
+
+\maketitle
+%\tableofcontents
+%\newpage
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+\section*{Applicants}
+
+% flatex input: [000_antragsteller.tex]
+\showfile
+
+\noindent Prof. Dr. Serge A. Shapiro\\
+Freie Universit\"at Berlin\\
+Professor, permanent\\
+\\
+\noindent Dr. J\"orn Kummerow\\
+Freie Universit\"at Berlin\\
+Senior Researcher, permanent\\
+\\%}
+\noindent Prof. Dr. Frederik Tilmann\\
+Freie Universität Berlin und \\
+Helmholtz-Zentrum Potsdam, Deutsches GeoForschungsZentrum (GFZ)\\
+Professor, permanent\\
+\\
+\noindent Dr. Christoph Sens-Schönfelder\\
+Helmholtz-Zentrum Potsdam, Deutsches GeoForschungsZentrum (GFZ)\\
+Senior Researcher, permanent\\
+% \\
+
+
+% \noindent Prof. Dr. Serge A. Shapiro (FUB: professor, permanent), Dr. J\"orn Kummerow (FUB: senior researcher, permanent)\\
+% Prof. Dr. Frederik Tilmann (GFZ and FUB: professor, permanent), Dr. Christoph Sens-Schönfelder (GFZ: senior researcher, permanent)\\
+% {\footnotesize (FUB: Freie Universität Berlin; GFZ: Helmholtz-Zentrum Potsdam, Deutsches GeoForschungsZentrum) }
+
+% flatex input end: [000_antragsteller.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+% flatex input: [010_summary.tex]
+\subsection*{Summary}
+\showfile
+
+Despite our general understanding of the macroscopic circumstances that generate large earthquakes, significant uncertainties exist about the internal processes in the material that hosts the rupture. However, these local processes are the crucial component that govern the evolution of a rupture into a large earthquake.
+
+The earthquake sequence in northern Chile that culminated in the April 1st 2014 Iquique earthquake ($M_W$ 8.1)  represents an exceptional opportunity for the investigation of such deformation and damage processes in a subduction zone because of its extended foreshock sequence, which was captured alongside the main shock by the Integrated Plate boundary Observatory of Chile (IPOC). %, a permanent plate boundary observatory in Northern Chile. 
+Well monitored plentiful seismicity in the preparation phase of the large event is interesting in itself as it provides a unique opportunity to study the preparatory phase of an imminent great earthquake. In addition, as the foreshock and aftershock sequences partially overlap, the fault zone is illuminated in a similar way before and after the earthquake, easing both the study of the static structure as well as its variability.  Such a possibility is lacking in most of the sequences previously investigated with the methods proposed here.
+
+To constrain the dominant factors influencing seismogenesis during the Iquique earthquake sequence we use seismic interferometry and waveform processing in three directions: (A) high precision seismicity mapping, (B) tomographic structural imaging, and (C) detection of temporal material changes. A joint analysis will interpret the results in terms of stress, pore pressure variations and impact of shaking. High precision waveform-based event relocation will delineate areas of activity and identify clusters of repeating events in order to understand the distribution of asperities and their possible variability through time. Waveform analysis will be used to better constrain the depth of the predominantly offshore seismicity, crucial for understanding the partition of deformation between the overriding plate, the plate interface and the downgoing plate. Also, a catalogue of repeating events forms the basis for the application of coda wave interferometry and determination of time-dependencies in double-difference S minus P travel times.
+%, which can indicate changes in the medium due to stress changes, fluid redistribution or damage in the fault zone or at the surface.
+Finally, ambient noise interferometry will be used to infer the static shear velocity structure from surface wave tomography but also to infer time-dependent changes.
+%complementing the measurements from repeating events, but being more sensitive to surficial effects such as shaking-induced damage and thermal or hydrological stressing. 
+
+This project is part of a research consortium and a rationale for the whole project bundle is provided in a summary paper attached to this application.
+\vspace*{\baselineskip}
+\textbf{Die Trennung der Einflüsse von Spannung, Porendruck und Erschütterung mittel Wellenform Aufzeichnungen während der Erdbebensequenz in Nord-Chile 2014} 
+
+Trotz unseres generellen Verständnisses der makroskopischen Umstände, die zu starken Erdbeben führen, gibt es grosse Unsicherheiten über die internen Prozesse in dem Material, das die Verwerfung beherbergt. Dabei sind die lokalen Prozesse eine kritische Komponente, die die Entwicklung eines Bruches in ein grosses Erdbeben steuern.
+
+Die Erdbebensequenz, die in dem Iquique Beben ($M_W$~8.1) vom 1. April 2014 gipfelte, bietet aufgrund der ausgedehnten Vorbebensequenz, die neben dem Hauptbeben vom Integrated Plate boundary Observatory Chile (IPOC) aufgezeichnet wurde, eine hervorragende Möglichkeit für die Untersuchung solcher Deformations- und Schädigungsprozesse in einer Subduktionszone. Die reichliche und hervorragend überwachte Seismizität in der Vorbereitungsphase des Hauptbeben ist als solche bereits hochinteressant, da sie die einzigartige Möglichkeiten bietet, die Entstehungsphase eines bedeutenden Erdbebens zu studieren. Darüber hinaus wird die Verwerfungszone durch die sich teilweise räumlich überlappenden Vor- und Nachbebensequenzen in ähnlicher Weise ausgeleucht was sowohl die Untersuchung statischer Strukturen wie auch deren zeitlicher Veränderungen ermöglicht. In den meisten Erdbebensequenzen die bisher mit den hier vorgeschlagenen Methoden untersucht wurden, fehlt diese Möglichkeit.
+
+Um die dominierenden Faktoren zu untersuchen, die die Seismogenese während der Iquique-Sequenz beeinflussten, benutzen wir Seismische Interferometrie und Wellenform Prozessierung in drei Richtungen: (A) hochgenaue Seismizitätslokalisierung, (B) tomografische Strukturabbilung, (C) Detektion zeitlicher Materialveränderungen. Eine gemeinsame Analyse wird die Ergebnisse in Hinsicht auf Spannung, Porendruckänderungen und den Einfluss von Erschütterungen interpretieren. Präzise Wellenform-basierte Ereignis-Relokalisierung wird Bereiche hoher Aktivität und Cluster mit wiederholt auftretenden Beben abbilden, um die Verteilung von Asperities und deren mögliche zeitliche Variationen zu verstehen. Mittels Wellenformanalyse wird die Tiefe der hauptsächlich untermeerischen Seismizität eingegrenzt, die für das Verständnis der Aufteilung der Deformation zwischen subduzierender Platte, Grenzfläche und subduzierter Platte ausschlaggebend ist. Ebenso bildet der Katalog mit wiederholt auftretenden Ereignissen die Grundlage für die Anwendung der Kodawelleninterferometrie und der Bestimmung von Zeitabhängigkeiten in Doppel-Differenz S minus P Laufzeiten. Schließlich wird die Interferometrie des Umgebungsrauschens genutzt um die Geschwindigkeitsstruktur der Scherwellen mittels Oberflächenwellentomographie  aufzulösen und ihre zeitlichen Veränderungen zu bestimmen.
+
+Dieses Projekt ist Teil eines Forschungsverbundes. Das Konzept des Gesamtprojektes liegt dem Antrag in Form einer Projektübersicht bei.
+% MORE DETAILED VERSION:
+% A detailed investigation of how clusters change their activity during the sequence might be able to provide information on stress redistribution or the localised activation of parts of the fault surface.  High resolution locations could shed light on the location of asperities which control the nucleation and rupture propagation of large events. A detailed spatio-temporal analysis of the precursory seismicity may help to identify the triggering mechanism of the mainshock (e.g., do we observe seismicity patterns typical for fluid movement and hydraulic fracturing)?  Finally, knowledge of the depth is crucial for understanding the partition of deformation between the overriding plate, the plate interface and the downgoing plate.
+% 
+% A catalogue of repeating events and event clusters is also the basis for the application of coda wave interferometry that will be used to identify changes of material properties in the source volume. Furthermore, we will map temporal variations of seismic velocities (Vp/Vs ratio) in the source region based on double-differences of P and S travel times. Stress changes, fluid redistribution or the generation/displacement of cracks cause tiny changes in the wave field that can only be observed with interferometric methods in the long propagating coda wave field.
+% Ambient noise interferometry will be used for targets B and C defined above. Auto- and cross-correlation functions of ambient seismic noise will be calculated for the whole network and a time span including the preparatory phase and the aftershock sequence. In the first instance these will be used to infer (static) shear velocity structure from surface wave tomography.  This structure can serve as a constraint for shallow layers in body wave tomography and other seismological structure investigations. The time-dependent variations will complement inferences about changes in the source volume obtained form the coda of repeating events. These are likely to result from a superposition of tectonically induced changes such as stress variations and surficial effects (shaking induced damage, thermal or hydrological stressing). 
+
+% flatex input end: [010_summary.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+
+\clearpage
+
+\section*{Project Description}
+
+\section{State of the art and preliminary work}
+% flatex input: [100_state_of_the_art.tex]
+\subsection{State of the Art}
+\showfile
+
+
+Great earthquakes with displacements of several metres %along the fault interface
+dramatically change the physical state of the surrounding lithosphere, as can be trivially seen from the rich aftershock sequences they generate.
+Postseismic ground deformation affects large areas as afterslip and viscoelastic relaxation return the system to its  background state of interseismic stress accumulation. From laboratory experiments it is well known that elastic properties vary as a function of stress \citep[e.g.][]{shapiroKaselow2005}, and therefore it should be possible to use seismological measurements to infer the changes in stress after a large event, and possibly even the stress buildup in the preseismic phase, but expected changes are small requiring waveform cross correlation and interferometry for precise measurements.  Another important agent of both time-dependent changes of elastic properties and the pattern of seismicity are fluids through their effect on pore pressure. This might be true in particular for subduction zone earthquakes where large amounts of water are subducted, mostly bound up in hydrated minerals \citep{hacker03b,moore01}. A sudden increase in permeability 
+caused by a large rupture could cause a migration of free fluids into the forearc. Intriguing changes of elastic properties were observed very recently by \citet{Brenguier2014} along the volcanic front of Japan in response to the Tohoku event. These changes were attributed to the relaxation of pressurized fluids.
+
+Damage in the fault zone is another process likely to both change elastic properties, and reorganise the plate interface by creating or destroying minor asperities. Finally, shaking-induced damage to the shallow surface has a large effect on seismological measurements because this is where the instruments are generally placed.
+
+These mechanisms are all plausible but quantifying their importance has been surprisingly difficult. Whereas by now coseismic velocity changes, mostly velocity drops, have been documented conclusively even for moderate size earthquakes (e.g. Parkfield 2004, $M_W=6.0$ --- \citealp{brenguier_etal_Science_08}; 2004 Niigata $M_W=6.6$ --- \citealp{wegler09}), the velocity changes observed with surface waves have often been tiny (tenths of a percent, strongly dependent on frequency). In constrast, deconvolution analysis between records of borehole and surface changes identified coseismic drops of velocity of the order of several percent in the uppermost 100 metres \citep{Sawazaki2009,Nakata2011,takagi_etal_JGR_12}. %, and to determine their depth would require measurements over a range of frequencies, often not available at sufficient time-resolution.
+Although it is difficult to observe changes, which have no obvious surface manifestation such as fluid migration from the fault zone a number of investigations located the cause of detected changes at a significant depth \citep{froment_etal_GRL_13, rivet_etal_GRL_11, hobiger_etal_JGR_12}. \citet{husen01_geology} reported
+a postseismic reduction in $V_S$ following the 1995 Antofagasta earthquake that was claimed to have lowered the $V_P/V_S$ ratio in a 50 km wide secion of the forearc by a few percentage points.%However, this study was based on comparing two tomographic images compiled from two periods of aftershock data, such that one cannot confidently exclude an artifact of the non-identical event set. 
+
+The $M_W=8.1$ earthquake which nucleated on April 1, 2014 near the coastal village of Pisagua was expected in the sense of having occurred in a well-publicised seismic gap \citep{comte91}. The region was therefore well monitored with a network of observatory grade seismological and geodetic stations at the time of the earthquake.% (see section \ref{sec:ipoc}).
+A remarkable aspect of this earthquake is the fact that it was preceded by several earthquake swarms, beginning with moderate size swarms in July 2013 and January 2014, and a very active phase of foreshock activity starting two weeks before, but continuing up to the mainshock \citep{ruiz14,schurr2014,hayes2014}. The swarms are dominated by plate interface earthquakes, but also show significant activation of the forearc, including the largest foreshock event ($M_W=6.7$ on March 16). The foreshocks occupy a broad area just updip of the coseismic slip maximum, and the same area hosts strong aftershock activity. This configuration thus provides a rare opportunity to study pre- co- and post-seismic processes and structural changes using multi-event methods with a high temporal resolution.
+%The margin in Northern Chile is characterised by a sediment-starved trench and active subduction erosion. 
+%\note{CS: Analysis of the seismicity pattern in the after shock sequences of large thrust events recently revealed ... . They allow to ... }
+The remarkable seismicity record also ideally qualifies this sequence for for an analysis of the spatio-temporal seismicity patterns. %We concentrate here on inferring regional stress drop from the frequency-magnitude distribution and on the identification of signatures of pore-pressure diffusion \citep{shapiro:2011}, whereas other aspects of statistical seismology are examined in project 2.\noteft{Comment by Ben Heit :state somewhere that a large seismic potential remains in the gap}
+
+With this proposal we attempt to separate the different processes and source regions of velocity changes by combining several different approaches to measuring seismic velocity, and combine these observation with observations from seismicity patterns.  We concentrate here on inferring regional stress drop from the frequency-magnitude distribution and on the identification of signatures of pore-pressure diffusion \citep{shapiro:2011} (other aspects of statistical seismology are examined in project 2).\noteft{Ben:state somewhere that a large seismic potential remains in the gap}. To this end we will carry out high resolution relocations and cluster analysis of fore- and aftershock sequences, which is also a pre-requisite for the event-based velocity-change detection approaches.
+%In the following section we will first review the mechanisms which might cause seismic velocity changes and then review  the different measurement methods, by which seismic velocity changes can be detected. \note{CS: Shouldn't we include something on WPs2.X here?}
+
+\subsection*{Possible processes}
+
+\begin{description}
+ \item[Large scale stress changes]
+\label{sec:stress}
+%One of possible mechanisms of the seismic velocity changes is the 
+%following.
+During a strong thrust event a significant release of the 
+compressive stress component (the average of the principal tectonic 
+stresses) occurs. On the one hand this stress release must be correlated 
+with the stress drop of the main shock and also with geodetic observations of strain at the free surface. 
+On the other hand, a release of the compressive stress causes a 
+decrease of elastic stiffnesses, and of seismic velocities, 
+respectively. 
+\cite{shapiro:2003a} proposed a quantitative approach (so-called 
+piezo-sensitivity formalism)  describing the dependence of elastic 
+stiffnesses and
+elastic seismic velocities on the differential pressure $P_d$ (the 
+difference between the confining compressive stress and 
+and the pore pressure). This formalism can be 
+directly applied to describe a seismic velocity reduction as a function 
+of  a release of a confining compressive stress.
+This approach was further generalized by \cite{shapiroKaselow2005} to 
+the case of a tensorial tectonic stress and anisotropic rocks.
+In poroelasticicty theory,  elastic moduli
+as well as porosity depend to first approximation only on
+the difference between the confining tectonic stress and
+pore pressure. However, in general, both the confining
+stress tensor and the pore pressure must be taken into
+account as independent variables. The stress-dependent
+geometry of the pore space fully controls the stress-induced
+changes in elastic moduli and seismic velocities.
+Specifically, the compliant pore space (low-aspect-ratio voids like 
+fractures) plays the most
+important role, despite the fact that in many rocks the
+compliant porosity is a very small part of total porosity.
+Changes in compliant porosity with pressure and stress
+explain the behaviour of elastic moduli often observed in the laboratory that
+in the low compressive stress regime (below several tens of MPa)
+moduli and velocity increase rapidly with differential pressure and then taper exponentially
+into a flat and linear increase with increasing load (see Figure 
+\ref{fig_ktb_velocities}):
+\begin{equation}
+c(P_d)= A_c + K_c P_d - B_c\exp{(-P_d D_c)},
+\label{expo}
+\end{equation}
+\noteft{Is this equation now valid for moduli or velocities. In general it should not have the same functional form and relationship depends on the behaviour of density}
+The  coefficients $A_c, K_c, B_c$ and
+$D_c$ %of equation (\ref{expo})
+are parameters of the piezo-sensitivity
+theory. The parameter $A_c$ describes the elastic property $c$ in a rock 
+with closed compliant porosity and the stiff porosity in the unloaded 
+configuration. The second (linear) term on the right-hand side describes 
+the effect of the changing stiff porosity and the third (exponential) 
+term describes the effect of the changing compliant porosity. To a good 
+approximation the exponent $D_c$ is nearly the same for all elastic 
+moduli and velocity.
+
+\begin{SCfigure}%[htp!]
+         \centering
+ %\mbox{
+ \includegraphics[width=0.5\textwidth]{bilder/403Cli515P-wavesFit}
+ %\includegraphics[width=0.5\textwidth]{bilder/403Cli515S-wavesFit}}
+            \caption{\footnotesize Measurements (dots) of quasi P-wave velocities %(left) and quasi S-wave velocities (right)
+    of a dry, metamorphic rock sample from the German KTB deep borehole.
+    Velocities were measured %in three
+    %orthogonal directions 
+    in laboratory experiments by \citet{Kern90} and \citet{Kern91}; similar patterns were found for quasi-S waves.
+    Best-fit lines corresponding to equation (\ref{expo})
+    with different coefficients $A_c, K_c, B_c$
+    reveal nearly the same
+      value of the parameter $D_c = 0.026$ MPa$^{-1}$. \citep[After][]{shapiroKaselow2005}.}
+                   \label{fig_ktb_velocities}
+	        \end{SCfigure}
+	        
+In the SAFOD borehole (San Andreas Fault Observatory in California), a stress sensitivity of $2.4\!\times\!10^{-7} \mbox{Pa}^{-1}$ was inferred based on in situ measurements of seismic velocities at 1 km depth in response to barometric pressure variations \citep{niu08}. In the field, it is often not straightforward to attribute the observed temporal changes in elastic properties to a single cause. However, there appears to be rough agreement between the areas where the shear stress has been reduced and where the largest velocity differences have been observed, even though the stress sensitivity inferred from seismological observation is typically much smaller. For example, for the 2008 Wenchuan earthquake \citet{chen10_grl} inferred a stress sensitivity of only $5\!\times\!10^{-8}\mbox{Pa}^{-1}$ from a comparison of the mapped velocity decreases and the stress change predicted from coseismic slip models.
+
+For truly large earthquakes such as the megathrust earthquakes along the Sumatran margin, the affected zone can be hundreds of km away from the fault zone and time-dependent shifts are observable from rather long period ambient noise \citep[e.g. 4-50 s in][]{xu09}, whose sensitivity is concentrated in the crust or within deep sedimentary basin rather than the near-surface layers.%\noteft{THis study might be a bit dodge because they use direct waves}
+
+ A further observation supporting an important role of stress is the close correspondence of the decay functions that govern both the recovery from coseismic velocity drops and the  afterslip acting along the plate interface, which is recorded by GPS stations in the near and far field of the fault \citep{brenguier_etal_Science_08}. Sometimes, a major earthquake does note even seem to be required, as a velocity drop has also been observed in conjunction with a slow-slip event in Mexico \citep{rivet_etal_GRL_11}. A surprising observation in this context is the virtual absence of coseismic velocity increases, which would be expected in areas loaded by the fault displacement of large earthquakes; one exception was reported by \citet{zhao12} who observed a short-lived velocity increase in an area of predicted increased stress following the Wenchuan earthquake.   
+ 
+ 
+ \item[Fluid migration at depth]
+
+	 Although the fluids contained between the grains of unconsolidated sediments are mostly squeezed out in the first few kilometres of subduction, a large amount of mobile water is potentially available at seismogenic depths from dehydration of hydrous minerals in sedimentary and igneous rocks %\note{JK: replace 'minerals' by 'rocks'} 
+	 at increasing pressures and temperatures \citep{hacker03b}. The fault gouge in the damage zone around the main plate interface can become impermeable, allowing significant overpressures to build up. If the fault seal is broken, pore fluid diffusion into the forearc will increase pore pressures there.
+	 Such a seismically induced breaking of a hydrological seal has been documented based on seismicity patterns following moderate size thrust earthquakes in Italy \citep{miller04}; the `fluid' in that example had been CO$_2$.
+	 A linear diffusion of the pore pressure in water- saturated rocks of the subduction channel as  a possible reason of aftershocks of the 1995 Antofagasta earthquake was also considered in \cite{shapiro:2003}.
+An increase in pore pressure can also arise directly from the coseismically induced compression of the forearc similar to the pore pressure changes observed in strike-slip events \citep{Jonsson2003}.
+ Coseismically induced pore pressure increases are also important for the long term evolution of the margin geometry because hydrofracturing of the lowermost margin framework has been proposed to be an important driver for basal subduction erosion \citep[e.g.,][]{ranero08,sallares05}. 
+ 
+ In general the effect of fluids on seismic velocities depends strongly on the pore geometry \citep{takei02}: the ratio of relative velocity changes in $S$ and $P$ waves, ${d\ln V_S}/{d\ln V_P}$ is around 1 for spherical pores, whereas it reaches 
+ values of 2 for situations, where the fluid fraction occupies a fracture network. Laboratory experiments on samples of oceanic and continental rocks demonstrated that both P and S velocities are lowered by increasing pore pressure (at constant confining pressure). Because this effect tends to be stronger for P waves than for S waves, the $V_P/V_S$ ratio also increases with pore pressure \citep{christensen84,peacock11}.
+ This is explained by two factors: the direct impact on elastic moduli and the porosity increase.
+ %DISCARDED MORE DETAILED TEXT:
+ %under variable confining and differential pressures demonstrated that the velocities depended on both confining and differential pressure in such a way that increases in confining pressure (at constant differential pressure) resulted in increased velocities and increases in differential pressure (at constant confining pressure, implying decreasing pore pressure) would lower velocities \citep{christensen84,peacock11}. However, increasing pore pressure has a larger effect on S wave velocities than on P velocities, with the net effect that increased pore pressure leads to an increase in $V_P/V_S$ ratio. 
+ Although the pressure range explored in lab experiments is limited to that of the upper crust, %($<$200\,MPa confining pressure, $<\sim$8\,km depth), 
+ the obtained relationships have been extrapolated to larger depths in many studies \citep[e.g.][]{kato10,kodaira04} in order to interpret increased $V_P/V_S$ ratios along the plate interface.  We follow these earlier works in assuming that an increase in $V_P/V_S$ ratios, i.e., an increase in the Poisson ratio, can be interpreted as signature of an increased fluid overpressure.
+ 
+ The inferred fluid overpressures from high $V_P/V_S$ ratios near the plate interface have been related  to transitional frictional behaviour such as episodic tremor and slip and non-volcanic tremor \citep{kodaira04}.  This type of transitional behaviour is not observed at the Iquique margin (leaving aside postseismic afterslip).% and there are no significant trench-sediments.
+ However, to our knowledge, \citet{husen01_geology} remain the only ones to have claimed a detection of a sharp increase in the bulk $V_P/V_S$ ratio of the forearc following a megathrust earthquake; this observation was made in the Antofagasta segment just 300 km to the south of the Iquique event, in a very similar tectonic environment.  In this case the proposed change occurred during the postseismic period of the Antofagasta earthquake, which had a seismic moment comparable to that of the Iquique event.   Furthermore, the Iquique earthquake appears to have occurred within a region transitional between fully-locked and aseismically creeping \citep{schurr2014} and it has been hypothesized that these transitions in frictional behaviour are controlled by fluids \citep{moreno14}.
+  Therefore, seismicity migration patterns and $Vp/Vs$ ratio evolution (especially when considered jointly) can be valuable indicators of the fluid dynamics.
+  
+\item[Shaking-induced damage]
+Dynamic strain damages the subsurface. The most prominent example is liquefaction of sediments that completely lose their strength in response to the deformation caused by seismic waves. This process goes along with a drastic reduction of the shear wave velocity. Changes of the structural integrity of elastic materials as manifest in a reduction of the shear modulus can be observed to various degree in almost all materials. Such shaking induced damage has been observed for individual cracks in glass \citep{Zaitsev2003}, in granular \citep{Josserand2000} and composite material such as concrete \citep{TenCate2000, Tremblay2010}, and in geotechnical applications \citep{Mainsant2012a}. In all these cases the damage is related to processes occurring at the limbs of cracks or at the rims of grain contacts. A distinct characteristic of this damage process is the healing that occurs proportionally to the logarithm of time elapsed after the excitation.
+
+Very similar processes are observed in seismology. The co-seismic velocity drop that can be observed with surface waves above 1Hz  after almost every large earthquake has frequently been interpreted as near surface damage for two reasons: firstly, co-seismic velocity increases are observed extremely rarely\noteft{in stress change section paper with increasing velocities is mentioned}, and secondly high frequency measurements with passive image interferometry are sensitive to the shallow part of the subsurface only. With controlled experiments combining damage induced by a low frequency high amplitude vibrator truck with high frequency seismic probe waves the occurrence of near surface damage has been demonstrated even for moderate shaking by \citet{Johnson2009}. Using a station with high sensitivity to shaking installed in a sedimentary material close to Salar Grande in Chile we recently demonstrated that amplitudes of co-seismic velocity changes are proportional to the strength of the shaking, at a single site \citep{Richter2014} (Fig.~\ref{fig:PATCX}A). For the same station we can now show that the velocity decrease is not only caused by the largest strain experienced by the site but rather accumulates over time and is continuously counteracted by a recovery process that gradually re-increases the seismic velocity. This is illustrated in Fig.~\ref{fig:PATCX}B  showing the velocity variations observed at station PATXC in Chile and a model prediction based on integrated absolute acceleration and continuous recovery. The characteristic time for the exponential recovery scales with the size of the excitation resulting in a behaviour that is very similar to the log-time dependence observed in material science.
+
+\begin{figure}
+\begin{tabular}{cc}
+(A) & (B) \\ 
+\includegraphics[width=0.3\linewidth]{bilder/richter14-fig4mod} \includegraphics[width = 0.6\linewidth]{bilder/PATCX_model_10s} 
+\end{tabular}
+\caption{\footnotesize (A) Magnitude of seismic velocity drop as function of peak acceleration for single station in study region 
+\citep{Richter2014}
+(B) Variations of seismic velocity  (unpublished by Gassenmeier, Sens-Schönfelder et al.). Top: total observed velocity change (blue dots) and correlation with long term reference as color in the background. White line represents the model accounting for shaking induced and seasonal changes. Middle: Isolated shaking related velocity changes (as in A), which decay exponentially. Bottom: isolated seasonal changes. }
+\label{fig:PATCX}
+\end{figure}
+
+By analogy with material sciences the analysis of shaking induced damage in the subsurface can  improve the subsurface characterization. For concrete it has been shown, that the sensitivity  to shaking is stronger in previously damaged material\citep{Tremblay2010}. So the sensitivity of the seismic velocity to shaking is a novel medium parameter that might be related to the crack size distribution or cohesion.% which are relevant parameters of geotechnical applications that rely on estimates of the strength of geomaterials.
+
+ 
+ \item[Thermal and hydrological effects]
+Seismic velocities are influenced by environmental conditions. The elastic moduli directly depend on temperature and thermal expansion induces stress changes that deform the material and induce velocity changes. Also, processes in the hydrological system affect seismic velocities. Such environmental processes are dominated by the seasonal cycle and introduce periodic signals in the seismic velocity measurements. \citet{Richter2014} find annual and daily periodicities in velocity changes in northern Chile (see Fig.~\ref{fig:PATCX}B for annual signal). Both signals were modelled with a thermoelastic model based on changes of air temperature. \citet{tsai_JGR_11} compare the impact  of hydrologic loading and thermally induced velocity changes by including GPS displacements in the analysis. Periodic displacements as required by the the model of \citet{Richter2014} are also found in GPS and strain signals in Chile (pers. comm. P. Victor and M. Moreno).
+
+Clear correlations between ground water level changes and variations of seismic velocities where shown by \citet{sens-schoenfelder_wegler_GRL_06} and \citet{Gassenmeier2014}. However, the hydrological system is not only governed by precipitation and drainage but it is also influenced co-seismically in the vicinity of the fault \citep{Jonsson2003} as documented by wells changing productivity or even turning artesian. 
+\end{description}
+
+
+\subsection*{Methods for detecting velocity changes}
+
+\begin{description}
+\item[Temporal variability of P and S arrival time differences]
+	Precise measurements of differential P and S arrival times for pairs of clustered earthquakes can be used to estimate the local $Vp/Vs$ ratio \citep{Lin2007}. This method has potentially a higher resolution of the $Vp/Vs$ ratio in the source region than standard tomographic methods. The estimated absolute $Vp/Vs$ values, however, may be biased by significant $Vp/Vs$ variations along the path from the source to the receivers and by the limited distribution of the events.
+In order to mitigate the latter effect, \cite{bloch:2014a} relaxed the restriction to similar event clusters by using a clusterization algorithm based on Voronoi volumes.
+
+In this proposal, we are particulary interested in resolving temporal $Vp/Vs$ changes, which are less affected by the event-receiver configuration than the absolute $Vp/Vs$ values. Waveform cross correlation of highly similar, collocated event groups which were active during both the foreshock and aftershock sequences allows to determine the differential arrival times at subsample accuracy and to resolve even small-scale $Vp/Vs$ variations with time.
+
+\item[Coda wave interferometry]
+Subtle changes in a medium illuminated by elastic waves can be detected precisely with coda wave interferometry \citep[CWI, ][]{poupinet_etal_JGR_84,Snieder2002,Snieder2006}. This technique uses seismic waves that are scattered at small heterogeneities and thus propagate in the target medium for much longer times than direct waves -- thereby generating the coda of earthquake records. Despite their complexity coda wave trains are deterministic signatures of the propagation medium. The waveforms recorded by a certain source receiver configuration are perfectly repeatable. In seismology the practical difficulty is the occurrence of identical earthquakes -- so called repeaters. In aftershock zones, however, such repeaters are a common feature \citep{yu13_repeating} generated by individual asperities that rupture multiple times in the same stress field. 
+
+Analysis of the perturbations of coda wave trains from such repeaters allow the measurement of tiny perturbations in the medium. Two fundamental observations can be made by comparing the waveforms $S_1$ and $S_2$ of a pair of repeaters. As expressed in equation~\ref{eq:CWI} these are the delay times $\tau(t)$ of waveform segments at different lapse times $t$ in the coda and the similarity of the these segments after correction of the delay $cc_{\mbox{max}}(t) = \mbox{max}_\tau(cc(t,\tau))$ with:
+\begin{equation}
+cc(t,\tau) = \int\limits_{t-\delta t/2}^{t+\delta t/2}S_1(t')S_2(t'+\tau) dt'.
+\label{eq:CWI}
+\end{equation} 
+
+Knowing the delay and the waveform correlation at a set of lapse times allows to discriminate the effects of tiny velocity changes and local impedance changes caused by the creation of cracks \citep{Larose2010}. Also the effect of slight differences in the source locations can be identified \citep{Snieder2005,Kummerow2010}.
+
+In the case of a volumetric change of velocities the time delay in the coda is amplified by the long propagation times resulting in a phase shift that is easier to detect than a faint change of the direct wave. If in contrast the material change is a strong localized perturbation, which we can think of as a new scatterer, it will be sensed by the diffusive scattered coda wavefield and results in a reduction of the correlation coefficient over a range of lag times.
+%that sample an extended volume whereas the perturbation does only affect direct waves if is located on the propagation path. 
+This high sensitivity comes at the price of degraded spatial resolution. In contrast to the spatial sensitivity of direct wave measurements along the ray the coda wave sensitivity is spread out but peaked at the source and receiver locations \citep{pacheco_snieder_JASA_05,planes_etal_WCRM_14,obermann13}. The use of repeating events on the fault plane therefore provides a high sensitivity to processes within the fault volume and makes CWI an ideal tool  to investigate dynamic processes in the fault area during fore- and aftershock sequences with a high rate of repeating events.
+
+
+\item[Ambient noise cross-correlation methods]
+A systematic challenge for CWI is its dependence on perfectly repeatable sources. This results in a limited and uncontrolled temporal sampling in seismological applications using repeating earthquakes. To mitigate this dependence we propose to also use ambient noise correlation functions as approximations of interstation Green's functions as input for coda wave interferometry \citep{sens-schoenfelder_wegler_GRL_06}. This methodology combines the high sensitivity of CWI for weak or small perturbations in the target medium with the possibility for temporally continuous measurements provided by the permanent availability of ambient seismic noise.
+Spectacular observations were made with this methodology in fault zones, volcanoes and sedimentary basins \citep{sens-schonfelder_etal_JVGR_14,Brenguier2014,Richter2014}.
+Some studies also make use of the direct Rayleigh or other surface wave in ambient noise correlation stacks for inferring time-dependent shifts \citep[e.g.][]{xu09}. In case of PII where both sensors are places at the surface measurements are most sensitive to near surface effects but can reach mid-crustal depth when low frequency cross-correlations are used \citep{rivet_etal_GRL_11, froment_etal_GRL_13}.
+
+ %This method is less accurate, though, as the phase of the direct wave is much more strongly influenced by the distribution of noise sources, which is often highly non-uniform and seasonally dependent.
+
+\end{description}
+
+\subsection{Preliminary work}
+
+\begin{figure}
+\includegraphics[width=8cm]{bilder/NChile_big}
+\caption{\footnotesize Overview of the seismic stations, which will be used for the work proposed here.}
+\label{fig:map}
+\end{figure}
+
+\subsubsection{Data acquisition}
+\label{sec:ipoc}
+
+Beginning in 2007, the GFZ group has, together with its French and Chilean partners, installed and operated a network of seismic stations in the area of the Iquique seismic gap, which by now encompasses 19 active stations, all equipped with STS2 broadband sensors (Fig.~\ref{fig:map}). Because the vaults for most stations have been carved out of bedrock and because of the low population density and hyper-arid climate this network exhibits very low noise levels. Each of the IPOC stations is also equipped with an accelerometer to record large earthquakes without clipping.
+18 of the IPOC stations were operational during the Iquique earthquake, and its foreshock and aftershock sequence, ensuring continuity of recording.
+
+A few days after the Iquique earthquake (as soon as the availability of cargo space and the necessary customs paperwork allowed) members of our working group (G. Asch, B. Heit) travelled to Northern Chile and installed an additional 23 seismometers (17 Trillium Compact and 6 Mark 1Hz instruments), which are still operational at the time of proposal submission. Six of the stations will be recovered in March 2015, and the remainder will be operated until autumn 2015 to maximise the overlap with the ocean bottom instruments deployed by GEOMAR in December 2014.
+
+%\note{JK
+%Preliminary work:\\
+We have  been involved in the planning and installation of the Mejillones Peninsula seismic monitoring network (MEJIPE) in June 2013, which is a collaboration with the Universidad Cat\'olica del Norte, Antofagasta, Chile. The FU Berlin provided eight of the 23 MEJIPE stations.
+Continuous waveform data are available to us at FU Berlin.\\[0.2cm] 
+%} % end note JK
+%\noteft{What about the time period after October 2014 for MEJIPE. THis is quite relevant as the OBS were only deployed in December}
+
+Data sharing has been agreed by all groups participating in the North Chilean field activities so we also have access to the data acquired by the temporary deployments of the University of Santiago, the University of Liverpool, and the GEOMAR OBS data (see project 1 proposal for more details on OBS data). Some early analysis of IPOC data following the Iquique earthquake has already been described briefly in the ``State of the Art'' section \citep[and Gassenmeier et al., in preparation]{schurr2014}. The automatic catalogue constructed by \citet{schurr2014} has since been extended to include the whole period 2007 to the present day, and will form the basis to select events for more precise catalogues as described below.
+
+
+%\note{Preliminary earthquake catalogue (work by Bernd Schurr)}
+
+
+%\note{Initial analysis of velocity variations with auto-correlation method (Tom's paper, maybe ongoing Martina's work}
+
+
+%\note{Generic summary of experience of PIs}
+
+% flatex input end: [100_state_of_the_art.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+\subsection{Project-related publications}
+% flatex input: [110_publications.tex]
+\subsubsection{Articles published by outlets with scientific quality assurance, book publications, and works accepted for publication but not yet published.}
+\showfile
+
+% \note{fjt: 10 publications; we can add a few more and then decide which ones to cut}
+% \noteft{FU: reduce to 5 publications so we have an even split}
+% \noteft{Um den Gesamtumfang zu kürzen, habe ich jetzt mal fünf der FU Publikationen ausgewählt - die anderen stehen noch als Kommentare im .tex falls Ihr mit meiner Auswahl einverstanden seid}
+
+
+%\bibliographystyle{apalike}
+%\begin{thebibliography}{}
+{\footnotesize
+\setlength{\bibsep}{0pt plus 0.3ex}
+
+\renewcommand{\section}[2]{}%
+%\providecommand{\newblock}{}
+%\renewcommand{\bibitem}[2][]{}%\noindent}
+\begin{thebibliography}{}
+\bibitem[Bloch et~al., 2014a]{Bloch2014}
+Bloch, W., Kummerow, J., Salazar, P., Wigger, P., and Shapiro, S.~A. (2014a).
+\newblock {High-resolution image of the North Chilean subduction zone:
+  seismicity, reflectivity and fluids}.
+\newblock {\em Geophysical Journal International}, 197(3):1744--1749.
+
+\bibitem[Buske et~al., 2002]{buske:2002}
+Buske, S., L\"uth, S., Meyer, H., Patzig, R., Reichert, C., Shapiro, S.,
+  Wigger, P., and Yoon, M. (2002).
+\newblock Broad depth range seismic imaging of the subducted {Na}zca slab,
+  {N}orth {C}hile.
+\newblock {\em Tectonophysics}, 350(4):273--282.
+
+\bibitem[Kummerow, 2010]{Kummerow2010}
+Kummerow, J. (2010).
+\newblock {Using the value of the crosscorrelation coefficient to locate
+  microseismic events}.
+\newblock {\em Geophysics}, 75(4):MA47--MA52.
+
+% \bibitem[Kummerow et~al., 2004]{kummerow2004}
+% Kummerow, J., Kind, R., Oncken, O., Giese, P., Ryberg, T., Wylegalla, K.,
+%   Scherbaum, F., and TRANSALPWorkingGroup (2004).
+% \newblock A natural and controlled source seismic profile through the Eastern
+%   Alps: TRANSALP.
+% \newblock 225:115--129.
+
+\bibitem[Shapiro, 2003]{shapiro:2003a}
+Shapiro, S. (2003).
+\newblock Elastic piezosensitivity of porous and fractured rocks.
+\newblock {\em Geophysics}, 68:482--486.
+
+
+% \bibitem[Shapiro et~al., 2003]{shapiro:2003}
+% Shapiro, S., Patzig, R., and Rothert, E. (2003).
+% \newblock Triggering of seismicity by pore-pressure perturbations:
+%   Permeability-related signatures of the phenomenon.
+% \newblock {\em Pure appl. geophys.}, 160:1051--1060.
+% 
+% 
+% \bibitem[Shapiro et~al., 2002]{shapiro:2002}
+% Shapiro, S., Rothert, E., Rath, V., and Rindschwendtner, J. (2002).
+% \newblock Characterization of fluid transport properties of reservoirs using
+%   induced microseismicity.
+% \newblock {\em Geophysics}, 67:212--220.
+
+
+\bibitem[Shapiro et~al., 2011]{shapiro:2011}
+Shapiro, S., Kr\"uger, O., Dinske, C., and Langenbruch, C. (2011).
+\newblock Magnitudes of induced earthquakes and geometric scales of
+  fluid-stimulated rock volumes.
+\newblock {\em Geophysics}, 76, doi:10.1190/geo2010-0349.1:WC55--WC63.
+
+% \bibitem[Shapiro et~al., 2013]{Shapiro2013}
+% Shapiro, S.~a., Kr\"{u}ger, O.~S., and Dinske, C. (2013).
+% \newblock {Probability of inducing given-magnitude earthquakes by perturbing
+%   finite volumes of rocks}.
+% \newblock {\em Journal of Geophysical Research: Solid Earth},
+%   118(7):3557--3575.
+
+\bibitem[Schurr et~al., 2014]{schurr2014}
+Schurr, B., Asch, G., Hainzl, S., Bedford, J., Hoechner, A., Palo, M., Wang,
+  R., Moreno, M., Bartsch, M., Zhang, Y., Oncken, O., Tilmann, F., Dahm, T.,
+  Vicor, P., Barrientos, S., and Vilotte, J.-P. (2014).
+\newblock Gradual unlocking of plate boundary controlled initiation of the 2014
+  {I}quique earthquake.
+\newblock {\em Nature}, 512:299--302.
+
+% \bibitem[Lange et~al., 2012]{lange12}
+% Lange, D., Tilmann, F., Barrientos, S.~E., Contreras-Reyes, E., Methe, P.,
+%   Moreno, M., Heit, B., Agurto, H., Bernard, P., Vilotte, J.-P., and Beck, S.
+%   (2012).
+% \newblock Aftershock seismicity of the {27 February 2010 Mw 8.8 Maule}
+%   earthquake rupture zone.
+% \newblock {\em Earth Planet. Sci. Let.}, 317-318:413--425.
+
+\bibitem[Tilmann et~al., 2010]{tilmann10*}
+Tilmann, F., Craig, T.~J., Grevemeyer, I., Suwargadi, B., Kopp, H., and Flueh,
+  E. (2010).
+\newblock {The updip seismic/aseismic transition of the Sumatra megathrust
+  illuminated by aftershocks of the 2004 Aceh-Andaman and 2005 Nias events}.
+\newblock {\em Geophys. J. Int.}, 181:1261--1274.
+
+\bibitem[Richter et~al., 2014]{Richter2014}
+Richter, T., Sens-Sch\"{o}nfelder, C., Kind, R., and Asch, G. (2014).
+\newblock {Comprehensive observation and modeling of earthquake and
+  temperature-related seismic velocity changes in northern Chile with passive
+  image interferometry}.
+\newblock {\em Journal of Geophysical Research}, 119:1--19.
+
+\bibitem[Sens-Sch\"{o}nfelder et~al., 2014]{sens-schonfelder_etal_JVGR_14}
+Sens-Sch\"{o}nfelder, C., Pomponi, E., and Peltier, A. (2014).
+\newblock {Dynamics of Piton de la Fournaise Volcano Observed by Passive Image
+  Interferometry with Multiple References}.
+\newblock {\em Journal of Volcanology and Geothermal Research}, 276:32--45.
+
+\bibitem[Sens-Sch\"{o}nfelder and Wegler, 2006]{sens-schoenfelder_wegler_GRL_06}
+Sens-Sch\"{o}nfelder, C. and Wegler, U. (2006).
+\newblock {Passive image interferometry and seasonal variations of seismic
+  velocities at Merapi Volcano, Indonesia}.
+\newblock {\em Geophysical Research Letters}, 33(21):1--5.
+\end{thebibliography}
+}
+%\noteft{Christoph, I just put in some papers for you - I hope you agree otherwise modify}
+
+\subsubsection{Other publications}
+%\showfile
+NA
+
+\subsubsection{Patents}
+NA
+
+%\myparagraph{Pending}
+%\showfile
+%\myparagraph{Issued}
+%\showfile
+
+% flatex input end: [110_publications.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+
+
+\section{Objectives and work programme}
+\subsection{Anticipated total duration of the project}
+\showfile
+
+ 36 months
+
+\subsection{Objectives}
+% flatex input: [220_objectives.tex]
+\showfile
+
+% Our proposal aims at identifying and quantifying  temporal changes of material properties, stress and fluid redistribution during the foreshock and aftershock sequences of a large interplate earthquake.
+% We will exploit the unique dataset of the 2014 $Mw\,8.1$ Iquique earthquake sequence, which shows great promise to apply different methods for estimating temporal variations of seismic parameters as indicators of changes of stress field and fluid pressure.
+% In particular, we will use coda wave interferometry and high-precision differential arrival times to resolve temporal variations of the seismic velocities and the Poisson ratio. This is complemented by a novel approach to determine stress-sensitive source parameters  from the magnitude frequency distribution of observed earthquakes.
+
+Our proposal aims at quantifying and understanding the structural dynamics within the crust leading to, during and after a great megathrust earthquake. This includes the evolution of stress in the lithosphere and identifying signatures of possible fluid migration at depth. 
+We will exploit the dataset acquired during the 2014 $M_W\,8.1$ Iquique earthquake sequence, which is distinguished from most other great subduction earthquakes in the first place by its rich foreshock sequence but also the continuity of monitoring. 
+Within this proposal, we will apply coda wave interferometry to both repeating events and ambient noise derived empirical Green's functions and examine high-precision differential arrival times to resolve temporal variations of the seismic velocities and the Poisson ratio. In order to interpret observed seismic velocity changes in terms of changes to the stress field and possible fluid migration we will quantify the effect of near-surface changes induced by shaking or shallow hydrological and thermal effects. Furthermore, an improved understanding of the systematics of the sensitivity of shallow elastic properties to large earthquakes is interesting in its own right because of its potential to serve as another way to characterise surface properties.
+These approaches  are complemented by a novel approach to determine stress-sensitive source parameters from the magnitude frequency distribution of observed earthquakes. \note{CS: last sentence needs to be extended.}
+
+
+
+
+\subsubsection{Identifying signatures of fluid diffusion and near-fault processes}
+
+We will probe the hypothesis that large earthquakes drain fluids from the plate interface into the forearc crust by seeking to constrain   seismic velocity changes in the near-source region and the forearc.
+%\noteft{Challenging because of offshore region} 
+If elastic property changes are detected, we will use their spatial and temporal variability to constrain the likely causative mechanism.  For example, a sudden coseismic velocity drop in the forearc could not 
+have been caused by the breakage of a fault seal near the megathrust, as diffusion requires a finite time to propagate an initial pore pressure pulse near the megathrust into the foreac. Conversely, a delayed drop in velocity would support the fluid diffusion hypothesis. Further evidence for pore pressure diffusion includes a diffusive pattern in the time-space history of off-megathrust aftershocks.
+Focal mechanisms derived by project 2 can also help to identify the signature of fluids by exploiting the effect of fault overpressure on the optimal orientation as determined from a Mohr circle, following the method derived by \citet{terakawa10}.
+%\noteft{This last work really is inherent project 2 territory - double check if they mention this as well}.
+Finally, an investigation of repeating events clusters, which are effectively minor asperities, can shed light on the severity with which the plate interface is altered by the main shock. In particular, are there repeating events that `survive' the main shock or is their pattern reorganised after the main shock? Tracking the activation of repeaters through the fore- and aftershock sequence will give further information about weakening and healing processes at the plate interface.
+
+\subsubsection{Observing changes to the stress field}
+
+This question will be explored in a close cooperation with project 2, which investigates the stress drop in moderate to large fore- and aftershocks, and project 4, which is concerned with measuring and modelling the deformation of the surface as measured with geodetic methods. We expect that during a strong thrust event a significant release of the compressive stress component (the average of the principal tectonic stresses) occurs\noteft{Would it be correct to say instead: We expect that a significant reduction of the stress normal to the margin occurs, thus reducing overall compressive stress in the crust.}. On the one hand the stress release must be correlated with the amount of the stress drop of the main shock, and can be calculated from the mainshock coseismic slip model as derived from seismological and geodetic observations \citep[e.g.][]{schurr2014} and an assumed model of the elastic properties. 
+On the other hand, a release of the compressive stress causes a decrease of elastic stiffness, and thus of seismic velocities. \cite{shapiro:2003a} proposed a quantitative approach (so-called piezo-sensitivity formalism)  describing the relation between a seismic velocity reduction and a release of confining stress.
+ Using this formalism, a comparison of predicted stress changes with the spatial pattern of seismic velocity changes allows an assessment of the plausibility of the assumption that observed velocity shifts are explained by changes in the crustal stress, and further allows an estimation of the constant of proportionality between stress change and seismic velocity shifts (divergent estimates were suggested in the literature, see section~\ref{sec:stress}). If a clear relationship can be discerned for the coseismic shift, this approach can be extended to the fore- and aftershock phase in order to gain a better understanding of the evolution of the stress field during the pre- and postseismic period.
+
+In addition to the stress-changes estimate from a joint consideration of earthquake source parameters (project 2), surface deformations  (project 4) and seismic structure changes (this project) we will explore one more possibility of estimating stress drop. It is provided by the fact that the frequency-magnitude distribution of induced seismicity is influenced by the geometry of the seismically activated domain. These effects were documented in studies of seismicity induced by fluid injections \citep{shapiro:2011,Shapiro2013} but there are indication that similar influences are observed in aftershock series of earthquakes (unpublished work on the Antofagasta aftershock series)\noteft{Maybe a bit problematic to refer to unpublished in this context - is there maybe at least a conference presentation?}. Such geometric influence is also a function of the average stress drop of the corresponding seismicity. Our precise locations of aftershocks and foreshocks will provide a good understanding of the geometry of the volumes tectonically activated by the preparation and reaction processes related to the main shock, respectively. 
+% \noteft{Deleted but maybe needs to be expanded instead?:``Then, important questions are the following one.''} 
+% \noteft{This preceding paragraph will be quite hard to follow for reviewers not familar with \cite{shapiro:2011}\& \cite{Shapiro2013} I think. Maybe this has already been addressed by additions to the ``state-of-the-art'' but I recommend supporting this statement with a figure (especially as I remember you said that the Antofagasta figure does not even appear in the paper)}
+
+\subsubsection{Transients in the shallow subsurface}
+
+We aim at a better understanding of seasonal and earthquake-induced variation of elastic properties of the shallow subsurface and how they depend on the shallow geology at the station site, e.g., whether stations are placed on bedrock or in sedimentary structures.
+In spite of many prior observations, even the fundamental question whether coseismic changes in seismic velocities in the near-surface are proportional to ground acceleration or to dynamic strain is unresolved. Our previous observations in Chile support the former \citep{Richter2014}, but as other results are ambiguous, we will make additional measurements that should be able to resolve this basic question. A further open question concerns the time scale at which the effect of disturbances is recovered and how that is related to the sensitivity and shear modulus of the medium.
+
+Although this proposal concentrates on seismically induced changes, it is necessary to quantify the seasonal variability and possibly other ambient mechanisms in order to obtain higher definition results for the seismically induced elastic property changes. As seen in previous investigations \citep{Richter2014} the sensitivity of near surface materials to seasonal or coseismic changes varies drastically in northern Chile with a particular IPOC station showing exceptional sensitivity (Fig.~\ref{fig:PATCX}). This station is installed in a sedimentary environment. Many of the temporarily installed stations %which are usually of inferior quality 
+sample similar settings providing more constraints of the origin of near surface material changes. 
+
+%\noteft{What about air pressure - I think this is at least measured at all the IPOC stations?}
+
+
+\subsection*{Required results}
+In order to address the more fundamental questions outlined above, we will first need to achieve a set of more intermediate targets or results:
+\begin{description}
+ \item[Refined hypocentre catalogue.] A refined catalogue of seismicity with improved depth estimates offshore in the period prior to installation of the ocean bottom stations.  Within this project the catalogue will be used for the spatio-temporal analysis to determine stress drop and to look for signatures of fluid diffusion.
+ \item[Clustered earthquake bulletin.] Based on cross-correlation measurements, the earthquakes will be clustered into groups of either similar events or repeating events, defined as events with highly similar waveforms whose rupture surface overlaps significantly. Within the project the catalogue of similar events will be used for the analysis of the time variability in the $V_P/V_S$ ratio based on differential traveltimes and the catalogue of repeating events is required as basis for coda wave interferometry and for more detailed spatio-temporal analysis. In particular, repeating events have been used for infer fault slip rates \citep{nadeau:1998,uchida04}, which can be compared to the  geodetic estimates of pre-event transients and postseismic deformation derived in project 4. %\note{CS: I would suggest to include a master event based event search here. This could be based on envelops or waveforms but would possibly increase the number of repeaters.}\noteft{Do you mean this?}
+ An initial catalogue of repeating events can also be used to construct templates for scanning for further events in the continuous data. 
+ \item[Velocity of shallow shear wave structure.] We will invert the ambient-noise based Green's functions for a tomographic model of shear velocities in the crust at twice the resolution as was previously possible based on the permanent IPOC stations \citep{ward13}. This model is needed for understanding the possible links between shear wave structure and susceptibility to ground shaking, and will also improve hypocentral relocation. It will also be useful as additional constraint for body wave tomography (project 1) and waveform modelling for source mechanism inversion (project 2). 
+\item[Seismic velocity changes.] We will provide a description of seismic velocity changes as a function of space and time. By combining different methodologies and employing different frequencies we aim to ascribe observed changes to at least the major regimes (a) shallow subsurface, (b) large scale changes in the crust, (c) changes in the near-source region.   
+\end{description}
+
+
+
+% Does the frequency-magnitude distribution \note{FT: Remember to explain link with project 2 (Sebastian Hainzl’s part). Proposal will need to clarify separation and synergies. }of aftershocks also show signatures of a geometrically restricted seismo-tectonically perturbed volume? \note{FT: Add reference! }And if yes, is the averaged stress drop estimate obtained from such a distribution in agreement with the other estimates.
+% 
+% \note{JKSH:\\
+% Is there a difference and a  systematic in the stress drop values of the foreshock and aftershock series? All these questions will be addressed in a close cooperation with Projects 2 and 4.\\
+% remove the following phrase (!?):
+% } % end note JK
+% Are any changes compatible with fluid migration, when considered in conjunction with seismicity patterns
+
+% flatex input end: [220_objectives.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+\noteft{Change WP to Task?  Descriptions seems to be too fine-grained to be really called a WP? Would need to be done consistent with project 2}
+\subsection{Work programme incl. proposed research methods}
+\noindent{\it \small For each applicant}\\
+% flatex input: [230_work_programme_intro.tex]
+\showfile
+%\note{JK:\\
+\noindent
+% Within this proposal, we apply for two Ph.D. Positions and two student research assistants (?).
+% 
+% 
+% \noindent
+% The first Ph.D. student will focus her/his work on the analysis of ambient seismic noise to resolve material changes and will be located at GFZ Potsdam ...\\[0.2cm]
+% 
+% \noindent
+% The second Ph.D. student will be located at FU Berlin. Her/his focus will be the study of space- and time- dependent source parameters (hypocenters, magnitudes and inferred b-values and stress drops) from deterministic earthquake data.
+% She/he will be supported by a student research assistant who will be involved in the compiling and routine processing of the seismic event data (e.g., quality control, event selection, data archiving).\\[0.2cm] 
+
+\noindent
+The work packages by FU Berlin and GFZ Potsdam are closely connected, and in particular for the interpretation of time-dependent changes and seismicity patterns we will need to collaborate intensively.
+
+%} %end note
+
+% flatex input end: [230_work_programme_intro.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+\subsubsection{GFZ (Postdoc, F. Tilmann and C. Sens-Schönfelder)}
+% flatex input: [231_work_programmeGFZ.tex]
+\showfile
+% \noteft{
+% \paragraph{Research methods}
+% \begin{itemize}
+% \item Coda Wave Interferometry of repeating events for the detection of material changes \citep{poupinet_etal_JGR_84, Snieder2002}
+% \item Passive Image Interferometry to analyse of ambient seismic noise for material changes within the seismic network \citep{sens-schoenfelder_wegler_CRG_11}
+% \item Ambient noise tomography \citep{Lin2008, Harmon2012, Jaxybulatov2014}
+% \end{itemize}
+% }
+
+\begin{itemize}
+\item
+{\bf WP1.1 Calculation of ambient noise cross-correlation functions}
+
+By calculating daily auto- and cross-correlation functions for all combinations of Z, N, and E components, we will derive vertical, tangential and radial cross-correlation functions and combinations thereof (vertical-radial etc.) in an efficient manner. For pre-processing we follow the standard procedure of instrumental restitution, decimation or interpolation to a common sampling rate, spectral whitening and 1-bit normalisation. Our algorithm (MIIC) is fully parallelised, such that calculating cross-correlation functions for the whole network will only take a few days on the linux cluster available in-house. Although this procedure is by now fairly routine \citep{Lin2008,Jaxybulatov2014}, we are aiming at examining fine differences in the correlation functions during a time-period when aftershock activity is high (WP1.3). We will therefore need to test thoroughly the effect of different strategies to reduce or equalise the effects of aftershocks) (possible alternatives: rely on 1-bit normalisation, catalogue-based muting,  or amplitude threshold-based muting).  For the structural study we will also utilise the GEOMAR ocean bottom sensors (project 1), which will be cross-correlated with each other and also with the land stations. Although this is fundamentally no more difficult than for land stations \citep{Harmon2012}, some additional issues such as timing corrections and the unknown instrument orientations make processing of OBS data more complex.
+
+\item
+{\bf WP1.2 Ambient noise surface wave tomography}
+
+We will determine group velocities for Rayleigh, and if the signal-to-noise-ratio is sufficient, of Love waves, using multiple-filter analysis as implemented by \citet{herrmann02}, using the difference between causal and anticausal signals and between different shorter timeframes to quantify the error of measurement \citep[see][]{bensen07}. If there is time-dependence in the surface wave velocities, this approach will include the inherent variability in the error estimate for the average dispersion curves. Phase measurements can also be extracted from the multiple filter approach, and phase velocities will be recovered by correcting for the $\pi/4$ phase shift in the far field and the inherent $2\pi$ ambiguity, by proceeding from lower to higher frequencies and by ensuring consistency across the network. 
+
+Based on our experience in other regions \citep{yang10,karplus13} and the results of preliminary analysis of the cross-correlations within the IPOC network (Fig.~\ref{fig:crosscor-ipoc}) we expect to obtain usable group dispersion measurements for Rayleigh waves at periods of 5-40\,s.  We will first derive maps of group and phase velocities using a 2D tomographic approach. Finally, the reconstructed dispersion curves at each position will be inverted to derive a structural model of the shear wave velocity.
+
+We will add to the ambient noise tomography model of \citet{ward13} by utilising a much denser network, approximately doubling the horizontal resolution and adding coverage offshore.  Furthermore, Love wave dispersion curves were not considered in the previous study, and these might allow an estimate of vertical-transverse anisotropy.
+
+\begin{SCfigure}
+ \includegraphics[width=0.5\textwidth]{bilder/richterthesis-cross-correl-recordsection-mod2}
+ \caption{\footnotesize Preliminary broadband vertical component cross-correlation functions between stations of the IPOC network for data from 2007-2011 show a clear dispersed surface wave train to large distances (continuous line indicates group velocity of 3\,km/s for reference \citep[modified after][Fig. 5.7]{richter_thesis}.}%\noteft{The longest periods I see in here are at around 20 s, though; I am pretty sure the other ones would come out after filtering, but this cannot be easily determined.}}
+ \label{fig:crosscor-ipoc}
+\end{SCfigure}
+
+
+\item
+{\bf WP1.3 Passive Image Interferometry using ambient noise records}
+
+The coda of daily auto- and cross-correlation functions will be filtered in different frequency bands and cut into (overlapping) time windows; depending on the data quality several days might have to be stacked in order to obtain a stable coda function. For each combination of lag time and filter frequency, we will use the stretching method to obtain the fractional time shift, corresponding to the average velocity shift in the region sampled by the coda waves.
+ We expect that at some stations the coda functions might have changed significantly during the main shock such that the stack of all daily correlations does not yield a satisfactory reference trace. In this case we will adopt a time-variable reference trace \citep{sens-schonfelder_etal_JVGR_14}.
+ The sensitivity kernels for the effect of velocity changes vary as a function of dominant wave type, frequency content and coda lag time \citep{obermann13}. Although they are more susceptible to changes in the distribution of noise sources, we will also measure possible time shifts in the direct surface waves visible in the Green's functions.
+
+\item
+{\bf WP1.4 Repeating event interferometry}
+
+% Coda wave interferometry
+For the clusters of repeating events identified by WP2.1, we will use the stretching method to measure decorrelation and relative time shifts between the codas of different member events of a cluster at different lag times. This method was employed for example by \citet{yu13_temporal} to measure seismic velocity changes after the Sumatra earthquakes. 
+Where recorded at high signal-to-noise ratios, we will also carry out time shift measurements on surface waves between pairs of repeating events in order to cross-check results derived by ambient noise analysis, and add sampling in the offshore area (relative shifts of body waves will be measured by WP2.4). 
+
+\item 
+{\bf WP1.5 Integration and interpretation of velocity change measurements}
+
+We aim to separate the source regions for velocity changes by jointly considering the results of the different methods: high frequency auto-correlations are most sensitive to the shallow subsurface. Cross-correlation coda wave interferometry at low frequencies and time shift of direct surface and body waves from repeating events constrain the bulk changes in the upper to mid-crust - we will be able to improve the estimation of this change by accounting for the effect of the shallow structure.
+As coda wave interferometry from repeating events is most sensitive to the near-source and near-receiver structure, we  can reconstruct the magnitude of near-source changes by estimating the near-receiver contributions from the other methods. 
+
+Finally, we will try to understand the physical significance of velocity changes by comparison with data acquired here or by the other projects in the bundle. We will investigate a relation of near surface changes with the surface wave velocity structure (WP1.2) and use the theory of piezo-sensitivity to deduce the magnitude of expected changes from geodetic models (project 4) to test the hypothesis that velocity change are stress related. We will focus on the stress state and possible fluid signatures by comparing velocity changes with temporal variation in $Vp/Vs$ ratio (WP2.4), but also consider seasonal and transient variations affecting the shallow sub-surface as these materials also have the highest sensitivity to deformation due to the vanishing confining stress.
+% Direct phases (Surface waves)
+\end{itemize}
+
+
+% flatex input end: [231_work_programmeGFZ.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+
+\subsubsection{FU (PhD, supervised by S. Shapiro and J. Kummerow)}
+% flatex input: [232_work_programmeFU.tex]
+\showfile
+
+% \paragraph{Research methods}
+% \begin{itemize}
+% \item High-precision event location from inversion of improved arrival times and decorrelation-based source separation estimates \citep{Waldhauser2000, Kummerow2010, Bloch2014, Snieder2005}. 
+% \item Estimation of Vp/Vs ratio distribution from precise differential arrival times of P and S waves \citep{Lin2007, Kummerow2012}.
+% \item Application of array stacking methods \citep{Rost2002} \note{FT: Cite Kennett \& Furumura (GJI 2008) – not quite sure whether it is applicable, though }to secondary crustal/ upper mantle seismic phases for improved earthquake depth determination; also apply full waveform modeling for earthquake depth determination and compare results.
+% \item  Gutenberg- Richter relation, b- value, stress drop \citep{Shapiro2013}.
+% \end{itemize}
+
+
+%\note{JK:
+
+\begin{itemize}
+\item
+	{\bf WP2.1 Waveform- similarity based seismic event relocation \& identification of repeating earthquake sequences.}
+The processing includes multiplet analysis to identify similar events. Arrival times for these multiplet events will be optimized iteratively using both original absolute time picks and relative times derived from waveform cross-correlation. The value of the cross-correlation coefficient itself also constrains the interevent distance and will be used additionally in the event location \citep[e.g.,][]{menke:1999, Kummerow2010,Snieder2005}.\noteft{removed reference to EAGE presentation to save space in references - this ground is covered in Kummerow2010}
+This high precision mapping of seismicity is mandatory for two reasons: it will allow to assess the size of seismicity structures (e.g. the thickness of the seismogenic interface), and it is a precondition for the anaylsis of the spatio-temporal behaviour of seismicity (see WP2.3) and the application of CWI in WP1.4.
+
+Attention will also be paid to the identification of repeating earthquake sequences (RES).
+Since RES are generally assumed to be related to aseismic creep (e.g. \cite{nadeau:1998}), their role in particular during the foreshock activity is an important indicator of the dominant deformation process leading to the $M_w\,8.1$ mainshock (i.e., aseismic versus seismic slip).
+In order to identify RES and ascertain that the slip patches overlap, we will apply a combination of measures of waveform similarity and source dimensions \citep[see][]{kummerow_eage:2014}. Estimates of the required source parameters will be provided by Project 2.
+
+\item
+{\bf WP2.2 
+Array-based relocation of key target events.}
+We intend to improve the depth resolution of specific events using depth phases recorded at regional distances by the MEJIPE seismic array located south of the Iquique rupture zone.
+Notably, the largest, $M_w\,6.7$ foreshock event on March 16, 2014, apparently occurred in the continental crust above the slab interface (\cite{schurr2014}, \cite{hayes2014}), but the depth resolution is only modest so far due to the restricted  aperture of the IPOC array and the lack of monitoring stations offshore.
+Since accurate hypocenter depths are crucial for understanding the earthquake sequence leading to the mainshock, we will use the enhanced depth resolution provided by relative time delays of observed depth phases (e.g., \cite{zonno:1984}).
+We plan to apply a combination of modelling of depth phases (cf. Fig. 7 in \cite{kummerow2004} for an application to lower-crustal earthquakes in an orogen) and stacking of array data for signal enhancement and accurate slowness determination of observed depth phases (e.g., \cite{Rost2002}).
+%\note{CS: we should mention here that the location of foreshocks can be improved by using the correlation values with aftershocks that ware more accurately located later on with the OBS network.}
+This project will benefit from accurate offshore locations based on the OBS network deployed in late 2014 (see project 1). These events, although likely few in numnber, can be used to validate and calibrate the array-based relocation of the main fore- and aftershock sequence.
+%... . from array data  in order to clarify their location relative to the plate interface (below, on, or above).
+%	For the largely off-shore seismicity related to the Iquique earthquake, the aperture provided by the onshore seismic network is poor, and in particular the hypocenter depths are not well constrained when using the measured P- and S arrival times. We plan to exploit the full P- and S- wave coda recorded by a dense seismic array ~250-300km south of the source region. Use relative times of crustal phases, ...modelling (transalp paper...).
+
+\item
+{\bf WP2.3 Spatio-temporal analysis of seismicity.}
+Based on accurate earthquake relocations (WP2.1) spatio-temporal characteristics of seismicity are analyzed to detect earthquake migration patterns and identify possible fluid-related signatures (e.g., \cite{shapiro:1997}, \cite{shapiro:2002}; see \cite{shapiro:2003} for an application to the 1995 Antofagsta aftershock seismicity).
+Additionally, we expect different imprints of fluid- and stress-driven processes. Modelling of pore-fluid pressure and stress will help to quantify the physical parameters such as the hydraulic diffusivity.   
+
+\item
+	{\bf WP2.4 Estimation of the $Vp/Vs$ ratio and its time-dependency in specific target zones.}
+%\note{JK: (problematic (?!): Vp/Vs is also part of proposal with B. Schurr).}
+%\noteft{One way to address this `problem' would be to focus even more strongly on time variations rather than getting structural information and include other body wave phases. An obvious candidate would be to measure relative shifts between rotated horizontal components in order to get a handle on changes to shear wave splitting, which has also been used variously, if somewhat infamously, to estimate stress by the Crampin (Edinburgh) group. The question is whether this would be too much?}
+We propose to use the method by \cite{Lin2007} as modified by \citet{bloch:2014a} to determine small-scale variations of the $Vp/Vs$ ratio from accurate differential S to P arrival times, which are obtained in WP2.1. 
+%We have recently performed a feasibility study of the method in a similar environment and used an overlapping Voronoi volume clusterization of seismic events (\cite{bloch:2014a}).
+	The abundance of recorded events in combination with the excellent station coverage is particularly suited to resolve relative temporal changes of the $Vp/Vs$ ratio, even if the determination of the absolute value of the $Vp/Vs$ ratio may prove to be difficult.
+	Temporal variations of the $Vp/Vs$ before and after the $M_w\,8.1$ Iquique earthquake can then be linked to changes of the pore pressure and related to estimates of velocity changes from WP1.4. 
+\item
+	{\bf WP2.5 Stress drop estimates \& frequency magnitude distribution.}
+High-precision relocation of earthquakes (WP2.1) provides a reliable estimate of the seismically activated volume and of its geometry. Following the concept of \citet{shapiro:2011} and \citet{Shapiro2013} the geometry, in combination with the average stress drop, affects the observed frequency magnitude distribution:
+\begin{equation}
+	M_Y= log_{10} Y^2 +(log_{10} \delta\sigma -log_{10} C)/1.5 -6.07
+\end{equation}
+with the characteristic scale of the stimulated volume $Y$, the characteristic magnitude $M_Y$, C
+is a geometric constant of the order of 1 and the stress drop $\delta\sigma$.
+Analysis of the frequency magnitude distribution therefore also provides an estimate of the stress drop simply by augmenting it with information about the spatial extent of the events.
+We will apply the method and investigate, if there are systematic temporal variations of the stress drop values before and after the Iquique mainshock. We will compare the resultant pattern with the pattern of velocity changes derived in WP1.3 and 1.4.  This work is also closely connected with Projects 2 and 4.
+\end{itemize}
+
+%} %end note
+
+
+% flatex input end: [232_work_programmeFU.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+\subsection{Time line}
+% flatex input: [233_timeline.tex]
+%\subsection{Timeline}
+\showfile
+% needs package 
+
+\begin{gantt}[xunitlength=0.9cm,fontsize=\footnotesize,titlefontsize=\footnotesize]{15}{12}
+    \begin{ganttitle}
+      %\numtitle{2010}{1}{2012}{4}
+      \titleelement{Y1}{4}
+      \titleelement{Y2}{4}
+      \titleelement{Y3}{4}
+    \end{ganttitle}
+    \begin{ganttitle}
+      \numtitle{1}{1}{4}{1}
+      \numtitle{1}{1}{4}{1}
+      \numtitle{1}{1}{4}{1}
+    \end{ganttitle}
+     \ganttbar{\underline{GFZ Postdoc} \hspace{1cm} Ambient noise EGF calc.}{0}{1}
+     %\addtocounter{ganttnum}{-1}
+     \ganttbar{Ambient noise surface wave tomography}{1}{2}
+     %\ganttcon{1}{3}{3}{4}
+     %\ganttcon{3}{3}{2}{7}
+
+     \ganttbar{Ambient noise based interferometry}{3}{2}
+     \ganttbar{Event coda interferometry}{5}{2}
+     \ganttbar{Integration, Vel. change modelling}{6}{2}
+    \ganttcon{8}{6}{8}{13}
+          % Paper writing group
+     \ganttbar{Write papers}{2}{1}
+     \addtocounter{ganttnum}{1}
+     \ganttbar{}{7}{1}
+     %
+     \draw[dotted] (0,\value{ganttnum}+0.8) -- (\value{ganttwidth}*\ganttunitlength,\value{ganttnum}+0.8);
+     %\ganttgroup{}{0}{12}
+     \ganttbar{\underline{FU PhD} \hspace{2cm} Identify multiplets}{0}{1}
+     \ganttcon{1}{8}{5}{5}
+     \ganttbar{Correlation-based relocation}{1}{1}
+     \ganttbar{Array-based relocation}{2}{2}
+     \ganttbar{Spatio-temporal analysis}{3}{2}
+     \ganttbar{Vp/Vs time dependency}{5}{2}
+     \ganttcon{7}{12}{7}{6}
+     \ganttbar{Inference of stress drops/fluids}{8}{3}
+     \ganttbar{Write papers}{4}{1}
+     \addtocounter{ganttnum}{1}
+     \ganttbar{}{7}{1}   \addtocounter{ganttnum}{1}
+     \ganttbar{}{11}{1}      
+ %   \ganttbar{Task 1}{0}{2}
+ %   \ganttbarcon{a consecutive task}{2}{4}
+  \end{gantt}
+{\footnotesize Arrows show the most important connections between the two major work packages within this proposal.}
+%We assume that the postdoc is more efficient than the PhD, allowing to complete the analysis in two years.
+  
+
+% \paragraph{Work programme\\}
+% \noindent {\footnotesize
+% \begin{tabular}{p{0.06\textwidth} |p{0.47\textwidth} |p{0.47\textwidth}}
+% Time (month) & PhD (FU)  & Postdoc (GFZ) \\
+% \hline
+% 1-3   &                  & 
+% }
+% \begin{tabular}{p{0.1\textwidth} |p{0.\textwidth} |p{0.2\textwidth}}
+% Time (month) & Analysis & Data needed\\
+% \hline\hline
+% 1-3&Calculation of ambient noise correlation functions&continuous waveform data\\
+% 4-7&Ambient noise surface wave tomography&\\
+% 8-9&Write paper&\\
+% \hline
+% 10-14&Passive Image Interferometry using ambient noise&\\
+% \hline
+% 23-32&Coda wave interferometry&repeating event catalog, waveform data of events\\
+% 33-36&Write papers on &\\
+% \end{tabular}
+% 
+% \paragraph{Work programme\\}
+% \noindent
+% \begin{tabular}{p{0.1\textwidth} |p{0.6\textwidth} |p{0.2\textwidth}}
+% Time (month) & Analysis & Data needed\\
+% \hline\hline
+% 1-3&Integration of all available waveform data from IPOC network and diverse temporary networks. &All available waveform data (event files)\\
+% 3-12&Multiplet analysis; event relocation; detection of repeating earthquakes; array- based relocation for increased depth resolution; analysis of spatio-temporal patterns.&\\
+% 12-15&Write paper&\\
+% \hline
+% 15-24&Waveform modeling of secondary phases.&Selected event waveform data\\
+% 24-33&Gutenberg-Richter- relation: B- value, stress drop and their temporal changes.&Locations, magnitudes\\
+% 33-36&Write paper&\\
+% \end{tabular}
+
+% flatex input end: [233_timeline.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+\subsection{Data handling}
+% flatex input: [240_data_handling.tex]
+\showfile
+No funds are requested within this proposal for data acquisition.  However, the data from the IPOC network is openly available from GEOFON server using standard EIDA (European Integrated data archive) access protocols such as arclink or FDSN web services (FDSN network code CX). The data from the MEJIPE array and the GFZ aftershock deployment will also be archived at the GEOFON datacenter. They will initially be restricted to PIs and cooperating partners but will be opened after completion of this proposal, and at the very latest in 2019, following the guidelines from the Geophysical Instrument Pool Potsdam (GIPP).
+
+The results obtained by the proposed work will be disseminated primarily through conferences and publications. Research products such relocated earthquake catalogues, time series of velocity changes etc. will additionally be made available in machine-readable form as supplementary material.
+
+
+% \begin{itemize}
+% \item Continuous seismic records for ambient noise correlation studies
+% \item seismic waveform data of fore-, main-, and aftershocks recorded by IPOC and several temporary networks
+% \item include specifically the MEJIPE array for waveform-based earthquake location
+% \item Catalogs of preliminary earthquake locations based on standard processing, including picks
+% \item GPS data for comparison purposes and interpretation
+% \end{itemize}
+% flatex input end: [240_data_handling.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+\subsection{Other information}
+\noindent{\it \small Please use this section for any additional information you feel is relevant which has not been provided elsewhere.}\\
+% flatex input: [250_other_information.tex]
+\showfile
+% flatex input end: [250_other_information.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+
+\subsection{Descriptions of proposed investigations involving experiments on humans, human materials or animals}
+\showfile
+NA
+
+\subsection{Information on scientific and financial involvement of international cooperation partners}
+% flatex input: [270_involvement_of_partners.tex]
+\showfile
+\noteft{Diana Comte, Andreas Rietbrock -- data sharing; Universidad Catolica del Norte - Unterstützung Feldarbeit}
+
+% flatex input end: [270_involvement_of_partners.tex]
+
+%\note{To add notes please use the macro ``{\tt \textbackslash note\{\}}'' starting with your initials. Examples for the use of tables, figures and references is in the end.}
+
+
+\section{Bibliography}
+\note{\tt 300\_bibliography.bib}
+
+\begingroup
+\footnotesize
+\setlength{\bibsep}{0pt plus 0.3ex}
+
+\renewcommand{\section}[2]{}%
+\begin{multicols}{2}
+%*flatex input: [Iquique_DFG.bbl]
+\begin{thebibliography}{}
+
+\bibitem[Bensen et~al., 2007]{bensen07}
+Bensen, G.~D., Ritzwoller, M.~H., Barmin, M.~P., Levshin, A.~L., Lin, F.,
+  Moschetti, M.~P., Shapiro, N.~M., and Yang, Y. (2007).
+\newblock Processing seismic ambient noise data to obtain reliable broad-band
+  surface wave dispersion measurements.
+\newblock {\em Geophysical Journal International}, 169(3):1239--1260.
+
+\bibitem[Bloch et~al., 2014]{bloch:2014a}
+Bloch, W., Kummerow, J., Wigger, P., Salazar, P., and Shapiro, S. (2014).
+\newblock Local seismicity and vp/vs at shallow to intermediate depth during
+  the late interseismic phase of the central {A}ndean seismic gap.
+\newblock {AGU} abstracts, American Geophysical Union.
+
+\bibitem[Brenguier et~al., 2008]{brenguier_etal_Science_08}
+Brenguier, F., Campillo, M., Hadziioannou, C., Shapiro, N.~M., Nadeau, R.~M.,
+  and Larose, E. (2008).
+\newblock {Postseismic relaxation along the San Andreas fault at Parkfield from
+  continuous seismological observations.}
+\newblock {\em Science}, 321(5895):1478--81.
+
+\bibitem[Brenguier et~al., 2014]{Brenguier2014}
+Brenguier, F., Campillo, M., Takeda, T., Aoki, Y., Shapiro, N.~M., Briand, X.,
+  Emoto, K., and Miyake, H. (2014).
+\newblock {Mapping pressurized volcanic fluids from induced crustal seismic
+  velocity drops}.
+\newblock {\em Science}, 345(6192):80--82.
+
+\bibitem[Chen et~al., 2010]{chen10_grl}
+Chen, J.~H., Froment, B., Liu, Q.~Y., and Campillo, M. (2010).
+\newblock Distribution of seismic wave speed changes associated with the {12
+  May 2008 Mw 7.9 Wenchuan} earthquake.
+\newblock {\em Geophys. Res. Let.}, 37(18):L18302.
+
+\bibitem[Christensen, 1984]{christensen84}
+Christensen, N.~I. (1984).
+\newblock Pore pressure and oceanic crustal seismic structure.
+\newblock {\em Geophys. J. R. Astr. Soc.}, 79:411--423.
+
+\bibitem[Comte and Pardo, 1991]{comte91}
+Comte, D. and Pardo, M. (1991).
+\newblock Reappraisal of great historical earthquakes in the northern {Chile}
+  and southern {Peru} seismic gaps.
+\newblock {\em Nat. Haz.}, 4:23--44.
+
+\bibitem[Froment et~al., 2013]{froment_etal_GRL_13}
+Froment, B., Campillo, M., Chen, J., and Liu, Q. (2013).
+\newblock {Deformation at depth associated with the 12 May 2008 MW 7.9 Wenchuan
+  earthquake from seismic ambient noise monitoring}.
+\newblock {\em Geophysical Research Letters}, 40(1):78--82.
+
+\bibitem[Gassenmeier et~al., 2014]{Gassenmeier2014}
+Gassenmeier, M., Sens-Sch\"onfelder, C., Delatre, M., and Korn, M. (2014).
+\newblock {Monitoring of environmental influences on seismic velocity at the
+  geological storage site for CO2 in Ketzin (Germany) with ambient seismic
+  noise}.
+\newblock {\em Geophysical Journal International}, 200(1):524--533.
+
+\bibitem[Hacker et~al., 2003]{hacker03b}
+Hacker, B.~R., Abers, G.~A., and Peacock, S.~M. (2003).
+\newblock Subduction factory 1. theoretical mineralogy, densities, seismic wave
+  speeds, and {H$_2$O} contents.
+\newblock {\em J. Geophys. Res.}, 108:2029.
+
+\bibitem[Harmon et~al., 2012]{Harmon2012}
+Harmon, N., Henstock, T., Tilmann, F., Rietbrock, A., and Barton, P. (2012).
+\newblock Shear velocity structure across the sumatran forearc-arc.
+\newblock {\em Geophysical Journal International}, 189(3):1306--1314.
+
+\bibitem[Hayes et~al., 2014]{hayes2014}
+Hayes, G., Herman, M., Barnhart, W., Furlong, K., Riquelme, S., Benz, H.,
+  Bergman, E., Barrientos, S., Earle, P., and Samsanov, S. (2014).
+\newblock Continuing megathrust earthquake potential in {C}hile after the 2014
+  {I}quique earthquake.
+\newblock {\em Nature}, 512:295--298.
+
+\bibitem[Herrmann and Ammon, 2014]{herrmann02}
+Herrmann, R.~B. and Ammon, C. (2002-2014).
+\newblock Computer programs in seismology, version 3.30.
+\newblock Technical report, Department of Earth and Atmospheric Sciences, Saint
+  Louis University.
+\newblock http://www.eas.slu.edu/eqc/eqccps.html.
+
+\bibitem[Hobiger et~al., 2012]{hobiger_etal_JGR_12}
+Hobiger, M., Wegler, U., Shiomi, K., and Nakahara, H. (2012).
+\newblock {Coseismic and postseismic elastic wave velocity variations caused by
+  the 2008 Iwate-Miyagi Nairiku earthquake, Japan}.
+\newblock {\em J. Geophys. Res.}, 117(B9):1--19.
+
+\bibitem[Husen and Kissling, 2001]{husen01_geology}
+Husen, S. and Kissling, E. (2001).
+\newblock Postseismic fluid flow after the large subduction earthquake of
+  {Antofagasta, Chile}.
+\newblock {\em Geology}, 29:847--850.
+
+\bibitem[Jaxybulatov et~al., 2014]{Jaxybulatov2014}
+Jaxybulatov, K., Shapiro, N.~M., Koulakov, I., Mordret, A., Landes, M., and
+  Sens-Sch\"onfelder, C. (2014).
+\newblock {A large magmatic sill complex beneath the Toba caldera}.
+\newblock {\em Science}, 346(6209):617--619.
+
+\bibitem[Johnson et~al., 2009]{Johnson2009}
+Johnson, P.~A., Bodin, P., Gomberg, J., Pearce, F., Lawrence, Z., and Menq,
+  F.-Y. (2009).
+\newblock {Inducing in situ, nonlinear soil response applying an active
+  source}.
+\newblock {\em J. Geophys. Res.}, 114(B5):1--14.
+
+\bibitem[Jonsson et~al., 2003]{Jonsson2003}
+Jonsson, S., Segall, P., Pedersen, R., and Bj\"{o}rnsson, G. (2003).
+\newblock {Post-earthquake ground movements correlated to pore-pressure
+  transients}.
+\newblock {\em Nature}, 424:179--183.
+
+\bibitem[Josserand et~al., 2000]{Josserand2000}
+Josserand, C., Tkachenko, A., Mueth, D., and Jaeger, H. (2000).
+\newblock {Memory Effects in Granular Materials}.
+\newblock {\em Physical Review Letters}, 85(17):3632--3635.
+
+\bibitem[Karplus et~al., 2013]{karplus13}
+Karplus, M.~S., Klemperer, S.~L., Lawrence, J.~F., Zhao, W., Mechie, J.,
+  Tilmann, F., Sandvol, E., and Ni, J. (2013).
+\newblock Ambient-noise tomography of north {Tibet} limits geological terrane
+  signature to upper-middle crust.
+\newblock {\em Geophys. Res. Let.}, 40:808--813.
+
+\bibitem[Kato et~al., 2010]{kato10}
+Kato, A., Iidaka, T., Ikuta, R., Yoshida, Y., Katsumata, K., Iwasaki, T.,
+  Sakai, S., Thurber, C., Tsumura, N., Yamaoka, K., Watanabe, T., Kunitomo, T.,
+  Yamazaki, F., Okubo, M., Suzuki, S., and Hirata, N. (2010).
+\newblock Variations of fluid pressure within the subducting oceanic crust and
+  slow earthquakes.
+\newblock {\em Geophys. Res. Let.}, 37.
+
+\bibitem[Kern and Schmidt, 1990]{Kern90}
+Kern, H. and Schmidt, R. (1990).
+\newblock Physical properties of the {KTB} core samples at simulated in situ
+  conditions.
+\newblock {\em Scientific Drilling}, 1:217--223.
+
+\bibitem[Kern et~al., 1991]{Kern91}
+Kern, H., Schmidt, R., and Popp, T. (1991).
+\newblock The velocity and density structure of the 4000~m crustal segment of
+  the {KTB} drilling site and their relation to lithological and
+  microstructural characteristics of the rock: an experimental approach.
+\newblock {\em Sci. Drill.}, 2:130--145.
+
+\bibitem[Kodaira et~al., 2004]{kodaira04}
+Kodaira, S., Iidaka, T., Kato, A., Park, J.-O., Iwasaki, T., and Kaneda, Y.
+  (2004).
+\newblock High pore fluid pressure may cause silent slip in the {Nankai
+  Trough}.
+\newblock {\em Science}, 304:1295--1298.
+
+\bibitem[Kummerow, 2010]{Kummerow2010}
+Kummerow, J. (2010).
+\newblock {Using the value of the crosscorrelation coefficient to locate
+  microseismic events}.
+\newblock {\em Geophysics}, 75(4):MA47--MA52.
+
+\bibitem[Kummerow et~al., 2014]{kummerow_eage:2014}
+Kummerow, J., Dinske, C., Asanuma, H., and H\"aring, M. (2014).
+\newblock Observation and signatures of injection-induced repeating earthquake
+  sequences.
+\newblock Expanded abstracts, 76th EAGE Conference and Exhibition 2014.
+
+\bibitem[Kummerow et~al., 2004]{kummerow2004}
+Kummerow, J., Kind, R., Oncken, O., Giese, P., Ryberg, T., Wylegalla, K.,
+  Scherbaum, F., and {TRANSALP\ Working\ Group} (2004).
+\newblock A natural and controlled source seismic profile through the {E}astern
+  {A}lps: {TRANSALP}.
+\newblock {\em Earth Planet. Sci. Letters}, 225:115--129.
+
+\bibitem[Larose et~al., 2010]{Larose2010}
+Larose, E., Planes, T., Rossetto, V., and Margerin, L. (2010).
+\newblock {Locating a small change in a multiple scattering environment}.
+\newblock {\em Applied Physics Letters}, 96(20):204101.
+
+\bibitem[Lin et~al., 2008]{Lin2008}
+Lin, F.-C., Moschetti, M.~P., and Ritzwoller, M.~H. (2008).
+\newblock {Surface wave tomography of the western United States from ambient
+  seismic noise: Rayleigh and Love wave phase velocity maps}.
+\newblock {\em Geophysical Journal International}, 173(1):281--298.
+
+\bibitem[Lin and Shearer, 2007]{Lin2007}
+Lin, G. and Shearer, P. (2007).
+\newblock {Estimating Local Vp/Vs Ratios within Similar Earthquake Clusters}.
+\newblock {\em Bulletin of the Seismological Society of America},
+  97(2):379--388.
+
+\bibitem[Mainsant et~al., 2012]{Mainsant2012a}
+Mainsant, G., Larose, E., Br\"{o}nnimann, C., Jongmans, D., Michoud, C., and
+  Jaboyedoff, M. (2012).
+\newblock {Ambient seismic noise monitoring of a clay landslide: Toward failure
+  prediction}.
+\newblock {\em J. Geophys. Res.}, 117(F1):F01030.
+
+\bibitem[Menke, 1999]{menke:1999}
+Menke, W. (1999).
+\newblock Using waveform similarity to constrain earthquake locations.
+\newblock {\em Bull. Seismol. Soc. Am.}, 89(4):1143--1146.
+
+\bibitem[Miller et~al., 2004]{miller04}
+Miller, S.~A., Collettini, C., Chiaraluce, L., Cocco, M., Barchi, M., and Kaus,
+  B. J.~P. (2004).
+\newblock Aftershocks driven by a high pressure {CO$_2$} source at depth.
+\newblock {\em Nature}, 427:724--727.
+
+\bibitem[Moore and Saffer, 2001]{moore01}
+Moore, J.~C. and Saffer, D. (2001).
+\newblock Updip limit of the seismogenic zone beneath the accretionary prism of
+  southwest {Japan}: An effect of diagenetic to low-grade metamorphic processes
+  and increasing effective stress.
+\newblock {\em Geology}, 29(2):183--186.
+
+\bibitem[Moreno et~al., 2014]{moreno14}
+Moreno, M., Haberland, C., Oncken, O., Rietbrock, A., Angiboust, S., and
+  Heidbach, O. (2014).
+\newblock Locking of the {Chile} subduction zone controlled by fluid pressure
+  before the 2010 earthquake.
+\newblock {\em Nat. Geosci.}, 7:292--296.
+
+\bibitem[Nadeau and Johnson, 1998]{nadeau:1998}
+Nadeau, R. and Johnson, L. (1998).
+\newblock Seismological studies at {P}arkfield {VI}: Moment release rates and
+  estimates of source parameters for small repeating earthquakes.
+\newblock {\em Bull. Seismol. Soc. Am.}, 88(3):790--814.
+
+\bibitem[Nakata and Snieder, 2011]{Nakata2011}
+Nakata, N. and Snieder, R. (2011).
+\newblock {Near-surface weakening in Japan after the 2011 Tohoku-Oki
+  earthquake}.
+\newblock {\em Geophysical Research Letters}, 38(17):1--5.
+
+\bibitem[Niu et~al., 2008]{niu08}
+Niu, F., Silver, P.~G., Daley, T.~M., Cheng, X., and Majer, E.~L. (2008).
+\newblock Preseismic velocity changes observed from active source monitoring at
+  the {Parkfield SAFOD} drill site.
+\newblock {\em Nature}, 454:204--208.
+
+\bibitem[Obermann et~al., 2013]{obermann13}
+Obermann, A., Plan\`es, Larose, E., Sens-Sch\"onfelder, C., and Campillo, M.
+  (2013).
+\newblock Depth sensitivity of seismic coda waves to velocity perturbations in
+  an elastic heterogeneous medium.
+\newblock {\em Geophys. J. Int.}, 194:372--382.
+
+\bibitem[Pacheco and Snieder, 2005]{pacheco_snieder_JASA_05}
+Pacheco, C. and Snieder, R. (2005).
+\newblock {Time-lapse travel time change of multiply scattered acoustic waves}.
+\newblock {\em The Journal of the Acoustical Society of America}, 118(3):1300.
+
+\bibitem[Peacock et~al., 2011]{peacock11}
+Peacock, S.~M., Christensen, N.~I., Bostock, M.~G., and Audet, P. (2011).
+\newblock High pore pressures and porosity at 35 km depth in the {Cascadia}
+  subduction zone.
+\newblock {\em Geology}, 39:471--474.
+
+\bibitem[Plan\`{e}s et~al., 2014]{planes_etal_WCRM_14}
+Plan\`{e}s, T., Larose, E., Margerin, L., Rossetto, V., and
+  Sens-Sch\"{o}nfelder, C. (2014).
+\newblock {Decorrelation and phase-shift of coda waves induced by local
+  changes: multiple scattering approach and numerical validation}.
+\newblock {\em Waves in Random and Complex Media}, (February):1--27.
+
+\bibitem[Poupinet et~al., 1984]{poupinet_etal_JGR_84}
+Poupinet, G., Ellsworth, W., and Frechet, J. (1984).
+\newblock {Monitoring Velocity Variations in the Crust Using Earthquake
+  Doublets: An Application to the Calaveras Fault, California}.
+\newblock {\em J. Geophys. Res.}, 89(4):5719--5731.
+
+\bibitem[Ranero et~al., 2008]{ranero08}
+Ranero, C., Grevemeyer, I., Sahling, H., Barckhausen, U., Hensen, C., Wallmann,
+  K., Weinrebe, W., Vannucchi, P., von Huene, R., and McIntosh, K. (2008).
+\newblock The hydrogeological system of erosional convergent margins and its
+  influence on tectonics and interplate seismogenesis.
+\newblock {\em Geochem., Geophys. Geosyst.}, 9:Q03S04.
+
+\bibitem[Richter, 2014]{richter_thesis}
+Richter, T. (2014).
+\newblock {\em Temporal variations of crustal properties in northern {Chile}
+  analyzed with receiver functions and passive image interferometry}.
+\newblock PhD thesis, Freie Universit\"at Berlin.
+
+\bibitem[Richter et~al., 2014]{Richter2014}
+Richter, T., Sens-Sch\"{o}nfelder, C., Kind, R., and Asch, G. (2014).
+\newblock {Comprehensive observation and modeling of earthquake and
+  temperature-related seismic velocity changes in northern Chile with passive
+  image interferometry}.
+\newblock {\em J. Geophys. Res.}, 119:1--19.
+
+\bibitem[Rivet et~al., 2011]{rivet_etal_GRL_11}
+Rivet, D., Campillo, M., Shapiro, N.~M., Cruz-Atienza, V., Radiguet, M., Cotte,
+  N., and Kostoglodov, V. (2011).
+\newblock {Seismic evidence of nonlinear crustal deformation during a large
+  slow slip event in Mexico}.
+\newblock {\em Geophysical Research Letters}, 38(8):L08308.
+
+\bibitem[Rost and Thomas, 2002]{Rost2002}
+Rost, S. and Thomas, C. (2002).
+\newblock {Array seismology: Methods and applications}.
+\newblock {\em Rev. of Geophys.}, 40(3):1008.
+
+\bibitem[Ruiz et~al., 2014]{ruiz14}
+Ruiz, S., Metois, M., Fuenzalida, A., Ruiz, J., Leyton, F., Grandin, R., Vigny,
+  C., Madariaga, R., and Campos, J. (2014).
+\newblock Intense foreshocks and a slow slip event preceded the 2014 {Iquique
+  Mw 8.1} earthquake.
+\newblock {\em Science}, 345:1165--1169.
+
+\bibitem[Sallares and Ranero, 2005]{sallares05}
+Sallares, V. and Ranero, C.~R. (2005).
+\newblock Structure and tectonics of the erosional convergent margin off
+  {Antofagasta, north Chile} (23$^\circ$30's).
+\newblock {\em J. Geophys. Res.}, 110:B06101.
+
+\bibitem[Sawazaki et~al., 2009]{Sawazaki2009}
+Sawazaki, K., Sato, H., Nakahara, H., and Nishimura, T. (2009).
+\newblock {Time-Lapse Changes of Seismic Velocity in the Shallow Ground Caused
+  by Strong Ground Motion Shock of the 2000 Western-Tottori Earthquake, Japan,
+  as Revealed from Coda Deconvolution Analysis}.
+\newblock {\em Bulletin of the Seismological Society of America},
+  99(1):352--366.
+
+\bibitem[Schurr et~al., 2014]{schurr2014}
+Schurr, B., Asch, G., Hainzl, S., Bedford, J., Hoechner, A., Palo, M., Wang,
+  R., Moreno, M., Bartsch, M., Zhang, Y., Oncken, O., Tilmann, F., Dahm, T.,
+  Vicor, P., Barrientos, S., and Vilotte, J.-P. (2014).
+\newblock Gradual unlocking of plate boundary controlled initiation of the 2014
+  {I}quique earthquake.
+\newblock {\em Nature}, 512:299--302.
+
+\bibitem[Sens-Sch\"{o}nfelder et~al., 2014]{sens-schonfelder_etal_JVGR_14}
+Sens-Sch\"{o}nfelder, C., Pomponi, E., and Peltier, A. (2014).
+\newblock {Dynamics of Piton de la Fournaise Volcano Observed by Passive Image
+  Interferometry with Multiple References}.
+\newblock {\em Journal of Volcanology and Geothermal Research}, 276:32--45.
+
+\bibitem[Sens-Sch\"{o}nfelder and Wegler,
+  2006]{sens-schoenfelder_wegler_GRL_06}
+Sens-Sch\"{o}nfelder, C. and Wegler, U. (2006).
+\newblock {Passive image interferometry and seasonal variations of seismic
+  velocities at Merapi Volcano, Indonesia}.
+\newblock {\em Geophysical Research Letters}, 33(21):1--5.
+
+\bibitem[Shapiro, 2003]{shapiro:2003a}
+Shapiro, S. (2003).
+\newblock Elastic piezosensitivity of porous and fractured rocks.
+\newblock {\em Geophysics}, 68:482--486.
+
+\bibitem[Shapiro et~al., 1997]{shapiro:1997}
+Shapiro, S., Huenges, E., and Borm, G. (1997).
+\newblock Estimating the crust permeability from fluid-injection-induced
+  seismic emission at the {KTB} site.
+\newblock {\em Geophys. J. Int.}, 131:F15--F18.
+
+\bibitem[Shapiro et~al., 2011]{shapiro:2011}
+Shapiro, S., Kr\"uger, O., Dinske, C., and Langenbruch, C. (2011).
+\newblock Magnitudes of induced earthquakes and geometric scales of
+  fluid-stimulated rock volumes.
+\newblock {\em Geophysics}, 76, doi:10.1190/geo2010-0349.1:WC55--WC63.
+
+\bibitem[Shapiro et~al., 2003]{shapiro:2003}
+Shapiro, S., Patzig, R., and Rothert, E. (2003).
+\newblock Triggering of seismicity by pore-pressure perturbations:
+  Permeability-related signatures of the phenomenon.
+\newblock {\em Pure appl. geophys.}, 160:1051--1060.
+
+\bibitem[Shapiro et~al., 2002]{shapiro:2002}
+Shapiro, S., Rothert, E., Rath, V., and Rindschwendtner, J. (2002).
+\newblock Characterization of fluid transport properties of reservoirs using
+  induced microseismicity.
+\newblock {\em Geophysics}, 67:212--220.
+
+\bibitem[Shapiro and Kaselow, 2005]{shapiroKaselow2005}
+Shapiro, S.~A. and Kaselow, A. (2005).
+\newblock Porosity and elastic anisotropy of rocks under tectonic stress and
+  pore-pressure changes.
+\newblock {\em Geophysics}, 70:N27--N38, doi:10.1190/1.2073884.
+
+\bibitem[Shapiro et~al., 2013]{Shapiro2013}
+Shapiro, S.~A., Kr\"{u}ger, O.~S., and Dinske, C. (2013).
+\newblock {Probability of inducing given-magnitude earthquakes by perturbing
+  finite volumes of rocks}.
+\newblock {\em Journal of Geophysical Research: Solid Earth},
+  118(7):3557--3575.
+
+\bibitem[Snieder, 2006]{Snieder2006}
+Snieder, R. (2006).
+\newblock {The Theory of Coda Wave Interferometry}.
+\newblock {\em Pure and Applied Geophysics}, 163(2-3):455--473.
+
+\bibitem[Snieder et~al., 2002]{Snieder2002}
+Snieder, R., Gr\^{e}t, A., Douma, H., and Scales, J. (2002).
+\newblock {Coda wave interferometry for estimating nonlinear behavior in
+  seismic velocity.}
+\newblock {\em Science}, 295(5563):2253--5.
+
+\bibitem[Snieder and Vrijlandt, 2005]{Snieder2005}
+Snieder, R. and Vrijlandt, M. (2005).
+\newblock {Constraining the source separation with coda wave interferometry:
+  Theory and application to earthquake doublets in the Hayward fault,
+  California}.
+\newblock {\em J. Geophys. Res.}, 110(B4):B04301.
+
+\bibitem[Takagi et~al., 2012]{takagi_etal_JGR_12}
+Takagi, R., Okada, T., Nakahara, H., Umino, N., and Hasegawa, A. (2012).
+\newblock {Coseismic velocity change in and around the focal region of the 2008
+  Iwate-Miyagi Nairiku earthquake}.
+\newblock {\em J. Geophys. Res.}, 117(B6):B06315.
+
+\bibitem[Takei, 2002]{takei02}
+Takei, Y. (2002).
+\newblock Effect of pore geomtry on $v_p/v_s$: From equilibirum geometry to
+  crack.
+\newblock {\em J. Geophys. Res.}, 107:2043.
+
+\bibitem[TenCate et~al., 2000]{TenCate2000}
+TenCate, J., Smith, E., and Guyer, R. (2000).
+\newblock {Universal slow dynamics in granular solids}.
+\newblock {\em Phys. rev. let.}, 85(5):1020--3.
+
+\bibitem[Terakawa et~al., 2010]{terakawa10}
+Terakawa, T., Zoporowski, A., Galvan, B., and Miller, S.~A. (2010).
+\newblock High pressure fluid at hypocentral depths in the {L'Aquila} region
+  inferred from earthquake focal mechanisms.
+\newblock {\em Geology}, 38:995--998.
+
+\bibitem[Tremblay et~al., 2010]{Tremblay2010}
+Tremblay, N., Larose, E., and Rossetto, V. (2010).
+\newblock {Probing slow dynamics of consolidated granular multicomposite
+  materials by diffuse acoustic wave spectroscopy.}
+\newblock {\em J. Acoust. Soc. Am.}, 127(3):1239--1243.
+
+\bibitem[Tsai, 2011]{tsai_JGR_11}
+Tsai, V.~C. (2011).
+\newblock {A model for seasonal changes in GPS positions and seismic wave
+  speeds due to thermoelastic and hydrologic variations}.
+\newblock {\em J. Geophys. Res.}, 116(B4):B04404.
+
+\bibitem[Uchida et~al., 2004]{uchida04}
+Uchida, N., Hasegawa, A., Matsuzawa, T., and Igarashi, T. (2004).
+\newblock {Pre- and post-seismic slip on the plate boundary off Sanriku, NE
+  Japan associated with three interplate earthquakes as estimated from small
+  repeating earthquake data}.
+\newblock {\em Earth Planet. Sci. Let.}, 385:1--15.
+
+\bibitem[Ward et~al., 2013]{ward13}
+Ward, K.~M., Porter, R.~C., Zandt, G., Beck, S.~L., Wagner, L.~S., Minaya, E.,
+  and Tavera, H. (2013).
+\newblock Ambient noise tomography across the {Central Andes}.
+\newblock {\em Geophys. J. Int.}, 194:1559--1573.
+
+\bibitem[Wegler et~al., 2009]{wegler09}
+Wegler, U., Nakahara, H., Sens-Sch\"onfelder, C., Korn, M., and Shiomi, K.
+  (2009).
+\newblock Sudden drop of seismic velocity after the {2004 $M_W$ 6.6
+  Mid-Niigata} earthquake, {Japan} observed with {Passive Image
+  Interferometry}.
+\newblock {\em J. Geophys. Res.}, 114:1--11.
+
+\bibitem[Xu and Song, 2009]{xu09}
+Xu, Z.~J. and Song, X. (2009).
+\newblock Temporal changes of surface wave velocity associated with major
+  {Sumatra} earthquakes from ambient noise correlation.
+\newblock {\em Proc. Nat. Acad. Sci.}, 106:14207--14212.
+
+\bibitem[Yang et~al., 2010]{yang10}
+Yang, Y., Zheng, Y., Chen, J., Zhou, S., Celyan, S., Sandvol, E., Tilmann, F.,
+  Priestley, K., Hearn, T.~M., Ni, J.~F., Brown, L.~D., and Ritzwoller, M.~H.
+  (2010).
+\newblock Rayleigh wave phase velocity maps of tibet and the surrounding
+  regions from ambient seismic noise tomography.
+\newblock {\em Geochem., Geophys. Geosyst.}, 11:Q08010.
+
+\bibitem[Yu et~al., 2013a]{yu13_repeating}
+Yu, W., Song, T. R.~A., and Silver, P.~G. (2013a).
+\newblock Repeating aftershocks of the great 2004 {Sumatra and Nias}
+  earthquakes.
+\newblock {\em J. of Asian Earth Science}, 67-68:153--179.
+
+\bibitem[Yu et~al., 2013b]{yu13_temporal}
+Yu, W., Song, T. R.~A., and Silver, P.~G. (2013b).
+\newblock Temporal velocity changes in the crust assoicated with the great
+  {Sumatra} earthquakes.
+\newblock {\em Bul. Seism. Soc. Am.}, 103:2797--2809.
+
+\bibitem[Zaitsev et~al., 2003]{Zaitsev2003}
+Zaitsev, V., Gusev, V., and Castagnede, B. (2003).
+\newblock Thermoelastic mechanism for logarithmic slow dynamics and memory in
+  elastic wave interactions with individual cracks.
+\newblock {\em Phys. Rev. Let.}, 90(7):075501.
+
+\bibitem[Zhao et~al., 2012]{zhao12}
+Zhao, P.-P., Chen, J.-H., Campillo, M., Liu, Q.-Y., Li, Y., Li, S.-C., Guo, B.,
+  Wang, J., and Qi, S.-H. (2012).
+\newblock {Crustal velocity changes associated with the Wenchuan M8.0
+  earthquake by auto-correlation function analysis of seismic ambient noise}.
+\newblock {\em Chin. J. of Geophys. --chin. ed.}, 55({1}):{137--145}.
+
+\bibitem[Zonno and Kind, 1984]{zonno:1984}
+Zonno, G. and Kind, R. (1984).
+\newblock Depth determination of north {Italian} earthquakes using
+  {G}raefenberg data.
+\newblock {\em Bull. Seismol. Soc. Am.}, 74:1645--1659.
+
+\end{thebibliography}
+
+% flatex input end: [Iquique_DFG.bbl]
+%FLATEX-REM:\bibliographystyle{apalike}
+%FLATEX-REM:\bibliography{300_bibliography,lit-ft}
+\end{multicols}
+\endgroup
+
+
+\section{Requested modules/funds}
+\noindent{\it \small Explain each item for each applicant (stating last name, first name).}
+% flatex input: [400_section4.tex]
+\subsection{Basic Module}
+
+\subsubsection{Funding for Staff}
+\showfile
+
+%\note{JK:\\
+%\noteft{I think for personnel it is not longer necessary to give monetary information}
+\textbf{FU Berlin}
+\begin{description}
+\item[\underline{\mdseries 1 PhD student position (NN) TV-L E13 (75\%) for 36 months}:] 
+The PhD will carry out the tasks in WP2 involving the cross-correlation and array-based relocations;  spatio-temporal analysis search for fluid signatures and stress; time-dependent Vp/Vs ratio determination  
+%: Spatio-temporal distribution of source parameters from earthquake data\\
+%\mbox{}\hfill$3\times 48814.60/a = 146443.80$\texteuro\\[0.3cm]
+\item[\underline{\mdseries 1 student research assistant (40 hours/month for 12 months)}:] Support in processing of seismic data: event detection/selection, phase picking, quality control and data archiving.
+\end{description}
+%\mbox{}\hfill$3\times 6000.00/a = 18000.00$\texteuro
+\textbf{GFZ Potsdam} %\hspace*{1cm}\\[-\baselineskip]
+\begin{description}\item[\underline{\mdseries 1 postdoc position (B. Heit) TV-L E13 for 24 months}:] 
+The postdoc will carry out tasks in WP1 involving the calculation of ambient noise auto- and cross-correlation functions and their analysis in terms of static and time-variable velocity; analysis of multiplet coda waves in terms of velocity changes; inference of source regions and physical mechanisms of velocity changes. B. Heit is a highly experienced seismologist with an excellent knowledge of the study area who coordinated (alongside G. Asch) and contributed substantially to the field acquisition in this project.  
+%: Spatio-temporal distribution of source parameters from earthquake data\\
+%\mbox{}\hfill$3\times 48814.60/a = 146443.80$\texteuro\\[0.3cm]
+\item[\underline{\mdseries 1 student research assistant (40 hours/month for 12 months)}:] Support in processing of seismic data, preparation of presentation material/posters.
+%\mbox{}\hfill$3\times 6000.00/a = 18000.00$\texteuro
+\end{description}
+%
+
+%}
+\subsubsection{Direct Project Costs}
+\showfile
+
+\myparagraph{Equipment up to \EUR{10,000}, Software and Consumables}
+\showfile
+None
+
+\myparagraph{Travel Expenses}
+\showfile
+%\note{JK:\\
+\begin{description}
+ \item[FU Berlin] 
+Cooperation visits\\
+2 visits to project partner in Kiel a 2 days each (train 100 + 150 hotel/per diem)\hfill \texteuro\ \ 500  \\
+1 visit to Chilean partners \`a 5 days $^\ast$					\hfill \texteuro\ \ 650 \\
+Meetings for PhD + Workshop Iquique for both FU-PIs + AGU for one FU-PI: \\
+Y1: DGG \`{a} $600$\texteuro 									\mbox{}\hfill\texteuro\ \ 600\\
+Y2: EGU \`{a} $1250$\texteuro +  3 $\times$ Workshop in Iquique \`{a} 2000\texteuro (PhD+2 PI)		\mbox{}\hfill\texteuro\  7250\\
+Y3: DGG \`{a} 600\texteuro + EGU \`a 1250 2$\times$ AGU \`{a} $2000$\texteuro 				\mbox{}\hfill\texteuro\ 5850\\
+Meetings (FU Berlin) Total									\mbox{}\hfill \textbf{\underline{\texteuro 14850}}
+%\mbox{}\hfill 4 X DGG, 2 x EGU, 2X AGU ($1.200+2.000+4.000$): $8.400$\texteuro\\[0.3cm]
+%\mbox{}\hfill 4 X DGG, 2 x EGU, 2X AGU ($1.200+2.000+4.000$): $8.400$\texteuro\\[0.3cm]
+%}
+ \item[GFZ Potsdam] 
+Cooperation visits: \\
+2 visits to project partner in Kiel a 2 days each (train 100 + 150)\hfill \texteuro\ \ 500  \\
+1 visit to Chilean partners \`a 5 days 					\hfill \texteuro\ \ 650 \\
+Meetings for Postdoc:$^{\ast\ast}$ \\
+Y1: DGG \`{a} $600$\texteuro + EGU EGU \`{a} $1250$\texteuro 				   \mbox{}\hfill \texteuro\ 1850\\
+Y2: EGU \`{a} 1250\texteuro + AGU \`{a} 2000 + Workshop in Iquique \`{a} 2000\texteuro (PD) \mbox{}\hfill\texteuro\ 5250\\
+Meetings (GFZ Potsdam) Total								\mbox{}\hfill \textbf{\underline{\texteuro\ 8250}}\\
+\footnotesize 
+$^\ast$\ Cooperation visit to Chilean partners will be combined with planned workshop in Iquique, requiring additional funding for per-diems only\\
+$^{\ast\ast}$\  Conference and workshop travel for GFZ PIs will be covered by institutional funding 
+\end{description}
+
+\myparagraph{Visiting Researchers (excluding Mercator Fellows)	}
+\showfile
+
+\myparagraph{Expenses for Laboratory Animals}
+\showfile
+
+\myparagraph{Other Costs}
+\showfile
+
+\myparagraph{Project-related publication expenses}
+\showfile\\
+%\note{JK:\\
+%Publication fees in peer reviewed journals; split equally between FU Berlin and GFZ Potsdam.\\
+Page charges/colour fees in peer reviewed journals 3$\times$ 750\texteuro \hfill FU Berlin\ \ 1250\texteuro\\
+\mbox{}\hfill 	 \hfill GFZ Potsdam\ \ 1250\texteuro
+%}
+\subsubsection{Instrumentation}
+\myparagraph{Equipment exceeding Euro 10,000}
+\showfile
+
+\myparagraph{Major Instrumentation exceeding Euro 100,000}
+\showfile
+
+% \subsection{Module Temporary Position for Funding}
+% \showfile
+% 
+% \subsection{Module Replacement Funding}
+% \showfile
+% 
+% \subsection{Module Temporary Clinician Substitute}
+% \showfile
+% 
+% \subsection{Module Mercator Fellows}
+% \showfile
+% 
+% \subsection{Module Workshop Funding}
+% \showfile
+% 
+% \subsection{Module Public Relations Funding}
+% \showfile
+
+% flatex input end: [400_section4.tex]
+
+%
+
+
+
+\section{Project requirements}
+% flatex input: [500_section5.tex]
+\subsection{Employment status information}
+\note{\noindent{\it \small For each applicant, state the last name, first name, and employment status (including duration of contract and funding body, if on a fixed-term contract).}}
+\showfile
+%\note{JK\\
+Prof. Dr. Serge A. Shapiro, permanent, FU Berlin\\
+Dr. J\"orn Kummerow, permanent, FU Berlin\\
+Prof. Dr. Frederik Tilmann, permanent,  GFZ Potsdam \& FU Berlin\\
+Dr. Christoph Sens-Sch\"onfelder, permanent, GFZ Potsdam\\
+
+%} %end note JK
+
+\subsection{First-time proposal data}
+\note{\noindent{\it \small Only if applicable: Last name, first name of first-time applicant}\\}
+\showfile
+NA
+
+\subsection{Composition of the project group}
+\noindent
+\showfile
+\note{\it \small List only those individuals who will work on the project but will not be paid out of the project funds. State each person’s name, academic title, employment status, and type of funding.}
+\begin{description}
+\item[PIs of proposal]  
+\item[Dr Günter Asch] (permanent GFZ): coordination of field experiment  \\
+\item[Dr Bernd Schurr] (permanent GFZ): production of automatic catalogue \\
+\end{description}
+
+
+\subsection{Cooperation with other researchers}
+
+
+
+\subsubsection{Researchers with whom you have agreed to cooperate on this project}
+\showfile
+\noteft{To Do}
+
+\subsubsection{Researchers with whom you have collaborated scientifically within the past three years}
+\showfile
+
+{\footnotesize (Only researchers at third institutions not mentioned in 5.1 listed here)
+
+\noteft{To add cooperation partners of CSS, SS, JK}
+\begin{multicols}{4}
+\begin{flushleft}
+Keith Priestley\\
+James Ni \\
+Eric Sandvol\\
+Georg Rümpker\\
+Joachim Ritter\\
+Bob White \\
+Steven Roecker \\
+Susan Beck\\
+Roel Snieder\\
+Michael Korn
+\end{flushleft}
+\end{multicols}
+
+\subsection{Scientific equipment}
+\noindent{\it \small List larger instruments that will be available to you for the project. These may include large computer facilities if computing capacity will be needed.}\\
+\showfile
+
+
+\subsection{Project-relevant cooperation with commercial enterprises}
+\noindent{\it \small If applicable, please note the guidelines contained in the EU’s Community Framework for State Aid for Research and Development and Innovation (2006/C 323/01) or contact your research institution in this regard.}\\
+\showfile
+
+
+\subsection{Project-relevant participation in commercial enterprises}
+\noindent{\it \small Information on connections between the project and the production branch of the enterprise}\\
+\showfile
+
+
+% flatex input end: [500_section5.tex]
+
+%
+
+\section{Additional information}
+\noindent{\it \small If applicable, please list proposals requesting major instrumentation and/or those previously submitted to a third party here.}\\
+\showfile
+
+
+
+% \note{
+% \clearpage
+% \section{Examples}
+% \input{xsamples}
+% 
+% }
+% \def\newblock{\hskip .11em plus .33em minus .07em}
+
+
+%\bibliographystyle{apalike}
+%\bibliography{/Users/christoph/Documents/paper/library/papers,/Users/christoph/Documents/paper/bib_files/scatter}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+% flatex input end: [Iquique_DFG.tex]

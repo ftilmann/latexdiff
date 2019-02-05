@@ -1,0 +1,6 @@
+*-diff-?.*.*.tex
+*-diff.tex
+*.log
+report-vc.txt
+*-diff.pdf
+

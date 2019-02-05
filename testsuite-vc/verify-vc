@@ -1,0 +1,117 @@
+#!/bin/csh
+
+# runtime mode
+# note that in fact iquique and iquique1 are identical (enforced by symolic links) but for the output we ought to distinguish them
+set testroots = ( iquique 'iquique1 --only-changes --graphics-markup=none')
+
+
+# NOT including -t option
+set options="-V -s SAFE -f FLOATSAFE"
+set refversion=1.3.0
+
+set reportfile=report-vc.txt
+
+#setenv INTERACTIVE
+
+
+if ( $#argv >= 1 ) then
+  if ( $argv[1] == "--reset" ) then
+    echo "Running verify in RESET mode, ie. save all differences with version number $refversion for later use, overwriting if necessary."
+    echo "Press Return to confirm"
+    set dummy="$<"
+    set reset
+  else
+    unset reset
+  endif
+else 
+  unset reset
+endif
+
+
+set failed
+set noexist
+set failedrun
+set pdfout
+if ( ! $?reset ) then 
+  echo "Report of diff test:" > $reportfile
+  latexdiff --version >>& $reportfile
+  echo "--------" >> $reportfile
+endif
+while ( $#testroots >= 1 )
+#foreach test ( $testroots)
+  echo $testroots[1]
+  set sample=( $testroots[1] )
+  shift testroots
+  if ( $#sample > 1 ) then 
+    set eopt="$sample[2-]"
+  else
+    set eopt
+  endif
+  set sample=$sample[1]
+  printf "%-20s :" $sample[1] >> $reportfile
+  echo "=========================================" 
+  echo "latexdiff-vc --pdf --force $options $eopt ${sample}-old.tex ${sample}-new.tex"
+  latexdiff-vc  --pdf --force $options $eopt ${sample}-old.tex ${sample}-new.tex |& tee ${sample}-latexdiff-vc.log
+  \mv ${sample}-new-diff.tex  ${sample}-diff.tex
+  \mv ${sample}-new-diff.pdf  ${sample}-diff.pdf
+  if ( $?reset ) then
+    \cp  ${sample}-diff.tex  ${sample}-diff-$refversion.tex 
+    \cp ${sample}-latexdiff-vc.log ${sample}-latexdiff-vc-$refversion.log
+  else
+    if (! -e ${sample}-diff-$refversion.tex ) then
+      echo "Reference version ${sample}-diff-$refversion.tex does not exist."
+      set noexist = ( $noexist $sample )
+      echo " noref" >> $reportfile
+      continue
+    endif
+    echo "Comparing ${sample}-diff-$refversion.tex and  ${sample}-diff.tex (removing latexdiff date stamp)"
+    # remove 2 lines after pattern
+    sed -e '/%DIF LATEXDIFF DIFFERENCE FILE/,+2d' ${sample}-diff-$refversion.tex > tmp-ref.$$.tex
+    sed -e '/%DIF LATEXDIFF DIFFERENCE FILE/,+2d' ${sample}-diff.tex > tmp-cur.$$.tex
+ 
+    diff -q tmp-ref.$$.tex tmp-cur.$$.tex
+ 
+    if ( $status ) then
+      echo -n " fail">> $reportfile
+      diff -c ${sample}-diff-$refversion.tex ${sample}-diff.tex
+      echo "\07" 
+      echo "Comparison of ${sample}-old.tex and ${sample}-new.tex gave different results to reference version. See above for detailed listing."
+      if ( $?INTERACTIVE ) then
+        echo "Press Return to continue" ; set dummy="$<" 
+      endif
+      set failed = ( $failed $sample )
+    else
+      echo -n " ok" >> $reportfile 
+      echo "Passed comparison..."
+    endif
+    # calculate running time from summing reported time
+    set totaltime=`perl -ne 'if (/\(([0-9.]*) s\)/){$sum+=$1; } END {print $sum }' ${sample}-latexdiff-vc.log`
+    set totaltimeref=`perl -ne 'if (/\(([0-9.]*) s\)/){$sum+=$1; } END {print $sum }' ${sample}-latexdiff-vc-$refversion.log`
+    # timediff[1] absolute diff.  timediff[2] % percentage diff rel. to old
+	set timediff=( `echo  $totaltime $totaltimeref | awk  '{ diff=$1-$2; print diff, 100*diff/($2+0.005) }'` )
+    printf " %5.2f s ( %6.2f s)\n" $totaltime $timediff[1]  >> $reportfile
+    \rm tmp-{cur,ref}.$$.tex
+  endif
+end
+
+
+# Reporting results
+if ( ! $?reset ) then 
+  cat $reportfile
+  unset flagdummy
+  foreach fail ( $failed )
+    set flagdummy
+    echo kdiff3 ${fail}-diff-$refversion.tex ${fail}-diff.tex ' &'
+  end
+  if ($?flagdummy ) then 
+    echo ""
+    echo "The following test(s) failed:"
+    echo $failed
+  endif
+  if ( "x$noexist" != x ) then
+    echo "The following test(s) did not have a reference version available:"
+    echo $noexist
+  endif
+endif
+
+
