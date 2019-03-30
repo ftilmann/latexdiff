@@ -327,7 +327,7 @@ my ($oldbody, $newbody, $diffbo);
 my ($oldpost, $newpost);
 my ($diffall);
 # Option names
-my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblelabel,
+my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblelabel,$filterscript,
     $showpreamble,$showsafe,$showtext,$showconfig,$showall,
     $replacesafe,$appendsafe,$excludesafe,
     $replacetext,$appendtext,$excludetext,
@@ -429,6 +429,7 @@ GetOptions('type|t=s' => \$type,
 	   'ignore-warnings' => \$ignorewarnings,
 	   'driver=s'=> \$driver,
 	   'flatten' => \$flatten,
+	   'filter-script=s' => \$filterscript,
 	   'no-links' => \$nolinks,
 	   'version' => \$version,
 	   'help|h' => \$help,
@@ -808,8 +809,27 @@ if (lc($encoding) eq "utf8" ) {
   binmode(STDERR, ":utf8");
 }
 
-$old=read_file_with_encoding($oldfile,$encoding);
-$new=read_file_with_encoding($newfile,$encoding);
+$old=filter(read_file_with_encoding($oldfile,$encoding));
+$new=filter(read_file_with_encoding($newfile,$encoding));
+
+sub filter {
+  my ($text)=@_;
+  my ($textout,$pid);
+  if ($filterscript ne "") {
+    print STDERR "Passing " . length($text) . " chars to filter script " . $filterscript . "\n";
+    use IPC::Open2;
+    $pid = open2(\*CHLD_OUT, \*CHLD_IN, $filterscript) or die "open2() failed $!";
+    print CHLD_IN $text."\n";  # Adding a newline just to make sure there is one.
+    close CHLD_IN;
+    while (<CHLD_OUT>) {
+      $textout = $textout.$_;
+    }
+    $text = $textout;
+    print STDERR "Received " . length($text) . " chars after filtering\n";
+    print STDERR $text;
+    return $text;
+  }
+}
 
 ###if (lc($encoding) eq "utf8" ) {
 ###  binmode(STDOUT, ":utf8");
