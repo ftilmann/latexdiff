@@ -727,9 +727,6 @@ The generic usage of this function is : C<latexdiff-vc --flatten -r rev1 [-r rev
 
 With C<--flatten=keep-intermediate>, the intermediate revision snapshots are kept in the current directory (Default is to store them in a temporary directory and delete them after generating the diff file.)
 
-=item B<--config var1=val1,var2=val2,...> or B<-c var1=val1,..>
-
-
 
 =item B<--only-changes>
 
@@ -752,6 +749,7 @@ run latex command on diff file after generation of diff file.
 run latex and dvixxx commands after generation of diff file.
 
 =item B<-c configfile>
+=item B<--config var1=val1,var2=val2,...> or B<-c var1=val1,..>
 
 Set configuration variables for latexdiff and latexdiff-vc.  The option can be repeated to set different
 variables (as an alternative to the comma-separated list).

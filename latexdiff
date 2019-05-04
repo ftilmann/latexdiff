@@ -186,7 +186,7 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.3.0  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+This is LATEXDIFF 1.3.1a  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
   (c) 2004-2018 F J Tilmann
 EOF
 
@@ -5036,7 +5036,7 @@ verbatim[*]?
 %DIF CULINECHBAR PREAMBLE
 \RequirePackage[normalem]{ulem}
 \RequirePackage[dvips]{changebar}
-\RequirePackage{color}
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
 \providecommand{\DIFadd}[1]{\protect\cbstart{\protect\color{blue}\uwave{#1}}\protect\cbend}
 \providecommand{\DIFdel}[1]{\protect\cbdelete{\protect\color{red}\sout{#1}}\protect\cbdelete}
 %DIF END CULINECHBAR PREAMBLE
