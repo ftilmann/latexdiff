@@ -4324,7 +4324,7 @@ included sections are not expanded.  The included files are assumed to
 respectively, making it possible to organise files into old and new directories. 
 --flatten is applied recursively, so inputted files can contain further
 C<\input> statements.  Also handles files included by the import package
-(\\import and \\subimport), and \\subfile command.
+(C<\import> and C<\subimport>), and C<\subfile> command.
 
 Use of this option might result in prohibitive processing times for
 larger documents, and the resulting difference document
