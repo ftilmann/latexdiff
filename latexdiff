@@ -42,6 +42,8 @@
 #     - added to textcmds: \intertext
 #    - new config variable CUSTOMDIFCMD to allow defining special versions of  commands  in added or deleted blocks (Pull request by github user jprotze)
 #    - added option -no-links (mostly for use by latexdiff-vc in only-changes modes) (Pull request by github user jprotze)
+#    - new option --filter-script to run both input through a pre-processing script (PR jasonmccsmith  #167) 
+#      new option --no-filter-stderr to hide stderr output from filter-script (potentially dangerous, as this might hide malfunctioning of filter scripts)
 #   Bug fixes:
 #    - pattern matching of \verb and \lstinline commands had an error which meant they would trigger on commands beginning with \verb.
 #    - In description environments, mark up item descriptions by effectively reating the insides of item commannds as text commands (fixes #161)
@@ -3758,13 +3760,6 @@ Other configuration options:
                        with \\mbox command, i.e. use default behaviour for ulem package for other packages
                        (the two options are identical and are simply aliases)
 
---filter-script=filterscript    Run files through this filterscript (full path preferred) before processing.
-                       The filterscript must take STDIN input and output to STDOUT.
-                       When coupled with --flatten, each file will be run through the filter as it is brought in.
-
---ignore-filter-stderr When running with --filter-script, STDERR from the script may cause readability issues.
-                       Turn this flag on to ignore STDERR from the filter script.
-
 Miscelleneous options
 
 --label=label
@@ -3787,6 +3782,15 @@ Miscelleneous options
                        respectively, making it possible to organise files into old and new directories.
                        --flatten is applied recursively, so inputted files can contain further
                        \\input statements.
+
+--filter-script=filterscript    Run files through this filterscript (full path preferred) before processing.
+                       The filterscript must take STDIN input and output to STDOUT.
+                       When coupled with --flatten, each file will be run through the filter as it is brought in.
+
+--ignore-filter-stderr When running with --filter-script, STDERR from the script may cause readability issues.
+                       Turn this flag on to ignore STDERR from the filter script.
+
+
 
 --help
 -h                     Show this help text.
@@ -4292,17 +4296,6 @@ Protect citation commands and other vulnerable commands in changed sections
 with C<\mbox> command, i.e. use default behaviour for ulem package for other packages
 (the two options are identical and are simply aliases)
 
-=item B<--filter-script=filterscript>
-
-Run files through this filterscript (full path preferred) before processing.
-The filterscript must take STDIN input and output to STDOUT.
-When coupled with --flatten, each file will be run through the filter as it is brought in.
-
-=item B<--ignore-filter-stderr>
-
-When running with --filter-script, STDERR from the script may cause readability issues.
-Turn this flag on to ignore STDERR from the filter script.
-
 =back
 
 =head2 Miscellaneous
@@ -4363,6 +4356,19 @@ C<\input> statements.
 Use of this option might result in prohibitive processing times for
 larger documents, and the resulting difference document
 no longer reflects the structure of the input documents.
+
+=item B<--filter-script=filterscript>
+
+Run files through this filterscript (full path preferred) before processing.
+The filterscript must take STDIN input and output to STDOUT.
+When coupled with --flatten, each file will be run through the filter as it is brought in.
+
+=item B<--ignore-filter-stderr>
+
+When running with --filter-script, STDERR from the script may cause readability issues.
+Turn this flag on to ignore STDERR from the filter script.
+
+
 
 =item B<--help> or
 B<-h>
