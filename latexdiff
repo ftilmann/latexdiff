@@ -44,6 +44,7 @@
 #    - added option -no-links (mostly for use by latexdiff-vc in only-changes modes) (Pull request by github user jprotze)
 #    - new option --filter-script to run both input through a pre-processing script (PR jasonmccsmith  #167) 
 #      new option --no-filter-stderr to hide stderr output from filter-script (potentially dangerous, as this might hide malfunctioning of filter scripts)
+#    - --flatten now can deal with imports made using the import package {PR jasonmccsmith #173)
 #   Bug fixes:
 #    - pattern matching of \verb and \lstinline commands had an error which meant they would trigger on commands beginning with \verb.
 #    - In description environments, mark up item descriptions by effectively reating the insides of item commannds as text commands (fixes #161)
@@ -183,6 +184,8 @@ use Getopt::Long ;
 use strict ;
 use warnings;
 use utf8 ;
+
+use File::Spec ;
 
 my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
@@ -938,11 +941,11 @@ exetime(1);
 ###}
 
 if ($flatten) {
-  $oldbody=flatten($oldbody,$oldpreamble,$oldfile,$encoding);
-  $newbody=flatten($newbody,$newpreamble,$newfile,$encoding);
+  $oldbody=flatten($oldbody,$oldpreamble,File::Spec->rel2abs($oldfile),$encoding);
+  $newbody=flatten($newbody,$newpreamble,File::Spec->rel2abs($newfile),$encoding);
   # flatten preamble
-  $oldpreamble=flatten($oldpreamble,$oldpreamble,$oldfile,$encoding);
-  $newpreamble=flatten($newpreamble,$newpreamble,$newfile,$encoding);
+  $oldpreamble=flatten($oldpreamble,$oldpreamble,File::Spec->rel2abs($oldfile),$encoding);
+  $newpreamble=flatten($newpreamble,$newpreamble,File::Spec->rel2abs($newfile),$encoding);
 
 ###   if ( $debug ) {
 ###     open(FILE,">","latexdiff.debug.flatold");
@@ -1563,11 +1566,13 @@ sub remove_endinput {
 # encoding is the encoding
 sub flatten {
   my ($text,$preamble,$filename,$encoding)=@_;
-  my ($includeonly,$dirname,$fname,$newpage,$fullfile,$filecontent,$replacement,$begline,$bblfile,$subfile,$command,$verbenv,$verboptions);
+  my ($includeonly,$dirname,$fname,$newpage,$fullfile,$filecontent,$replacement,$begline,$bblfile,$subfile,$command,$verbenv,$verboptions,$ignore,$fileonly);
   my ($subpreamble,$subbody,$subpost);
+  my ($subdir,$subdirfull,$importfilepath);
   require File::Basename ; 
-  require File::Spec ; 
-  $dirname = File::Basename::dirname($filename);
+  ###  require File::Spec ;    # now this is needed even if flatten option not given
+  $filename = File::Spec->rel2abs( $filename ) ;
+  ($ignore, $dirname, $fileonly) = File::Spec->splitpath($filename) ;
   $bblfile = $filename;
   $bblfile=~s/\.tex$//;
   $bblfile.=".bbl";
@@ -1580,9 +1585,44 @@ sub flatten {
 
   print STDERR "DEBUG: includeonly $includeonly\n" if $debug;
 
+
   # Run through filter, to let filterscript have a pass if it was set
   $text = filter($text);
-  
+
+  # Recursively replace \\import and \\subimport files
+  $text =~ s/(^(?:[^%\n]|\\%)*)(\\subimport\{(.*?)\}|\\import\{(.*?)\})(?:[\s]*)\{(.*?)\}/{
+          # $1 is begline
+          # $3 is directory if subimport
+          # $4 is directory if import
+          # $5 is filename
+          $begline = (defined($1)? $1 : "");
+          $subdir = $3 if defined($3);
+          $subdir = $4 if defined($4);
+          $fname = $5;
+          $fname .= ".tex" unless $fname =~ m|\.\w{3,4}$|;
+          print STDERR "DEBUG begline:", $begline, "\n" if $debug;
+          print STDERR "DEBUG", (defined($3)? "subimport_file:" : "import_file:"), $subdir, "\n" if $debug;
+          print STDERR "DEBUG file:", $fname, "\n" if $debug;
+
+          # subimport appends $subdir to the current $dirname.  import replaces it with an absolute path.
+          $subdirfull = (defined($3) ? File::Spec->catdir($dirname,$subdir) : $subdir);
+
+          $importfilepath = File::Spec->catfile($subdirfull, $fname);
+          
+          print STDERR "importing importfilepath:", $importfilepath,"\n" if $verbose;
+          if ( -f $importfilepath ) {
+              # If file exists, replace input or include command with expanded input
+              $replacement=flatten(read_file_with_encoding($importfilepath, $encoding), $preamble,$importfilepath,$encoding) or die "Could not open file ",$fullfile,": $!";
+          } else {
+              # if file does not exist, do not expand include or input command (do not warn if fname contains #[0-9] as it is then likely part of a command definition
+              # and is not meant to be expanded directly 
+              print STDERR "WARNING: Could not find included file ",$importfilepath,". I will continue but not expand |$2|\n";
+              $replacement=(defined($3)? "\\subimport" : "\\import");
+              $replacement .= "{$subdir}{$fname} % Processed";
+          }
+          "$begline$replacement";
+  }/exgm;
+
   # recursively replace \\input and \\include files
   $text =~ s/(^(?:[^%\n]|\\%)*)(\\input\{(.*?)\}|\\include\{(${includeonly}(?:\.tex)?)\})/{ 
 	    $begline=(defined($1)? $1 : "") ;
@@ -3781,7 +3821,8 @@ Miscelleneous options
                        be located in the same directories as the old and new master files,
                        respectively, making it possible to organise files into old and new directories.
                        --flatten is applied recursively, so inputted files can contain further
-                       \\input statements.
+                       \\input statements.  Also handles files included by the import package
+                       (\\import and \\subimport), and \\subfile command.
 
 --filter-script=filterscript    Run files through this filterscript (full path preferred) before processing.
                        The filterscript must take STDIN input and output to STDOUT.
@@ -4351,7 +4392,8 @@ included sections are not expanded.  The included files are assumed to
  be located in the same directories as the old and new master files,
 respectively, making it possible to organise files into old and new directories. 
 --flatten is applied recursively, so inputted files can contain further
-C<\input> statements.
+C<\input> statements.  Also handles files included by the import package
+(C<\import> and C<\subimport>), and C<\subfile> command.
 
 Use of this option might result in prohibitive processing times for
 larger documents, and the resulting difference document
