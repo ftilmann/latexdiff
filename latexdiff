@@ -328,6 +328,7 @@ my ($oldpost, $newpost);
 my ($diffall);
 # Option names
 my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblelabel,
+    $filterscript,$ignorefilterstderr,
     $showpreamble,$showsafe,$showtext,$showconfig,$showall,
     $replacesafe,$appendsafe,$excludesafe,
     $replacetext,$appendtext,$excludetext,
@@ -429,6 +430,8 @@ GetOptions('type|t=s' => \$type,
 	   'ignore-warnings' => \$ignorewarnings,
 	   'driver=s'=> \$driver,
 	   'flatten' => \$flatten,
+	   'filter-script=s' => \$filterscript,
+       'ignore-filter-stderr' => \$ignorefilterstderr,
 	   'no-links' => \$nolinks,
 	   'version' => \$version,
 	   'help|h' => \$help,
@@ -473,7 +476,8 @@ if (defined($mathmarkup)) {
   # else use numerical value
 }
 
-
+# Give filterscript a default empty string
+$filterscript="" unless defined($filterscript);
 
 # setting extra preamble commands
 if (defined($preamblefile)) {
@@ -808,8 +812,55 @@ if (lc($encoding) eq "utf8" ) {
   binmode(STDERR, ":utf8");
 }
 
+# filter($text)
+# Runs $text through the script provided in $filterscript argument, if set
+# If not set, just returns $text unchanged.
+# If flatten was set, defer filtering to flatten.  flatten will run the filter
+# on all incoming text prior to its own processing.
+# If flatten was not set, filter each of old and new once (see just below this def)
+sub filter {
+  my ($text)=@_;
+  my ($textout,$pid);
+  if ($filterscript ne "") {
+    print STDERR "Passing " . length($text) . " chars to filter script " . $filterscript . "\n" if $verbose;
+
+    if ($ignorefilterstderr) {
+        # If we need to capture and bury STDERR, use the Open3 version, and close CHLD_ERR below.
+        use IPC::Open3;
+        # We consume STDERR from the process, and hide it
+        $pid = open3(\*CHLD_IN, \*CHLD_OUT, \*CHLD_ERR, $filterscript) or die "open3() failed $!";
+    }
+    else {
+        # Capture STDOUT and use as our new $text.  Allow STDERR to go to console.
+        use IPC::Open2;
+        $pid = open2(\*CHLD_OUT, \*CHLD_IN, $filterscript) or die "open2() failed $!";
+    }
+    # Send in $text
+    print CHLD_IN $text."\n";  # Adding a newline just to make sure there is one.
+    close CHLD_IN;
+    # Wait for output and gather it up
+    while (<CHLD_OUT>) {
+      $textout = $textout.$_;
+    }
+    if ($ignorefilterstderr) {
+        close CHLD_ERR;       # Enable only if Open3 used above
+    }
+    # On the off chance a very long running and/or frequently called script is used.
+    waitpid( $pid, 0 );
+    $text = $textout;
+    print STDERR "Received " . length($text) . " chars after filtering\n" if $verbose;
+    print STDERR $text if $verbose;
+  }
+  return $text;
+}
+
 $old=read_file_with_encoding($oldfile,$encoding);
 $new=read_file_with_encoding($newfile,$encoding);
+
+if (not defined($flatten)) {
+    $old=filter($old);
+    $new=filter($new);
+}
 
 ###if (lc($encoding) eq "utf8" ) {
 ###  binmode(STDOUT, ":utf8");
@@ -1527,6 +1578,9 @@ sub flatten {
 
   print STDERR "DEBUG: includeonly $includeonly\n" if $debug;
 
+  # Run through filter, to let filterscript have a pass if it was set
+  $text = filter($text);
+  
   # recursively replace \\input and \\include files
   $text =~ s/(^(?:[^%\n]|\\%)*)(\\input\{(.*?)\}|\\include\{(${includeonly}(?:\.tex)?)\})/{ 
 	    $begline=(defined($1)? $1 : "") ;
@@ -3704,6 +3758,13 @@ Other configuration options:
                        with \\mbox command, i.e. use default behaviour for ulem package for other packages
                        (the two options are identical and are simply aliases)
 
+--filter-script=filterscript    Run files through this filterscript (full path preferred) before processing.
+                       The filterscript must take STDIN input and output to STDOUT.
+                       When coupled with --flatten, each file will be run through the filter as it is brought in.
+
+--ignore-filter-stderr When running with --filter-script, STDERR from the script may cause readability issues.
+                       Turn this flag on to ignore STDERR from the filter script.
+
 Miscelleneous options
 
 --label=label
@@ -4230,6 +4291,17 @@ using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR)
 Protect citation commands and other vulnerable commands in changed sections 
 with C<\mbox> command, i.e. use default behaviour for ulem package for other packages
 (the two options are identical and are simply aliases)
+
+=item B<--filter-script=filterscript>
+
+Run files through this filterscript (full path preferred) before processing.
+The filterscript must take STDIN input and output to STDOUT.
+When coupled with --flatten, each file will be run through the filter as it is brought in.
+
+=item B<--ignore-filter-stderr>
+
+When running with --filter-script, STDERR from the script may cause readability issues.
+Turn this flag on to ignore STDERR from the filter script.
 
 =back
 
