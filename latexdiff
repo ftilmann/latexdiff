@@ -31,6 +31,11 @@
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 ###  - change meaning of --packages option such that this packages are used in addition of automatically detected packages (possibly introduce option --only-packages that overrides automatic choices completely
 
+# Version 1.3.1 
+#    Bug fixes:
+#      - remove some uninitialised variable $2 warnings in string substitution in flatten function in case included file is not found
+#      - add minimal postprocessing to diff processing of preamble commands (replace \RIGHTBRACE by \} ) 
+#
 # Version 1.3.0 (7 October 2018):
 #    - treat options to \documentclass as potential package names (some packages allow implicit loading of or imply selected packages
 #    - improved pattern matching: now allows nested angular brackets, and is no longer confused by escaped curly braces
@@ -1566,7 +1571,7 @@ sub remove_endinput {
 # encoding is the encoding
 sub flatten {
   my ($text,$preamble,$filename,$encoding)=@_;
-  my ($includeonly,$dirname,$fname,$newpage,$fullfile,$filecontent,$replacement,$begline,$bblfile,$subfile,$command,$verbenv,$verboptions,$ignore,$fileonly);
+  my ($includeonly,$dirname,$fname,$newpage,$fullfile,$filecontent,$replacement,$begline,$inputcmd,$bblfile,$subfile,$command,$verbenv,$verboptions,$ignore,$fileonly);
   my ($subpreamble,$subbody,$subpost);
   my ($subdir,$subdirfull,$importfilepath);
   require File::Basename ; 
@@ -1626,8 +1631,10 @@ sub flatten {
   # recursively replace \\input and \\include files
   $text =~ s/(^(?:[^%\n]|\\%)*)(\\input\{(.*?)\}|\\include\{(${includeonly}(?:\.tex)?)\})/{ 
 	    $begline=(defined($1)? $1 : "") ;
+	    $inputcmd=$2;
 	    $fname = $3 if defined($3) ;
 	    $fname = $4 if defined($4) ;
+            $newpage=(defined($4)? " \\newpage " : "") ;
             #      # add tex extension unless there is a three or four letter extension already 
             $fname .= ".tex" unless $fname =~ m|\.\w{3,4}$|;
             $fullfile = File::Spec->catfile($dirname,$fname);
@@ -1640,12 +1647,11 @@ sub flatten {
 	      $replacement=flatten(read_file_with_encoding($fullfile, $encoding), $preamble,$filename,$encoding) or die "Could not open file ",$fullfile,": $!";
 	      $replacement = remove_endinput($replacement); 
 	      # \include always starts a new page; use explicit \newpage command to simulate this
-	      $newpage=(defined($4)? " \\newpage " : "") ;
 	    } else {
 	      # if file does not exist, do not expand include or input command (do not warn if fname contains #[0-9] as it is then likely part of a command definition
               # and is not meant to be expanded directly 
-	      print STDERR "WARNING: Could not find included file ",$fullfile,". I will continue but not expand |$2|\n" unless $fname =~ m(#[0-9]) ;
-	      $replacement = $2 ;   # i.e. just the original command again -> make no change file does not exist
+	      print STDERR "WARNING: Could not find included file ",$fullfile,". I will continue but not expand |$inputcmd|\n" unless $fname =~ m(#[0-9])n ;
+	      $replacement = $inputcmd ;   # i.e. just the original command again -> make no change file does not exist
 	      $newpage="";
 	    }
 	    "$begline$newpage$replacement$newpage";
@@ -2252,24 +2258,24 @@ sub iscmd {
   my ($cmd,$regexar,$regexexcl)=@_;
   my ($ret)=0;
 ###  print STDERR "DEBUG: iscmd($cmd) in @$regexar, \n---------\n excluding @$regexexcl or @TEXTCMDEXCL safe @SAFECMDEXCL \n" if $debug;
-  print STDERR "DEBUG: iscmd($cmd)=" if $debug;
+  ### print STDERR "DEBUG: iscmd($cmd)=" if $debug;
   foreach $pat ( @$regexar ) {
     if ( $cmd =~ m/^${pat}$/ ) {
       $ret=1 ; 
       last;
     }
   }
-  print STDERR "0\n" if ($debug && !$ret) ;
+  ### print STDERR "0\n" if ($debug && !$ret) ;
   return 0 unless $ret;
 ###  print STDERR "DEBUG: Maybe\n" if $debug;
   foreach $pat ( @$regexexcl ) {
 ###    print STDERR "DEBUG iscmd: checking |$cmd| against |$pat|\n" if $debug;
 ###    print STDERR "DEBUG MATCH\n" if ($debug && $cmd =~ m/^${pat}$/);
-    print STDERR "0\n" if ( $debug && $cmd =~ m/^${pat}$/) ;
+    ### print STDERR "0\n" if ( $debug && $cmd =~ m/^${pat}$/) ;
     return 0 if ( $cmd =~ m/^${pat}$/ );
   }
 ###  print STDERR "DEBUG: Yes\n" if $debug;
-  print STDERR "1\n" if $debug;
+  ### print STDERR "1\n" if $debug;
   return 1;
 }
 
@@ -2387,7 +2393,7 @@ sub marktags {
     }
     # negative lookahead pattern (?!) in second clause is put in to avoid matching \( .. \) patterns
     # also note that second pattern will match \\
-    print STDERR "DEBUG marktags: Considering word |$word|\n" if $debug;
+    ### print STDERR "DEBUG marktags: Considering word |$word|\n" if $debug;
     if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
       ###print STDERR "DEBUG MARKTAGS is a non-safe command ($1)\n" if $debug;
       ###    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\([\w*@\\% ]+)/ && !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
@@ -3305,8 +3311,7 @@ sub restore_item_commands {
   # pre-process preamble by looking for commands used in \maketitle (title, author, date etc commands) 
   # the list of commands is defined in CONTEXT2CMD 
   # if found then use a bodydiff to mark up content, and replace the corresponding commands 
-  # in both preambles by marked up version to 'fool' the linediff (such that only body is marked
-  # up.
+  # in both preambles by marked up version to 'fool' the linediff (such that only body is marked up).
   # A special case are e.g. author commands being added (or removed)
   # 1. If commands are added, then the entire content is marked up as new, but also the lines are marked as new in the linediff
   # 2. If commands are removed, then the linediff will mark the line as deleted.  The program returns 
@@ -3392,6 +3397,9 @@ EOF
     }
     $argnew=$newhash{$cmd}->[2];
     $argdiff="{" . join("",bodydiff($argold,$argnew)) ."}";
+    # Replace \RIGHTBRACE by }    
+    $argdiff =~ s/\\RIGHTBRACE/}/g;
+
 ###    print STDERR "DEBUG cmd:$cmd argnew:$argnew argold:$argold |",defined($newhash{$cmd}),defined($oldhash{$cmd}),"|\n";
     if ( length $optargnew ) {
       $optargdiff="[".join("",bodydiff($optargold,$optargnew))."]" ;
