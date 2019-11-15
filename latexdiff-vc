@@ -473,7 +473,7 @@ while ( $infile=$file2=shift @files ) {
 
   # Remaining options are passed to latexdiff
   if (scalar(@ldoptions) > 0 ) {
-    $options = "\'" . join("\' \'",@ldoptions) . "\'";
+    $options = join(" ",@ldoptions);
   } else {
     $options = "";
   }
@@ -613,7 +613,7 @@ sub checkout_dir {
     system("svn checkout -r $rev $rootdir $dirname")==0 or die "Something went wrong in executing:  svn checkout -r $rev $rootdir $dirname";
   } elsif ( $vc eq "GIT" ) {
     $rev="HEAD" if length($rev)==0;
-    system("git archive --format=tar $rev | ( cd $dirname ; tar -xf -)")==0 or die "Something went wrong in executing:  git archive --format=tar $rev | ( cd $dirname ; tar -xf -)";
+    system("git archive --format=tar $rev | tar -C $dirname -xf -")==0 or die "Something went wrong in executing:  git archive --format=tar $rev | tar -C $dirname -xf -";
   } elsif ( $vc eq "HG" ) {
     system("hg archive --type files -r $rev $dirname")==0 or die "Something went wrong in executing:  hg archive --type files -r $rev $dirname";
   } else {
