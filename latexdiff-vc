@@ -814,7 +814,7 @@ L<latexdiff>
 =head1 PORTABILITY
 
 I<latexdiff-vc> uses external commands and is therefore dependent on the system architecture; it has been
-tested mainly on Unix-like systems. It also requires the a version control
+tested mainly on Unix-like systems. It also requires a version control
 system and latex to be installed on the system to make use of all features.  Modules from Perl 5.8
 or higher are required.
 
