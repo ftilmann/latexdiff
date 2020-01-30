@@ -20,7 +20,7 @@ latex packages such as {\em color.sty}. Changes not directly affecting visible
 text, for example in formatting  commands, are still marked in the
 latex source.
 
-A rudimentary revision facilility is provided by another Perl script,
+A rudimentary revision facility is provided by another Perl script,
 {\em latexrevise}, which  accepts or rejects all changes.  Manual editing
 of the difference file can be used to override this default behaviour
 and accept or reject selected changes only.  
@@ -201,7 +201,7 @@ To compare both revisions, type
 latexdiff -t UNDERLINE example-draft.tex example-rev.tex > example-diff.tex
 \end{verbatim}
 This results in the following difference file (a few newlines have been 
-added in this listing for legibility reasosn):
+added in this listing for legibility reasons):
 {\scriptsize
 \begin{verbatim}
 \documentclass[12pt,a4paper]{article}
@@ -359,7 +359,7 @@ The following is an incomplete list of wrappers written by others providing some
 \begin{description}
  \item[latexdiffcite] (Author: Christer van der Meeren)  is a wrapper around latexdiff to make citations diff properly. It works by expanding \verb|\cite| type commands using the bbl or bib file, such that citations are treated just like normal text rather than as atomic in the plain latexdiff. \\
 \verb|https://latexdiffcite.readthedocs.org|
-\item[git-latexdiff] (lead author: Matthieu Moy) is a wrapper (bash scipt) around latexdiff that allows using it to diff two revisions of a LaTeX file under git revision control Similar functionality is provided by \verb|latexdiff-vc --git| with \verb|--flatten| option included with this distribution but git-latexdiff allows more fine-grained control on varous aspects. (Not to be confused with latexdiff-git, which is normally installed as a soft link to latexdiff-vc) \\
+\item[git-latexdiff] (lead author: Matthieu Moy) is a wrapper (bash script) around latexdiff that allows using it to diff two revisions of a \LaTeX file under git revision control Similar functionality is provided by \verb|latexdiff-vc --git| with \verb|--flatten| option included with this distribution but git-latexdiff allows more fine-grained control on various aspects. (Not to be confused with latexdiff-git, which is normally installed as a soft link to latexdiff-vc) \\
 \verb|https://gitorious.org/git-latexdiff/|
 
 \end{description}
