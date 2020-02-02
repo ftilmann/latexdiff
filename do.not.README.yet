@@ -9,7 +9,7 @@ the latex source. Note that only files conforming to latex syntax will
 be processed correctly, not generic TeX files. Some further 
 minor restrictions apply, see documentation.
  
-A rudimentary revision facilility is provided by another Perl script,
+A rudimentary revision facility is provided by another Perl script,
 latexrevise, which accepts or rejects all changes.  Manual
 editing of the difference file can be used to override this default
 behaviour and accept or reject selected changes only.  
@@ -90,7 +90,7 @@ latexdiff-wrap (Author: V. Kuhlmann) An alternative wrapper script which can be 
 
 latexdiff.spec (Author: T. Doerges) spec file for RPM generation
 
-latexchanges (Author: Jan-Ake Larsson) Wrapper script for applying latexdiff with numbered documen version 
+latexchanges (Author: Jan-Ake Larsson) Wrapper script for applying latexdiff with numbered document version 
 (see contrib/README.latexchanges for a more detailed description)
 
 Contributions by the following authors were incorporated into the latexdiff code, or inspired me to 
@@ -101,7 +101,7 @@ EXTERNAL LATEXDIFF SUPPORT PROGRAMS
 LATEXDIFFCITE (Author: Christer van der Meeren)  is a wrapper around latexdiff to make citations diff properly. It works by expanding \cite type commands using the bbl or bib file, such that citations are treated just like normal text rather than as atomic in the plain latexdiff.
 https://latexdiffcite.readthedocs.org
 
-GIT-LATEXDIFF (lead author: Matthieu Moy) is a wrapper (bash scipt) around latexdiff that allows using it to diff two revisions of a LaTeX file under git revision control (similar functionality is provided by latexdiff-vc --git with --flatten option included with this distribution but git-latexdiff allows more fine-grained control on (not to be confused with latexdiff-git, which is normally installed as a soft link to latexdiff-vc) 
+GIT-LATEXDIFF (lead author: Matthieu Moy) is a wrapper (bash script) around latexdiff that allows using it to diff two revisions of a LaTeX file under git revision control (similar functionality is provided by latexdiff-vc --git with --flatten option included with this distribution but git-latexdiff allows more fine-grained control on (not to be confused with latexdiff-git, which is normally installed as a soft link to latexdiff-vc) 
 https://gitorious.org/git-latexdiff/
 
 LICENSE (also see file COPYING)
