@@ -30,13 +30,13 @@
 #    - option --only-changes with hyperref will suppress hyperrefs (pull request jprotze)_
 #    - option --only-changes now moves (rather than copies) file with only changes 
 # version 1.2.1 (22 June 2017):
-#    - update: use qpdf (instead of pdftk) to select particular pages of output (pull request #102 submited by Tom Scogland via github). This was necessary because pdftk is being deprecated. pdftk is still used as a fall-back
+#    - update: use qpdf (instead of pdftk) to select particular pages of output (pull request #102 submitted by Tom Scogland via github). This was necessary because pdftk is being deprecated. pdftk is still used as a fall-back
 #    - bug fix: --hg option was not recognised (partially fixes github issue #93 )
 #    - wrap passed-through options to latexdiff in quotation marks (fix github issue #58 )
 #    - program names for latexdiff, latex, dvips, bibtex configurable (fixes issue #40)
 #
 # version 1.2.0:
-#    - depracation fix: left brace in RegEx now needs to be escaped
+#    - deprecation fix: left brace in RegEx now needs to be escaped
 #
 # version 1.1.1:
 #    - better detection of RCS system 
@@ -714,7 +714,7 @@ reported to stdout.
 Rather than appending the string C<diff> and optionally the version
 numbers given to the output-file, this will prepend a directory name C<diff> 
 to the
-original filename, creating the directory and subdirectories should they not exist already.  This is particularly useful in order to clone a
+original filename, creating the directory and sub-directories should they not exist already.  This is particularly useful in order to clone a
 complete directory hierarchy.  Optionally, a pathname F<path> can be specified, which is prepended instead of C<diff>.
 
 =item B<--flatten,--flatten=keep-intermediate>
@@ -766,7 +766,7 @@ Available variables for latexdiff-vc:
 
 =back
 
-All other config variables are passed to latexdiff. Explicity set configuration changes always override implicit
+All other config variables are passed to latexdiff. Explicitly set configuration changes always override implicit
 changes by the following shortcut options B<--fast>, B<--so>, B<--ps> and B<--pdf>. 
 
 =item B<--fast> or B<--so>
