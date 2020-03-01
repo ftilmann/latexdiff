@@ -38,6 +38,7 @@
 #      - pre-processing: replacee (contributed) routine take_comments_and_enter_from_frac() with take_comments_and_newline_from_frac(), which does the same thing
 #        (remove whitespace characters and comments between the argument of \frac commands) in an easier and more robust way. In addition, it
 #        will replace commands like \frac12 with \frac{1}{2} as pre-processing step.   Fixes issue #184
+#      - add "intertext" to list of unsafe math commands @UNSAFEMATHCMD . Fixes issue #179
 #
 # Version 1.3.0 (7 October 2018):
 #    - treat options to \documentclass as potential package names (some packages allow implicit loading of or imply selected packages
@@ -269,7 +270,7 @@ my ($ARRENV,
 
 
 my $LABELCMD='(?:label)';                # matching commands are disabled within deleted blocks - mostly useful for maths mode, as otherwise it would be fine to just not add those to SAFECMDLIST
-my @UNSAFEMATHCMD=('qedhere');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
+my @UNSAFEMATHCMD=('qedhere','intertext');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
 ###my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
 ###my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
 my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths expression with \mbox ( to get around compatibility
@@ -660,6 +661,8 @@ if ( $mathmarkup == COARSE || $mathmarkup == WHOLE ) {
   push(@MATHTEXTCMDLIST,qr/^MATHBLOCK(?:$MATHENV|$MATHARRENV|SQUAREBRACKET)$/);
 }
 
+
+
 ### if ( $disablemathmark ) {
 ###   $PICTUREENV="(?:$PICTUREENV)|(?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET";
 ###   $MATHENV="";
@@ -672,11 +675,12 @@ foreach $pkg ( @packagelist ) {
 }
 
 
-
 if ($showconfig || $showtext || $showsafe || $showpreamble) {
+
   show_configuration();
   exit 0; 
 }
+
 
 if ( @ARGV != 2 ) { 
   print STDERR "2 and only 2 non-option arguments required.  Write latexdiff -h to get help\n";
@@ -1285,12 +1289,9 @@ print STDERR "Preprocessing body.  " if $verbose;
 preprocess($oldbody,$newbody);
 
 
-###print STDERR "DEBUG PREPROCESS OLD:\n$oldbody\n END PREPROCESS\n";
 # run difference algorithm
 @diffbody=bodydiff($oldbody, $newbody);
 $diffbo=join("",@diffbody);
-###print STDERR "DEBUG NOT POSTPROCESSED\n";
-###print STDERR "DEBUG $diffbo END POSTPROCESS\n";
 writedebugfile($diffbo,"bodydiff");
 
 print STDERR "(",exetime()," s)\n","Postprocessing body. \n" if $verbose;
