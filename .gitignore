@@ -14,4 +14,7 @@ latexrevise.tex
 dist
 latexdiff-?.*.*
 *~
+latexdiff.debug.*
+texput.log
+private
 
