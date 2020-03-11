@@ -12,7 +12,7 @@ default:
 	@echo "   of the PERL package Algorithm::Diff available from "
 	@echo "   the PERL archive www.cpan.org)"
 	@echo " "
-	@echo "To install fast version (using UNIX diff) type: make install fast "
+	@echo "To install fast version (using UNIX diff) type: make install-fast "
 	@echo " "
 	@echo "To install the version which uses the system Algorithm::Diff package type: make install-ext"
 	@echo " "
