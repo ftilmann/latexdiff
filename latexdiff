@@ -2663,15 +2663,15 @@ sub reverselinecomment {
     # very confused by what is there   (and othertimes seems to ignore this anyway)
     unless ( $verbatimtext =~ s/^(\s*)\[($brat_n)\](.*)\n/$1\[$2,alsolanguage=DIFcode\]\n/ ) {
       if ( $verbatimtext =~ m/^\s*\n/ ) {
-	$verbatimtext = "{${lang}}" . $verbatimtext;
+	$verbatimtext = "[alsolanguage=DIFcode]" . $verbatimtext;
       } else {
-	$verbatimtext = "{${lang}}\n" . $verbatimtext;
+	$verbatimtext = "[alsolanguage=DIFcode]\n" . $verbatimtext;
       }
     }
     # There is a bug in listings package (at least v1.5b) for empty comments where the actual comment command is not made invisible
     # I therefore have to introduce an artificial '-' character at the end of empty added or deleted lines
     $verbatimtext =~ s/($DELCOMMENT\s*)$/$1-/mg;
-    $verbatimtext = "\\DIFmodbegin\n\\begin{${environment}}${verbatimtext}\\end{${environment}}\n\\DIFmodend";
+    $verbatimtext = "\\DIFmodbegin\n\\begin{lstlisting}${verbatimtext}\\end{lstlisting}\n\\DIFmodend";
   } else {
     $verbatimtext = "\\begin{${environment}}{${lang}}${verbatimtext}\\end{${environment}}";
   }
