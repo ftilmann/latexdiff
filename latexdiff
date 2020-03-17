@@ -2575,7 +2575,7 @@ sub preprocess {
     s/(?<!\\)\\\$/\\DOLLAR /g ;  # (?<! is negative lookbehind assertion to prevent \\$ from being converted
 ###    s/\\begin\{(verbatim\*?)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     s/\\begin\{($VERBATIMENV)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
-    s/\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"\\begin{$1}". linecomment($2) . "\\end{$1}"/esg;
+    s/\\begin\{($VERBATIMLINEENV)\}\{([a-z]+)\}(.*?)\\end\{\1\}/"\\begin{$1}{$2}". linecomment($3) . "\\end{$1}"/esg;
 
     # mark all first empty line (in block of several) with \PAR tokens
     s/\n(\s*?)\n((?:\s*\n)*)/\n$1\\PAR\n$2/g ;
@@ -2636,10 +2636,10 @@ sub linecomment {
   return(join("\n%$VERBCOMMENT",@verbatimlines)."\n");
 }
 
-# $simple=reverselinecomment($env $string)
+# $simple=reverselinecomment($env $lang $string)
 # remove DIFVRB comments but leave changed lines marked 
 sub reverselinecomment {
-  my ($environment, $verbatimtext)=@_;
+  my ($environment, $lang, $verbatimtext)=@_;
   ###print STDERR "OLD VERBATIMTEXT: |$verbatimtext|\n";
   # remove markup added by latexdiff
   # (this should occur only if the type of verbatim environment was changed)
@@ -2663,17 +2663,17 @@ sub reverselinecomment {
     # very confused by what is there   (and othertimes seems to ignore this anyway)
     unless ( $verbatimtext =~ s/^(\s*)\[($brat_n)\](.*)\n/$1\[$2,alsolanguage=DIFcode\]\n/ ) {
       if ( $verbatimtext =~ m/^\s*\n/ ) {
-	$verbatimtext = "[alsolanguage=DIFcode]" . $verbatimtext;
+	$verbatimtext = "{${lang}}" . $verbatimtext;
       } else {
-	$verbatimtext = "[alsolanguage=DIFcode]\n" . $verbatimtext;
+	$verbatimtext = "{${lang}}\n" . $verbatimtext;
       }
     }
     # There is a bug in listings package (at least v1.5b) for empty comments where the actual comment command is not made invisible
     # I therefore have to introduce an artificial '-' character at the end of empty added or deleted lines
     $verbatimtext =~ s/($DELCOMMENT\s*)$/$1-/mg;
-    $verbatimtext = "\\DIFmodbegin\n\\begin{${environment}}${verbatimtext}\\end{${environment}}\n\\DIFmodend"
+    $verbatimtext = "\\DIFmodbegin\n\\begin{${environment}}${verbatimtext}\\end{${environment}}\n\\DIFmodend";
   } else {
-    $verbatimtext = "\\begin{${environment}}${verbatimtext}\\end{${environment}}"
+    $verbatimtext = "\\begin{${environment}}{${lang}}${verbatimtext}\\end{${environment}}";
   }
   ###print STDERR "NEW VERBATIMTEXT: |$verbatimtext|\n";
   return($verbatimtext);
@@ -3145,12 +3145,12 @@ sub postprocess {
 ###    s/(?<!%\\DIFCMD < )\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
 ###    s/\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
     # revert changes to verbatim environments for line diffs (and add code to mark up changes)
-    s/(?<!$DELCMDOPEN)\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"". reverselinecomment($1, $2) .""/esg;
+    s/(?<!$DELCMDOPEN)\\begin\{($VERBATIMLINEENV)\}\{([a-z]+)\}(.*?)\\end\{\1\}/"". reverselinecomment($1, $2, $3) .""/esg;
 #    # we do the same for deleted environments but additionally reinstate the framing commands
 #   s/$DELCMDOPEN\\begin\{($VERBATIMLINEENV)\}$extraspace(?:\[$brat0\])?$DELCMDCLOSE(.*?)$DELCMDOPEN\\end\{\1\}$DELCMDCLOSE/"\\begin{$1}". reverselinecomment($2) . "\\end{$1}"/esg;
 ##    s/$DELCMDOPEN\\begin\{($VERBATIMLINEENV)\}($extraspace(?:\[$brat0\])?\s*)(?:\n|$DELCMDOPEN)*$DELCMDCLOSE((?:\%$DELCOMMENT$VERBCOMMENT.*?\n)*)($DELCMDOPEN\\end\{\1\}(?:\n|\s|$DELCMDOPEN)*$DELCMDCLOSE)/"SUBSTITUTION: \\begin{$1}$2 INTERIOR: |$3| END: |$4|"/esg;
      s/ # Deleted \begin command of verbatim environment (Captures $1: whole deleted command, $2: environment, $3: optional arguments with white space
-          (\Q$DELCMDOPEN\E\\begin\{($VERBATIMLINEENV)\}(\Q$extraspace\E(?:\[$brat_n\])?\s*)(?:\n|\Q$DELCMDOPEN\E)*\Q$DELCMDCLOSE\E)
+          (\Q$DELCMDOPEN\E\\begin\{($VERBATIMLINEENV)\}\{([a-z]+)\}(\Q$extraspace\E(?:\[$brat_n\])?\s*)(?:\n|\Q$DELCMDOPEN\E)*\Q$DELCMDCLOSE\E)
         # Interior of deleted verbatim environment should consist entirely of delete DIFVRB comments, i.e. match only lines beginning with % DIF < DIFVRB
         #   Captures: $4: all lines combined
           ((?:\%\Q$DELCOMMENT$VERBCOMMENT\E[^\n]*?\n)*)
@@ -3160,7 +3160,7 @@ sub postprocess {
             $1                   # Leave expression as is 
             . "$AUXCMD NEXT\n"   # Mark the following line as an auxiliary command
             . ""    # reinstate the original environment without options
-            . reverselinecomment($2, "$3$4")   # modify the body to change the markup; reverselinecomment parses for options
+            . reverselinecomment($2, $3, "$4$5")   # modify the body to change the markup; reverselinecomment parses for options
             . " $AUXCMD\n"  # close the auxiliary environment
             . $5               # and again leave the original deleted closing environment as is
       /esgx;  # Modifiers of substitution command
