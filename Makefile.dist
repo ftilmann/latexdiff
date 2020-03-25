@@ -12,7 +12,7 @@ default:
 	@echo "   of the PERL package Algorithm::Diff available from "
 	@echo "   the PERL archive www.cpan.org)"
 	@echo " "
-	@echo "To install fast version (using UNIX diff) type: make install fast "
+	@echo "To install fast version (using UNIX diff) type: make install-fast "
 	@echo " "
 	@echo "To install the version which uses the system Algorithm::Diff package type: make install-ext"
 	@echo " "
@@ -62,3 +62,13 @@ test-fast:
 	@echo "latexdiff example/example-draft.tex example/example-rev.tex (stand-alone version)"
 	./latexdiff-fast -V example/example-draft.tex example/example-rev.tex > example/example-diff.tex
 	@echo "Difference file created: example/example-diff.tex"
+
+uninstall:
+# -f is needed to ignore missing files
+	@rm -f $(INSTALLPATH)/bin/latexdiff{,-cvs,-git,-hg,-rcs,-so,-svn,-vc,-fast} $(INSTALLPATH)/bin/latexrevise
+	@rm -f $(INSTALLPATH)/man/man1/latex{diff{,-vc},revise}.1
+# maybe remove potentially empty directories
+	@rmdir --ignore-fail-on-non-empty $(INSTALLPATH)/bin
+	@rmdir --ignore-fail-on-non-empty $(INSTALLPATH)/man/man1
+	@rmdir --ignore-fail-on-non-empty $(INSTALLPATH)/man
+	@rmdir --ignore-fail-on-non-empty $(INSTALLPATH)
