@@ -8,7 +8,7 @@
 # package and use the standard latexdiff version instead
 # (current distribution available from http://search.cpan.org/~nedkonz/Algorithm-Diff-1.15
 #  the most recent version can be found via  http://search.cpan.org/search?module=Algorithm::Diff )
-# Please note that the LICENCSE for Algorithm::Diff :
+# Please note the LICENCE for Algorithm::Diff :
 #   "Copyright (c) 2000-2002 Ned Konz.  All rights reserved.
 #    This program is free software;
 #    you can redistribute it and/or modify it under the same terms

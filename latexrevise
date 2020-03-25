@@ -21,7 +21,7 @@
 #
 # Detailed usage information at the end of the file
 # Note: version number now keeping up with latexdiff
-# Version 1.3.1  (Bug fix) Remove some depracation warnings dur to uncommented left parentheses 
+# Version 1.3.1  (Bug fix) Remove some deprecation warnings due to uncommented left parentheses 
 # Version 1.0.2  Option --version
 # Version 1.0.1   no changes to latexrevise
 # Version 0.3   Updated for compatibility with latexdiff 0.3 output (DIFAUXCMD removal)
@@ -121,7 +121,7 @@ if ( $version ) {
 
 
 if ( ($accept &&  $decline) || ($accept && $simplify) || ($decline && $simplify) ) {
-  die '-a,-d and -s options are mutually axclusive. Type latexrevise -h to get more help.';
+  die '-a,-d and -s options are mutually exclusive. Type latexrevise -h to get more help.';
 }
 
 ###if (! $accept &&  ! $decline && ! $simplify ) {
@@ -410,7 +410,7 @@ options.
 
 -c cmd
 --comment=cmd     Remove \\cmd{...}.  cmd is supposed to mark some explicit 
-                  anotations which should be removed from the file before 
+                  annotations which should be removed from the file before 
                   release.
 
 -e envir
@@ -502,7 +502,7 @@ options.
 =item B<-c cmd> or B<--comment=cmd>
 
 Remove C<\cmd{...}> sequences.  C<cmd> is supposed to mark some explicit 
-anotations which should be removed from the file before 
+annotations which should be removed from the file before 
 release.
 
 =item B<-e envir> or B<--comment-environment=envir> 

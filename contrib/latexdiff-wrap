@@ -3,7 +3,7 @@
 # latexdiff-wrap
 #
 # Wrapper for latexdiff, to
-#   * provide support for documents consiting of more than 1 latex file
+#   * provide support for documents consisting of more than 1 latex file
 #   * provide my common arguments
 #
 # Copyright (C) by Volker Kuhlmann <VolkerKuhlmann@gmx.de>
@@ -174,7 +174,7 @@ while [ $# -gt 0 ]; do
 	)
     else
     	# Delete file, to make sure it's not clobbered by redirecting stdout
-	# in case it's a symlink to te original.
+	# in case it's a symlink to the original.
 	test -f "$diffdir/$file" && (set -x
 	rm "$diffdir/$file"
 	)
