@@ -39,6 +39,7 @@
 #        (remove whitespace characters and comments between the argument of \frac commands) in an easier and more robust way. In addition, it
 #        will replace commands like \frac12 with \frac{1}{2} as pre-processing step.   Fixes issue #184
 #      - add "intertext" to list of unsafe math commands @UNSAFEMATHCMD . Fixes issue #179
+#      - provide citation command patters for biblatex and protect them with mbox'es. Fixes issue #199
 #
 # Version 1.3.0 (7 October 2018):
 #    - treat options to \documentclass as potential package names (some packages allow implicit loading of or imply selected packages
@@ -1233,6 +1234,8 @@ if ( defined $packages{"apacite"}  ) {
   print STDERR "apacite package detected.\n" if $verbose ;
 ###  $citpatsafe=qr/^(?:mask)?(?:full|short)?cite(?:A|author|year)?(?:NP)?$/;
   $citpat='(?:mask)?(?:full|short|no)?cite(?:A|author|year|meta)?(?:NP)?';
+} elsif (defined $packages{"biblatex"}) {
+  $citpat='(?:[cC]ites?|(?:[pP]aren|foot|[Tt]ext|[sS]mart|super)cites?\*?|footnotecitetex)';
 } else {
   # citation command pattern for all other citation schemes
 ###  $citpatsafe=qr/^cite.*$/;
@@ -3719,6 +3722,7 @@ be real files (not pipes or similar) as they are opened twice.
                        reason package specific parsing needs to be switched off, use --packages=none.
                        The following packages trigger special behaviour:
                        endfloat hyperref amsmath apacite siunitx cleveref glossaries mhchem chemformula/chemmacros
+                       biblatex
                        [ Default: scan the preamble for \\usepackage commands to determine
                          loaded packages.]
 
@@ -4065,7 +4069,7 @@ define new C<\DIFadd> and C<\DIFdel> commands, which provide a wrapper for these
 using them for the text but not for the link defining command (where any markup would cause
 errors).
 
-=item C<apacite>
+=item C<apacite>, C<biblatex>
 
 Redefine the commands recognised as citation commands.
 
