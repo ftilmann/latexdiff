@@ -30,16 +30,21 @@
 ###  - --flatten option only expands first including command per line if there is more than one
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 ###  - change meaning of --packages option such that this packages are used in addition of automatically detected packages (possibly introduce option --only-packages that overrides automatic choices completely
+###  - for revtex document files, choose   init_regex_arr_ext(\@MBOXCMDEXCL, "citefontname");    to avoid inappropriate use of mbox
+###                        remove spaces between commnands and arguments in bibliography
+
 
 # Version 1.3.1 
 #    Bug fixes:
 #      - remove some uninitialised variable $2 warnings in string substitution in flatten function in case included file is not found
 #      - add minimal postprocessing to diff processing of preamble commands (replace \RIGHTBRACE by \} ) 
-#      - pre-processing: replacee (contributed) routine take_comments_and_enter_from_frac() with take_comments_and_newline_from_frac(), which does the same thing
+#      - pre-processing: replace (contributed) routine take_comments_and_enter_from_frac() with take_comments_and_newline_from_frac(), which does the same thing
 #        (remove whitespace characters and comments between the argument of \frac commands) in an easier and more robust way. In addition, it
 #        will replace commands like \frac12 with \frac{1}{2} as pre-processing step.   Fixes issue #184
 #      - add "intertext" to list of unsafe math commands @UNSAFEMATHCMD . Fixes issue #179
-#      - provide citation command patters for biblatex and protect them with mbox'es. Fixes issue #199
+#      - provide citation command patterns for biblatex and protect them with mbox'es. Fixes issue #199
+#      - hardcode number of parameters for \href and \url commands to allow spaces between commands and arguments even if --allow-spaces option is not used (this
+#        is needed because some bibliography styles add such in-command-sequence spaces)  Fixes issues: #178 #198
 #
 # Version 1.3.0 (7 October 2018):
 #    - treat options to \documentclass as potential package names (some packages allow implicit loading of or imply selected packages
@@ -758,6 +763,14 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 # word: sequence of letters or accents followed by letter
   my $word_ja='\p{Han}+|\p{InHiragana}+|\p{InKatakana}+';
   my $word='(?:' . $word_ja . '|(?:(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])(?!(?:' . $word_ja . ')))+)';
+
+  # for selected commands, the number of arguments is known, and we can therefore allow spaces between command and its argument
+  # Note that it is still expected that the arguments are blocks marked by parentheses rather than single characters, and that intervening comments will inhibit the association
+  my $predefinedcmdoptseq01='(?:\\\\url)\s*\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one non-optional argument
+  my $predefinedcmdoptseq12='(?:\\\\href)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\}\s*){2}';  # Commands with one optional and two non-optional arguments
+
+  my $predefinedcmdoptseq='(?:'.$predefinedcmdoptseq12.'|'.$predefinedcmdoptseq01.')';
+
   my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|\.]|\\\\(?:[|{}]|\w+))';
 ###  my $word='(?:[-\p{IsL}*]|\\\\[\"\'\`~^][\p{IsL}A-Za-z\*])+';
 ### standard $cmdoptseq without intervening spaces
@@ -778,7 +791,7 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 ###  my $math='\$(?:[^$]|\\\$)*\$';
 ###  my $comment='%.*?\n';
   my $comment='%[^\n]*\n';
-  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|${defseq}|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
+  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|${defseq}|$cmdleftright|${predefinedcmdoptseq}|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
 
 
 
@@ -1235,6 +1248,7 @@ if ( defined $packages{"apacite"}  ) {
 ###  $citpatsafe=qr/^(?:mask)?(?:full|short)?cite(?:A|author|year)?(?:NP)?$/;
   $citpat='(?:mask)?(?:full|short|no)?cite(?:A|author|year|meta)?(?:NP)?';
 } elsif (defined $packages{"biblatex"}) {
+  print STDERR "biblatex package detected.\n" if $verbose ;
   $citpat='(?:[cC]ites?|(?:[pP]aren|foot|[Tt]ext|[sS]mart|super)cites?\*?|footnotecitetex)';
 } else {
   # citation command pattern for all other citation schemes
@@ -1983,6 +1997,7 @@ sub splitlatex {
     }
 
   }
+
   unshift(@retval,$leadin) if (length($leadin)>0);
   return @retval;
 }
@@ -2185,11 +2200,15 @@ sub extracttextblocks {
   my $wpat=qr/^(?:[a-zA-Z.,'`:;?()!]*)[\s~]*$/;  #'
   my $retval=[];
 
+  # we redefine locally $extraspace (shadowing the global definition) to capture command sequences with intervening spaces no matter what the global setting
+  # this is done so we can capture those commands with a predefined number of arguments without having to introduce them again explicitly here
+  my $extraspace='\s*'; 
+
   for ($i=0;$i< scalar @$block;$i++) {
     ($token,$index)=@{ $block->[$i] };
     # store pure text blocks
 ### pre-0.3    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d*]+)((?:\[$brat_n\]|\{$pat_n\})*)/o 
-    if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat_n\]${extraspace}|${extraspace}\{$pat_n\})*)/o 
+    if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat_n\]${extraspace}|${extraspace}\{$pat_n\})*)/ 
 				&& iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 				&& !iscmd($1,\@TEXTCMDLIST,\@TEXTCMDEXCL))) {
       # we have text or a command which can be treated as text
@@ -2235,6 +2254,10 @@ sub extractcommands {
   my ($i,$token,$index,$cmd,$open,$mid,$closing);
   my $retval=[];
 
+  # we redefine locally $extraspace (shadowing the global definition) to capture command sequences with intervening spaces no matter what the global setting
+  # this is done so we can capture those commands with a predefined number of arguments without having to introduce them again explicitly here
+  my $extraspace='\s*'; 
+
   for ($i=0;$i< scalar @$block;$i++) {
     ($token,$index)=@{ $block->[$i] };
     # check if token is an alphanumeric command sequence with at least one non-optional argument
@@ -2247,7 +2270,7 @@ sub extractcommands {
 ### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat_n\})*\{)($pat_n)(\}\s*)$/so )
     if ( ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat_n\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
 	 && iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL) ) {
-###      print STDERR "EXTRACTCOMMANDS Match |$1|$2|$3|$4|$index \n";      
+      print STDERR "DEBUG EXTRACTCOMMANDS Match |$1|$2|$3|$4|$index \n" if $debug;      
       #      push(@$retval,[ $2,$index,$1,$3,$4 ]);
       ($cmd,$open,$mid,$closing) = ($2,$1,$3,$4) ;
       $closing =~ s/\}/\\RIGHTBRACE/ ;
@@ -2345,7 +2368,6 @@ sub pass2 {
     print STDERR "  $deltokcnt discarded tokens in $delblkcnt blocks.\n";
     print STDERR "  $addtokcnt appended  tokens in $addblkcnt blocks.\n";
   }
-
   return(@$retval);
 }
 
@@ -2368,10 +2390,18 @@ sub marktags {
   my $cmdcomment= ($opencmd =~ m/^%/);  # Flag to indicate whether opencmd is a comment (i.e. if we intend to simply comment out changed commands)
   my ($command,$commandword,$closingbracket) ; # temporary variables needed below to remember sub-pattern matches
 
-# split this block to flatten out sequences joined in pass1
+
+
+# split this block to split sequences joined in pass1
   @$block=splitlatex(join "",@$block);
   ### print STDERR "DEBUG: marktags $openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment\n" if $debug;
   ### print STDERR "DEBUG: marktags blocksplit ",join("|",@$block),"\n" if $debug;
+
+  # we redefine locally $extraspace (shadowing the global definition) to capture command sequences with intervening spaces no matter what the global setting
+  # this is done so we can capture those commands with a predefined number of arguments without having to introduce them again explicitly here
+  my $extraspace_mt='\s*'; 
+
+
   foreach (@$block) {
     $word=$_; 
     ### print STDERR "DEBUG MARKTAGS: |$word|\n" if $debug;
@@ -2414,7 +2444,7 @@ sub marktags {
 	# $3: last argument
 	# $4: }  + trailing spaces
 	### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat_n\})*\{)($pat_n)(\}\s*)$/so )
-      if ( ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat_n\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
+      if ( ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace_mt}\[$brat_n\]|${extraspace_mt}\{$pat_n\})*${extraspace_mt}\{)($pat_n)(\}\s*)$/so )
 	   && (iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL)|| iscmd($2,\@MATHTEXTCMDLIST,\@MATHTEXTCMDEXCL))
            && ( !$cmdcomment || !iscmd($2,\@CONTEXT2CMDLIST, \@CONTEXT2CMDEXCL) )  ) {
 	# Condition 1: word is a command? - if yes, $1,$2,.. will be set as above
@@ -4982,6 +5012,7 @@ framebox
 footnote
 footnotetext
 framebox
+href
 intertext
 part
 (sub){0,2}section\*?
