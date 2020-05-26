@@ -1,0 +1,80 @@
+\documentclass[prl]{revtex4-1}
+
+
+\usepackage[colorlinks=false]{hyperref}
+
+
+
+\begin{document}
+hello world
+
+Reference A \cite{Czarnik:2015}.
+Reference B \cite{Czarnik:2012}.
+
+\begin{thebibliography}{2}
+\makeatletter
+\providecommand \@ifxundefined [1]{
+ \@ifx{#1\undefined}
+}
+\providecommand \@ifnum [1]{
+ \ifnum #1\expandafter \@firstoftwo
+ \else \expandafter \@secondoftwo
+ \fi
+}
+\providecommand \@ifx [1]{
+ \ifx #1\expandafter \@firstoftwo
+ \else \expandafter \@secondoftwo
+ \fi
+}
+\providecommand \natexlab [1]{#1}
+\providecommand \enquote  [1]{``#1''}
+\providecommand \bibnamefont  [1]{#1}
+\providecommand \bibfnamefont [1]{#1}
+\providecommand \citenamefont [1]{#1}
+\providecommand \href@noop [0]{\@secondoftwo}
+\providecommand \href [0]{\begingroup \@sanitize@url \@href}
+\providecommand \@href[1]{\@@startlink{#1}\@@href}
+\providecommand \@@href[1]{\endgroup#1\@@endlink}
+\providecommand \@sanitize@url [0]{\catcode `\\12\catcode `\$12\catcode
+  `\&12\catcode `\#12\catcode `\^12\catcode `\_12\catcode `\%12\relax}
+\providecommand \@@startlink[1]{}
+\providecommand \@@endlink[0]{}
+\providecommand \url  [0]{\begingroup\@sanitize@url \@url }
+\providecommand \@url [1]{\endgroup\@href {#1}{\urlprefix }}
+\providecommand \urlprefix  [0]{URL }
+\providecommand \Eprint [0]{\href }
+\providecommand \doibase [0]{http://dx.doi.org/}
+\providecommand \selectlanguage [0]{\@gobble}
+\providecommand \bibinfo  [0]{\@secondoftwo}
+\providecommand \bibfield  [0]{\@secondoftwo}
+\providecommand \translation [1]{[#1]}
+\providecommand \BibitemOpen [0]{}
+\providecommand \bibitemStop [0]{}
+\providecommand \bibitemNoStop [0]{.\EOS\space}
+\providecommand \EOS [0]{\spacefactor3000\relax}
+\providecommand \BibitemShut  [1]{\csname bibitem#1\endcsname}
+\let\auto@bib@innerbib\@empty
+\bibitem[{\citenamefont {Czarnik}\ and\ \citenamefont{Dziarmaga}(2015)}]{Czarnik:2015}
+  \BibitemOpen
+  \bibfield{author}{\bibinfo{author}{\bibfnamefont{Piotr}\ \bibnamefont {Czarnik}}\ and\ \bibinfo{author}{\bibfnamefont{Jacek}\ \bibnamefont{Dziarmaga}},\ }\bibfield  {title} {\enquote {\bibinfo {title} {Variational
+  approach to projected entangled pair states at finite temperature},}\ }\href
+  {\doibase 10.1103/PhysRevB.92.035152} {\bibfield  {journal} {\bibinfo
+  {journal} {Phys. Rev. B}\ }\textbf {\bibinfo {volume} {92}},\ \bibinfo
+  {pages} {035152} (\bibinfo {year} {2015})}\BibitemShut {NoStop}
+\bibitem [{\citenamefont {Czarnik}\ \emph {et~al.}(2012)\citenamefont
+  {Czarnik}, \citenamefont {Cincio},\ and\ \citenamefont
+  {Dziarmaga}}]{Czarnik:2012}
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {Piotr}\ \bibnamefont
+  {Czarnik}}, \bibinfo {author} {\bibfnamefont {Lukasz}\ \bibnamefont
+  {Cincio}}, \ and\ \bibinfo {author} {\bibfnamefont {Jacek}\ \bibnamefont
+  {Dziarmaga}},\ }\bibfield  {title} {\enquote {\bibinfo {title} {Projected
+  entangled pair states at finite temperature: Imaginary time evolution with
+  ancillas},}\ }\href {\doibase 10.1103/PhysRevB.86.245101} {\bibfield
+  {journal} {\bibinfo  {journal} {Phys. Rev. B}\ }\textbf {\bibinfo {volume}
+  {86}},\ \bibinfo {pages} {245101} (\bibinfo {year} {2012})}\BibitemShut
+  {NoStop}
+\end{thebibliography}
+ 
+
+\end{document}

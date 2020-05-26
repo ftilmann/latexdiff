@@ -30,8 +30,6 @@
 ###  - --flatten option only expands first including command per line if there is more than one
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 ###  - change meaning of --packages option such that this packages are used in addition of automatically detected packages (possibly introduce option --only-packages that overrides automatic choices completely
-###  - for revtex document files, choose   init_regex_arr_ext(\@MBOXCMDEXCL, "citefontname");    to avoid inappropriate use of mbox
-###                        remove spaces between commnands and arguments in bibliography
 
 
 # Version 1.3.1 
@@ -45,6 +43,12 @@
 #      - provide citation command patterns for biblatex and protect them with mbox'es. Fixes issue #199
 #      - hardcode number of parameters for \href and \url commands to allow spaces between commands and arguments even if --allow-spaces option is not used (this
 #        is needed because some bibliography styles add such in-command-sequence spaces)  Fixes issues: #178 #198
+#      - bibitem is now kept even in deleted blocks such that deleted references show up properly (this implies that the actual numbers in numerical referencing schemes will change)
+#        (this is implemented by introducing a new class of commands KEEPCMD , which are kept as is in deleted environments (no effect in added environments). Currently
+#        \bibitem   is hardwired to be the only member of this class  (fixes issue #194, #174)
+#    Features:
+#      - add some special processing for revtex bibliography commands, so that the spaces between bibliography commands \bibfield and \bibinfo and their arguments are ignored.
+#         (fixes issue #194, should fix #174)
 #
 # Version 1.3.0 (7 October 2018):
 #    - treat options to \documentclass as potential package names (some packages allow implicit loading of or imply selected packages
@@ -227,7 +231,7 @@ my %CONFIG=(
    COUNTERCMD => undef,
                                         # COUNTERCMD textcmds which are associated with a counter
                                         # If any of these commands occur in a deleted block
-                                        # they will be succeeded by an \addtocounter{...}{-1}
+                                        # they will be followed by an \addtocounter{...}{-1}
                                         # for the associated counter such that the overall numbers
                                         # should be the same as in the new file
    LISTENV => undef ,  # list making environments - they will generally be kept
@@ -335,6 +339,8 @@ our @SAFECMDEXCL=();
 my @MBOXCMDLIST=();   # patterns for commands which are in principle safe but which need to be surrounded by an \mbox
 my @MBOXCMDEXCL=();           # all the patterns in MBOXCMDLIST will be appended to SAFECMDLIST
 
+my @KEEPCMDLIST=( qr/^bibitem$/ );   # patterns for commands which should not be deleted in nominally delete text passages
+my @KEEPCMDEXCL=();          
 
 my ($i,$j,$l);
 my ($old,$new);
@@ -766,10 +772,13 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 
   # for selected commands, the number of arguments is known, and we can therefore allow spaces between command and its argument
   # Note that it is still expected that the arguments are blocks marked by parentheses rather than single characters, and that intervening comments will inhibit the association
-  my $predefinedcmdoptseq01='(?:\\\\url)\s*\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one non-optional argument
-  my $predefinedcmdoptseq12='(?:\\\\href)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\}\s*){2}';  # Commands with one optional and two non-optional arguments
+  my $predefinedcmdoptseq01='\\\\(?:url|BibitemShut)\s*\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one non-optional argument
+  my $predefinedcmdoptseq12='\\\\(?:href|bibfield|bibinfo)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\}\s*){2}';  # Commands with one optional and two non-optional arguments
+#  my $predefinedcmdoptseq11='\\\\(?:bibitem)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one optional and one non-optional arguments
+# \bibitem in revtex styles appears to be always followed by \BibItemOpen. We bind \BibItemOpen to the bibitem (if present) in order to prevent the comparison algorithm to interpret the \BibItemOpen as an identical part of the sequence; this interpretation can lead to added and removed entries to the reference list to become mixed.
+  my $predefinedbibitem='\\\\(?:bibitem)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\})(?:%?\s*\\\\BibitemOpen)?';  # Commands with one optional and one non-optional arguments
 
-  my $predefinedcmdoptseq='(?:'.$predefinedcmdoptseq12.'|'.$predefinedcmdoptseq01.')';
+  my $predefinedcmdoptseq='(?:'.$predefinedcmdoptseq12.'|'.$predefinedcmdoptseq01.'|'.$predefinedbibitem.')';
 
   my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|\.]|\\\\(?:[|{}]|\w+))';
 ###  my $word='(?:[-\p{IsL}*]|\\\\[\"\'\`~^][\p{IsL}A-Za-z\*])+';
@@ -2404,7 +2413,7 @@ sub marktags {
 
   foreach (@$block) {
     $word=$_; 
-    ### print STDERR "DEBUG MARKTAGS: |$word|\n" if $debug;
+###    print STDERR "DEBUG MARKTAGS: |$word|\n" if $debug;
     if ( $word =~ s/^%/%$comment/ ) {
       # a comment
 ###      print STDERR "MARKTAGS: Add comment |$word|\n";
@@ -2430,9 +2439,9 @@ sub marktags {
     }
     # negative lookahead pattern (?!) in second clause is put in to avoid matching \( .. \) patterns
     # also note that second pattern will match \\
-    ### print STDERR "DEBUG marktags: Considering word |$word|\n" if $debug;
-    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
-      ###print STDERR "DEBUG MARKTAGS is a non-safe command ($1)\n" if $debug;
+###    print STDERR "DEBUG marktags: Considering word |$word|\n" if $debug;
+    if (  $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
+###      print STDERR "DEBUG MARKTAGS is a non-safe command\n" if $debug;
       ###    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\([\w*@\\% ]+)/ && !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
       # word is a command or other significant token (not in SAFECMDLIST)
 	## same conditions as in subroutine extractcommand:
@@ -2450,12 +2459,12 @@ sub marktags {
 	# Condition 1: word is a command? - if yes, $1,$2,.. will be set as above
         # Condition 2: word is a text command - we mark up the interior of the word. There is a separate check for MATHTEXTCMDLIST
         #              because for $mathmarkup=WHOLE, the commands should not be split in pass1 (ie. math mode commands are not in
-        #              TEXTCMDLIST, but the interior of MATHTEXT commands should be highlighted in both deleted and added blocks
+        #              TEXTCMDLIST, but the interior of MATHTEXT commnds should be highlighted in both deleted and added blocks
         # Condition 3: But if we are in a deleted block ($cmdcomment=1) and
         #            $2 (the command) is in context2, just treat it as an ordinary command (i.e. comment it open with $opencmd)
         # Because we do not want to disable this command
 	# here we do not use $opencmd and $closecmd($opencmd is empty) 
-###	print STDERR "Detected text but not safe command $2 \n.";
+###	print STDERR "DEBUG: Detected text but not safe command $2 \n." if $debug;
 ###	push (@$retval,$closecmd,$open) if $cmd==1 ;
 	if ($cmd==1) {
 	  push (@$retval,$closecmd) ;
@@ -2464,7 +2473,7 @@ sub marktags {
 	}
         $command=$1; $commandword=$2; $closingbracket=$4;
 	@argtext=splitlatex($3);   # split textual argument into tokens
-###        print STDERR "DEBUG: command|$command| commandword|$commandword| closingbracket|$closingbracket| argtext|@argtext|";
+### print STDERR "DEBUG: command|$command| commandword|$commandword| closingbracket|$closingbracket| argtext|@argtext|\n" if $debug;
 	# and mark it up (but we do not need openmark and closemark)
         # insert command with initial arguments, marked-up final argument, and closing bracket
 	if ( $cmdcomment && iscmd($commandword,\@CONTEXT1CMDLIST, \@CONTEXT1CMDEXCL) ) {
@@ -2490,8 +2499,17 @@ sub marktags {
 	}
 	push (@$retval,$AUXCMD,"\n") if $cmdcomment ;
 	$cmd=-1 ;
+      } elsif ( $cmdcomment &&
+	       ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace_mt}\[$brat_n\]|${extraspace_mt}\{$pat_n\})*${extraspace_mt}\{)($pat_n)(\}\s*)/so )
+	       && iscmd($2,\@KEEPCMDLIST, \@KEEPCMDEXCL) ) {
+###	print STDERR "DEBUG: Detected KEEPCMD command $1 \n." if $debug;
+	# 'keepcmd' in a deleted environment: keep  the command as is
+	push (@$retval,$close) if $cmd==0 ;
+	push (@$retval,$word);
+	$cmd=-1;  # pretend we are at the beginning of a sequence because we do not want to add an additional $closecmd or $close before the next token, no matter what it is
       } else {
 	# ordinary command
+###	print STDERR "DEBUG: Ordinary command $2 \n." if $debug;
 	push (@$retval,$opencmd) if $cmd==-1 ;
 	push (@$retval,$close,$opencmd) if $cmd==0 ;
 	$word =~ s/\n/\n${opencmd}/sg if $cmdcomment ;   # if opencmd is a comment, repeat this at the beginning of every line
@@ -4986,6 +5004,8 @@ min
 Pr
 sec
 sup
+bibfield
+bibinfo
 [Hclbkdruvt]
 [`'^"~=.]
 _
