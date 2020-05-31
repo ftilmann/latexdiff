@@ -3,7 +3,7 @@
 # latexdiff - differences two latex files on the word level
 #             and produces a latex file with the differences marked up.
 #
-#   Copyright (C) 2004-16  F J Tilmann (tilmann@gfz-potsdam.de)
+#   Copyright (C) 2004-20  F J Tilmann (tilmann@gfz-potsdam.de)
 #
 # Repository/issue tracker:   https://github.com/ftilmann/latexdiff
 # CTAN page:          http://www.ctan.org/pkg/latexdiff
@@ -210,7 +210,7 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.3.1  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+This is LATEXDIFF 1.3.2a  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
   (c) 2004-2020 F J Tilmann
 EOF
 
@@ -1680,7 +1680,7 @@ sub flatten {
 	    } else {
 	      # if file does not exist, do not expand include or input command (do not warn if fname contains #[0-9] as it is then likely part of a command definition
               # and is not meant to be expanded directly 
-	      print STDERR "WARNING: Could not find included file ",$fullfile,". I will continue but not expand |$inputcmd|\n" unless $fname =~ m(#[0-9])n ;
+	      print STDERR "WARNING: Could not find included file ",$fullfile,". I will continue but not expand |$inputcmd|\n" unless $fname =~ m(#[0-9]) ;
 	      $replacement = $inputcmd ;   # i.e. just the original command again -> make no change file does not exist
 	      $newpage="";
 	    }
