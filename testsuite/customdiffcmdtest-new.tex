@@ -1,5 +1,10 @@
 % Code by J Protze
 \documentclass{book}
+% donothing by paul-pearce
+\newcommand{\donothing}[1]{#1}
+\newcommand{\ADDdonothing}[1]{{\color{blue}\donothing{#1}}} 
+\newcommand{\DELdonothing}[1]{{\color{red}\donothing{#1}}}
+
 \usepackage{blindtext}
 \newcommand{\DELblindtext}{{\color{red}\blindtext}}
 \newcommand{\ADDblindtext}{{\color{blue}\blindtext}}
