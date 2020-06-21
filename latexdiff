@@ -1558,7 +1558,7 @@ sub add_safe_commands {
     print STDERR "DEBUG Checking new command: maybe_to_test, should_be_safe: $1 $2\n" if $debug;
     my $success = 0;
     # skip custom diff commands
-    next if ($maybe_to_test =~ m/${CUSTOMDIFCMD}/);
+    next if ($maybe_to_test =~ m/^${CUSTOMDIFCMD}$/);
     # test if all latex commands inside it are safe
     $success = 1;
     if ($should_be_safe =~ m/\\\\/) {
@@ -2773,6 +2773,12 @@ sub fromhash {
   return $retstr;
 }
 
+sub stripdelcmdopen {
+  my ($str) = $_[0];
+  $str =~ s/${DELCMDOPEN}//mg;
+  return $str;
+}
+
 # writedebugfile(string, label)
 # if $debug set writes <string> to file latexdiff.debug.<label>
 # otherwise do nothing
@@ -3019,7 +3025,7 @@ sub postprocess {
       # Mark deleted verbose commands
       $delblock =~ s/(${DELCMDOPEN}\\DIF((?:verb\*?|lstinline(?:\[$brat_n\])?)\{([-\d]*?)\}\s*).*)$/%\n\\DIFDIFdel$2${AUXCMD}\n$1/gm;
       if ( $CUSTOMDIFCMD ) {
-        $delblock =~ s/(${DELCMDOPEN}.*)\\($CUSTOMDIFCMD)/$1${DELCMDCLOSE}\\DEL$2/gm;
+        $delblock =~ s/(${DELCMDOPEN}.*)\\($CUSTOMDIFCMD)((?:\[${brat_n}\])*?(?:\s*\{${pat_n}\})*)/"$1${DELCMDCLOSE}\\DEL$2". stripdelcmdopen($3) ." ${DELCMDOPEN}"/egms;
       }
 
       #     splice in modified delblock
