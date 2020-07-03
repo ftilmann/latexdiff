@@ -30,7 +30,9 @@
 ###  - --flatten option only expands first including command per line if there is more than one
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 ###  - change meaning of --packages option such that this packages are used in addition of automatically detected packages (possibly introduce option --only-packages that overrides automatic choices completely
-
+# Version 1.3.2
+#  - extend CUSTOMDIFCMD related postprocessing to deal properly with multiline commands, or a sequence of several commands in the same line (see github issue #204)
+#
 # Version 1.3.1.1
 #  - remove spurious \n to fix error: Unknown regexp modifier "/n" at .../latexdiff line 1974, near "=~ " (see github issue #201)
 #
@@ -212,7 +214,7 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.3.1.1 (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+This is LATEXDIFF 1.3.2a (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
   (c) 2004-2020 F J Tilmann
 EOF
 
@@ -1558,7 +1560,8 @@ sub add_safe_commands {
     print STDERR "DEBUG Checking new command: maybe_to_test, should_be_safe: $1 $2\n" if $debug;
     my $success = 0;
     # skip custom diff commands
-    next if ($maybe_to_test =~ m/^${CUSTOMDIFCMD}$/);
+    next if ($maybe_to_test =~ m/^(?:ADD|DEL)?${CUSTOMDIFCMD}$/);
+    ###print STDERR "DEBUG: really test it. \n";
     # test if all latex commands inside it are safe
     $success = 1;
     if ($should_be_safe =~ m/\\\\/) {
@@ -3025,7 +3028,12 @@ sub postprocess {
       # Mark deleted verbose commands
       $delblock =~ s/(${DELCMDOPEN}\\DIF((?:verb\*?|lstinline(?:\[$brat_n\])?)\{([-\d]*?)\}\s*).*)$/%\n\\DIFDIFdel$2${AUXCMD}\n$1/gm;
       if ( $CUSTOMDIFCMD ) {
-        $delblock =~ s/(${DELCMDOPEN}.*)\\($CUSTOMDIFCMD)((?:\[${brat_n}\])*?(?:\s*\{${pat_n}\})*)/"$1${DELCMDCLOSE}\\DEL$2". stripdelcmdopen($3) ." ${DELCMDOPEN}"/egms;
+        ###$delblock =~ s/(${DELCMDOPEN}.*)\\($CUSTOMDIFCMD)((?:\[${brat_n}\])*?(?:\s*\{${pat_n}\})*)/"$1${DELCMDCLOSE}\\DEL$2". stripdelcmdopen($3) ." ${DELCMDOPEN}"/egms;
+        ###$delblock =~ s/(${DELCMDOPEN}.*)\\($CUSTOMDIFCMD)/$1${DELCMDCLOSE}\\DEL$2/gm;
+        # ($1 ? "${DELCMDOPEN}$1${DELCMDCLOSE}":"") : only add the DELCMDOPEN / DELCMDCLOSE pair if there are actually any commands in between, otherwise this is redundant
+	$delblock    =~ s/${DELCMDOPEN}(.*?)\\($CUSTOMDIFCMD)((?:\[${brat_n}\])*?(?:\s*\{${pat_n}\})*)/($1 ? "${DELCMDOPEN}$1${DELCMDCLOSE}":"") ."\\DEL$2". stripdelcmdopen($3)/egs;
+        # if there is a sequence of several commands in the same row only the first will be converted due to the need to be connected to the DELCMDOPEN. To mop these up, just add the DEL to the front of any remaining cmd's in the deleted block
+        $delblock =~ s/\\($CUSTOMDIFCMD)/\\DEL$1/g;     # this will also convert comments but I guess it does not matter much
       }
 
       #     splice in modified delblock
@@ -3072,7 +3080,7 @@ sub postprocess {
       $addblock =~ s/\\DIFverb/\\DIFDIFaddverb/g;
       $addblock =~ s/\\DIFlstinline/\\DIFDIFaddlstinline/g;
       if( $CUSTOMDIFCMD ) {
-        $addblock =~ s/\\($CUSTOMDIFCMD)/\\ADD$1/g;
+        $addblock =~ s/\\($CUSTOMDIFCMD)/\\ADD$1/g;     # this will also convert comments but I guess it does not matter much
       }
       # markup the optional arguments of \item
       $addblock =~ s/(\\$ITEMCMD$extraspace(?:<$abrat0>)?$extraspace)\[($brat_n)\]/

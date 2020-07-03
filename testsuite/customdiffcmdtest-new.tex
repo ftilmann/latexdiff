@@ -4,6 +4,9 @@
 \newcommand{\donothing}[1]{#1}
 \newcommand{\ADDdonothing}[1]{{\color{blue}\donothing{#1}}} 
 \newcommand{\DELdonothing}[1]{{\color{red}\donothing{#1}}}
+\newcommand{\cmd}[1]{#1}
+\newcommand{\ADDcmd}[1]{\textcolor{blue}{#1}}
+\newcommand{\DELcmd}[1]{\textcolor{red}{#1}}
 
 \usepackage{blindtext}
 \newcommand{\DELblindtext}{{\color{red}\blindtext}}
@@ -12,5 +15,7 @@
 \newcommand{\DELmypar}{\paragraph{\DIFdel{MYPAR}}}
 \newcommand{\ADDmypar}{\paragraph{\DIFadd{MYPAR}}}
 \begin{document}
+\cmd{Test1}
+\cmd{Test5}
 \end{document}
 
