@@ -1,0 +1,30 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{filecontents}
+\begin{filecontents}{bibliography.bib}
+@article{greenwade93,
+    author  = "George D. Greenwade",
+    title   = "The {C}omprehensive {T}ex {A}rchive {N}etwork ({CTAN})",
+    year    = "1993",
+    journal = "TUGBoat",
+    volume  = "14",
+    number  = "3",
+    pages   = "342--351"
+}
+@book{goossens93,
+    author    = "Michel Goossens and Frank Mittelbach and Alexander Samarin",
+    title     = "The LaTeX Companion",
+    year      = "1993",
+    publisher = "Addison-Wesley",
+    address   = "Reading, Massachusetts"
+}
+\end{filecontents}
+\usepackage[style=apa,backend=biber]{biblatex}
+\addbibresource{bibliography.bib}
+\begin{document}
+
+\textcite{goossens93} is the best book on \LaTeX \parencite{greenwade93}.
+
+\printbibliography
+
+\end{document}
