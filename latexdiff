@@ -30,9 +30,12 @@
 ###  - --flatten option only expands first including command per line if there is more than one
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 ###  - change meaning of --packages option such that this packages are used in addition of automatically detected packages (possibly introduce option --only-packages that overrides automatic choices completely
+#
 # Version 1.3.2
 #  - extend CUSTOMDIFCMD related postprocessing to deal properly with multiline commands, or a sequence of several commands in the same line (see github issue #204)
 #  - fix a bug in biblatex mode, which prevented proper processing of modified \textcite (see: https://tex.stackexchange.com/questions/555157/latexdiff-and-biblatex-citation-commands)
+#  - -h string fix: add -driver option
+#   replace default driver dvips->pdftex
 #
 # Version 1.3.1.1
 #  - remove spurious \n to fix error: Unknown regexp modifier "/n" at .../latexdiff line 1974, near "=~ " (see github issue #201)
@@ -519,7 +522,7 @@ if (defined($preamblefile)) {
 
 if ( defined($driver) ) {
   # for changebar only
-  $latexdiffpreamble=~s/\[dvips\]/[$driver]/sg;
+  $latexdiffpreamble=~s/\[pdftex\]/[$driver]/sg;
 }
 # setting up @SAFECMDLIST and @SAFECMDEXCL
 if (defined($replacesafe)) {
@@ -3882,7 +3885,10 @@ Miscelleneous options
 --ignore-filter-stderr When running with --filter-script, STDERR from the script may cause readability issues.
                        Turn this flag on to ignore STDERR from the filter script.
 
-
+--driver=type          Choose driver for changebar package (only relevant for styles using
+                       changebar: CCHANGEBAR CFONTCHBAR CULINECHBAR CHANGEBAR). Possible
+                       drivers are listed in changebar manual, e.g. pdftex,dvips,dvitops
+                       [Default: pdftex]
 
 --help
 -h                     Show this help text.
@@ -4404,7 +4410,7 @@ Default is to work silently.
 Choose driver for changebar package (only relevant for styles using
    changebar: CCHANGEBAR CFONTCHBAR CULINECHBAR CHANGEBAR). Possible
 drivers are listed in changebar manual, e.g. pdftex,dvips,dvitops
-  [Default: dvips]
+  [Default: pdftex]
 
 =item B<--ignore-warnings>
 
@@ -5195,14 +5201,14 @@ verbatim[*]?
 %DIF END FONTSTRIKE PREAMBLE
 
 %DIF CCHANGEBAR PREAMBLE
-\RequirePackage[dvips]{changebar}
+\RequirePackage[pdftex]{changebar}
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
 \providecommand{\DIFadd}[1]{\protect\cbstart{\protect\color{blue}#1}\protect\cbend}
 \providecommand{\DIFdel}[1]{\protect\cbdelete{\protect\color{red}#1}\protect\cbdelete}
 %DIF END CCHANGEBAR PREAMBLE
 
 %DIF CFONTCHBAR PREAMBLE
-\RequirePackage[dvips]{changebar}
+\RequirePackage[pdftex]{changebar}
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
 \providecommand{\DIFadd}[1]{\protect\cbstart{\protect\color{blue}\sf #1}\protect\cbend}
 \providecommand{\DIFdel}[1]{\protect\cbdelete{\protect\color{red}\scriptsize #1}\protect\cbdelete}
@@ -5210,14 +5216,14 @@ verbatim[*]?
 
 %DIF CULINECHBAR PREAMBLE
 \RequirePackage[normalem]{ulem}
-\RequirePackage[dvips]{changebar}
+\RequirePackage[pdftex]{changebar}
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
 \providecommand{\DIFadd}[1]{\protect\cbstart{\protect\color{blue}\uwave{#1}}\protect\cbend}
 \providecommand{\DIFdel}[1]{\protect\cbdelete{\protect\color{red}\sout{#1}}\protect\cbdelete}
 %DIF END CULINECHBAR PREAMBLE
 
 %DIF CHANGEBAR PREAMBLE
-\RequirePackage[dvips]{changebar}
+\RequirePackage[pdftex]{changebar}
 \providecommand{\DIFadd}[1]{\protect\cbstart{#1}\protect\cbend}
 \providecommand{\DIFdel}[1]{\protect\cbdelete}
 %DIF END CHANGEBAR PREAMBLE
