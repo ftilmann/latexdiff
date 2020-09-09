@@ -36,6 +36,7 @@
 #  - fix a bug in biblatex mode, which prevented proper processing of modified \textcite (see: https://tex.stackexchange.com/questions/555157/latexdiff-and-biblatex-citation-commands)
 #  - -h string fix: add -driver option
 #   replace default driver dvips->pdftex
+#  - fix issue #206 affecting proper markup of text commands which are not safe cmd's at the same time and have multiple arguments
 #
 # Version 1.3.1.1
 #  - remove spurious \n to fix error: Unknown regexp modifier "/n" at .../latexdiff line 1974, near "=~ " (see github issue #201)
@@ -790,11 +791,11 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 
   my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|\.]|\\\\(?:[|{}]|\w+))';
 ###  my $word='(?:[-\p{IsL}*]|\\\\[\"\'\`~^][\p{IsL}A-Za-z\*])+';
-### standard $cmdoptseq without intervening spaces
+# standard $cmdoptseq (default: no intrevening spaces, controlled by extraspcae) - a final open parentheses is merged to the commend if it exists to deal properly with multi-argument text command
 ###pre-0.3  my $cmdoptseq='\\\\[\w\d\*]+(?:\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))*';
 ###  my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
-  my $cmdoptseq='\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
-### Handle tex \def macro: \def\MAKRONAME#1[#2]#3{DEFINITION}
+  my $cmdoptseq='\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*\{?';
+# Handle tex \def macro: \def\MAKRONAME#1[#2]#3{DEFINITION}
   my $defseq='\\\\def\\\\[\w\d@\*]+(?:#\d+|\[#\d+\])+(?:\{'. $pat_n . '\})?';
 ###pre-0.3  my $oneletcmd='(?:\\\\.|[_\^])(?:\['.$brat0.'\]|\{'. $pat_n . '\})*';
   my $backslashnl='\\\\\n';
@@ -2414,9 +2415,10 @@ sub marktags {
 
 
 # split this block to split sequences joined in pass1
+  print STDERR "DEBUG: marktags before splitlatex blocksplit ",join("|",@$block),"\n" if $debug;
   @$block=splitlatex(join "",@$block);
   ### print STDERR "DEBUG: marktags $openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment\n" if $debug;
-  ### print STDERR "DEBUG: marktags blocksplit ",join("|",@$block),"\n" if $debug;
+  print STDERR "DEBUG: after splitlatex ",join("|",@$block),"\n" if $debug;
 
   # we redefine locally $extraspace (shadowing the global definition) to capture command sequences with intervening spaces no matter what the global setting
   # this is done so we can capture those commands with a predefined number of arguments without having to introduce them again explicitly here
@@ -2476,7 +2478,7 @@ sub marktags {
         #            $2 (the command) is in context2, just treat it as an ordinary command (i.e. comment it open with $opencmd)
         # Because we do not want to disable this command
 	# here we do not use $opencmd and $closecmd($opencmd is empty) 
-###	print STDERR "DEBUG: Detected text but not safe command $2 \n." if $debug;
+	print STDERR "DEBUG: Detected text |$word| but not safe command \$2: $2 \$3: $3\n." if $debug;
 ###	push (@$retval,$closecmd,$open) if $cmd==1 ;
 	if ($cmd==1) {
 	  push (@$retval,$closecmd) ;
