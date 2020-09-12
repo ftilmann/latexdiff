@@ -4834,6 +4834,7 @@ makebox
 mbox
 pageref
 ref
+eqref
 symbol
 raisebox
 rule
