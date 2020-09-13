@@ -78,7 +78,7 @@ And now an example making use of the \lstinline|listings| package.
 Einige Spezialf\"alle von L\"oschungen zu testen: \verb|vertikale Balken|.
 % Fall von doppelter Klammer auf, wird nicht richtig behandelt, wenn color code verwendet wird
 
-lstlisting: \lstinline{Gepaarte Klammern sind möglich mit % Kommentarzeichen}
+lstlisting: \lstinline{Gepaarte Klammern sind moeglich mit % Kommentarzeichen}
 
 Und mit Optionen: \lstinline[basicstyle=\footnotesize]{int i;}
 
@@ -146,5 +146,16 @@ if (scalar @ARGV == 0 ) {
   open($tex,">",$outname . "-ref.tex") or die "Could not open output file ${outname}-ref.tex";
 }
 \end{lstlisting}  same line stuff
+
+\textbf{Issue 168: Mangled verbatim environment}
+
+\begin{verbatim}
+1
+\end{verbatim}
+\begin{verbatim}
+2
+\end{verbatim}
+
+
 \end{document}
 

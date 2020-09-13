@@ -37,6 +37,8 @@
 #  - -h string fix: add -driver option
 #   replace default driver dvips->pdftex
 #  - fix issue #206 affecting proper markup of text commands which are not safe cmd's at the same time and have multiple arguments
+#  - fix issue #210 by adding \eqref (amsmath package) to the list of safe commands
+#  - fix bug reported in issue #168 mangled verbatim line environment 
 #
 # Version 1.3.1.1
 #  - remove spurious \n to fix error: Unknown regexp modifier "/n" at .../latexdiff line 1974, near "=~ " (see github issue #201)
@@ -2415,7 +2417,7 @@ sub marktags {
 
 
 # split this block to split sequences joined in pass1
-  print STDERR "DEBUG: marktags before splitlatex blocksplit ",join("|",@$block),"\n" if $debug;
+  ### print STDERR "DEBUG: marktags before splitlatex blocksplit ",join("|",@$block),"\n" if $debug;
   @$block=splitlatex(join "",@$block);
   ### print STDERR "DEBUG: marktags $openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment\n" if $debug;
   print STDERR "DEBUG: after splitlatex ",join("|",@$block),"\n" if $debug;
@@ -2705,7 +2707,7 @@ sub linecomment {
 # remove DIFVRB comments but leave changed lines marked 
 sub reverselinecomment {
   my ($environment, $verbatimtext)=@_;
-  ###print STDERR "OLD VERBATIMTEXT: |$verbatimtext|\n";
+  ### print STDERR "DEBUG REVERSELINECOMMENT input: $environment,|$verbatimtext|\n" if $debug;
   # remove markup added by latexdiff
   # (this should occur only if the type of verbatim environment was changed)
   # (note that this destroys some information in old file)
@@ -2740,7 +2742,7 @@ sub reverselinecomment {
   } else {
     $verbatimtext = "\\begin{${environment}}${verbatimtext}\\end{${environment}}"
   }
-  ###print STDERR "NEW VERBATIMTEXT: |$verbatimtext|\n";
+  ### print STDERR "DEBUG REVERSELINECOMMENT output: |$verbatimtext|\n" if $debug;
   return($verbatimtext);
 }
 
@@ -2783,6 +2785,8 @@ sub fromhash {
   return $retstr;
 }
 
+# stripdelcmpopen(string)
+# return string with $DELCMDOPEN removed
 sub stripdelcmdopen {
   my ($str) = $_[0];
   $str =~ s/${DELCMDOPEN}//mg;
@@ -3032,7 +3036,7 @@ sub postprocess {
       ###  $delblock =~ s/\\DIFverb\{/\\DIFDIFdelverb\{/g;
       ###  $delblock =~ s/\\DIFlstinline/\\DIFDIFdellstinline/g;
       ###}
-      # Mark deleted verbose commands
+      # Mark deleted verbatim commands
       $delblock =~ s/(${DELCMDOPEN}\\DIF((?:verb\*?|lstinline(?:\[$brat_n\])?)\{([-\d]*?)\}\s*).*)$/%\n\\DIFDIFdel$2${AUXCMD}\n$1/gm;
       if ( $CUSTOMDIFCMD ) {
         ###$delblock =~ s/(${DELCMDOPEN}.*)\\($CUSTOMDIFCMD)((?:\[${brat_n}\])*?(?:\s*\{${pat_n}\})*)/"$1${DELCMDCLOSE}\\DEL$2". stripdelcmdopen($3) ." ${DELCMDOPEN}"/egms;
@@ -3047,7 +3051,6 @@ sub postprocess {
       substr($_,$begin,$len)=$delblock;
       pos = $begin + length($delblock);
     }
-    ###writedebugfile($_,'postprocess');
 
     ### print STDERR "<<<$_>>>\n" if $debug;
 
@@ -3214,14 +3217,22 @@ sub postprocess {
     # remove empty DIFCMD < lines
     s/^\Q${DELCMDOPEN}\E\n//msg;
 
-    # Expand hashes of verb and verbatim environments (note negative look behind assertion to not leak out of DIFDELCMD comments
-###    s/${DELCMDOPEN}\\(verbatim\*?)\{([-\d]*?)\}/"${DELCMDOPEN}\\begin{${1}}".fromhash(\%verbhash,$2,$DELCMDOPEN)."${DELCMDOPEN}\\end{${1}}"/esg;
+    # Expand hashes of verb and verbatim environments 
     s/${DELCMDOPEN}\\($VERBATIMENV)\{([-\d]*?)\}/"${DELCMDOPEN}\\begin{${1}}".fromhash(\%verbhash,$2,$DELCMDOPEN)."${DELCMDOPEN}\\end{${1}}"/esg;
-### DEBUG    s/${DELCMDOPEN}\\(verbatim\*?)/VERBATIMBLURB/sg;
-###    s/(?<!%\\DIFCMD < )\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
-###    s/\\(verbatim\*?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
-    # revert changes to verbatim environments for line diffs (and add code to mark up changes)
-    s/(?<!$DELCMDOPEN)\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"". reverselinecomment($1, $2) .""/esg;
+    # revert changes to verbatim environments for line diffs (and add code to mark up changes) (note negative look behind assertions to not leak out of DIFDELCMD comments)
+    # Example:
+    # < \begin{verbatim}
+    # < %DIF < DIFVRB old verbatim line
+    # < %DIF > DIFVRB new verbatim line
+    # < \end{verbatim}
+    # ---
+    # > \DIFmodbegin
+    # > \begin{verbatim}[alsolanguage=DIFcode]
+    # > %DIF < old verbatim line
+    # > %DIF > new verbatim line
+    # > \end{verbatim}
+    # > \DIFmodend
+    s/(?<!$DELCMDOPEN)\\begin\{($VERBATIMLINEENV)\}(.*?)(?<!$DELCMDOPEN)\\end\{\1\}/"". reverselinecomment($1, $2) .""/esg;
 #    # we do the same for deleted environments but additionally reinstate the framing commands
 #   s/$DELCMDOPEN\\begin\{($VERBATIMLINEENV)\}$extraspace(?:\[$brat0\])?$DELCMDCLOSE(.*?)$DELCMDOPEN\\end\{\1\}$DELCMDCLOSE/"\\begin{$1}". reverselinecomment($2) . "\\end{$1}"/esg;
 ##    s/$DELCMDOPEN\\begin\{($VERBATIMLINEENV)\}($extraspace(?:\[$brat0\])?\s*)(?:\n|$DELCMDOPEN)*$DELCMDCLOSE((?:\%$DELCOMMENT$VERBCOMMENT.*?\n)*)($DELCMDOPEN\\end\{\1\}(?:\n|\s|$DELCMDOPEN)*$DELCMDCLOSE)/"SUBSTITUTION: \\begin{$1}$2 INTERIOR: |$3| END: |$4|"/esg;
@@ -3241,13 +3252,13 @@ sub postprocess {
             . $5               # and again leave the original deleted closing environment as is
       /esgx;  # Modifiers of substitution command
 ###    s/\Q$DELCMDOPEN\E\\begin\{($VERBATIMLINEENV)\}/"SUBSTITUTION"/esgx;
+    writedebugfile($_,'postprocess2');
     # where changes have occurred in verbatim environment, change verbatim to DIFverbatim to allow mark-up
     # (I use the presence of optional paramater to verbatim environment as the marker - normal verbatim 
     # environment does not take optional arguments)
     s/(?<!$DELCMDOPEN)\\begin\{(verbatim[*]?)\}(\[$brat_n\].*?)\\end\{\1\}/\\begin{DIF$1}$2\\end{DIF$1}/sg;
 
     s/\\($VERBATIMENV)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
-
 
     # remove all \PAR tokens (taking care to properly keep commented out PAR's
     # from introducing uncommented newlines - next line)
@@ -3314,7 +3325,7 @@ sub postprocess {
     s/\\QLEFTBRACE /\\\{/sg;
     s/\\QRIGHTBRACE /\\\}/sg;
     s/\\AMPERSAND /\\&/sg;
-    # Highligh added inline verbatim commands if possible
+    # Highlight added inline verbatim commands if possible
     if ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{color\}/ )   { 
       # wrap added verb commands with color commands
       s/\\DIFDIFadd((?:verb\*?|lstinline(?:\[$brat_n\])?)\{[-\d]*?\}[\s\n]*)/\{\\color{blue}$AUXCMD\n\\DIF$1%\n\}$AUXCMD\n/sg;
