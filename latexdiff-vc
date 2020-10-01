@@ -546,7 +546,7 @@ foreach $diff ( @difffiles ) {
       #print STDERR "Generated postscript file $ps\n";
     } elsif ( $run ) {
       if ( $onlychanges ) {
-	my @pages=findchangedpages("$diffbase.aux");
+	my @pages=compresspages(findchangedpages("$diffbase.aux"));
         my $gs = `which gs`;
         $gs =~ s/^\s+|\s+$//g;
         my $qpdf = `which qpdf`;
@@ -600,6 +600,43 @@ sub findchangedpages {
   close(AUX);
   # sort pages numerically (they should be sorted already; this is just to make sure
   return(sort {$a <=> $b} keys(%pages));
+}
+
+# inspired by a python version posted at https://stackoverflow.com/a/54714846/8136338
+# compresspages(@pages)
+# @pages: sorted array of unique integers (pages)
+# return a list of pages and page ranges. 3 or more consecutive numbers are merged into a "begin-end" string
+sub compresspages {
+  my (@pages) = @_;
+  my @res;
+  my $begin=$pages[0];
+  my $end =$pages[0];
+  my $page;
+  foreach $page ( @pages ) {
+    next if ($page == $begin);
+    if ($page == $end+1) { # handle continuous pages
+      $end = $page;
+      next;
+    } elsif ($begin == $end) { # push single continuous page
+      push @res, $begin;
+      $begin = $end = $page;
+    } elsif ($begin + 1 == $end) { # push two continuous pages
+      push @res, $begin, $end;
+      $begin = $end = $page;
+    } else { # push multiple continuous pages
+      push @res, "$begin-$end";
+      $begin = $end = $page;
+    }
+  }
+  # Finally just check in the same manner for the end element
+  if ($begin == $end) {
+    push @res, $begin;
+  } elsif ($begin + 1 == $end) {
+    push @res, $begin, $end;
+  } else {
+    push @res, "$begin-$end";
+  }
+  return @res;
 }
 
 # checkout_dir(rev,dirname)
