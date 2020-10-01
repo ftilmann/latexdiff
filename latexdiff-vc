@@ -608,7 +608,7 @@ sub findchangedpages {
 sub checkout_dir {
   my ($rev,$dirname)=@_;
 
-  unless (-e $dirname) { mkdir $dirname or die "Cannot mkdir $dirname ." ;}
+  unless (-e $dirname) { mkpath([ $dirname ]) or die "Cannot mkdir $dirname ." ;}
   if ( $vc eq "SVN" ) {
     system("svn checkout -r $rev $rootdir $dirname")==0 or die "Something went wrong in executing:  svn checkout -r $rev $rootdir $dirname";
   } elsif ( $vc eq "GIT" ) {
