@@ -606,6 +606,8 @@ sub findchangedpages {
 # compresspages(@pages)
 # @pages: sorted array of unique integers (pages)
 # return a list of pages and page ranges. 3 or more consecutive numbers are merged into a "begin-end" string
+#
+# example: join(",", compresspages([1,3,4,5,7,8])) -> join(",", [1,"3-5",7,8]) -> "1,3-5,7,8"
 sub compresspages {
   my (@pages) = @_;
   my @res;
