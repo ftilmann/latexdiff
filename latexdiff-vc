@@ -554,7 +554,7 @@ foreach $diff ( @difffiles ) {
         my $pdftk = `which pdftk`;
         $pdftk =~ s/^\s+|\s+$//g;
         my $command;
-        if (-x $gs && `gs --version` >= 9.20) {
+        if (-x $gs && `$gs --version` >= 9.20) {
           $command="gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -sPageList=" . join(",", @pages) . " -sOutputFile=\"$diffbase-changedpage.pdf\" \"$diffbase.pdf\"";
         } elsif (-x $pdftk) {
           $command="pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"";
