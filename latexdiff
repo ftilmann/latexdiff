@@ -1096,6 +1096,9 @@ $ulem = ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{ulem\}/ || def
 # If listings is being used or can be found in the latexdiff search path, add to the preamble auxiliary code to enable line-by-line markup
 if ( defined($packages{"listings"}) or `kpsewhich listings.sty` ne "" ) {
   my @listingpreamble=extrapream("LISTINGS");
+  if ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{color\}/ ) {
+    @listingpreamble=extrapream("COLORLISTINGS");
+  }
   my @listingDIFcode=();
   my $replaced;
   # note that in case user supplies preamblefile the type might not reflect well the 
@@ -5484,7 +5487,6 @@ verbatim[*]?
 
 %DIF LISTINGS PREAMBLE
 \RequirePackage{listings}
-\RequirePackage{color}
 \lstdefinelanguage{DIFcode}{
   % note that the definitions in the following two lines are overwritten dependent on the markup type selected %DIFCODE TEMPLATE
   morecomment=[il]{\%DIF\ <\ },          %DIFCODE TEMPLATE
@@ -5499,6 +5501,24 @@ verbatim[*]?
 \lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{}
 \lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{}
 %DIF END LISTINGS PREAMBLE
+
+%DIF COLORLISTINGS PREAMBLE
+\RequirePackage{listings}
+\RequirePackage{color}
+\lstdefinelanguage{DIFcode}{
+  % note that the definitions in the following two lines are overwritten dependent on the markup type selected %DIFCODE TEMPLATE
+  morecomment=[il]{\%DIF\ <\ },          %DIFCODE TEMPLATE
+  moredelim=[il][\bfseries]{\%DIF\ >\ }  %DIFCODE TEMPLATE
+}
+\lstdefinestyle{DIFverbatimstyle}{
+	language=DIFcode,
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	keepspaces=true
+}
+\lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{}
+\lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{}
+%DIF END COLORLISTINGS PREAMBLE
 
 %DIF DIFCODE_UNDERLINE
   moredelim=[il][\color{red}\sout]{\%DIF\ <\ },
