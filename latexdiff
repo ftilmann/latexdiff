@@ -39,6 +39,7 @@
 #  - fix issue #206 affecting proper markup of text commands which are not safe cmd's at the same time and have multiple arguments
 #  - fix issue #210 by adding \eqref (amsmath package) to the list of safe commands
 #  - fix bug reported in issue #168 mangled verbatim line environment 
+#  - fix bug reported in issue #218 by replacing \hspace{0pt} after \mbox{..} auxiliary commands with \hskip0pt.
 #
 # Version 1.3.1.1
 #  - remove spurious \n to fix error: Unknown regexp modifier "/n" at .../latexdiff line 1974, near "=~ " (see github issue #201)
@@ -2547,7 +2548,7 @@ sub marktags {
       if ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)(.*?)(\s*)$/s &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL)) {
 	# $word is a safe command in MBOXCMDLIST
 	###print STDERR "DEBUG Mboxsafecmd detected:$word:\n" if $debug ;
-	push(@$retval,"\\mbox{$AUXCMD\n\\" . $1 . $2 . $3 ."}\\hspace{0pt}$AUXCMD\n" );
+	push(@$retval,"\\mbox{$AUXCMD\n\\" . $1 . $2 . $3 ."}\\hskip0pt$AUXCMD\n" );
       } else {
 	# $word is a normal word or a safe command (not in MBOXCMDLIST)
 	push (@$retval,$word);
