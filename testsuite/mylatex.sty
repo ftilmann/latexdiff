@@ -1,0 +1,151 @@
+% revision commands
+\RequirePackage{color}
+\RequirePackage{settobox}
+
+\newcommand{\remark}[1]{{\color{green} \bf [ \footnotesize #1 ]}}
+\newcommand{\chg}[1]{{\sf #1}} 
+\newcommand{\gap}{{\sf [..]}}
+\newcommand{\del}[1]{{[..\protect\footnote{removed: #1} ]}}
+\newcommand{\remove}{\del}
+% commands below look nice but don't work in captions
+%\newcommand{\chg}[1]{\protect\marginpar{$\Leftarrow$ CHG}{\sffamily #1}\protect\marginpar{$\Leftarrow$}} 
+%\newcommand{\gap}{\protect\marginpar{$\Leftarrow$ GAP}{\bf [..]}}
+\newcommand{\ignore}[1]{}
+
+
+\newcommand{\remarkft}[1]
+{
+  \textcolor{magenta}
+  {
+    \footnote
+    {
+      \linespread{0.5}\footnotesize
+      \textcolor{magenta}
+      {
+        \sffamily \textbf{FT:} #1
+      }
+    }
+  }
+}
+% in floating material footnotes are very tricky, so use the following variant instead
+\newcommand{\remarkfigft}[1]{\textcolor{magenta}{\sffamily \footnotesize [\textbf{FT:} #1]}}
+
+\newcommand{\todoft}[1]
+{
+  \textcolor{magenta}
+  {
+    \footnote
+    {
+      \linespread{0.5}\footnotesize
+      \textcolor{magenta}{
+        \sffamily \textbf{FT ToDo:} #1
+      }
+    }
+  }
+}
+% in floating material footnotes are very tricky, so use the following variant instead
+\newcommand{\todofigft}[1]{\textcolor{magenta}{\sffamily \footnotesize [\textbf{FT ToDo:} #1]}}
+
+
+
+\newcommand{\myfootnote}[1]{\footnote{\small #1}}
+\newcommand{\mycaption}[1]{\caption{\small #1}}
+\newenvironment{smalltable}
+   {\begin{table} \renewcommand{\baselinestretch}{1} \small }
+   {\end{table}}
+
+% framed minipage, from latex guide
+\newsavebox{\fmboxatmylatex}
+\newenvironment{fmpage}[2][]
+{\begin{lrbox}{\fmboxatmylatex}\begin{minipage}[#1]{#2}}
+{\end{minipage}\end{lrbox}\fbox{\usebox{\fmboxatmylatex}}}
+
+%\newcommand{\vfill*}{\vspace*{\fill}}
+%\newcommand{\hfill*}{\hspace*{\fill}}
+%\newcommand{\4th}{\mbox{$4^{\rm th}$}}
+% calloute{type}{ref} prints out ref in text, but prepends type in callout-box 
+\def\calloute#1#2{#2\ifprintcallout\marginpar{\fbox{\large#1 #2}}\fi}
+
+
+\newcommand{\dg}{\mbox{$^{\circ}$}}
+\providecommand{\deg}{\mbox{$^{\circ}$}}
+
+\newcommand{\lsim}{\protect\raisebox{-0.25\totalheight}{$\,\stackrel{\textstyle <}{\textstyle \sim}\,$}}
+\newcommand{\gsim}{\protect\raisebox{-0.25\totalheight}{$\,\stackrel{\textstyle >}{\textstyle \sim}\,$}}
+
+
+%\newsavebox{\DIFdelgraphicsbox}
+%\newlength{\DIFdelgraphicswidth}
+%\newlength{\DIFdelgraphicsheight}
+%\newcommand{\DIFscaledelfig}{1}
+%\newcommand{\includegraphicscrossout}[2][]{%
+%\sbox{\DIFdelgraphicsbox}{\includegraphics[#1]{#2}}%
+%\settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox}
+%\settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox}
+%\scalebox{\DIFscaledelfig}{%
+%\parbox[b]{\DIFdelgraphicswidth}{\usebox{\DIFdelgraphicsbox}\\[-\baselineskip] \rule{\DIFdelgraphicswidth}{0em}}\llap{\resizebox{\DIFdelgraphicswidth}%{\DIFdelgraphicsheight}{%
+%\setlength{\unitlength}{\DIFdelgraphicswidth}%
+%\begin{picture}(1,1)%
+%\thicklines\linethickness{2pt}
+%{\color[rgb]{1,0,0}\put(0,0){\framebox(1,1){}}}%
+%{\color[rgb]{1,0,0}\put(0,0){\line( 1,1){1}}}%
+%{\color[rgb]{1,0,0}\put(0,1){\line(1,-1){1}}}%
+%\end{picture}%
+%}\hspace*{3pt}}}
+%}
+
+
+% I can't remember what these are good for so I commented them on 25/02/2016
+
+% % It has the following parameters that can be changed
+% % figarrwidth : width of each figure when two are displayed
+% % figarrrwidth : width of each figure when three are displayed
+% % figarrvspace : extra space between (a),(b) and figures
+% % figarrvspace : extra space between (a),(b),(c) and figures
+% % \standardfigwidth resets values to standard parameters
+\newlength{\figarrwidth}
+\newlength{\figarrrwidth}
+\newlength{\figarrvspace}
+\newlength{\figarrrvspace}
+% 
+% \newcommand{\standardfigwidth}{\setlength{\figarrwidth}{0.4\textwidth}
+% \setlength{\figarrrwidth}{0.32\textwidth}
+% \setlength{\figarrvspace}{2cm}
+% \setlength{\figarrrvspace}{0cm}}
+% 
+% 
+% \standardfigwidth
+% 
+\newcommand{\includefig}[2]{\fbox{\em include {\tt #1}}}
+\newcommand{\includefigss}[2]{\fbox{\em include \tt #1, \tt #2}}
+\newcommand{\includefigww}[4]{\fbox{\em include \tt #1, \tt #2}}
+\newcommand{\includefigsss}[3]{\fbox{\em include \tt #1,\tt #2, \tt #3}}
+\newcommand{\includefigarr}[2]{\fbox{\em include \tt #1, \tt #2}}
+\newcommand{\includefigarrr}[3]{\fbox{\em include \tt #1,\tt #2, \tt #3}}
+% \newcommand{\includevspace}[1]{}
+
+%zero width box centred within argument
+\def\clap#1{\hbox to0pt{\hss#1\hss}}
+
+% Small citation
+\newcommand{\scriptcite}[1]{{\scriptsize\citep{#1}}}
+% Small picture credit on bottom right (use directly after \includegraphics, no space)
+\newcommand{\rfigcite}[1]{\llap{\colorbox{white}{\tiny Fig. credit: \citet{#1}}}}
+% Small picture credit on bottom left (use directly before \includegraphics, no space)
+\newcommand{\lfigcite}[1]{\rlap{\colorbox{white}{\tiny Fig. credit: \citet{#1}}}}
+
+
+%\coord{xlabel}{ylabel}
+% Draw a simple coordinate system with labelled axes 
+\newcommand{\coordinatesystem}[2]{\begin{picture}(2774,1777)(-41,797)
+\thinlines
+{\color[rgb]{0,0,0}\put(  1,839){\vector( 0, 1){1675}}
+}%
+{\color[rgb]{0,0,0}\put(  1,839){\vector( 1, 0){2700}}
+}%
+\put(2626,914){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\sfdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}#1}%
+}}}}
+\put( 76,2339){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\sfdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}#2}%
+}}}}
+\end{picture}%
+}
