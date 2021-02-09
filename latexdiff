@@ -3385,7 +3385,7 @@ sub preprocess_preamble {
   my ($line,$cmd,$optarg,$arg,$optargnew,$optargold,$optargdiff,$argold,$argnew,$argdiff,$auxline);
 
   my $warnmsgdetail = <<EOF ;
-     This should not occur for standard styles, but can occur for some specifiy styles, document classes,
+     This should not occur for standard styles, but can occur for some specific styles, document classes,
      e.g. journal house styles.
      Workaround: Use --replace-context2cmd option to specifically set those commands, which are not repeated.
 EOF
@@ -3856,6 +3856,9 @@ Other configuration options:
                                 variable SCALEDELGRAPHICS to set size of deleted figures.
                       Note that changes to the optional parameters will make the figure appear as changed 
                       to latexdiff, and this figure will thus be highlighted.
+                      In some circumstances "Misplaced \\noalign" errors can occur if there are certain types
+                      of changes in tables. In this case please use option --graphics-markup=none as a 
+                      work-around. 
 
 --disable-citation-markup 
 --disable-auto-mbox    Suppress citation markup and markup of other vulnerable commands in styles 
@@ -4393,7 +4396,12 @@ scale, and crossed out with a red diagonal cross. Use configuration
 variable SCALEDELGRAPHICS to set size of deleted figures.
 
 Note that changes to the optional parameters will make the figure appear as changed 
-to latexdiff, and this figure will thus be highlighted
+to latexdiff, and this figure will thus be highlighted.
+
+In some circumstances "Misplaced \noalign" error can occur if there are certain types
+of changes in tables. In this case please use C<--graphics-markup=none> as a 
+work-around. 
+
 
 =item B<--disable-citation-markup> or B<--disable-auto-mbox>
 
