@@ -3870,7 +3870,7 @@ Other configuration options:
                        with \\mbox command, i.e. use default behaviour for ulem package for other packages
                        (the two options are identical and are simply aliases)
 
-Miscelleneous options
+Miscellaneous options
 
 --label=label
 -L label               Sets the labels used to describe the old and new files.  The first use
