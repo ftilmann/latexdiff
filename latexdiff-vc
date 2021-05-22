@@ -209,7 +209,9 @@ foreach $config ( @configlist ) {
 $configlatexdiff="";
 foreach $assign ( @config ) {
 ###    print STDERR "assign:|$assign|\n";
-  $assign=~ m/\s*(\w*)\s*=\s*(\S*)\s*$/ or die "Illegal assignment $assign in configuration list (must be variable=value)";  
+#   $assign=~ m/\s*(\w*)\s*=\s*(\S*)\s*$/ 
+    $assign=~ m/\s*(\w*)\s*=\s*(.*?)\s*$/ 
+      or die "Illegal assignment |$assign| in configuration list (must be variable=value)";  
   if ( defined($CFG{$1})) {
     # known latexdiff-vc option
     $CFG{$1}=$2;
