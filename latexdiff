@@ -1616,6 +1616,7 @@ sub remove_endinput {
 # expands \input and \include commands within text
 # expands \bibliography command with corresponding bbl file if available
 # expands \subfile command (from subfiles package - not part of standard text distribution)
+# expands \import etc commands (from import package - not part of standard text distribution)
 # preamble is scanned for includeonly commands
 # encoding is the encoding
 sub flatten {
@@ -1643,15 +1644,16 @@ sub flatten {
   # Run through filter, to let filterscript have a pass if it was set
   $text = filter($text);
 
-  # Recursively replace \\import and \\subimport files
-  $text =~ s/(^(?:[^%\n]|\\%)*)(\\subimport\{(.*?)\}|\\import\{(.*?)\})(?:[\s]*)\{(.*?)\}/{
+  # Recursively replace \\import, \\subimport, and related import commands
+  $text =~ s/(^(?:[^%\n]|\\%)*)(\\(sub)?(?:import|inputfrom|includefrom))\{(.*?)\}(?:[\s]*)\{(.*?)\}/{
+          #  (--------1-------)(--(=3=)-------------2-------------------)  (-4-)             (-5-)
           # $1 is begline
-          # $3 is directory if subimport
-          # $4 is directory if import
+          # $2 is the import macro name
+          # $3 is (optional) prefix "sub"
+          # $4 is directory
           # $5 is filename
           $begline = (defined($1)? $1 : "");
-          $subdir = $3 if defined($3);
-          $subdir = $4 if defined($4);
+          $subdir = $4;
           $fname = $5;
           $fname .= ".tex" unless $fname =~ m|\.\w{3,4}$|;
           print STDERR "DEBUG begline:", $begline, "\n" if $debug;
@@ -1666,12 +1668,13 @@ sub flatten {
           print STDERR "importing importfilepath:", $importfilepath,"\n" if $verbose;
           if ( -f $importfilepath ) {
               # If file exists, replace input or include command with expanded input
+              #TODO: need remove_endinput & newpage similar to other replacements inside flatten
               $replacement=flatten(read_file_with_encoding($importfilepath, $encoding), $preamble,$importfilepath,$encoding) or die "Could not open file ",$fullfile,": $!";
           } else {
               # if file does not exist, do not expand include or input command (do not warn if fname contains #[0-9] as it is then likely part of a command definition
               # and is not meant to be expanded directly 
               print STDERR "WARNING: Could not find included file ",$importfilepath,". I will continue but not expand |$2|\n";
-              $replacement=(defined($3)? "\\subimport" : "\\import");
+              $replacement = $2;
               $replacement .= "{$subdir}{$fname} % Processed";
           }
           "$begline$replacement";
