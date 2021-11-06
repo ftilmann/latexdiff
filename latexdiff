@@ -2570,16 +2570,15 @@ sub take_comments_and_newline_from_frac() {
   # some special magic for common usage of frac, which does not conform to the latexdiff requirements but can be made to fit
   # note that this is a rare exception to the general rule that the new tex can be reconstructed from the diff file
 
+  # regex that matches space and comment characters
+  my $space = qr/\s|%[^\n]*?/;
+  # \frac {abc} -> \frac{abc}
   # \frac1 -> \frac{1}
   # \frac a -> \frac{a}
   # \frac \lambda -> \frac{\lambda}
-  s/\\frac(?:\s*(\d)|\s+(\w)|\s*(\\[a-zA-Z]+))/\\frac\{$1$2$3\}/g;
+  s/\\frac(?:${space}+\{($pat_n)\}|${space}*(\d)|${space}+(\w)|${space}*(\\[a-zA-Z]+))/\\frac\{$1$2$3$4\}/g;
   # same as above for the second argument of frac
-  s/\\frac(\{$pat_n\})(?:\s*(\d)|\s+(\w)|\s*(\\[a-zA-Z]+))/\\frac$1\{$2$3$4\}/g;
-
-  # delete space and comment characters between \frac arguments
-#  s/\\frac(?:\s*?%[^\n]*?)*?(\{$pat_n\})\s*(\{$pat_n\})/\\frac$1$2/g;
-  s/\\frac(?:\s|%[^\n]*?)*(\{$pat_n\})(?:\s|%[^\n]*?)*(\{$pat_n\})/\\frac$1$2/g;
+  s/\\frac(\{$pat_n\})(?:${space}*\{($pat_n)\}|${space}*(\d)|${space}+(\w)|${space}*(\\[a-zA-Z]+))/\\frac$1\{$2$3$4$5\}/g;
 }
 
 # preprocess($string, ..)
