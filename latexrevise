@@ -21,6 +21,8 @@
 #
 # Detailed usage information at the end of the file
 # Note: version number now keeping up with latexdiff
+# Version 1.3.2a  Functionality -c option: if comment to be deleted is the last in the line replace new line by space character. This is done to avoid errors or unintended line breaks from empty lines after deletion (which are implicit \par)
+#                  Introduce option -r / --replace which removes markup of the form \replaced{new text}{old text} in the changes package
 # Version 1.3.1  (Bug fix) Remove some deprecation warnings due to uncommented left parentheses 
 # Version 1.0.2  Option --version
 # Version 1.0.1   no changes to latexrevise
@@ -33,8 +35,8 @@ use strict;
 use warnings;
 
 my $versionstring=<<EOF ;
-This is LATEXREVISE 1.3.1.1
-  (c) 2005-2020 F J Tilmann
+This is LATEXREVISE 1.3.2a
+  (c) 2005-2021 F J Tilmann
 EOF
 
 # Markup strings (make sure that this are set to the same value as in 
@@ -93,7 +95,7 @@ my (@matches);
 my ($cnt,$prematch,$postmatch);
 my ($help,$version);
 my ($verbose,$quiet,$accept,$decline,$simplify)=(0,0,0,0,0);
-my ($comment,$comenv,$markup,$markenv);
+my ($comment,$comenv,$markup,$markenv,$replace);
 
 # A word unlikely ever to be used in a real latex file
 my $someword='gobbledegooksygook';
@@ -106,6 +108,7 @@ GetOptions('accept|a' => \$accept,
 	   'comment-environment|e=s' => \$comenv,
 	   'markup|m=s' => \$markup,
 	   'markup-environment|n=s' => \$markenv,
+	   'replace|r=s' => \$replace,
 	   'no-warnings|q' => \$verbose,
            'version' => \$version,
 	   'verbose|V' => \$verbose,
@@ -270,7 +273,7 @@ if (defined($comment)) {
   # protect $comments in comments by making them look different
   $body =~ s/(%.*)${comment}(.*)$/$1${someword}$2/mg ;
   # carry out the substitution
-  $cnt = 0 + $body =~ s/\\${comment}(?:\[${brat0}\])?\{${pat_n}\}//sg ;
+  $cnt = 0 + $body =~ s/\\${comment}(?:\[${brat0}\])?\{${pat_n}\}(?: *\n)?//sg ;
   print STDERR "$cnt matches found and removed.\n" if $verbose;
 ###  $body =~ s/${comment}//sg;
   # and undo the protection substitution
@@ -305,6 +308,17 @@ if (defined($markenv)) {
   $body =~ s/(%.*)${someword}/$1${markenv}/mg ;
 }
 
+if (defined($replace)) {
+  print STDERR "Removing \\$replace\{..\}\{..\} commands (leaving 1st and discarding 2nd argument))..." if $verbose;
+  # protect $markups in comments by making them look different
+  $body =~ s/(%.*)${replace}(.*)$/$1${someword}$2/mg ;
+  # carry out the substitution
+  $cnt = 0 + $body =~ s/\\${replace}(?:\[${brat0}\])?\{(${pat_n})\}\s?\{(${pat_n})\}/$1/sg ;
+  print STDERR "$cnt matches found and removed.\n" if $verbose;
+###  $body =~ s/${markup}//sg;
+  # and undo the protection substitution
+  $body =~ s/(%.*)${someword}(.*)$/$1${replace}$2/mg ;
+}
 
 if ( length $preamble ) {
   print "$preamble\\begin{document}${body}\\end{document}$post";
@@ -405,7 +419,7 @@ In SIMPLIFY mode the preamble is left unmodified.
 
 Note that the three mode options are mutually exclusive. If no mode option is given,
 latexrevise simply removes user annotations and markup according to the following four
-options.
+options; these functions can be very useful outside the latexdiff context, too.
 
 
 -c cmd
@@ -429,6 +443,11 @@ options.
 --markup-environment=envir  
                   Similarly, remove \\begin{envir} and \\end{envir} commands,
                   but leave content of the environment in the text.
+
+
+-r cmd
+--replace=cmd    For constructions \\cmd{..}{..}, remove the command, leave the 
+                 content of first argument, and delete second argument. 
                   
 -q
 --no-warnings     Do not warn users about \\DIDadd{..} or \\DIFdel statements
@@ -495,7 +514,7 @@ markup from body).
 
 Note that the three mode options are mutually exclusive.  If no mode option is given,
 I<latexrevise> simply removes user annotations and markup according to the following four
-options.
+options. These functions can be very useful outside the latexdiff context, too
 
 =over 4
 
@@ -524,6 +543,13 @@ turn C<\cmd{abc}> into C<abc>.
 
 Similarly, remove C<\begin{envir}> and C<\end{envir}> commands but 
 leave content of the environment in the text.
+
+=item B<-r cmd> or B<--replace=cmd>
+
+For constructions C<\\cmd{..}{..}>, remove the command, leave the 
+content of first argument, and delete second argument, i.e. turn 
+C<\cmd{abc}{def} into C<abc>.
+
                   
 
 =item B<-V> or B<--verbose>
