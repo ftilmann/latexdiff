@@ -40,6 +40,7 @@
 #  - fix issue #210 by adding \eqref (amsmath package) to the list of safe commands
 #  - fix bug reported in issue #168 mangled verbatim line environment 
 #  - fix bug reported in issue #218 by replacing \hspace{0pt} after \mbox{..} auxiliary commands with \hskip0pt.
+#  - more ways to process \frac correctly with atomic arguments (committed by julianuu PR #246
 #
 # Version 1.3.1.1
 #  - remove spurious \n to fix error: Unknown regexp modifier "/n" at .../latexdiff line 1974, near "=~ " (see github issue #201)
@@ -2589,7 +2590,7 @@ sub take_comments_and_newline_from_frac() {
 ### #. change begin and end commands  within comments to BEGINDIF, ENDDIF
 ###    so they don't disturb the pattern matching (if there are several \begin or \end in one line, this 
 ###    will still cause a problem
-# #.   Change {,} in comments to \CLEFTBRACE, \CRIGHTBRACE
+# #.   Change {,},\frac in comments to \CLEFTBRACE, \CRIGHTBRACE, \CFRAC
 # 2. mark all first empty line (in block of several) with \PAR tokens
 # 3. Convert all '\%' into '\PERCENTAGE ' and all '\$' into \DOLLAR to make parsing regular expressions easier
 # 4. Convert all \verb|some verbatim text| commands (where | can be an arbitrary character)
@@ -2636,10 +2637,12 @@ sub preprocess {
 ###    # this substitution is insufficient but that appears unlikely)
 ###    s/(%.*)\\begin\{(.*)$/$1\\BEGINDIF\{$2/mg ;
 ###    s/(%.*)\\end\{(.*)$/$1\\ENDDIF\{$2/mg ;
-# replace {,} in comments with \\CLEFTBRACE,\\CRIGHTBRACE
+# replace {,}, \frac in comments with \\CLEFTBRACE,\\CRIGHTBRACE, CFRAC to protect from special treatment
     1 while s/((?<!\\)%.*)\{(.*)$/$1\\CLEFTBRACE $2/mg ;
 ###    print STDERR "Preprocess 3\n" if $debug;
     1 while s/((?<!\\)%.*)\}(.*)$/$1\\CRIGHTBRACE $2/mg ;
+    1 while s/((?<!\\)%.*)\\frac(.*)$/$1\\CFRAC $2/mg ;
+
 ###    print STDERR "Preprocess 10\n" if $debug;
 ###    s/\n(\s*)\n((?:\s*\n)*)/\\PAR\n$2/g ;
     s/(?<!\\)\\%/\\PERCENTAGE /g ;  # (?<! is negative lookbehind assertion to prevent \\% from being converted
@@ -3321,6 +3324,7 @@ sub postprocess {
     1 while s/\\SQRT(\s*\{($pat_n)\})/\\sqrt$1/g ;
     1 while s/\\SQRTNB\{(\s*$pat0)\}/\\sqrt$1/g ;
  
+    1 while s/(%.*)\\CFRAC (.*)$/$1\\frac$2/mg ;
     1 while s/(%.*)\\CRIGHTBRACE (.*)$/$1\}$2/mg ;
     1 while s/(%.*)\\CLEFTBRACE (.*)$/$1\{$2/mg ;
 
