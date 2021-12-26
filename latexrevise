@@ -119,7 +119,8 @@ if ( $help ) {
 }
 
 if ( $version ) {
-  die $versionstring ; 
+  print STDERR $versionstring ; 
+  exit 0;
 }
 
 
@@ -378,7 +379,7 @@ sub splitdoc {
 
 
 sub usage {
-  die <<"EOF"; 
+  print STDERR <<"EOF"; 
 Usage: $0 [OPTIONS] [diff.tex] > revised.tex
 
 Read a file diff.tex (output of latexdiff), and remove its markup. 
@@ -457,6 +458,7 @@ options; these functions can be very useful outside the latexdiff context, too.
 --verbose         Verbose output
 
 EOF
+  exit 0;
 }
 
 =head1 NAME

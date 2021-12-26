@@ -32,16 +32,20 @@
 ###  - change meaning of --packages option such that this packages are used in addition of automatically detected packages (possibly introduce option --only-packages that overrides automatic choices completely
 #
 # Version 1.3.2
+# API adaptions:
+#  - latexdiff now completes with exit code 0 after --help or --version command (see issue #248)
+# New features / feature extensions
 #  - extend CUSTOMDIFCMD related postprocessing to deal properly with multiline commands, or a sequence of several commands in the same line (see github issue #204)
-#  - fix a bug in biblatex mode, which prevented proper processing of modified \textcite (see: https://tex.stackexchange.com/questions/555157/latexdiff-and-biblatex-citation-commands)
-#  - -h string fix: add -driver option
 #  - Support for additional macros from import package (\import, \inputfrom, \includefrom, \subimport,\subinputfrom, \subincludefrom). Provided by janniklasrose in PR #243 (fixes #239)
 #  - replace default driver dvips->pdftex
+# Bug fixes:
 #  - fix issue #206 affecting proper markup of text commands which are not safe cmd's at the same time and have multiple arguments
 #  - fix issue #210 by adding \eqref (amsmath package) to the list of safe commands
 #  - fix bug reported in issue #168 mangled verbatim line environment 
 #  - fix bug reported in issue #218 by replacing \hspace{0pt} after \mbox{..} auxiliary commands with \hskip0pt.
 #  - more ways to process \frac correctly with atomic arguments (committed by julianuu PR #246
+#  - fix a bug in biblatex mode, which prevented proper processing of modified \textcite (see: https://tex.stackexchange.com/questions/555157/latexdiff-and-biblatex-citation-commands)
+#  - -h string fix: add -driver option
 #
 # Version 1.3.1.1
 #  - remove spurious \n to fix error: Unknown regexp modifier "/n" at .../latexdiff line 1974, near "=~ " (see github issue #201)
@@ -483,7 +487,8 @@ if ( $help ) {
 
 
 if ( $version ) {
-  die $versionstring ; 
+  print STDERR $versionstring ; 
+  exit 0;
 }
 
 print STDERR $versionstring if $verbose; 
@@ -3674,7 +3679,7 @@ sub exetime {
 
 
 sub usage {
-  die <<"EOF"; 
+  print STDERR <<"EOF"; 
 Usage: $0 [options] old.tex new.tex > diff.tex
 
 Compares two latex files and writes tex code to stdout, which has the same format as new.tex but 
@@ -3937,6 +3942,7 @@ the API should be considered less stable than for the other options.
 --no-links             Suppress generation of hyperreferences, used for minimal diffs 
                        (option --only-changes of latexdiff-vc).
 EOF
+  exit 0; 
 }
 
 =head1 NAME
