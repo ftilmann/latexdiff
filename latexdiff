@@ -35,7 +35,8 @@
 #  - extend CUSTOMDIFCMD related postprocessing to deal properly with multiline commands, or a sequence of several commands in the same line (see github issue #204)
 #  - fix a bug in biblatex mode, which prevented proper processing of modified \textcite (see: https://tex.stackexchange.com/questions/555157/latexdiff-and-biblatex-citation-commands)
 #  - -h string fix: add -driver option
-#   replace default driver dvips->pdftex
+#  - Support for additional macros from import package (\import, \inputfrom, \includefrom, \subimport,\subinputfrom, \subincludefrom). Provided by janniklasrose in PR #243 (fixes #239)
+#  - replace default driver dvips->pdftex
 #  - fix issue #206 affecting proper markup of text commands which are not safe cmd's at the same time and have multiple arguments
 #  - fix issue #210 by adding \eqref (amsmath package) to the list of safe commands
 #  - fix bug reported in issue #168 mangled verbatim line environment 
