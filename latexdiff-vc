@@ -26,7 +26,7 @@
 # Detailed usage information at the end of the file
 #
 # TODO/IDEAS: - option to call external pre-processing codes
-# version 1.3.2a:
+# version 1.3.2:
 #    - bug fix: when setting config variables with the command lines it is now possible to use quotes to includes spaces in the value, e.g. "-c LATEX=pdflatex --shell-escape'
 #    - bug fix: --only-changes is not compatible with graphics markup. --graphics-markup=none is now set automatically
 #    - when --pdf or --postscript is select, then replace tildes in version names with underscores in output file (e.g. diffHEAD_1 instead of diff HEAD~1. This is necessary because pdflatex strips ~n strings at the end of the filename, when generating output file names
@@ -79,8 +79,8 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.3.1.1
-  (c) 2005-2020 F J Tilmann
+This is LATEXDIFF-VC 1.3.2
+  (c) 2005-2021 F J Tilmann
 EOF
 
 # output debug and intermediate files, set to 0 in final distribution
