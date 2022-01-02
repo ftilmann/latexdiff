@@ -379,6 +379,7 @@ my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblel
     $replacecontext1,$appendcontext1,
     $replacecontext2,$appendcontext2,
     $help,$verbose,$driver,$version,$ignorewarnings,
+    $onlyadditions,
     $enablecitmark,$disablecitmark,$allowspaces,$flatten,$nolinks,$debug,$earlylatexdiffpreamble);  ###$disablemathmark,
 my ($mboxsafe);
 # MNEMNONICS for mathmarkup
@@ -413,6 +414,7 @@ my ($pkg,%packages);
 # Defaults
 $mathmarkup=COARSE;
 $verbose=0;
+$onlyadditions=0;
 # output debug and intermediate files, set to 0 in final distribution
 $debug=0; 
 # insert preamble directly after documentclass - experimental feature, set to 0 in final distribution
@@ -477,6 +479,7 @@ GetOptions('type|t=s' => \$type,
 	   'filter-script=s' => \$filterscript,
        'ignore-filter-stderr' => \$ignorefilterstderr,
 	   'no-links' => \$nolinks,
+       'no-del' => \$onlyadditions,
 	   'version' => \$version,
 	   'help|h' => \$help,
 	   'debug!' => \$debug ) or die "Use latexdiff -h to get help.\n" ;
@@ -2893,8 +2896,13 @@ sub postprocess {
     # up. This case should be rare, so I just leave this in the diff file output. Not really elegant
     # but can still be dealt with later if it results in problems. 
     s/%DIFDELCMD < \\RIGHTBRACE/%DIFDELCMD < \\MBLOCKRIGHTBRACE/g ;
-    # Replace \RIGHTBRACE by }    
+    # Replace \RIGHTBRACE by }
     s/\\RIGHTBRACE/}/g;
+
+    # Optional: Remove deleted block entirely
+    if ($onlyadditions) {
+        s/\\DIFdelbegin.*?\\DIFdelend//sg ;
+    }
 
 ###    # change citation commands within comments to protect from processing
 ###    if ($CITECMD){
@@ -3826,6 +3834,8 @@ be real files (not pipes or similar) as they are opened twice.
                        biblatex
                        [ Default: scan the preamble for \\usepackage commands to determine
                          loaded packages.]
+
+--no-del               Supress deleted text from the diff.
 
 --show-preamble        Print generated or included preamble commands to stdout.
 
