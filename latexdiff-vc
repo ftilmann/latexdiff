@@ -147,7 +147,8 @@ if ( $help ) {
 }
 
 if ( $version ) {
-  die $versionstring ; 
+  print STDERR $versionstring ;  
+  exit 0; 
 }
 
 if ( $so ) {
