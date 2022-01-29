@@ -4,6 +4,9 @@
 *.blg
 *.out
 *.dvi
+*.spl
+*.cb
+*.lof
 latexdiff.debug.*
 *%
 *~
@@ -14,4 +17,6 @@ auto
 report.txt
 *.fff
 *.ttt
+example-diff-t*.*
+verbatim-diff-t*.*
 

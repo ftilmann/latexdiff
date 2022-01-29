@@ -39,7 +39,7 @@
 #  - Support for additional macros from import package (\import, \inputfrom, \includefrom, \subimport,\subinputfrom, \subincludefrom). Provided by janniklasrose in PR #243 (fixes #239)
 #  - replace default driver dvips->pdftex
 # Bug fixes:
-#  - fix issue #206 affecting proper markup of text commands which are not safe cmd's at the same time and have multiple arguments
+#  - fix issue #206 affecting proper markup of text commands which are not also safe cmd's and have multiple arguments
 #  - fix issue #210 by adding \eqref (amsmath package) to the list of safe commands
 #  - fix bug reported in issue #168 mangled verbatim line environment 
 #  - fix bug reported in issue #218 by replacing \hspace{0pt} after \mbox{..} auxiliary commands with \hskip0pt.
