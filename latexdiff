@@ -31,6 +31,9 @@
 ###  - move --show-xxx options so that they are also capable of showing preamble (and commands) after all modificationsbased on source file packages
 ###  - change meaning of --packages option such that this packages are used in addition of automatically detected packages (possibly introduce option --only-packages that overrides automatic choices completely
 #
+# Version 1.3.3:
+#  - Option --no-del to remove all deleted text (merge contributed by github user tdegeus #252, fixing issue #66
+#
 # Version 1.3.2
 # API adaptions:
 #  - latexdiff now completes with exit code 0 after --help or --version command (see issue #248)
@@ -228,7 +231,7 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.3.2 (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+This is LATEXDIFF 1.3.3a (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
   (c) 2004-2021 F J Tilmann
 EOF
 
@@ -4854,7 +4857,7 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.3.2
+Version 1.3.3a
 Copyright (C) 2004-2021 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
