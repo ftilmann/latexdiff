@@ -480,9 +480,9 @@ GetOptions('type|t=s' => \$type,
 	   'driver=s'=> \$driver,
 	   'flatten' => \$flatten,
 	   'filter-script=s' => \$filterscript,
-       'ignore-filter-stderr' => \$ignorefilterstderr,
+	   'ignore-filter-stderr' => \$ignorefilterstderr,
 	   'no-links' => \$nolinks,
-       'no-del' => \$onlyadditions,
+	   'no-del' => \$onlyadditions,
 	   'version' => \$version,
 	   'help|h' => \$help,
 	   'debug!' => \$debug ) or die "Use latexdiff -h to get help.\n" ;
@@ -3838,8 +3838,6 @@ be real files (not pipes or similar) as they are opened twice.
                        [ Default: scan the preamble for \\usepackage commands to determine
                          loaded packages.]
 
---no-del               Supress deleted text from the diff.
-
 --show-preamble        Print generated or included preamble commands to stdout.
 
 --show-safecmd         Print list of regex matching and excluding safe commands.
@@ -3890,6 +3888,10 @@ Other configuration options:
                       of changes in tables. In this case please use option --graphics-markup=none as a 
                       work-around. 
 
+--no-del               Suppress deleted text from the diff. It is similar in effect to the BOLD style, 
+                       but the deleted text ist not just invisible in the output, it is also not included in the
+                       diff text file. This can be more robust than just making it invisible. 
+
 --disable-citation-markup 
 --disable-auto-mbox    Suppress citation markup and markup of other vulnerable commands in styles 
                        using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR)
@@ -3899,6 +3901,8 @@ Other configuration options:
 --enforce-auto-mbox    Protect citation commands and other vulnerable commands in changed sections 
                        with \\mbox command, i.e. use default behaviour for ulem package for other packages
                        (the two options are identical and are simply aliases)
+
+
 
 Miscellaneous options
 
@@ -4434,6 +4438,12 @@ of changes in tables. In this case please use C<--graphics-markup=none> as a
 work-around. 
 
 
+=item B<--no-del> 
+
+Suppress deleted text from the diff. It is similar in effect to the BOLD style, 
+but the deleted text ist not just invisible in the output, it is also not included in the diff text file. 
+This can be more robust than just making it invisible. 
+
 =item B<--disable-citation-markup> or B<--disable-auto-mbox>
 
 Suppress citation markup and markup of other vulnerable commands in styles 
@@ -4598,7 +4608,7 @@ No visible markup (but generic markup commands will still be inserted.
 
 =item C<BOLD>
 
-Added text is set in bold face, discarded is not shown.
+Added text is set in bold face, discarded is not shown. (also see --no-del option for another possibility to hide deleted text)
 
 =item C<PDFCOMMENT>
 
