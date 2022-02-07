@@ -1342,7 +1342,8 @@ if ( iscmd("label",\@SAFECMDLIST,\@SAFECMDEXCL) ) {
 print STDERR "Preprocessing body.  " if $verbose;
 ###my ($oldleadin,$newleadin)=preprocess($oldbody,$newbody);
 preprocess($oldbody,$newbody);
-
+writedebugfile($oldbody,'old-preprocess');
+writedebugfile($newbody,'new-preprocess');
 
 # run difference algorithm
 @diffbody=bodydiff($oldbody, $newbody);
@@ -2686,7 +2687,9 @@ sub preprocess {
     s/\\begin\{($PICTUREENV)}(.*?)\\end\{\1}/\\PICTUREBLOCK$1\{$2\}/sg;
     #    For math-mode COARSE,WHOLE or NONE option -convert all \begin{MATH} .. \end{MATH}
     #    into \MATHBLOCKMATH{...} commands, where MATH is any valid math environment
-    #    Also convert all array environments into ARRAYBLOCK environments
+    #    Also convert all array environments into ARRAYBLOCK environments.
+    #    Where these environments have arguments they become optional arguments to the MATHBLOCK command enclosed in < > brackets
+    #    Example: \begin{alignat}{3} ... \end{alignat} will turn into \MATHBLOCKalignat[{3}]{ ... }
 ###    print STDERR "Preprocess 20\n" if $debug;
 
     if ( $mathmarkup != FINE ) {
@@ -2703,6 +2706,9 @@ sub preprocess {
       take_comments_and_newline_from_frac();
 
 ###      print STDERR "^^^^^^^^^^^^^^^^^^\n$_\n^^^^^^^^^^^^^^^^^\n" if $debug;
+      # Convert Math environments with arguments 
+      s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}((?:\[$brat_n\])|(?:\{$pat_n\}))+(.*?)\\end\{\1\}/\\MATHBLOCK$1\[$2\]\{$3\\DIFANCHORMATHB \}\\DIFANCHORMATHE /sg;
+      # Convert Math environments without arguments
       s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)\\end\{\1\}/\\MATHBLOCK$1\{$2\\DIFANCHORMATHB \}\\DIFANCHORMATHE /sg;
     }
 ###    print STDERR "Preprocess 30\n" if $debug;
@@ -3000,8 +3006,8 @@ sub postprocess {
 	#       Convert MATHBLOCKmath commands to their uncounted numbers (e.g. convert equation -> displaymath
 	#       (environments defined in $MATHENV will be replaced by $MATHREPL, and  environments in $MATHARRENV
 	#       will be replaced by $MATHARRREPL
-	$delblock=~ s/\\MATHBLOCK($MATHENV)\{($pat_n)\}/\\MATHBLOCK$MATHREPL\{$2\}/sg;
-	$delblock=~ s/\\MATHBLOCK($MATHARRENV)\{($pat_n)\}/\\MATHBLOCK$MATHARRREPL\{$2\}/sg;
+	$delblock=~ s/\\MATHBLOCK($MATHENV)(\[$brat_n\])?\{($pat_n)\}/\\MATHBLOCK$MATHREPL$2\{$3\}/sg;
+	$delblock=~ s/\\MATHBLOCK($MATHARRENV)(\[$brat_n\])?\{($pat_n)\}/\\MATHBLOCK$MATHARRREPL$2\{$3\}/sg;
       }
       # Reinstate completely deleted list environments. note that items within the 
       # environment will still be commented out.  They will be restored later
@@ -3194,6 +3200,9 @@ sub postprocess {
       s/\\begin\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)\}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end\{\1\}$AUXCMD\n/$2/sg;       
     } else {
       #   math modes OFF,WHOLE,COARSE: Convert \MATHBLOCKmath{..} commands back to environments
+      # with optionl argument to MATHBLOCK, e.g \MATHBLOCKalignat[{3}]{ ...}
+      s/\\MATHBLOCK($MATHENV|$MATHARRENV|SQUAREBRACKET)\[($brat0)\]\{($pat_n)\}/\\begin{$1}$2$3\\end{$1}/sg;
+      # without optional argument e.g \MATHBLOCKalign{ ...}
       s/\\MATHBLOCK($MATHENV|$MATHARRENV|SQUAREBRACKET)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
       # convert ARRAYBLOCK.. commands back to environments
       s/\\ARRAYBLOCK($ARRENV)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
