@@ -50,6 +50,7 @@
 #    that there is a deleted array environment, but does not know which one. In this case, MATHARRREPL is still being used
 #    to encapsulate these parts of the source, and therefore it is still set internally.  But this is a quite rare situation). 
 #    Fixes issue #216
+#  - --flatten now works for empty files. Fixes issue #242
 
 
 # Version 1.3.2
@@ -1704,7 +1705,7 @@ sub flatten {
           if ( -f $importfilepath ) {
               # If file exists, replace input or include command with expanded input
               #TODO: need remove_endinput & newpage similar to other replacements inside flatten
-              $replacement=flatten(read_file_with_encoding($importfilepath, $encoding), $preamble,$importfilepath,$encoding) or die "Could not open file ",$fullfile,": $!";
+              $replacement=flatten(read_file_with_encoding($importfilepath, $encoding), $preamble,$importfilepath,$encoding); 
           } else {
               # if file does not exist, do not expand include or input command (do not warn if fname contains #[0-9] as it is then likely part of a command definition
               # and is not meant to be expanded directly 
@@ -1731,7 +1732,7 @@ sub flatten {
             # content of file becomes replacement value (use recursion), add \newpage if the command was include
             if ( -f $fullfile ) {
 	      # If file exists, replace input or include command with expanded input
-	      $replacement=flatten(read_file_with_encoding($fullfile, $encoding), $preamble,$filename,$encoding) or die "Could not open file ",$fullfile,": $!";
+	      $replacement=flatten(read_file_with_encoding($fullfile, $encoding), $preamble,$filename,$encoding);  
 	      $replacement = remove_endinput($replacement); 
 	      # \include always starts a new page; use explicit \newpage command to simulate this
 	    } else {
@@ -1806,7 +1807,7 @@ sub flatten {
      print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
      # content of file becomes replacement value (do not use recursion), add \newpage if the command was include
      ###$replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
-     $replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
+     $replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding); # (cannot on apparent failure as this triggers for empty fie. Original:  or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
      # Add a new line if it not already there (note that the matching operator needs to use different delimiters, as we are still inside an outer scope that takes precedence
      $replacement .= "\n" unless  $replacement =~ m(\n$)  ;
      "$begline\\begin{$verbenv}$verboptions\n$replacement\\end{$verbenv}\n";
