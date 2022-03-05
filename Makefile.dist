@@ -26,26 +26,32 @@ install-so: install-latexdiff-so install-latexrevise install-latexdiff-vc instal
 install-fast: install-latexdiff-fast install-latexrevise install-latexdiff-vc install-man
 
 install-man:
-	install -m 644 -D -t $(INSTALLMANPATH)/man1 latexrevise.1 latexdiff.1 latexdiff-vc.1
+	mkdir -p $(INSTALLMANPATH)/man1
+	install -m 644  latexrevise.1 latexdiff.1 latexdiff-vc.1  $(INSTALLMANPATH)/man1
 
 install-latexdiff:
-	install -D -t $(INSTALLEXECPATH) latexdiff
+	mkdir -p $(INSTALLEXECPATH)
+	install latexdiff $(INSTALLEXECPATH)
 
 install-latexdiff-so:
 	if [ -e $(INSTALLEXECPATH)/latexdiff ]; then rm $(INSTALLEXECPATH)/latexdiff; fi
-	install -D -t $(INSTALLEXECPATH) latexdiff-so
+	mkdir -p $(INSTALLEXECPATH)
+	install latexdiff-so $(INSTALLEXECPATH)
 	cd $(INSTALLEXECPATH); ln -s latexdiff-so latexdiff
 
 install-latexdiff-fast:
 	if [ -e $(INSTALLEXECPATH)/latexdiff ]; then rm $(INSTALLEXECPATH)/latexdiff; fi
-	install -D -t $(INSTALLEXECPATH) latexdiff-fast
+	mkdir -p $(INSTALLEXECPATH)
+	install latexdiff-fast $(INSTALLEXECPATH)
 	cd $(INSTALLEXECPATH); ln -s latexdiff-fast latexdiff
 
 install-latexrevise:
-	install -D -t $(INSTALLEXECPATH) latexrevise
+	mkdir -p $(INSTALLEXECPATH)
+	install latexrevise $(INSTALLEXECPATH) 
 
 install-latexdiff-vc:
-	install -D -t $(INSTALLEXECPATH) latexdiff-vc
+	mkdir -p $(INSTALLEXECPATH)
+	install latexdiff-vc $(INSTALLEXECPATH)
 	cd $(INSTALLEXECPATH); for vcs in cvs rcs svn git hg ; do if [ -e latexdiff-$$vcs ]; then rm latexdiff-$$vcs; fi; ln -s latexdiff-vc latexdiff-$$vcs ; done
 
 test-ext: 
