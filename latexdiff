@@ -50,7 +50,10 @@
 #    that there is a deleted array environment, but does not know which one. In this case, MATHARRREPL is still being used
 #    to encapsulate these parts of the source, and therefore it is still set internally.  But this is a quite rare situation). 
 #    Fixes issue #216
+#  - Unlike 'array' environment, 'split' (amsmath) does not work in argument of \DIFadd or \DIFdl in UNDERLINE modes; therefore remove it from ARRENV configuration variable. 
+     Exclude \begin and \end in math environments in COARSE and WHOLE modes. Fixes #258. Fixes #109
 #  - --flatten now works for empty files. Fixes issue #242
+
 
 
 # Version 1.3.2
@@ -320,7 +323,7 @@ my ($ARRENV,
 
 
 my $LABELCMD='(?:label)';                # matching commands are disabled within deleted blocks - mostly useful for maths mode, as otherwise it would be fine to just not add those to SAFECMDLIST
-my @UNSAFEMATHCMD=('qedhere','intertext');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
+my @UNSAFEMATHCMD=('qedhere','intertext','begin','end');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
 ###my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
 ###my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
 my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths expression with \mbox ( to get around compatibility
@@ -2544,7 +2547,7 @@ sub marktags {
           # for latexrevise
           push (@$retval,$command,"%\n{$AUXCMD\n",marktags("","",$open,$close,$opencmd,$closecmd,$comment,\@argtext),$closingbracket);
         } elsif ( iscmd($commandword,,\@MATHTEXTCMDLIST, \@MATHTEXTCMDEXCL) ) {
-	  # MATHBLOCK pseudo command: consider all commands safe, except & and \\	
+	  # MATHBLOCK pseudo command: consider all commands safe, except & and \\, \begin and \end and a few package sprcific one (look at UNSAFEMATHCMD definition)	
 	  # Keep these commands even in deleted blocks, hence set $opencmd and $closecmd (5th and 6th argument of marktags) to 
 	  # ""
 	  local @SAFECMDLIST=(".*"); 
@@ -5278,8 +5281,9 @@ array
 [pbvBV]?matrix
 smallmatrix
 cases
-split
 %%END ARRENV CONFIG
+# split
+
 
 %%BEGIN COUNTERCMD CONFIG
 footnote
