@@ -53,6 +53,7 @@
 #  - Unlike 'array' environment, 'split' (amsmath) does not work in argument of \DIFadd or \DIFdl in UNDERLINE modes; therefore remove it from ARRENV configuration variable. 
 #     Exclude \begin and \end in math environments in COARSE and WHOLE modes. Fixes #258. Fixes #109
 #  - --flatten now works for empty files. Fixes issue #242
+#  - improved processing of Chinese and Japanese texts in that splitting is done based on characters. Thanks to LuXu (Oliver Lew) in git for working this out. Fixes #229, fixes #145
 
 
 
@@ -816,8 +817,9 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 # such that a\_b is interpreted as a{\_}b by latex but a{\_b} by perl
   my $quotedunderscore='\\\\_';
 # word: sequence of letters or accents followed by letter
-  my $word_ja='\p{Han}+|\p{InHiragana}+|\p{InKatakana}+';
-  my $word='(?:' . $word_ja . '|(?:(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])(?!(?:' . $word_ja . ')))+)';
+  ### my $word_ja='\p{Han}+|\p{InHiragana}+|\p{InKatakana}+';
+  my $word_cj='\p{Han}|\p{InHiragana}|\p{InKatakana}';
+  my $word='(?:' . $word_cj . '|(?:(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])(?!(?:' . $word_cj . ')))+)';
 
   # for selected commands, the number of arguments is known, and we can therefore allow spaces between command and its argument
   # Note that it is still expected that the arguments are blocks marked by parentheses rather than single characters, and that intervening comments will inhibit the association
