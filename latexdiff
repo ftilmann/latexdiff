@@ -51,7 +51,7 @@
 #    to encapsulate these parts of the source, and therefore it is still set internally.  But this is a quite rare situation). 
 #    Fixes issue #216
 #  - Unlike 'array' environment, 'split' (amsmath) does not work in argument of \DIFadd or \DIFdl in UNDERLINE modes; therefore remove it from ARRENV configuration variable. 
-     Exclude \begin and \end in math environments in COARSE and WHOLE modes. Fixes #258. Fixes #109
+#     Exclude \begin and \end in math environments in COARSE and WHOLE modes. Fixes #258. Fixes #109
 #  - --flatten now works for empty files. Fixes issue #242
 
 
