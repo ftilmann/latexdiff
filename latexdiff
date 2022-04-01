@@ -3024,7 +3024,7 @@ sub postprocess {
         # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
         if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \h*\\begin\{($MATHARRENV)\}(.*?)(?:$DELCMDCLOSE|\n))/$1\\begin{$2*}$3$AUXCMD\n/sg ) {
 	  $arrenv=$2;
-	  $delblock =~ s/(\\DIFdelend$)/\\end{$arrenv*}}$AUXCMD\n$1/s ;
+	  $delblock =~ s/(\\DIFdelend$)/\\end{$arrenv*}$AUXCMD\n$1/s ;
         }
         ### print STDERR "STEP2: |" . $delblock . "|\n\n" if $debug ;
 
