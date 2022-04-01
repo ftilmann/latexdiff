@@ -5314,9 +5314,10 @@ verbatim[*]?
 
 %DIF UNDERLINE PREAMBLE
 \RequirePackage[normalem]{ulem}
+\newcommand{\strikeout}[1]{\ifmmode\text{\sout{\ensuremath{#1}}}\else\sout{#1}\fi}
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
 \providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}}
-\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                     
+\providecommand{\DIFdel}[1]{{\protect\color{red}\strikeout{#1}}}                     
 %DIF END UNDERLINE PREAMBLE
 
 %DIF CTRADITIONAL PREAMBLE
@@ -5343,9 +5344,10 @@ verbatim[*]?
 
 %DIF FONTSTRIKE PREAMBLE
 \RequirePackage[normalem]{ulem}
+\newcommand{\strikeout}[1]{\ifmmode\text{\sout{\ensuremath{#1}}}\else\sout{#1}\fi}
 \DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
 \providecommand{\DIFadd}[1]{{\sf #1}}
-\providecommand{\DIFdel}[1]{{\footnotesize \sout{#1}}}
+\providecommand{\DIFdel}[1]{{\footnotesize \strikeout{#1}}}
 %DIF END FONTSTRIKE PREAMBLE
 
 %DIF CCHANGEBAR PREAMBLE
@@ -5365,9 +5367,10 @@ verbatim[*]?
 %DIF CULINECHBAR PREAMBLE
 \RequirePackage[normalem]{ulem}
 \RequirePackage[pdftex]{changebar}
+\newcommand{\strikeout}[1]{\ifmmode\text{\sout{\ensuremath{#1}}}\else\sout{#1}\fi}
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
 \providecommand{\DIFadd}[1]{\protect\cbstart{\protect\color{blue}\uwave{#1}}\protect\cbend}
-\providecommand{\DIFdel}[1]{\protect\cbdelete{\protect\color{red}\sout{#1}}\protect\cbdelete}
+\providecommand{\DIFdel}[1]{\protect\cbdelete{\protect\color{red}\strikeout{#1}}\protect\cbdelete}
 %DIF END CULINECHBAR PREAMBLE
 
 %DIF CHANGEBAR PREAMBLE
