@@ -806,52 +806,52 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $abrat0 = '(?:[^<>])*';
 
 ###print STDERR "DEBUG pat1 $pat1\n      pat2 $pat_n\n";
-  my $quotemarks = '(?:\'\')|(?:\`\`)';
-  my $punct='[0.,\/\'\`:;\"\?\(\)\[\]!~\p{IsNonAsciiPunct}\p{IsNonAsciiS}]';
-  my $number='-?\d*\.\d*';
-  my $mathpunct='[+=<>\-\|]';
-  my $and = '&';
 ###  my $spacecmd = '\\\\\040';
-  my $coords= '[\-.,\s\d]*';
-# quoted underscore - this needs special treatment as perl treats _ as a letter (\w) but latex does not
-# such that a\_b is interpreted as a{\_}b by latex but a{\_b} by perl
-  my $quotedunderscore='\\\\_';
-# word: sequence of letters or accents followed by letter
-  ### my $word_ja='\p{Han}+|\p{InHiragana}+|\p{InKatakana}+';
+
+# variable definitions are in order that they are matched
+  my $and = '&';
+  my $quotemarks = '(?:\'\')|(?:\`\`)';
+  my $number='-?\d*\.\d*';
+
+  # word: sequence of letters or accents followed by letter
   my $word_cj='\p{Han}|\p{InHiragana}|\p{InKatakana}';
   my $word='(?:' . $word_cj . '|(?:(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])(?!(?:' . $word_cj . ')))+)';
 
+  # quoted underscore - this needs special treatment as perl treats _ as a letter (\w) but latex does not
+  # such that a\_b would otherwise be interpreted as a{\_}b by latex but a{\_b} by latexdiff
+  my $quotedunderscore='\\\\_';
+  # Handle tex \def macro: \def\MAKRONAME#1[#2]#3{DEFINITION}
+  my $defseq='\\\\def\\\\[\w\d@\*]+(?:#\d+|\[#\d+\])+(?:\{'. $pat_n . '\})?';
+  my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|\.]|\\\\(?:[|{}]|\w+))';
+
   # for selected commands, the number of arguments is known, and we can therefore allow spaces between command and its argument
   # Note that it is still expected that the arguments are blocks marked by parentheses rather than single characters, and that intervening comments will inhibit the association
-  my $predefinedcmdoptseq01='\\\\(?:url|BibitemShut)\s*\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one non-optional argument
   my $predefinedcmdoptseq12='\\\\(?:href|bibfield|bibinfo)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\}\s*){2}';  # Commands with one optional and two non-optional arguments
-#  my $predefinedcmdoptseq11='\\\\(?:bibitem)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one optional and one non-optional arguments
-# \bibitem in revtex styles appears to be always followed by \BibItemOpen. We bind \BibItemOpen to the bibitem (if present) in order to prevent the comparison algorithm to interpret the \BibItemOpen as an identical part of the sequence; this interpretation can lead to added and removed entries to the reference list to become mixed.
+  my $predefinedcmdoptseq01='\\\\(?:url|BibitemShut)\s*\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one non-optional argument
+  # \bibitem in revtex styles appears to be always followed by \BibItemOpen. We bind \BibItemOpen to the bibitem (if present) in order to prevent the comparison algorithm to interpret the \BibItemOpen as an identical part of the sequence; this interpretation can lead to added and removed entries to the reference list to become mixed.
   my $predefinedbibitem='\\\\(?:bibitem)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\})(?:%?\s*\\\\BibitemOpen)?';  # Commands with one optional and one non-optional arguments
-
   my $predefinedcmdoptseq='(?:'.$predefinedcmdoptseq12.'|'.$predefinedcmdoptseq01.'|'.$predefinedbibitem.')';
 
-  my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|\.]|\\\\(?:[|{}]|\w+))';
-###  my $word='(?:[-\p{IsL}*]|\\\\[\"\'\`~^][\p{IsL}A-Za-z\*])+';
-# standard $cmdoptseq (default: no intrevening spaces, controlled by extraspcae) - a final open parentheses is merged to the commend if it exists to deal properly with multi-argument text command
-###pre-0.3  my $cmdoptseq='\\\\[\w\d\*]+(?:\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))*';
-###  my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
+  # standard $cmdoptseq (default: no intrevening spaces, controlled by extraspcae) - a final open parentheses is merged to the commend if it exists to deal properly with multi-argument text command
+  my $coords= '[\-.,\s\d]*';
   my $cmdoptseq='\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*\{?';
-# Handle tex \def macro: \def\MAKRONAME#1[#2]#3{DEFINITION}
-  my $defseq='\\\\def\\\\[\w\d@\*]+(?:#\d+|\[#\d+\])+(?:\{'. $pat_n . '\})?';
-###pre-0.3  my $oneletcmd='(?:\\\\.|[_\^])(?:\['.$brat0.'\]|\{'. $pat_n . '\})*';
+
+  # inline math $....$ or \(..\)
+  ### the commented out version is simpler but for some reason cannot cope with newline (in spite of s option) - need to include \newline explicitly
+  ###  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(].*?\\\\[)]';
+  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(](?:.|\n)*?\\\\[)]';         
+  ### test version (this seems to give the same results as version above)
+  ## the current maths command cannot cope with newline within the math expression
+  ### my $math='\$(?:[^$]|\\\$)*?\$|\\[(].*?\\[)]';
+  ###  my $math='\$(?:[^$]|\\\$)*\$';
+
   my $backslashnl='\\\\\n';
   my $oneletcmd='\\\\.\*?(?:\['.$brat_n.'\]|\{'. $pat_n . '\})*';
-### the commented out version is simpler but for some reason cannot cope with newline (in spite of s option) - need to include \newline explicitly
-###  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(].*?\\\\[)]';
-# inline math $....$ or \(..\)
-  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(](?:.|\n)*?\\\\[)]';         
-### test version (this seems to give the same results as version above)
-## the current maths command cannot cope with newline within the math expression
-### my $math='\$(?:[^$]|\\\$)*?\$|\\[(].*?\\[)]';
-###  my $math='\$(?:[^$]|\\\$)*\$';
-###  my $comment='%.*?\n';
   my $comment='%[^\n]*\n';
+  my $punct='[0.,\/\'\`:;\"\?\(\)\[\]!~\p{IsNonAsciiPunct}\p{IsNonAsciiS}]';
+  my $mathpunct='[+=<>\-\|]';
+
+  # Assembled pattern
   my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|${defseq}|$cmdleftright|${predefinedcmdoptseq}|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
 
 
