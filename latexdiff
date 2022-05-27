@@ -38,6 +38,12 @@
 #  - Option --no-del to remove all deleted text (merge contributed by github user tdegeus PR #252, fixing issue #66
 #
 # Bug fixes:
+#  - Abbreviations involving punctuations within them. They need special treatment because otherwise in some
+#    circumstances the gnoring of white space differences in conjunction with merging according to MINWORDSBLOCK rule
+#    could turn 'i.e.' into 'i.\PAR e.' (see https://github.com/ftilmann/latexdiff/issues/269). A few abbreviations
+#    are now hard-coded and treated as atomic: 
+#    English: i.e., e.g.   Deutsch: z.B.
+#    (fixes issue #269)
 #  - In WHOLE and COARSE math modes, now properly treat math environments with arguments such as \alignat. Fixes #251
 #  - For FINE math mode, multiple improvments to the processing work flow yield more robust outcomes. In particular, changes 
 #    to the equation type, e.g. \begin{displaymath} -> \begin{equation}  without modifications  now usually no longer result 
@@ -811,7 +817,12 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 # variable definitions are in order that they are matched
   my $and = '&';
   my $quotemarks = '(?:\'\')|(?:\`\`)';
-  my $number='-?\d*\.\d*';
+  # some common abbreviations involving punctuations within them. They need special treatment because otherwise in some
+  # circumstances the gnoring of white space differences in conjunction with merging according to MINWORDSBLOCK rule
+  # could turn 'i.e.' into 'i.\PAR e.' (see https://github.com/ftilmann/latexdiff/issues/269)
+  # English: i.e., e.g.   Deutsch: z.B.
+  my $abbreviation='(?:i\. ?e\.|e\. ?g\.|z\. ?B\.)' ;
+  my $number='-?\d*\.\d*'; 
 
   # word: sequence of letters or accents followed by letter
   my $word_cj='\p{Han}|\p{InHiragana}|\p{InKatakana}';
@@ -852,7 +863,7 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $mathpunct='[+=<>\-\|]';
 
   # Assembled pattern
-  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|${defseq}|$cmdleftright|${predefinedcmdoptseq}|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
+  my $pat=qr/(?:\A\s*)?(?:${abbreviation}|${and}|${quotemarks}|${number}|${word}|$quotedunderscore|${defseq}|$cmdleftright|${predefinedcmdoptseq}|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
 
 
 
