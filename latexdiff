@@ -1792,7 +1792,7 @@ sub flatten {
 	     ($subpreamble,$subbody,$subpost)=splitdoc($subfile,'\\\\begin\{document\}','\\\\end\{document\}');
 	     ###           $subfile=~s|^.*\\begin{document}||s; 
 	     ###           $subfile=~s|\\end{document}.*$||s;
-	     $replacement=flatten($subbody, $preamble,$filename,$encoding);
+	     $replacement=flatten($subbody, $preamble,$fullfile,$encoding);
 	     ### $replacement = remove_endinput($replacement); 
 	   } else {
 	      # if file does not exist, do not expand subfile
