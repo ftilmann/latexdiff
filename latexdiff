@@ -4925,8 +4925,12 @@ Try options C<--math-markup=whole>.   If even that fails, you can turn off mark 
 
 =item How can I just show the pages where changes had been made
 
-Use options -C<-s ZLABEL>  (some postprocessing required) or C<-s ONLYCHANGEDPAGE>. C<latexdiff-vc --ps|--pdf> with C<--only-changes> option takes care of
+Use options C<--s ZLABEL>  (some postprocessing required) or C<-s ONLYCHANGEDPAGE>. C<latexdiff-vc --ps|--pdf> with C<--only-changes> option takes care of
 the post-processing for you (requires zref package to be installed).
+
+=item The character encoding breaks when running latexdiff from powershell
+
+This problem is not limited to C<latexdiff> and has to do with the default settings of C<powershell> in Windows. It is recommended to use C<cmd> instead.
 
 =back
 
