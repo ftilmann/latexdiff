@@ -1269,8 +1269,8 @@ if (defined $packages{"siunitx"} ) {
   # protect SI command by surrounding them with an \mbox
   # this is done to get around an incompatibility between the ulem and siunitx package
   print STDERR "siunitx package detected.\n" if $verbose ;
-  my $mboxcmds='SI,ang,numlist,numrange,SIlist,SIrange';
-  init_regex_arr_list(\@SAFECMDLIST,'num,si');
+  my $mboxcmds='SI,ang,numlist,numrange,SIlist,SIrange,qty,qtylist,qtyproduct,qtyrange,complexqty';
+  init_regex_arr_list(\@SAFECMDLIST,'num,si,numproduct,unit,complexnum');
   if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
     init_regex_arr_list(\@MBOXCMDLIST,$mboxcmds);
   } else {
