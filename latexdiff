@@ -38,6 +38,7 @@
 #  - sometimes the introduction of aux commands to show deleted lists or descriptions leaves in place empty auxiliary
 #    list environments, which would cause error messages (though skipping messages would result in a correct output pdf).
 #    These are now removed.  
+#  - add more mboxsafecmd and safecmd commands for SIunitx to stay compatible with newer versionsof SIunitx (PR #283, fixing issue #282, contributed by github user joe6302413) 
 #
 # Version 1.3.3:
 # New features:
