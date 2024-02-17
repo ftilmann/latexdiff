@@ -17,4 +17,6 @@ latexdiff-?.*.*
 latexdiff.debug.*
 texput.log
 private
+#latexdiff#
+*-scratch
 
