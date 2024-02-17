@@ -861,7 +861,7 @@ Show version number
 
 =back
 
-All other options are passed on to C<latexdiff>.
+All other options are passed on to C<latexdiff>.  Note that it is not always easy for latexdiff to correctly assign arguments to options when short form (single letter) options are used so it is recommended to use long-form options. 
 
 =head1 SEE ALSO
 
