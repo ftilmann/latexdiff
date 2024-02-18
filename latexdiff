@@ -40,6 +40,7 @@
 #    These are now removed.  
 #  - add more mboxsafecmd and safecmd commands for SIunitx to stay compatible with newer versionsof SIunitx (PR #283, fixing issue #282, contributed by github user joe6302413) 
 #  - File added via --preamble option is no longer assumed to be ASCII, but read either with encoding as defined by --encoding option or using the encoding of the LOCALE (fixes issue #285 )
+#  - multicolumn argument is now treated as text
 #
 # Version 1.3.3:
 # New features:
@@ -5264,6 +5265,7 @@ sqrt
 % Regex matching commands with a text argument (leave out the \), which will fail out of context. These commands behave like text commands, except when they occur in a deleted section, where they are disabled, but their argument is shown as deleted text.
 caption
 subcaption
+multicolumn
 %%END CONTEXT1 COMMANDS 
 
 %%BEGIN CONTEXT2 COMMANDS
