@@ -1,15 +1,17 @@
 # Makefile for preparing files for distribution
-VERSION=1.3.3
-
+# VERSION=1.3.3
+VERSION=$(shell git describe --abbrev=4 --dirty --always --tags)
 
 .PHONY: distribution release test mkdirs clean cleanall cleantest webmanual
 
 default:
-	@echo "Type:"
+	@echo "Type:" 
 	@echo "make distribution    - to prepare distribution directory dist"
 	@echo "make test            - to run suite of example files to check against output of previous version"
 	@echo "make release         - to prepare file" latexdiff-$(VERSION).tar.gz " for upload"
 	@echo "make webmanual       - to prepare manual pdf for inclusion in webpage"
+	@echo "Version:" $(VERSION)
+
 
 distribution: mkdirs dist/latexdiff dist/latexrevise dist/latexdiff-so dist/latexdiff-fast dist/latexdiff-vc dist/latexdiff.1 dist/latexrevise.1 dist/latexdiff-vc.1 dist/doc/latexdiff-man.pdf dist/example/example-draft.tex dist/example/example-rev.tex dist/doc/example-diff.tex dist/doc/latexdiff-man.tex dist/COPYING dist/README dist/contrib dist/Makefile
 
@@ -100,7 +102,7 @@ dist/example/example-draft.tex: example-draft.tex
 dist/example/example-rev.tex: example-rev.tex
 	cp $< $@
 
-dist/README: do.not.README.yet
+dist/README: README.md
 	cp $< $@
 
 dist/COPYING: COPYING
