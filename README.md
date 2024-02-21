@@ -113,8 +113,11 @@ extend latexdiff in a similar way: J. Paisley, N. Becker, K. Huebner
 EXTERNAL LATEXDIFF SUPPORT PROGRAMS
 -----------------------------------
 
+LATEXDIDFFR (Author: David Hugh-Jones) is a small library that uses the latexdiff command to create a diff of two Rmarkdown, .Rnw or TeX files.
+https://github.com/hughjonesd/latexdiffr
+
 LATEXDIFFCITE (Author: Christer van der Meeren)  is a wrapper around latexdiff to make citations diff properly. It works by expanding \cite type commands using the bbl or bib file, such that citations are treated just like normal text rather than as atomic in the plain latexdiff.
-https://latexdiffcite.readthedocs.org
+https://github.com/twilsonco/latexdiffcite
 
 GIT-LATEXDIFF (lead author: Matthieu Moy) is a wrapper (bash script) around latexdiff that allows using it to diff two revisions of a LaTeX file under git revision control (similar functionality is provided by latexdiff-vc --git with --flatten option included with this distribution but git-latexdiff allows more fine-grained control on (not to be confused with latexdiff-git, which is normally installed as a soft link to latexdiff-vc) 
 https://gitorious.org/git-latexdiff/
