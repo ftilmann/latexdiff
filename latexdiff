@@ -33,10 +33,6 @@
 #
 # Note references to issue numbers are for the github repository of latexdiff: https://github.com/ftilmann/latexdiff
 #
-# Version 1.4.0:
-# New features:
-#  - Option to use lua-ul instead of ulem (for use with LuaLaTeX) (fix #17, #60, #188, #255, #270)
-#
 # Version 1.3.4a:
 # Bug fix
 #  - sometimes the introduction of aux commands to show deleted lists or descriptions leaves in place empty auxiliary
@@ -45,6 +41,8 @@
 #  - add more mboxsafecmd and safecmd commands for SIunitx to stay compatible with newer versionsof SIunitx (PR #283, fixing issue #282, contributed by github user joe6302413)
 #  - File added via --preamble option is no longer assumed to be ASCII, but read either with encoding as defined by --encoding option or using the encoding of the LOCALE (fixes issue #285 )
 #  - multicolumn argument is now treated as text
+# New features:
+#  - Option to use lua-ul instead of ulem (for use with LuaLaTeX) (fix #17, #60, #188, #255, #270)
 #
 # Version 1.3.3:
 # New features:
@@ -274,7 +272,7 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.4.0 (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+This is LATEXDIFF 1.3.4a (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
   (c) 2004-2022 F J Tilmann
 EOF
 
@@ -4242,7 +4240,7 @@ Available styles:
 
 C<UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE
 CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCHBAR BOLD PDFCOMMENT
-UNDERLINE>
+LUAUNDERLINE>
 
 [ Default: C<UNDERLINE> ]
 
@@ -4692,7 +4690,7 @@ The major type determine the markup of plain text and some selected latex comman
 Added text is wavy-underlined and blue, discarded text is struck out and red
 (Requires color and ulem packages).  Overstriking does not work in displayed math equations such that deleted parts of equation are underlined, not struck out (this is a shortcoming inherent to the ulem package).
 
-=item C<UNDERLINEUNDERLINE>
+=item C<LUAUNDERLINE>
 
 Added text is underlined and blue, discarded text is struck out and red
 (Requires lua-ul package + LuaLaTeX).
@@ -4993,7 +4991,7 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.4.0
+Version 1.3.4a
 Copyright (C) 2004-2022 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
