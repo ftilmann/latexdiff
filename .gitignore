@@ -19,4 +19,13 @@ texput.log
 private
 #latexdiff#
 *-scratch
+*out
+*fdb_latexmk
+*bbl
+*fls
+*bcf
+*synctex*
+*xml
+bibliography.bib
+revtex-bibliography-diffNotes.bib
 
