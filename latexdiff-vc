@@ -28,7 +28,8 @@
 # TODO/IDEAS: - option to call external pre-processing codes
 #
 # version 1.3.4a:
-#    - Enhancement: if --flatten option is used, and no bbl file is included in the version management, then latexdiff-vc will try to run bibtex to generate the bbl file. Implements the suggestion of PR #127
+#    - Enhancement: if --flatten option is used, and no bbl file is included in the version management, then latexdiff-vc will try to run bibtex to generate the bbl file. Implements the suggestion of PR #127 (contributed by github user cousteaulecommandant )
+#    - Efficiency boost: use -draftmode for non-interactive preliminary runs of latex (idea from #
 #    - bug fix: minor fix for --only-changed that makes detection of changed pages more reliable [ PR #297 contributed by user nelijuc ]
 #
 # version 1.3.2:
@@ -447,8 +448,8 @@ while ( $infile=$file2=shift @files ) {
       if ( greptex('^[^%]*\\\\bibliography\\{',$infile) == 0)  {
 	my ($filebase,$filedir)=fileparse($infile,".tex");
 	if ( ! -e "$filedir$filebase.bbl" ) {
-	  system("$CFG{LATEX} --interaction=batchmode '$infile'; $CFG{BIBTEX} '$filedir$filebase'")
-	      or die  "Something went wrong in executing:  $CFG{LATEX} --interaction=batchmode '$infile'; $CFG{BIBTEX} '$filedir$filebase'" ;
+	  system("$CFG{LATEX} -draftmode -interaction=batchmode '$infile'; $CFG{BIBTEX} '$filedir$filebase'")
+	      or die  "Something went wrong in executing:  $CFG{LATEX} -draftmode -interaction=batchmode '$infile'; $CFG{BIBTEX} '$filedir$filebase'" ;
 	}
       }
     } else {
@@ -552,18 +553,18 @@ foreach $diff ( @difffiles ) {
 
 #    if ( system("grep -q \'^[^%]*\\\\bibliography{\' \"$diff\"") == 0 ) { 
     if ( greptex('^[^%]*\\\\bibliography{',$diff ) == 0 ) { 
-      system("$CFG{LATEX} --interaction=batchmode \"$diff\"; $CFG{BIBTEX} \"$diffbase\";");
+      system("$CFG{LATEX} -draftmode -interaction=batchmode \"$diff\"; $CFG{BIBTEX} \"$diffbase\";");
       push @ptmpfiles, "$diffbase.bbl","$diffbase.bbl" ; 
     }
 
     # if special needs, as CHANGEBAR
     if ( $extracomp ) {
       # print "Extracomp\n";
-      system("$CFG{LATEX} --interaction=batchmode \"$diff\";");
+      system("$CFG{LATEX} -draftmode -interaction=batchmode \"$diff\";");
     }
 
     # final compilation
-    system("$CFG{LATEX} --interaction=batchmode \"$diff\";"); # needed if cross-refs
+    system("$CFG{LATEX} -draftmode -interaction=batchmode \"$diff\";"); # needed if cross-refs
     system("$CFG{LATEX} \"$diff\";"); # final, with possible error messages
 
     if ( $rundvi2 ) {
@@ -699,8 +700,8 @@ sub checkout_dir {
       ($filebase,$filedir)=fileparse($file,".tex");
       if ( ! -e "$filedir$filebase.bbl" ){
  	  printf STDERR "Running $CFG{BIBTEX} to generate $filedir$filebase.bbl.\n";
-	  system("cd '$dirname'; $CFG{LATEX} --interaction=batchmode '$file'; $CFG{BIBTEX} '$filedir$filebase'")==0
-	      or die  "Something went wrong in executing:  cd '$dirname'; $CFG{LATEX} --interaction=batchmode '$file'; $CFG{BIBTEX} '$filedir$filebase'" ;
+	  system("cd '$dirname'; $CFG{LATEX} -draftmode -interaction=batchmode '$file'; $CFG{BIBTEX} '$filedir$filebase'")==0
+	      or die  "Something went wrong in executing:  cd '$dirname'; $CFG{LATEX} -draftmode -interaction=batchmode '$file'; $CFG{BIBTEX} '$filedir$filebase'" ;
       }
 #      else { # DEBUG
 #	  printf STDERR "DEBUG: Skipping bbl file generation as $filedir$filebase.bbl already exists.\n"
@@ -844,7 +845,7 @@ Available variables for latexdiff-vc:
 
 =over 8
 
-=item C<LATEXDIFF> latexdiff command (e.g. latexdiff-fast, latexdiff-so). This command should support the option C<--interaction=batchmode>
+=item C<LATEXDIFF> latexdiff command (e.g. latexdiff-fast, latexdiff-so). This command should support the options C<-draftmode> and C<-interaction=batchmode>
 
 =item C<LATEX> latex command (e.g. pdflatex, lualatex)
 
