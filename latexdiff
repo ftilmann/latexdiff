@@ -34,6 +34,10 @@
 # Note references to issue numbers are for the github repository of latexdiff: https://github.com/ftilmann/latexdiff
 #
 # Version 1.3.4a:
+# New features:
+#  - Option to use lua-ul instead of ulem (for use with LuaLaTeX) (fix #17, #60, #188, #255, #270)
+# Enhancement
+#  - If amsmath is detected as one of the included (based on idea in PR #263 contributed by github user xlucn
 # Bug fix
 #  - sometimes the introduction of aux commands to show deleted lists or descriptions leaves in place empty auxiliary
 #    list environments, which would cause error messages (though skipping messages would result in a correct output pdf).
@@ -41,8 +45,6 @@
 #  - add more mboxsafecmd and safecmd commands for SIunitx to stay compatible with newer versionsof SIunitx (PR #283, fixing issue #282, contributed by github user joe6302413)
 #  - File added via --preamble option is no longer assumed to be ASCII, but read either with encoding as defined by --encoding option or using the encoding of the LOCALE (fixes issue #285 )
 #  - multicolumn argument is now treated as text
-# New features:
-#  - Option to use lua-ul instead of ulem (for use with LuaLaTeX) (fix #17, #60, #188, #255, #270)
 #
 # Version 1.3.3:
 # New features:
@@ -1156,6 +1158,11 @@ if ($graphicsmarkup != NONE ) {
 
 $ulem = ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{ulem\}/ || defined $packages{"ulem"});
 
+# If amsmath is defined and $ulem is used for markup, redefine the \sout command to also work (mostly) in math mode
+# See stack exchange https://tex.stackexchange.com/questions/20609/strikeout-in-math-mode/308647#308647 based on comment by Taylor Raine
+if ( defined($packages{'amsmath'}) and $ulem ) {
+    $latexdiffpreamble .= join "\n",(extrapream('AMSMATHULEM'),"");
+}
 
 # If listings is being used or can be found in the latexdiff search path, add to the preamble auxiliary code to enable line-by-line markup
 if ( defined($packages{"listings"}) or `kpsewhich listings.sty` ne "" ) {
@@ -4923,31 +4930,37 @@ treat VERBATIMLINEENV environments treated exactly the same way as VERBATIMENV e
 
 =over 10
 
-=item Citations result in overfull boxes
+=item Changed citations result in overfull boxes
 
 There is an incompatibility between the C<ulem> package, which C<latexdiff> uses for underlining and striking out in the UNDERLINE style,
 the default style, and the way citations are generated. In order to be able to mark up citations properly, they are enclosed with an C<\mbox>
-command. As mboxes cannot be broken across lines, this procedure frequently results in overfull boxes, possibly obscuring the content as it extends beyond the right margin.  The same occurs for some other packages (e.g., siunitx). If this is a problem, you have two possibilities.
+command. As mboxes cannot be broken across lines, this procedure frequently results in overfull boxes, possibly obscuring the content as it extends beyond the right margin.  The same occurs for some other packages (e.g., siunitx). If this is a problem, you have several possibilities.
 
 1. Use C<CFONT> type markup (option C<-t CFONT>): If this markup is chosen, then changed citations are no longer marked up
 with the wavy line (additions) or struck out (deletions), but are still highlighted in the appropriate color, and deleted text is shown with a different font. Other styles not using the C<ulem> package will also work.
 
 2. Choose option C<--disable-citation-markup> which turns off the marking up of citations: deleted citations are no longer shown, and
-added citations are shown without markup. (This was the default behaviour of latexdiff at versions 0.6 and older)
-
+added citations are shown without markup. (This was the default behaviour of latexdiff at versions 0.6 and older).
 For custom packages you can define the commands which need to be protected by C<\mbox> with C<--append-mboxsafecmd> and C<--excludemboxsafecmd> options
 (submit your lists of command as feature request at github page to set the default behaviour of future versions, see section 6)
 
-=item Changes in complicated mathematical equations result in latex processing errors
+3. If you are using luatex >= 1.12.0 you can use option LUAUNDERLINE that uses lua-ul instead of ulem for underlining, which does not have this problem (experimental feature).
 
-Try options C<--math-markup=whole>.   If even that fails, you can turn off mark up for equations with C<--math-markup=off>.
+=item Changes in complicated mathematical equations result in latex processing errors.
 
-=item How can I just show the pages where changes had been made
+Try option C<--math-markup=whole>.   If even that fails, you can turn off mark up for equations with C<--math-markup=off>.
+
+=item Deleted parts in equations are not struck out but underlined.
+
+This is a limitation of the ulem package that implements the strike-out. If you use the amsmath package, then the strike-out command is redefined in such a way that deleted passages are wrapped with C<\text> command; adding C<\usepackage{amsmath}> to your preamble will trigger this behaviour. (If amsmath is not included directly, but imported by another package, latexdiff will not be able to detect its availability; in this case you can give latexdiff a hint with option C<--packages=amsmath>.
+
+
+=item How can I just show the pages where changes had been made?
 
 Use options C<--s ZLABEL>  (some postprocessing required) or C<-s ONLYCHANGEDPAGE>. C<latexdiff-vc --ps|--pdf> with C<--only-changes> option takes care of
 the post-processing for you (requires zref package to be installed).
 
-=item The character encoding breaks when running latexdiff from powershell
+=item The character encoding breaks when running latexdiff from powershell.
 
 This problem is not limited to C<latexdiff> and has to do with the default settings of C<powershell> in Windows. It is recommended to use C<cmd> instead.
 
@@ -5660,6 +5673,15 @@ verbatim[*]?
 %DIF END HIGHLIGHTGRAPHICS PREAMBLE
 
 %% SPECIAL PACKAGE PREAMBLE COMMANDS
+
+%% Redefine strike out command to wrap in text box if amsmath is used and markup style with ulem is used
+%DIF AMSMATHULEM PREAMBLE
+\makeatletter
+\let\sout@orig\sout
+\renewcommand{\sout}[1]{\ifmmode\text{\sout@orig{\ensuremath{#1}}}\else\sout@orig{#1}\fi}
+\makeatother
+%DIF END AMSMATHULEM PREAMBLE
+
 
 % Standard \DIFadd and \DIFdel are redefined as \DIFaddtex and \DIFdeltex
 % when hyperref package is included.
