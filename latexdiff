@@ -45,6 +45,7 @@
 #  - add more mboxsafecmd and safecmd commands for SIunitx to stay compatible with newer versionsof SIunitx (PR #283, fixing issue #282, contributed by github user joe6302413)
 #  - File added via --preamble option is no longer assumed to be ASCII, but read either with encoding as defined by --encoding option or using the encoding of the LOCALE (fixes issue #285 )
 #  - multicolumn argument is now treated as text
+#  - when tikz-dependency package is used, \& is no longer a safe command as it has special meaning inside dependency environment.  The fix is a little of a hack as really it should only be considered unsafe within dependency environment (fixes (mostly) issue #303 )
 #
 # Version 1.3.3:
 # New features:
@@ -1332,6 +1333,10 @@ if (defined $packages{"mhchem"} ) {
   # The next command would be needed to allow highlighting the interior of \cee commands in math environments
   # but the redefinitions in chemformula are too deep to make this viable
   # push(@MATHTEXTCMDLIST,'cee');
+}
+
+if ( defined $packages{"tikz-dependency"} ) {
+  init_regex_arr_ext(\@SAFECMDEXCL, 'AMPERSAND');
 }
 
 
