@@ -27,7 +27,7 @@
 #
 # TODO/IDEAS: - option to call external pre-processing codes
 #
-# version 1.3.4a:
+# version 1.3.4:
 #    - Enhancement: if --flatten option is used, and no bbl file is included in the version management, then latexdiff-vc will try to run bibtex to generate the bbl file. Implements the suggestion of PR #127 (contributed by github user cousteaulecommandant )
 #    - Efficiency boost: use -draftmode for non-interactive preliminary runs of latex (idea from #
 #    - bug fix: minor fix for --only-changed that makes detection of changed pages more reliable [ PR #297 contributed by user nelijuc ]
@@ -85,7 +85,7 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.3.4a
+This is LATEXDIFF-VC 1.3.4x
   (c) 2005-2024 F J Tilmann
 EOF
 
@@ -808,7 +808,7 @@ complete directory hierarchy.  Optionally, a pathname F<path> can be specified, 
 =item B<--flatten,--flatten=keep-intermediate>
 
 If combined with C<--git>, C<--svn> or C<--hg> option or the corresponding modes, check out the revisions to compare in a separate temporary directory, and then pass on option C<--flatten> to latexdiff. The directory in which C<latexdiff-vc> is invoked defines the subtree which will be checked out.
-Note that if additional files are needed which are not included in the flatten procedure (package files, included graphics), they need to be accessible in the current directory. If you use bibtex, it is recommended to include the C<.bbl> file in the version management. From latexdiff-vc >=1.3.4  there will be an attempt to create the C<.bbl> file by running bibtex in the retrieved subdirectories; note that the bibtex is run in the temporary subdirectories so any .bib or .bst files either need to be under version management, or in the global search paths for bibtex (shell environment variables C<BIBINPUTS> and C<BSTINPUTS>). 
+Note that if additional files are needed which are not included in the flatten procedure (package files, included graphics), they need to be accessible in the current directory. If you use bibtex, it is recommended to include the C<.bbl> file in the version management. From latexdiff-vc >=1.3.4  there is an attempt to create the C<.bbl> file by running bibtex in the retrieved subdirectories; note that the bibtex is run in the temporary subdirectories so any .bib or .bst files either need to be under version management, or in the global search paths for bibtex (shell environment variables C<BIBINPUTS> and C<BSTINPUTS>). 
 
 The generic usage of this function is : C<latexdiff-vc --flatten -r rev1 [-r rev2] master.tex> where master.tex is the project file containing the highest level of includes etc.
 

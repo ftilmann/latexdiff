@@ -33,7 +33,7 @@
 #
 # Note references to issue numbers are for the github repository of latexdiff: https://github.com/ftilmann/latexdiff
 #
-# Version 1.3.4a:
+# Version 1.3.4:
 # New features:
 #  - Option to use lua-ul instead of ulem (for use with LuaLaTeX) (fix #17, #60, #188, #255, #270)
 # Enhancement
@@ -274,8 +274,8 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.3.4a (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
-  (c) 2004-2022 F J Tilmann
+This is LATEXDIFF 1.3.4 (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+  (c) 2004-2024 F J Tilmann
 EOF
 
 # Hash with defaults for configuration variables. These marked undef have default values constructed from list defined in the DATA block
@@ -5004,8 +5004,8 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.3.4a
-Copyright (C) 2004-2022 Frederik Tilmann
+Version 1.3.4
+Copyright (C) 2004-2024 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License Version 3

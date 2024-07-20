@@ -5,7 +5,7 @@ set sample = example
 # NOT including -t option
 set options="-V -s SAFE -f FLOATSAFE"
 
-set pdftypes=( UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE BOLD PDFCOMMENT CCHANGEBAR CFONTCHBAR CULINECHBAR CHANGEBAR) 
+set pdftypes=( UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE BOLD PDFCOMMENT CCHANGEBAR CFONTCHBAR CULINECHBAR CHANGEBAR LUAUNDERLINE ) 
 set dvitypes=(  )
 
 #set pdftypes=( UNDERLINE PDFCOMMENT )
@@ -18,7 +18,11 @@ foreach type ( $pdftypes )
   echo "========================================="
   echo "Differencing ${sample}-old.tex ${sample}-new.tex with type $type"
   latexdiff $options -t$type ${sample}-old.tex ${sample}-new.tex > ${sample}-diff-t$type.tex
-  pdflatex --interaction=batchmode ${sample}-diff-t$type.tex
+  if ( $type =~ LUA* ) then 
+    lualatex --interaction=batchmode ${sample}-diff-t$type.tex
+  else
+    pdflatex --interaction=batchmode ${sample}-diff-t$type.tex
+  endif
   if ($status || ! -e ${sample}-diff-t$type.pdf ) then 
    echo "Compilation of ${sample}-diff-t$type.tex did not complete as expected."
    set failed=($failed ${sample}-diff-t$type.tex)
@@ -43,7 +47,7 @@ end
 
 
 foreach out ( $pdfout )
-  echo "acroread $out"
+  echo "okular $out"
 end
 foreach out ( $psout )
   echo "gv $out"

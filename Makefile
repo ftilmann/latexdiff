@@ -1,6 +1,6 @@
 # Makefile for preparing files for distribution
-# VERSION=1.3.3
-VERSION=$(shell git describe --abbrev=4 --dirty --always --tags)
+#VERSION=$(shell git describe --abbrev=4 --dirty --always --tags)
+VERSION=1.3.4
 
 .PHONY: distribution release test mkdirs clean cleanall cleantest webmanual
 
