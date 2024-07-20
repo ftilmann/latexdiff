@@ -1,0 +1,15 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz-dependency}
+\begin{document}
+    \begin{dependency}
+        \begin{deptext}[column sep=0.4cm]
+              the\_Det : Det \& black\_A : A \& cat\_N : N \\
+              \& PositA black\_A : AP \&  \\
+        \end{deptext}
+        \depedge{3}{1}{det}
+        \depedge{3}{2}{amod}
+        \deproot{3}{root}
+    \end{dependency}
+\end{document}
+
