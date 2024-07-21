@@ -29,7 +29,7 @@
 #
 # version 1.3.4:
 #    - Enhancement: if --flatten option is used, and no bbl file is included in the version management, then latexdiff-vc will try to run bibtex to generate the bbl file. Implements the suggestion of PR #127 (contributed by github user cousteaulecommandant )
-#    - Efficiency boost: use -draftmode for non-interactive preliminary runs of latex (idea from #
+#    - Efficiency boost: use -draftmode for non-interactive preliminary runs of latex (idea from #127 user cousteaulecommandant)
 #    - bug fix: minor fix for --only-changed that makes detection of changed pages more reliable [ PR #297 contributed by user nelijuc ]
 #
 # version 1.3.2:
