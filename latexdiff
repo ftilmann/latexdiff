@@ -35,6 +35,7 @@
 #
 # Version 1.3.5a:
 #  - Fix a bug in the preprocessing that detects \[ \] as math expression (it was interpreting \\] as \+ \] instead of correctly \\ + ]
+#  - Commands that were both in the safecmd and text command list, and which have additional arguments beyond the last textual one (optional or non-optional) could lead to errors, if there was a change in those earlier arguments  (fixes #306, first reported through debian bug report)
 #
 # Version 1.3.4:
 # New features:
@@ -5037,22 +5038,17 @@ __END__
 % Regex matching commands which can safely be in the
 % argument of a \DIFadd or \DIFdel command (leave out the \)
 arabic
-dashbox
 emph
 fbox
-framebox
 hspace\*?
 math.*
-makebox
 mbox
 pageref
 ref
 eqref
 symbol
-raisebox
 rule
 text.*
-shortstack
 usebox
 dag
 ddag
@@ -5072,7 +5068,6 @@ l
 L
 frac
 ss
-sqrt
 ldots
 cdots
 vdots
@@ -5261,6 +5256,18 @@ SQRTNB
 PERCENTAGE
 DOLLAR
 %%END SAFE COMMANDS
+
+% Commands with optional or more than one non-optional arguments that are also text commands.
+% They were formerly (pre-1.3.5) considered safe, but if a change is made to any of the earlier arguments
+% (i.e. not the last one considered text), then invalid code would often result. 
+% dashbox
+% framebox
+% makebox
+% raisebox
+% shortstack
+% sqrt
+
+
 
 %%BEGIN TEXT COMMANDS
 % Regex matching commands with a text argument (leave out the \)

@@ -1,0 +1,22 @@
+\documentclass{minimal}
+
+%\usepackage[UKenglish,dutch]{babel}
+
+\begin{document}
+
+This sample document demonstrates a latexdiff defect whereby
+a slight change to a length passed to raisebox results in an uncompilable diff.\\
+
+\noindent\begin{minipage}[b]{0.32\textwidth}%\selectlanguage{dutch}
+  blurb of Dutch text here.%
+\end{minipage}\hfill%
+\raisebox{-4\baselineskip}{%
+  \begin{minipage}[b]{0.36\textwidth}
+  \rule{\textwidth}{\textwidth}%
+\end{minipage}}\hfill%
+\noindent\begin{minipage}[b]{0.28\textwidth}%\selectlanguage{UKenglish}
+   blurb of English text here.%
+\end{minipage}%
+
+\end{document}
+
