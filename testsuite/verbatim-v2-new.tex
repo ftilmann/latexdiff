@@ -1,0 +1,128 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{color}
+
+\begin{document}
+
+We edit to obain revised text, \verb|example-rev.tex|, listed here in
+full but also included in the distribution (except that the ``verbatim'' environment had
+to be renamed to ``Verbatim'' for the listing).
+{\scriptsize
+\begin{verbatim}
+\documentclass[12pt,a4paper]{article}
+
+\setlength{\topmargin}{-0.2in}
+\setlength{\textheight}{9.5in}
+\setlength{\oddsidemargin}{0.0in}
+
+\setlength{\textwidth}{6in}
+
+\title{latexdiff Example - Revised version}
+\author{F Tilmann}
+% Note how in the preamble visual markup is never used (even
+% if some preamble might eventually end up as visible text.)
+
+\begin{Document}
+\maketitle
+
+\section*{Introduction}
+
+This is an extremely simple document that showcases some of the latexdiff features.
+Type
+\begin{Verbatim}
+latexdiff -t UNDERLINE example-draft.tex example-rev.tex > example-diff.tex
+\end{Verbatim}
+to create the difference file.  You can inspect this file directly. Then run either 
+\begin{Verbatim}
+pdflatex example-diff.tex
+xpdf example-diff.pdf
+\end{Verbatim}
+or
+\begin{Verbatim}
+latex example-diff.tex
+dvips -o example-diff.ps example-diff.dvi
+gv example-diff.ps
+\end{Verbatim}
+to display the markup.
+
+\section*{Yet another section title}
+
+ More things could be said were it not for the constraints of time and space.
+
+A paragraph with a line only in the revised document.  
+More things could be said were it not for the constraints of time and space.
+
+And here is a typo. 
+
+Here is a table:
+
+\begin{tabular}{ll}
+Name & Description \\
+\hline
+Gandalf & White \\
+Saruman & Evil
+\end{tabular}
+
+And now for something completely different, with not a paragraph in sight.
+No change, 
+no markup!
+\end{Document}
+\end{verbatim}
+}
+We can now compare
+this text to the draft version.
+\newpage
+A now an example making use of the \lstinline|listings| package.
+
+Some new verbatim listings to test odd variants: \verb|vertical bars|.
+% Note that \verb with two opening braces no longer works as it interferes with colored markup
+In lstlisting we can actually use paired braces \lstinline{Listing brackets by braces % with comment character}.
+And even options with lstlisting are possible: \lstinline[basicstyle=\footnotesize]{var i:integer;} 
+Another variant of this: \lstinline[basicstyle=\footnotesize]$var x:float;$ 
+
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+We simply take a small subroutine of latexdif as an example:
+\lstset{language=perl}
+%\lstset{commentstyle=\color{gray}}
+\begin{lstlisting}[commentstyle=\color{gray}]
+# init_regex_arr_ext(\@array,$arg)
+# appends array with regular expressions.
+# if arg is a file name, then read in list of regular expressions from that file
+# (one expression per line)
+# Otherwise treat arg as a comma separated list of regular expressions
+sub init_regex_arr_ext {
+  my ($arr,$arg)=@_;
+  init_regex_arr_list($arr,$arg);
+}
+
+# init_regex_arr_file(\@array,$fname)
+# appends array with regular expressions.
+# Read in list of regular expressions from $fname
+# (one expression per line)
+sub init_regex_arr_file {
+  my ($arr,$fname)=@_;
+  open(FILE,"$fname")
+  while (<FILE>) {
+    chomp;
+    next if /^\s*#/ || /^\s*%/ || /^\s*$/ ;
+    push (@$arr,qr/^$_$/);
+  }
+  close(FILE);
+}
+\end{lstlisting}
+
+\textbf{Issue 168: Mangled verbatim environment}
+
+\begin{verbatim}
+3
+\end{verbatim}
+
+Finally a particular trap to see if special characters don't mess up things:
+\begin{verbatim}
+first _
+block _
+\end{verbatim}
+
+
+\end{document}
+
