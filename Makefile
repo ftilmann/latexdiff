@@ -34,8 +34,13 @@ latexdiff-$(VERSION):
 htdocs/latexdiff-man.pdf: dist/doc/latexdiff-man.pdf
 	cp $< $@ 
 
+# CTAN requested that top level directory is latexdiff rather than latexdiff-x.x.x
 latexdiff-$(VERSION).tar.gz: distribution
-	tar -z -cvf latexdiff-$(VERSION).tar.gz --dereference --exclude-vcs  latexdiff-$(VERSION)
+	[ ! -e prep-release-tmp ] || rm -r prep-release-tmp
+	mkdir -p prep-release-tmp
+	cp -r latexdiff-$(VERSION) prep-release-tmp/latexdiff 
+	cd prep-release-tmp; tar -z -cvf ../latexdiff-$(VERSION).tar.gz --dereference --exclude-vcs  latexdiff
+	rm -r prep-release-tmp
 
 dist/latexdiff: latexdiff
 	grep -v '^###' latexdiff > dist/latexdiff ; chmod a+x dist/latexdiff
@@ -82,13 +87,13 @@ dist/doc/latexdiff-vc.tex: latexrevise.tex
 	cp $^ $@
 
 latexdiff.tex: latexdiff
-	pod2latex latexdiff; sed 's/--/-{}-/g' latexdiff.tex > tmp$$.tex ; mv tmp$$.tex latexdiff.tex
+	pod2latex latexdiff; sed 's/--/-{}-/g' latexdiff.tex > tmp$$$$.tex ; mv tmp$$$$.tex latexdiff.tex
 
 latexrevise.tex: latexrevise
-	pod2latex latexrevise ; sed 's/--/-{}-/g' latexrevise.tex > tmp$$.tex ; mv tmp$$.tex latexrevise.tex
+	pod2latex latexrevise ; sed 's/--/-{}-/g' latexrevise.tex > tmp$$$$.tex ; mv tmp$$$$.tex latexrevise.tex
 
 latexdiff-vc.tex: latexdiff-vc
-	pod2latex latexdiff-vc; sed 's/--/-{}-/g' latexdiff-vc.tex > tmp$$.tex ; mv tmp$$.tex latexdiff-vc.tex
+	pod2latex latexdiff-vc; sed 's/--/-{}-/g' latexdiff-vc.tex > tmp$$$$.tex ; mv tmp$$$$.tex latexdiff-vc.tex
 
 example-diff.pdf: example-diff.tex
 	pdflatex example-diff.tex
