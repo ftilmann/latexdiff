@@ -2742,16 +2742,23 @@ sub preprocess {
 ###    1 while s/((?<!\\)%.*)\}(.*)$/$1\\CRIGHTBRACE $2/mg ;
 ###    1 while s/((?<!\\)%.*)\\frac(.*)$/$1\\CFRAC $2/mg ;
 
-###    print STDERR "Preprocess 10\n" if $debug;
+###    writedebugfile($_,'preprocess1');
+
+    # replace {,} with \CLEFTBRACE,\CRIGHTBRACE
+    1 while s/(%.*)\{(.*)$/$1\\CLEFTBRACE $2/mg ;
+    1 while s/(%.*)\}(.*)$/$1\\CRIGHTBRACE $2/mg ;
+
 ###    s/\n(\s*)\n((?:\s*\n)*)/\\PAR\n$2/g ;
     s/(?<!\\)\\\$/\\DOLLAR /g ;  # (?<! is negative lookbehind assertion to prevent \\$ from being converted
 ###    s/\\begin\{(verbatim\*?)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     s/\\begin\{($VERBATIMENV)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     s/\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"\\begin{$1}". linecomment($2) . "\\end{$1}"/esg;
-
+###    writedebugfile($_,'preprocess-intermediate');
     
-    # replace {,}, \frac,_,^ in comments with \\CLEFTBRACE,\\CRIGHTBRACE, \\CFRAC, \\CUNDERSCORE, \\CCARET, respectively to protect from special treatment
+    # replace {,}, \frac,_,^ in comments with \CLEFTBRACE,\CRIGHTBRACE, \CFRAC, \CUNDERSCORE, \CCARET, respectively to protect from special treatment
     # note that we need to do this after having turned verbatim environments into comments
+    # (an exception is for {,} as otherwise the processing of the verbatim environments themselves might be affected)
+    # We solve this by simpling doint the CLEFTBRACE,CRIGHTBRACE conversion twice.
 ###   since 1.3.5 we can simplify these expressions as literal percentage (\%) has already be converted so we can trust % to indicate comment
 ###    1 while s/((?<!\\)%.*)\{(.*)$/$1\\CLEFTBRACE $2/mg ;
 ###    1 while s/((?<!\\)%.*)\}(.*)$/$1\\CRIGHTBRACE $2/mg ;
