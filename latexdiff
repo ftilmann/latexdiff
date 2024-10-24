@@ -37,6 +37,7 @@
 #  - Fix a bug in pre-/postprocessing that led to odd behaviour if some characters with special meaning, like _,^ were used in particular contexts in verbatim environments. Fixes #305
 #  - Fix a bug in the preprocessing that detects \[ \] as math expression (it was interpreting \\] as \+ \] instead of correctly \\ + ]
 #  - Commands that were both in the safecmd and text command list, and which have additional arguments beyond the last textual one (optional or non-optional) could lead to errors, if there was a change in those earlier arguments  (fixes #306, first reported through debian bug report)
+#  - Commands/RegExs explicitly defined as not safe with --exclude-safecmd are now also considered unsafe in COARSE and WHOLE math markup (Fixes #311)
 #
 # Version 1.3.4:
 # New features:
@@ -353,7 +354,7 @@ my ($ARRENV,
 
 
 my $LABELCMD='(?:label)';                # matching commands are disabled within deleted blocks - mostly useful for maths mode, as otherwise it would be fine to just not add those to SAFECMDLIST
-my @UNSAFEMATHCMD=('qedhere','intertext','begin','end');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
+my @UNSAFEMATHCMD=('qedhere','intertext','begin','end' );           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode) deleted unsafe commands are not deleted but simply taken outside \DIFdel
 ###my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
 ###my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
 my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths expression with \mbox ( to get around compatibility
@@ -606,7 +607,9 @@ foreach $appendsafe ( @appendsafelist ) {
 ### }
 ### if (defined($excludesafe)) {
 foreach $excludesafe ( @excludesafelist ) {
-  init_regex_arr_ext(\@SAFECMDEXCL, $excludesafe);
+    init_regex_arr_ext(\@SAFECMDEXCL, $excludesafe);
+    # add explicit list to unsafe math commands also
+    init_regex_arr_ext(\@UNSAFEMATHCMD, $excludesafe);
 }
 ### }
 # setting up @MBOXCMDLIST and @MBOXCMDEXCL
@@ -1050,7 +1053,7 @@ exetime(1);
 ($newpreamble,$newbody,$newpost)=splitdoc($new,'\\\\begin\{document\}','\\\\end\{document\}');
 
 ###if ( $newpreamble =~ m/\\usepackage\[(\w*?)\]\{inputenc\}/  ) {
-###  if ($encoding ne $1 ) {
+##  if ($encoding ne $1 ) {
 ###    die  "Input encoding in both old and new file must be the same.\n";
 ###  }
 ###  $newpreamble=Encode::decode($encoding,$newpreamble);
@@ -1485,7 +1488,7 @@ sub show_configuration {
   if ($showsafe) {
     print "\nsafecmd: Commands safe within scope of $ADDOPEN $ADDCLOSE and $DELOPEN $DELCLOSE (unless excluded):\n";
     print_regex_arr(@SAFECMDLIST);
-    print "\nsafecmd-exlude: Commands not safe within scope of $ADDOPEN $ADDCLOSE and $DELOPEN $DELCLOSE :\n";
+    print "\nsafecmd-exclude: Commands not safe within scope of $ADDOPEN $ADDCLOSE and $DELOPEN $DELCLOSE :\n";
     print_regex_arr(@SAFECMDEXCL);
     print "\nmboxsafecmd:  Commands safe only if they are surrounded by \\mbox command:\n";
     print_regex_arr(@MBOXCMDLIST);
@@ -2413,7 +2416,7 @@ sub extractcommands {
 sub iscmd {
   my ($cmd,$regexar,$regexexcl)=@_;
   my ($ret)=0;
-###  print STDERR "DEBUG: iscmd($cmd) in @$regexar, \n---------\n excluding @$regexexcl or @TEXTCMDEXCL safe @SAFECMDEXCL \n" if $debug;
+  ### print STDERR "DEBUG: iscmd($cmd) in @$regexar, \n---------\n excluding @$regexexcl or @TEXTCMDEXCL safe @SAFECMDEXCL \n" if $debug;
   ### print STDERR "DEBUG: iscmd($cmd)=" if $debug;
   foreach $pat ( @$regexar ) {
     if ( $cmd =~ m/^${pat}$/ ) {
@@ -2603,7 +2606,7 @@ sub marktags {
           # for latexrevise
           push (@$retval,$command,"%\n{$AUXCMD\n",marktags("","",$open,$close,$opencmd,$closecmd,$comment,\@argtext),$closingbracket);
         } elsif ( iscmd($commandword,,\@MATHTEXTCMDLIST, \@MATHTEXTCMDEXCL) ) {
-	  # MATHBLOCK pseudo command: consider all commands safe, except & and \\, \begin and \end and a few package sprcific one (look at UNSAFEMATHCMD definition)
+	  # MATHBLOCK pseudo command: consider all commands safe, except & and \\, \begin and \end and a few package specific one (look at UNSAFEMATHCMD definition)
 	  # Keep these commands even in deleted blocks, hence set $opencmd and $closecmd (5th and 6th argument of marktags) to
 	  # ""
 	  local @SAFECMDLIST=(".*");
