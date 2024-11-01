@@ -33,11 +33,12 @@
 #
 # Note references to issue numbers are for the github repository of latexdiff: https://github.com/ftilmann/latexdiff
 #
-# Version 1.3.5a:
+# Version 1.3.5a: [ bump to 1.4.0 at release!]
 #  - Fix a bug in pre-/postprocessing that led to odd behaviour if some characters with special meaning, like _,^ were used in particular contexts in verbatim environments. Fixes #305
 #  - Fix a bug in the preprocessing that detects \[ \] as math expression (it was interpreting \\] as \+ \] instead of correctly \\ + ]
-#  - Commands that were both in the safecmd and text command list, and which have additional arguments beyond the last textual one (optional or non-optional) could lead to errors, if there was a change in those earlier arguments  (fixes #306, first reported through debian bug report)
+#  - Commands that were both in the safecmd and textcmd list, and which have additional arguments beyond the last textual one (optional or non-optional) could lead to errors, if there was a change in those earlier arguments  (fixes #306, first reported through debian bug report)
 #  - Commands/RegExs explicitly defined as not safe with --exclude-safecmd are now also considered unsafe in COARSE and WHOLE math markup (Fixes #311)
+#  - add directive pair  %BEGIN DIFNOMARKUP, %END DIFNOMARKUP that can suppress markup locally 
 #
 # Version 1.3.4:
 # New features:
@@ -466,6 +467,10 @@ my ($assign,@config);
 # Hash where keys corresponds to the names of  all included packages (including the documentclass as another package
 # the optional arguments to the package are the values of the hash elements
 my ($pkg,%packages);
+
+# Global variables for keeping state across subroutines 
+our $block_markup = 0;         # 0: do not block markup, 1: block markup  (supporting DIFNOMARKUP directives)
+
 
 # Defaults
 $mathmarkup=COARSE;
@@ -2458,6 +2463,9 @@ sub pass2 {
   my $delhunk   = [];
   my $addhunk   = [];
 
+  # State variable that should be accessible to subroutines 
+  local $block_markup = 0;         # 0: do not block markup, 1: block markup  (supporting DIFNOMARKUP directives)
+
   my $discard = sub { $deltokcnt++;
 ### print "DISCARD $_[0],$_[1]: $seq1->[$_[0]]\n";
                       push ( @$delhunk, $seq1->[$_[0]]) };
@@ -2481,7 +2489,32 @@ sub pass2 {
                       push @$retval,marktags($ADDMARKOPEN,$ADDMARKCLOSE,$ADDOPEN,$ADDCLOSE,"","",$ADDCOMMENT,$addhunk);
 		      $addhunk = [];
 		    }
-		    push(@$retval,$seq2->[$_[1]]) };
+		    push(@$retval,$seq2->[$_[1]]);
+        # Update DIFNOMARKUP counter
+        ### # save procedure
+        ### my $cnt_bnomarkup = scalar(grep { /^%BEGIN DIFNOMARKUP/ } @$retval); 
+        ### my $cnt_enomarkup = scalar(grep { /^%END DIFNOMARKUP/ } @$retval); 
+        ### if ( $cnt_bnomarkup == $cnt_enomarkup+1 && !$block_markup ) {
+        ###   $block_markup = 1;
+        ### } elsif ( $cnt_bnomarkup+1 == $cnt_enomarkup && $block_markup ) {
+        ###   $block_markup = 0;
+        ### } elsif { $cnt_bnomarkup == $cnt_enomarkup ) {
+        ###   pass;     # DIFNOMARKUP directives are paired appropriately
+        ### } else {
+        ###   print STDERR "WARNING: DIFNOMARKUP nesting incorrect. Using last value to determine next state irrespective of earlier state\n";
+        # shortcut relying on the last DIFNOMARKUP directive; this relies on proper nesting
+
+		    my @nomarkups = grep (/^%(BEGIN|END) DIFNOMARKUP/, $seq2->[$_[1]]);
+		    
+		    if ( scalar @nomarkups ) {
+		      if ( $nomarkups[-1] =~ /^%BEGIN DIFNOMARKUP/ ) {
+		        $block_markup = 1;
+		      } elsif ( $nomarkups[-1] =~ /^%END DIFNOMARKUP/ ) {
+			$block_markup = 0;
+		      }
+		    }
+	  ###        }
+      };
 
   my $keyfunc = sub { join("  ",split(" ",shift())) };
 
@@ -2506,20 +2539,21 @@ sub pass2 {
 # mark comments with $comment
 # exclude all other exceptions from scope of open, close like this
 # ($openmark, $open,...,$close, $opencmd,command, command,$closecmd, $open, ..., $close, $closemark)
-# If $opencmd begins with "%" marktags assumes it is operating on a deleted block, otherwise on an added block
+# If $opencmd begins with "%" marktags assumes it is operating on a deleted block, otherwise on an added block.
+# marktags also respects the local variable $block_markup, which if set to 1 will block markup; and also
+# updates it if encountering DIFNOMARKUP directives
 sub marktags {
   my ($openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment,$block)=@_;
   my $word;
   my (@argtext);
   my $retval=[];
-  my $noncomment=0;
+  my $noncomment=0; # flag to indicate whether we have already written a non-comment token
   my $cmd=-1;    # -1 at beginning 0: last token written is a ordinary word
                  # 1: last token written is a command
                 # for keeping track whether we are just in a command sequence or in a word sequence
-  my $cmdcomment= ($opencmd =~ m/^%/);  # Flag to indicate whether opencmd is a comment (i.e. if we intend to simply comment out changed commands)
+  my $cmdcomment= ($opencmd =~ m/^%/);  # Flag to indicate whether opencmd is a comment (i.e. if we intend to simply comment out changed commands). Usually this means we are in a deleted block
   my ($command,$commandword,$closingbracket) ; # temporary variables needed below to remember sub-pattern matches
-
-
+  our $block_markup;   # we need to keep track across function calls, and also modifications outside
 
 # split this block to split sequences joined in pass1
   ### print STDERR "DEBUG: marktags before splitlatex blocksplit ",join("|",@$block),"\n" if $debug;
@@ -2534,7 +2568,34 @@ sub marktags {
 
   foreach (@$block) {
     $word=$_;
-###    print STDERR "DEBUG MARKTAGS: |$word|\n" if $debug;
+    ### print STDERR "DEBUG MARKTAGS: |$word| $block_markup | $cmdcomment\n" ;
+    # check for DIFNOMARKUP tags but ignore them in deleted blocks
+    if ( ! $cmdcomment && $word =~ /^%BEGIN DIFNOMARKUP/ ) {
+      $block_markup = 1;
+      # close any open blocks if needed:
+      push (@$retval,$close) if $cmd==0;
+      push (@$retval,$closecmd) if $cmd==1;
+      push (@$retval,$closemark) if ($noncomment);
+      push (@$retval,$closecmd) ;
+
+      push (@$retval,$word);
+      
+      # reset state as if at the the beginning of marktags
+      $cmd=-1;
+      $noncomment=0;
+
+      next;
+    }
+    if ( ! $cmdcomment &&  $word =~ /^%END DIFNOMARKUP/ ) {
+      $block_markup = 0;
+      push (@$retval,$word);
+      next;
+    }
+    if ( $block_markup ) {
+      # simply add the words as received without marking up
+      push (@$retval,$word);
+      next;
+    }
     if ( $word =~ s/^%/%$comment/ ) {
       # a comment
 ###      print STDERR "MARKTAGS: Add comment |$word|\n";
@@ -4152,6 +4213,23 @@ the API should be considered less stable than for the other options.
 
 --no-links             Suppress generation of hyperreferences, used for minimal diffs
                        (option --only-changes of latexdiff-vc).
+
+Directives:
+Special comments in the latex source that modify latexdiff behaviour.
+In the new file, those directives can be used:
+%BEGIN DIFNOMRKUP
+%END DIFNOMRKUP
+  Tell latexdiff to not mark up the enclosed text.
+
+%BEGIN DIFADD
+%END DIFADD
+  Tell latexdiff to mark up the enclosed text as added.
+
+In the old file, those directives can be used:
+%BEGIN DIFDEL
+%END DIFDEL
+  Tell latexdiff to mark up the enclosed text as deleted.
+
 EOF
   exit 0;
 }
@@ -4986,6 +5064,95 @@ treat VERBATIMLINEENV environments treated exactly the same way as VERBATIMENV e
 
 =back
 
+=head1 DIRECTIVES
+
+I<Note that this section describes planned functionality that is not
+=yet implemented!>
+
+Sometimes, the output C<latexdiff> produces is not satisfactory or
+some complicated constructions even lead to difference tex file that
+leads to error. It is possible to give  
+latexdiff some hints to control the markup by placing some special
+comments, termed I<directives> into the tex file. Directives mark
+blocks by paired C<BEGIN> and C<END> directives. It is important that
+the directives are written exactly as specified below,i.e., all
+letter need to be capitalised and there has to be exactly one space
+between BEGIN/END and the block type. However, after the directive
+arbitrary comments can be added. Nesting of blocks or overlapping
+blocks are not parsed correctly and will cause undefined behaviour.
+Blocks can be spanning across scope boundaries, but avoid using those directives in the arguments of commands; the only exception are text commands, when the block is fully included in the argument. 
+
+=over 10 
+
+=item C<DIFADD> block
+
+ ...
+ %BEGIN DIFADD
+ ...
+ %END DIFADD
+ ...
+
+Everything enclosed between the  C<%BEGIN DIFADD> and C<%END DIFADD> directives will be treated as atomistic addition to the
+text. The interior will be marked up as added text following the
+normal rules for what is marked up. A use case for this directive is
+when a paragraph has been changed substantially but retains some of
+the phrasing of the original paragraph. As latexdiff prefers to find
+a minimal difference between two files, such a configuration will
+usually lead to a fragmented markup, with several added and deleted
+sentences or parts of sentenced and a few remaining phrases marked as
+unchanged. With the use of this directive it is possible to mark the
+whole modified segment as new, which will then be marked-up `en bloc'
+as new, and the old part as one block of deleted material, which is
+usually clearer than the fragmented default markup. 
+C<DIFADD> block directives must be placed into the the body of the new
+file. Those directives are ignored in the preamble or in the old file.
+
+=item C<DIFDEL> block
+
+ ...
+ %BEGIN DIFDEL
+ ...
+ %END DIFDEL
+ ...
+
+Everything enclosed between the  C<%BEGIN DIFDEL> and C<%END DIFDEL>
+directives will be treated as atomistic deleted text.
+The interior will be marked up as deleted text following the
+normal rules for what is marked up. 
+C<DIFDEL> block directives must be placed into the the body of the old
+file. Those directives are ignored in the preamble or in the new
+file.The use case is similar to that of the C<DIFADD> blocks, but the
+hint is placed in the old file. In most cases, is sufficient to either
+hint in the old file with a C<DIFDEL> block I<or> in the new file with
+a C<DIFADD> block and latexdiff will take care of the rest. 
+
+=item C<DIFNOMARKUP> block
+
+ ...
+ %BEGIN DIFNOMARKUP
+ ...
+ %END DIFNOMARKUP
+ ...
+
+The text between the markers will be included in the diff  algorithm
+but no actual markup will be included in this part of the text. It
+will show the new text only and suppress the old text. If the text
+immediately above the DIFNOMARKUP block has been added a
+C<\DIFaddend> will be placed directly above the C<%BEGIN DIFNOMARKUP>
+line and any open C<\DIFadd> command terminated, equivalently for
+deleted blocks and for text added or deleted immediately after the
+C<%BEGIN DIFNOMARKUP>. The main purpose of this command is to salvage
+the situation if latexdiff has produced invalid  or visually
+unacceptable output - markup in the offending passage can be
+suppressed by surrounding it with C<DIFNOMARKUP> directives and
+rerunning latexdiff, thus enabling markup of the rest of the document. 
+This pair of directives must be placed in the new file and will be
+=ignored in the old file (or the preambles of either file). 
+
+
+
+=back
+
 =head1 COMMON PROBLEMS AND FAQ
 
 =over 10
@@ -5026,11 +5193,11 @@ This problem is not limited to C<latexdiff> and has to do with the default setti
 
 =back
 
-=head1 BUGS
+=head1 KNOWN BUGS
 
 =over 10
 
-=item Option allow-spaces not implemented entirely consistently. It breaks
+=item Option C<--allow-spaces> is not implemented entirely consistently. It breaks
 the rules that number and type of white space does not matter, as
 different numbers of inter-argument spaces are treated as significant.
 
