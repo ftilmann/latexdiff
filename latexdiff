@@ -39,7 +39,8 @@
 #  - Commands that were both in the safecmd and textcmd list, and which have additional arguments beyond the last textual one (optional or non-optional) could lead to errors, if there was a change in those earlier arguments  (fixes #306, first reported through debian bug report)
 #  - Commands/RegExs explicitly defined as not safe with --exclude-safecmd are now also considered unsafe in COARSE and WHOLE math markup (Fixes #311)
 #  - add directive pair  %BEGIN DIFNOMARKUP, %END DIFNOMARKUP that can suppress markup locally 
-#
+#  - add directive pairs %BEGIN DIF(ADD|DEL), %END DIF(ADD|DEL) that causes blocks to be marked up as a whole
+# 
 # Version 1.3.4:
 # New features:
 #  - Option to use lua-ul instead of ulem (for use with LuaLaTeX) (fixes #17, #60, #188, #255, #270)
@@ -469,7 +470,7 @@ my ($assign,@config);
 my ($pkg,%packages);
 
 # Global variables for keeping state across subroutines 
-our $block_markup = 0;         # 0: do not block markup, 1: block markup  (supporting DIFNOMARKUP directives)
+our $suppress_markup = 0;         # 0: do not block markup, 1: block markup  (supporting DIFNOMARKUP directives)
 
 
 # Defaults
@@ -2046,17 +2047,11 @@ sub bodydiff {
   print STDERR "(",exetime()," s)\n","Pass 1: Expanding text commands and merging isolated identities with changed blocks  " if $verbose;
   pass1(\@oldwords, \@newwords);
 
-###  my $token;
-###  $i=0;
-###  foreach $token ( @oldwords ) {
-###    $i++;
-###    print STDERR "OLDP1 $i: $token\n";
-###  }
-###  $i=0;
-###  foreach $token ( @newwords ) {
-###    $i++;
-###    print STDERR "NEWP1 $i: $token\n";
-###  }
+  ### print STDERR "(",exetime()," s)\n","tokenizeblocks:  " if $verbose;
+  
+  # make blocks enclosed by %BEGIN|END DIFFadd|DIFdel into a single token (for markup they will be split again in marktags() ) 
+  tokenizeblocks(\@oldwords,"DIFDEL");
+  tokenizeblocks(\@newwords,"DIFADD");
 
   print STDERR "(",exetime()," s)\n","Pass 2: inserting DIF tokens and mark up.  " if $verbose;
   if ( $debug ) {
@@ -2443,6 +2438,48 @@ sub iscmd {
   return 1;
 }
 
+# tokenizeblocks( \@seq, $blocktype)
+# destructively turn blocks enclosed by %BEGIN|END $blocktype into a single token for the sequence pointed 
+# to by \@seq
+sub tokenizeblocks {
+  my ($seq,$blocktype)=@_;
+  my @new_seq=();
+  my @accumulate=();
+  my ($token);
+  my $mode;     # 0: copy mode, 1: accumulate mode (inside block)
+
+  $mode = 0;
+  foreach $token ( @$seq ) {
+    if ( $token =~ m/^%BEGIN $blocktype/ ) {
+      if ($mode == 1 ) {
+        print STDERR "WARNING: Two consecutive %BEGIN $blocktype directive detected. Maybe the preceding %END $blocktype was placed in a command argument and overlooked?\n";
+        # We assume that this occurs because previous %END $blocktype was overlooked rather than actual nesting
+        # therefore we append the accumulated tokens as indivual tokens, effectively ignoring the previous BEGIN directive but
+        # honouring the current one
+        push(@new_seq,@accumulate);
+      }
+      $mode = 1;
+      @accumulate=($token);
+    } elsif ( $token =~ m/^%END $blocktype/ ) {
+      if ( $mode  ) {
+         # regular behaviour
+        $mode = 0;
+        push(@accumulate,$token);
+        push(@new_seq,join("",@accumulate));   # append the merged tokens so they appear as a single token
+      } else {
+        print STDERR "WARNING: %END $blocktype directive without preceding BEGIN $blocktype. Maybe the preceding %BEGIN $blocktype was placed in a command argument and overlooked?\n";
+        # We assume that this occurs because previous %BEGIN $blocktype was overlooked rather than actual nesting
+        # We have to do nothing here (except add the token to the sequence)
+        push(@new_seq,$token);
+      } 
+    } elsif ( $mode ) {
+      push(@accumulate,$token);
+    } else {
+      push(@new_seq,$token);
+    }
+  }
+  @$seq=@new_seq;
+}
 
 # pass2( \@seq1,\@seq2)
 # Look for differences between seq1 and seq2.
@@ -2464,7 +2501,7 @@ sub pass2 {
   my $addhunk   = [];
 
   # State variable that should be accessible to subroutines 
-  local $block_markup = 0;         # 0: do not block markup, 1: block markup  (supporting DIFNOMARKUP directives)
+  local $suppress_markup = 0;         # 0: do not block markup, 1: block markup  (supporting DIFNOMARKUP directives)
 
   my $discard = sub { $deltokcnt++;
 ### print "DISCARD $_[0],$_[1]: $seq1->[$_[0]]\n";
@@ -2494,10 +2531,10 @@ sub pass2 {
         ### # save procedure
         ### my $cnt_bnomarkup = scalar(grep { /^%BEGIN DIFNOMARKUP/ } @$retval); 
         ### my $cnt_enomarkup = scalar(grep { /^%END DIFNOMARKUP/ } @$retval); 
-        ### if ( $cnt_bnomarkup == $cnt_enomarkup+1 && !$block_markup ) {
-        ###   $block_markup = 1;
-        ### } elsif ( $cnt_bnomarkup+1 == $cnt_enomarkup && $block_markup ) {
-        ###   $block_markup = 0;
+        ### if ( $cnt_bnomarkup == $cnt_enomarkup+1 && !$suppress_markup ) {
+        ###   $suppress_markup = 1;
+        ### } elsif ( $cnt_bnomarkup+1 == $cnt_enomarkup && $suppress_markup ) {
+        ###   $suppress_markup = 0;
         ### } elsif { $cnt_bnomarkup == $cnt_enomarkup ) {
         ###   pass;     # DIFNOMARKUP directives are paired appropriately
         ### } else {
@@ -2508,9 +2545,9 @@ sub pass2 {
 		    
 		    if ( scalar @nomarkups ) {
 		      if ( $nomarkups[-1] =~ /^%BEGIN DIFNOMARKUP/ ) {
-		        $block_markup = 1;
+		        $suppress_markup = 1;
 		      } elsif ( $nomarkups[-1] =~ /^%END DIFNOMARKUP/ ) {
-			$block_markup = 0;
+			$suppress_markup = 0;
 		      }
 		    }
 	  ###        }
@@ -2540,7 +2577,7 @@ sub pass2 {
 # exclude all other exceptions from scope of open, close like this
 # ($openmark, $open,...,$close, $opencmd,command, command,$closecmd, $open, ..., $close, $closemark)
 # If $opencmd begins with "%" marktags assumes it is operating on a deleted block, otherwise on an added block.
-# marktags also respects the local variable $block_markup, which if set to 1 will block markup; and also
+# marktags also respects the local variable $suppress_markup, which if set to 1 will block markup; and also
 # updates it if encountering DIFNOMARKUP directives
 sub marktags {
   my ($openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment,$block)=@_;
@@ -2553,9 +2590,9 @@ sub marktags {
                 # for keeping track whether we are just in a command sequence or in a word sequence
   my $cmdcomment= ($opencmd =~ m/^%/);  # Flag to indicate whether opencmd is a comment (i.e. if we intend to simply comment out changed commands). Usually this means we are in a deleted block
   my ($command,$commandword,$closingbracket) ; # temporary variables needed below to remember sub-pattern matches
-  our $block_markup;   # we need to keep track across function calls, and also modifications outside
+  our $suppress_markup;   # we need to keep track across function calls, and also modifications outside
 
-# split this block to split sequences joined in pass1
+# split this block to split sequences joined in pass1, and %BEGIN|END DIFADD|DIFDEL blocks 
   ### print STDERR "DEBUG: marktags before splitlatex blocksplit ",join("|",@$block),"\n" if $debug;
   @$block=splitlatex(join "",@$block);
   ### print STDERR "DEBUG: marktags $openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment\n" if $debug;
@@ -2568,10 +2605,10 @@ sub marktags {
 
   foreach (@$block) {
     $word=$_;
-    ### print STDERR "DEBUG MARKTAGS: |$word| $block_markup | $cmdcomment\n" ;
+    ### print STDERR "DEBUG MARKTAGS: |$word| $suppress_markup | $cmdcomment\n" ;
     # check for DIFNOMARKUP tags but ignore them in deleted blocks
     if ( ! $cmdcomment && $word =~ /^%BEGIN DIFNOMARKUP/ ) {
-      $block_markup = 1;
+      $suppress_markup = 1;
       # close any open blocks if needed:
       push (@$retval,$close) if $cmd==0;
       push (@$retval,$closecmd) if $cmd==1;
@@ -2587,11 +2624,11 @@ sub marktags {
       next;
     }
     if ( ! $cmdcomment &&  $word =~ /^%END DIFNOMARKUP/ ) {
-      $block_markup = 0;
+      $suppress_markup = 0;
       push (@$retval,$word);
       next;
     }
-    if ( $block_markup ) {
+    if ( $suppress_markup ) {
       # simply add the words as received without marking up
       push (@$retval,$word);
       next;
@@ -5065,9 +5102,6 @@ treat VERBATIMLINEENV environments treated exactly the same way as VERBATIMENV e
 =back
 
 =head1 DIRECTIVES
-
-I<Note that this section describes planned functionality that is not
-=yet implemented!>
 
 Sometimes, the output C<latexdiff> produces is not satisfactory or
 some complicated constructions even lead to difference tex file that

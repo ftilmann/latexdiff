@@ -1,0 +1,1142 @@
+\documentclass[reviewcopy]{elsart}
+
+%\pagewiselinenumbers
+\usepackage{graphicx}
+\renewcommand{\includegraphics}[2][]{\fbox{#2}}
+
+
+% Template article for preprint document class `elsart'
+% with harvard style bibliographic references
+% SP 2006/04/26
+
+%\documentclass{elsart}
+
+% Use the option doublespacing or reviewcopy to obtain double line spacing
+% \documentclass[doublespacing]{elsart}
+
+% the natbib package allows both number and author-year (Harvard)
+% style referencing;
+\usepackage{natbib}
+\bibliographystyle{elsart-harv}
+
+
+\usepackage{graphicx}
+\usepackage{mylatex}
+
+% if you use PostScript figures in your article
+% use the graphics package for simple commands
+% \usepackage{graphics}
+% or use the graphicx package for more complicated commands
+% \usepackage{graphicx}
+% or use the epsfig package if you prefer to use the old commands
+% \usepackage{epsfig}
+
+% The amssymb package provides various useful mathematical symbols
+%\usepackage{amssymb}
+
+% The lineno packages adds line numbers. Start line numbering with
+% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
+% for the whole article with \linenumbers.
+% \usepackage{lineno}
+
+% \linenumbers
+\begin{document}
+
+\begin{frontmatter}
+
+% Title, authors and addresses
+
+% use the thanksref command within \title, \author or \address for footnotes;
+% use the corauthref command within \author for corresponding author footnotes;
+% use the ead command for the email address,
+% and the form \ead[url] for the home page:
+% \title{Title\thanksref{label1}}
+% \thanks[label1]{}
+% \author{Name\corauthref{cor1}\thanksref{label2}}
+% \ead{email address}
+% \ead[url]{home page}
+% \thanks[label2]{}
+% \corauth[cor1]{}
+% \address{Address\thanksref{label3}}
+% \thanks[label3]{}
+
+\title{Seismicity in the outer rise offshore southern Chile:
+  indication of fluid effects in crust and mantle}
+
+% use optional labels to link authors explicitly to addresses:
+% \author[label1,label2]{}
+% \address[label1]{}
+% \address[label2]{}
+
+\author[cam]{Frederik J. Tilmann\corauthref{cor1}}
+\corauth[cor1]{Corresponding author}
+\ead{tilmann@esc.cam.ac.uk} 
+\author[ifm]{Ingo Grevemeyer}
+\author[ifm]{Ernst R. Flueh}
+\author[ifm]{J\"urgen Go{\ss}ler}
+\author[ifm]{Martin Scherwath}
+\author[ham]{Torsten Dahm}
+
+\address[cam]{Bullard Laboratories, University of Cambridge,
+  Cambridge CB3 0EZ, UK}
+\address[ifm]{IfM-GEOMAR, Kiel, Germany}
+\address[ham]{Institute for Geophysics, University of Hamburg, Hamburg, Germany}
+
+\begin{abstract}
+% Text of abstract
+\remark{EPSL limits: 6500 words in main text, 10 figures, 80 refrences}
+(Type abstract here)
+\end{abstract}
+
+\begin{keyword}
+subduction \sep outer rise \sep seismicity \sep fluids and earthquakes \sep serpentinization
+% keywords here, in the form: keyword \sep keyword
+\PACS 91.30.Dk \sep 91.30.Ga \sep 91.30.Ye \sep 91.50.Wy \sep 91.55.Tt
+% PACS codes here, in the form: \PACS code \sep code
+% 91.30.Dk Seismicity
+% 91.30.Ga Subduction zones
+% 91.30.Ye Oceanic crust seismology
+% 91.50.Wy      Subduction zone processes
+% 91.55.Tt      Role of fluids
+\end{keyword}
+
+\end{frontmatter}
+
+% main text
+\section{Introduction}
+
+The outer rise forms an integral part of the subduction system with
+regard to both material fluxes and stress distribution. Faulting at
+the outer rise is thought to provide pathways for water into the
+lithosphere, both its crustal part \citep{kirby96} and probably also
+into the mantle  \citep{ranero03}; it therefore exerts a strong
+influence on melt generation and rheology further down the subduction
+system.  The causative stress field is a superposition of bending
+stresses and regional horizontal stresses \citep{christensen88}.
+Because the latter varies through the seismic cycle of the interplate
+megathrust \citep[e.g.][]{taylor96}, with trench-perpendicular
+compression late in the cycle and tension early in the cycle,
+\citet{christensen88} proposed that an 
+increased numbers of outer rise thrust events indicates an
+interplate-thrust close to the rupture limit, whereas many normal faulting events
+are expected to follow great interplate earthquakes. However, actual
+mechanisms also depend on the loading history \citep{mueller96b}, such that the
+relationship is likely to be more complicated than suggested by this
+simple idea.
+
+In addition to
+its significance to the subduction system, the outer rise region also
+plays host to most of the world's oceanic intraplate  seismicity
+(excluding intermediate and deep-focus earthquakes which might be
+controlled by different frictional laws).  
+%Because the temperature and
+%composition of oceanic plates is comparatively well understood,
+Intra-plate earthquakes in oceanic mantle have been used to show that
+temperature is the dominant factor controlling the
+depth of brittle faulting \citep{wiens83}, with 650\dg C being the
+maximum temperature at which earthquakes are observed
+\citep{mckenzie05}.
+However, all previous studies of outer rise seismicity and oceanic
+intraplate seismicity in general exclusively utilised teleseismic and
+regional data \citep[e.g.][]{wiens83,christensen88}. This approach allows global
+  coverage but limits the analysis to strong earthquakes ($m_b>\sim
+  5.5$). This limitation poses particular problems for very young
+  oceanic plates where few events of sufficient magnitude
+  occur.\remark{better check this statement for other TJs}
+Moreover, the finite source properties of the larger of these events
+make it hard to ascertain the maximum depth of faulting (as opposed to
+the hypocentre, see \citet{tichelaar92}).
+Here, we take the complementary approach and use a dense array of
+ocean bottom stations to characterize micro-earthquake activity in the
+outer rise of the Chilean subduction zone.
+
+A number of fracture zones north of the Chile triple junction segment
+the Nazca plate which subducts at the Chilean margin. No significant
+variation exists in 
+%either the fossil spreading rate (5-12
+%cm/yr  between the TJ and 40\dg S) 
+% full spreading rates seaward of trenchmeasured from Ingo magnetic anomalies map: 
+% 4.7 cm/yr at 47 S 
+% 8.0 cm/y  at 43 S
+% 12.3 cm/y at 41 S
+%
+%gmtdefaults -D >.gmtdefaults4
+%gmtset PAGE_ORIENTATION portrait
+%makecpt -Crainbow  -T0/200/20  > rate.cpt
+%makecpt -Crainbow  -T10/40/2  > rate.cpt
+%grdimage -Y4 /usr/local/gmt/data/agegrid/rate_1.6.grd -Crate.cpt -R-87/-70/-49/-35 -JM14.6 -Ba5g5f1 -K > rate_chile.ps
+%grdcontour /usr/local/gmt/data/agegrid/rate_1.6.grd -R -JM -A10 -C5 -L0/40 -O -K >>rate_chile.ps
+%psscale -Crate.cpt -B5 -D5/-2/10/1h -O >>rate_chile.ps
+%
+%grdimage -Y4 /usr/local/gmt/data/agegrid/age_1.6.grd -C/usr/local/gmt/data/agegrid/age.cpt -R-87/-70/-49/-35 -JM14.6 -Ba5g5f1 -K > age_chile.ps
+%psscale -C/usr/local/gmt/data/agegrid/age.cpt -D5/-2/10/1h -O >>age_chile.ps
+the convergence rate between the Nazca and South American
+plates (7.9  - 8.0 cm/yr, near trench-perpendicular convergence of
+N79E) \citep{demets94}. 
+% octave:4> [vel,az]=rpm(-46,-76,'sa','nz','nuvel1a')
+% octave:5> [vel,az]=rpm(-35,-74,'sa','nz','nuvel1a')
+% octave:5> [vel,az]=rpm(-40,-75,'sa','nz','nuvel1a')
+On the other hand, large variations in thermal structure are expected
+because the square root of time dependence of plate cooling results in
+strong age dependence for young plates.
+%This leaves the age of the oceanic plate as
+%the only large-scale tectonic parameter likely to influence processes
+%at the outer rise. 
+%  Because on the segment just north of the triple
+%junction the spreading ridge is so close to the outer rise that no
+%distinct outer rise region can be identified, 
+We have placed seismic arrays on the second and
+third youngest subducting 
+segments (age at the trench 6 and 14 Ma at center of segment, respectively), which are
+bounded, from south to north by the Guamblin, Guafo and Chiloe
+fracture zones.  This
+experiment forms part of the TIPTEQ project, such that the passive
+seismic data are complemented by refraction profiles as
+well as swath mapping and magnetic profiling. 
+
+\section{Data and processing}
+
+The northern array consisted of 7 ocean bottom hydrophones (OBH) and 10 four-component stations (ocean
+bottom seismometers - OBS).
+% STA1 no significant data obh13 
+   The southern array consisted of 2 OBH and 10 OBS.  All stations
+   were sampling continuously at 100 Hz, except OBH28 within the
+   southern array (50 Hz). Two
+   stations, one in each array did not return any useful data (see
+   the supplementary material for a table of station locations and
+   instrument types). 
+   The hydrophone records generally showed clear
+   P onsets and, for most stations, could easily be picked on
+   the unfiltered traces (see  supplementary Figure~\ref{figa:waveform}). 
+.  Strong S arrivals were visible on all
+   seismometer components (including the vertical) but were
+   characterized by ringing, nearly monochromatic waveforms, presumably due to resonances within the shallow
+   sediment. The P arrivals on the hydrophone channels were usually
+   succeeded by a strong arrival on the horizontal channels 0.5--1~s
+   later, with the time delay varying from station to station but
+   being similar between events.  Similarly, S arrivals were preceded
+   by precursory arrivals, which were particularly clear on the hydrophone
+   channels, but also appeared on the horizontal components, again
+   separated by approximately 0.5--1~s from the main arrival.  The
+   delayed and precursory phases are presumably related to
+   mode-conversions at the basement. Active source data show that sediment
+   thickness does not exceed 500~m in the area of the array
+   \citep{ifmgeomar02} but the observed large delays are easily
+   explained by extremely low S velocities ($<$100 m/s) in the
+   uppermost layers of unconsolidated marine sediment. \remark{needs a
+     reference}.  
+% Care was taken during picking to pick the main
+%   S arrival and not the precursory mode-conversion.
+
+\subsection{Location and magnitude determination}
+
+Before any further analysis timing and location of the ocean bottom
+stations were corrected as described in the supplementary material.
+\begin{enumerate}
+\item Generation of  a preliminary list of events
+with a STA/LTA trigger algorithm that  detects nearly
+coincident changes in the amplitude at several stations.  
+\item Manually inspect all trigger events and pick arrivals, assigning
+a subjective weight to each pick. Remove
+events, which are unclear, presumably not earthquakes, or cannot be
+picked on at least three stations. 
+\item Obtain a preliminary location of each event by linearised
+inversion and using a 1-D velocity model derived from the refraction
+data \citep[see supplementary material for velocity
+model]{scherwath06}.   % reference to EOS article
+% STA2: grep '1$' /work/tilmann/SEISAN8/WOR/STA2_/STA2_alls20.nor | wc -l
+% STA1: grep '1$' /work/tilmann/SEISAN8/WOR/STA1_/STA1_all.nor | wc -l
+A total of 656 events were located by the northern array, and 1114
+events by the southern array.
+\item Based on preliminary locations, temporarily remove events which
+  were recorded by less than 5 stations, have only picks for one phase
+  type (P or S), or are far from the array (azimuthal gap
+  $>300\dg$).
+% STA2: grep '1$' /work/tilmann/SEISAN8/WOR/STA2_/STA2_goods20.nor | wc -l
+% STA1: grep '1$' /work/tilmann/SEISAN8/WOR/STA1_/STA1_good.nor | wc -l
+ This reduced event set comprised 240  events for the
+  northern array, and 484 events for the southern array.
+
+\item Apply the joint
+  hypocenter determination (JHD) method to the restricted event sets (using
+  \textsc{Velest} \citep{kissling94}).  Station delays for S were large ($\sim 1$s) and did
+  not correlate well with P delays but instead correlated with
+  the observed delays between the P arrival and the delayed phase, and
+between the S-precursor and main S arrival.  This observation is consistent
+  with our interpretation of a zone of extremely low S velocities
+  causing much of the delay between direct and mode-converted phases. 
+\item For the southern array only, we further restrict the data set to
+  those events with a gap of less than 200\dg and eliminating outlier
+  picks 
+  with residuals larger than 0.75~s (after JHD).
+% STA2: grep '1$' /work/tilmann/SEISAN8/WOR/STA2_/inarray.sgl.s20.jhdfresh.nosed-vpvs18.nor | wc -l 
+% 
+  This procedure leaves 287 events. A minimum 1D-model is determined
+  for this event set \citep{kissling94}.  We tested the robustness of the minimum-1d
+  model by randomly perturbing the starting model and comparing the resulting models and depth distributions.
+  Only slight differences in average event depths are found
+  ($<$1~km). Similarly, even with extreme variations in starting event
+  depths,
+%(all starting depths set to 15 km)
+ the resulting final depth distributions and models are
+  similar. \\
+  Most of the events were located at the margin or outside the
+  northern array, so that a minimum-1D model could not be determined.
+  However, the velocity structure of the northern array is
+  constrained by both trench-parallel and -perpendicular refraction
+  lines \citep{scherwath06}
+such
+  that the lack of a minimum-1D model in the north should not
+  compromise our ability to determine accurate
+  locations. \remark{probably should reference Contreras at this
+    point. Is there anything suitable}
+\item Using the station terms and, in the south, minimum 1D-model
+  derived in the previous two steps we relocate all earthquakes using
+  the non-linear oct-tree search algorithm \citep{lomax00}.  This method efficiently
+  explores the probability density function for location associated
+  with a particular earthquake, and as such provides much better
+  information on location errors than linearized inversions.  The
+  maximum-likelhood location is retained as the catalogue location. 
+\item 
+Finally, moment magnitudes are estimated using the automated procedure
+of\citet{ottemoeller03}, which was modified to account for the
+requirements of the ocean bottom data (see supplementary material for
+further information).  
+\end{enumerate}
+
+\subsection{Correlation and cluster identification}
+
+We cross-correlate the waveforms from all events.  In many cases, an
+extremely high degree of waveform similarity is observed between the traces of
+different events, with correlation coefficients 
+as high as 0.95 for a correlation window of 9.5 s, equivalent to more
+than 60 oscillations at the dominant period of the data (Figure~\ref{fig:clust-waveform-histo}a).
+We identify
+all events with similar waveforms and group them into clusters using
+hierarchical clustering with the dendrogram method \remark{Ref needed}.  During the deployment
+period, 41\% of events within the southern array exhibited a high
+degree of waveform similarity with at least one other event, with the
+largest cluster encompassing 27 events (Figure~\ref{fig:clust-waveform-histo}c). For the northern array,  32\%
+of events are members of a cluster, and the largest cluster consisted
+of 11 events \ref{fig:clust-waveform-histo}b).   Within 
+both arrays doublets were the most common type of cluster.
+% Percentages from last line of merge_P_BP5-20P2_9-5.clusters
+
+For all identified clusters, cross-correlation time
+differences are evaluated using a short window of 0.4 s for the P
+arrival and 0.6~s for the S wave (with lead-in times before the P or S
+pick of 0.1 and 0.2~s, respectively). The short time window minimises
+the impact of scattered arrivals, while the restriction of correlation
+time measurements to known clusters eliminates the possibility of
+obtaining spurious measurements with high correlation coefficients
+which otherwise are expected to occur by chance for short time windows.
+All events are relocated using the double-difference procedure with
+both catalogue and correlation times but only approximately half the
+events are sufficiently linked to neighbouring events to be included
+in the double-difference inversion (see Figure~\ref{fig:epimaps}).
+
+% Command to get these numbers
+% run_all.csh analyse_clust_times
+A cluster location for all clusters of three or more events is derived
+by first aligning the waveforms, and then using the median of the
+manual picks of individual events as the cluster arrival time.  This
+procedure also allows an independent verification of the manual
+picking errors.  If we define the picking error as the difference
+between the earliest and latest pick within a nearly identical
+waveform, the average picking error for P is 0.06-0.10~s (maximum: 0.58-0.77~s)
+and the average error for S is 0.09-0.10~s (maximum 0.38-0.88).; the
+lower bound pertains to the southern array and the upper bound to the
+northern array.  
+% except maximum S where it is the other way round.
+ It has to be remembered that these picking errors are only valid for
+ identified clustered events and might not be representative of the
+ overall dataset. 
+
+Lastly, for all those cluster locations 
+with small azimuthal
+gaps and good depth constraints we pick the polarity of arrivals on the hydrophone
+component. The ability to view nearly-identical signals on several
+traces strongly reduces the likelihood of misidentifications of
+polarities due to the presence of noise. The station density is not
+high enough to determine reliable focal mechanism solutions for
+individual clusters but an estimate of the regional stress field was
+made using the method of \citet{robinson00}, which attempts to fit the
+first motions of all earthquakes simulataneously by varying the
+direction of the regional P and T axes and using the assumptions that earthquakes
+occur on optimally oriented fault planes.  Because bending might cause
+a variation of the `regional' stress with depth, we separate the event set
+into shallow crustal ($<$4 km below the seafloor) and deep
+crustal/mantle earthquakes ($>$4 km) below the seafloor.
+
+Because most of the activity in the north is just outside the array,
+the first motions do not provide a meaningful constraint on the
+stress field there and were not picked.
+\remark{Vertical component not suitable because of low gain}
+
+\section{Results}
+
+\subsection{Epicenters and magnitude distribution}
+
+The seismic activity recorded by the northern array is strongly
+concentrated in a small area of about 10$\times$20~km$^2$
+(Figure~\ref{fig:epimaps}a).  Event
+rates within this area drop sharply from 10 events per day to 1.7 per
+day on December
+23. (Event rates only take into account events in the reduced set with
+magnitude
+determinations).  As outside this region events occur at  a nearly constant rate of
+2.3 events per day throughout the experiment, and no  changes to the network configuration took
+place near December 23 we are probably witnessing the tail end of an
+earthquake swarm with event magnitudes up to $M_W$=2.7, but no clear
+mainshock-aftershock sequences.   Even after December 23, the swarm
+region remains the most active region in terms of number of events per
+area.
+
+In contrast, no single region dominates in the region of the southern
+array, and the event rate is 10 
+events/day throughout.  Some events form elongated groups that are
+aligned sub-parallel to the pre-existing fabric; however, the clearest
+of these groups,
+between obh19 and obs24~(Figure~\ref{fig:epimaps}b), actually subtends an angle
+of nearly 20\dg\ with pre-existing seafloor fabric.  
+
+The frequency-magnitude distribution (Figure~\ref{fig:freq-mag}) of
+events in both sub-arrays is
+characterized by b values between 1.5 and 1.7. 
+%b values this large are
+%typically only  found in volcanic or geothermal
+%areas, or in creeping sections of faults \citep{wiemer02}.  
+There is
+some suggestion in Figure~\ref{fig:freq-mag} that the b value of the northern array is biased upwards by
+the swarm activity, but the number of earthquakes outside the swarm
+region is too small for a reliable estimate. 
+The magnitude of completeness $M_c$ differs by 0.4 magnitude units between
+the southern and northern arrays.
+The greater sensitivity of the southern array 
+ is a sufficient  explanation for the larger total number of events
+recorded by it.
+  In fact, event rates for events with $1.5<M_W<2.5$
+are very similar for both arrays if the swarm region of the northern array is
+excluded.   Given comparable station densitities within both arrays,
+the cause of the different sensitivities is not clear; possibly, it
+is related to the spatial distribution of seismicity: for the
+southern array, most earthquakes are shallow and within the array;
+for the northern array, the average earthquake depth is larger, and
+most earthquakes occur outside the array. In the southern array, small
+earthquakes are thus more likely to be recorded by a sufficient number
+of stations to be included in the reduced set. 
+An alternative explanation for the apparent different $M_c$ values 
+could be a systematic difference in the average station
+amplification factors (see appendix~\ref{sec:magnitude}) of both
+arrays. This explanation would imply that seismicity rates are indeed
+larger for the southern array.  A direct comparison of the magnitude
+estimates for the two events recorded by both arrays does indeed show
+a systematic shift consistent with the latter explanation but
+uncertainties are too large to be conclusive. 
+
+\subsection{Event depths}
+
+Within both arrays, most earthquakes occur within the crust but both
+also show significant activity in the mantle
+(Figures~\ref{fig:dephistos} and~\ref{fig:profiles}). Within the southern array, the deepest
+well-located vents occur at a depth of
+$\sim$10~km (Figures~\ref{fig:profiles}) below the seafloor, only slightly deeper than the
+maximum depth of faulting at slow-spreading ridges
+\citep[e.g.][]{toomey88,tilmann04}.  Asssuming purely conductive
+cooling, this depth corresponds to temperatures of 500-600\dg
+C, although hydrothermal activity  near the ridge or at the outer rise
+could result in somewhat lower
+ temperatures.  We find a
+larger fraction of deep events in the region of the northern array
+(Figures~\ref{fig:dephistos}) but
+a more quantitative comparison is precluded by the small number of
+events with well-constrained depths in the north. A later array
+deployment landward of the trench located intra-oceanic-plate
+earthquakes in the trench region of this segment (75.5\dg W) with a maximum depth of
+$\sim$30~km \citep{lange07}. 
+
+\subsection{Cluster analysis}
+
+The location of cluster events appears to reflect the overall
+distribution of seismicity.  There are distributed through the
+experimental region in the south, and are strongly concentrated within
+the swarm region in the North (Figure~\ref{fig:clust-location}).  In
+particular, cluster type events occur both within the crust and mantle
+within the southern array.  Within the northern array, the fact that
+most clusters locate outside or at the limit of the array and therefore
+have poor depth determination precludes us from making a similar
+assertion about the northern array.   Short intervals between events
+belonging to the same cluster are common, with occasional reactivation
+after a longer waiting times.  In fact, the recurrence interval
+distribution follows a power-law (Figure~\ref{fig:clust-statistics}),
+which indicates that the individual events of a cluster do neither occur
+independently of each other, nor do they seem to recur at
+quasi-periodic intervals.  The deficit of events at very short
+recurrence intervals (below $\sim$100s) could possibly have arisen from our
+processing method which often  misses events which occur in the
+coda of a previous event.
+
+The events within a cluster can differ in
+magnitude by up to one magnitude unit \remark{check and modify
+  appropriately, I have a feeling it is somewhat more}, but the
+largest event can occur at any time within the sequence, i.e. they
+cannot be understood in terms of a mainshock with its aftershocks.
+This is also likely to be true when considering the swarm in the
+northern array where the largest event occurs close to the end of the
+sequence.  We cannot categorically exclude a large earthquake before
+the beginning of our survey (but small enough not to be registerd
+teleseismically), but the abrupt end of the swarm argues against its
+interpretation as an aftershock sequence.
+
+\subsection{Stress directions}
+
+The stress fields estimated from the shallow and deep event set within
+the southern array are both characterized by a sub-horizontal EW to
+ENE-WSW oriented pressure axis but differ in the orientation of the
+tension axis (Figure~\ref{fig:focmec}). However, the uncertainty
+regions of both sets overlap, and fitting the whole dataset results in
+stress direction estimates very similar to those of the shallow set
+($\sigma_1$ az=260\dg, dip=10\dg; $\sigma_3$ azimuth=350\dg, dip=0\dg;) with only marginally reduced fit
+(\%ok=92.9).  Although  mechanism type for individual clusters
+could not be determined with any confidence the results were
+also generally compatible with EW compressional stresses, and were in
+particular generally {\em not} compatible with EW tensional stresses.
+
+\section{Discussion}
+
+Large $b$ values are typically found in volcanic or geothermal, or in
+the creeping sections of faults \citep{wiemer02}.  
+%\remark{not sure if the following is true, might be an artifact of
+%  magnitude measurements (see Okal and Romanowics paper):
+%$b$ values as large
+%as in the present study have also been observed near segment-centres
+%of slow-spreading mid-oceanic ridges where there is evidence of recent
+%magmatic injection events (Table~2 of \citep{tilmann04}; note in this
+%table $\beta$ values were quoted, where $b=\frac{2}{3}b$).}
+Similarly, the presence of a large number of earthquakes with strong
+waveform similarity over a short time span is typical of
+swarm-like activity.  Repeating earthquakes are also found in or near creeping
+sections of major faults \citep[e.g.][]{nadeau98} but are then
+generally characterised by more regular, and larger, inter-event
+times, and smaller variation in event magnitudes within a
+cluster. Power law distributions of waiting times can also
+arise in settings where elastic stress transfer dominates, but in this
+case mainshock-aftershock sequences result in the largest earthquakes
+preferentially occuring near the beginning of a sequence, contrary to
+our observations, 
+
+Swarm-type seismicity has been
+previously observed in the shallow crust following rainfall
+\citep{kraft06}, in the mid-crust in central Europe \citep{kurz04}, in
+the mid and upper crust in California and Japan \citep{vidale06}, and
+in the crust of the overriding plate of the Aegean subduction zone
+\citep{becker06} and other settings.  In all these setting, fluids
+have been implicated in causing the swarm seismicity. \remark{really need a better reference for
+Vogtland swarm.}  \citet{yamashita99} has developed a model which
+explains how the presence of fluids can lead to swarm type activity.
+In his model, overpressures within a fault allow earthquakes to
+occur.  As the earthquake progresses, permeability is created in the
+fault zone, which allows the overpressures to diffuse away, thereby
+arresting the earthquake before it becomes too large.  In this way
+mainshock-aftershock sequences are suppressed, and smaller events are
+more common. 
+
+The dramatic rate change within the northern array hints that swarm
+activity does indeed occur within our study region but the presence of
+ earthquakes with similar waveforms outside the area of this particular swarm as well
+as the fact that a high rate of similar earthquakes is observed in
+both arrays within two different segments of the incoming plate
+strongly suggests that this type of seismic activity is typical for
+the outer rise region in Southern Chile, rather than just a fortuitous
+recording of a rare swarm event.
+
+Based on the occurence of cluster events up to 8-9~km below the
+seafloor (for a $\sim$5~km crust), we thus infer
+the presence of fluids within both the crust and the  mantle below our southern
+array on the 6 Ma old plate. 
+We do not have sufficient
+depth control for a suitably large number of clusters within the
+northern array, but it seems reasonable to assume that cluster events
+occur at least as deep as below the southern array. We will now
+consider potential fluid sources. 
+\begin{enumerate}
+\item Melts. Minor magnetism has been observed on the outer rise of
+  old plates \citep{hirano04}, and has been attributed to
+  melts prevalent in the asthenosphere, which can migrate to the
+  surface following flexure-induced fractuirng. 
+  \citep{hirano06}.   However, observations of velocities in
+  the low velocity zone below the oceans  in conjunction with
+  measurements of the temperature dependence of seismic velocities at
+  seismic frequencies indicate temperatures below the solidus, and in
+  particular do not indicate the presence of melt \citep{priestley05,faul05}. 
+   Furthermore, the elastic thickness of a young plates
+   is expected to be very small, particularly at 6 Ma, and thus little flexure should
+  occur.   This   is borne out by the absence of an identifiable flexural bulge in either topography or
+  gravity \citep[e.g.]{bry03}.   We thus do not consider it likely that
+  the fluids implied by the seismicity are pervasive asthenospheric
+  melts.  The fluids also cannot be derived from remnant melt advected
+  with the plate from the ridge axis because
+  even at 6~Ma, a magma-filled sill or dike formed
+  at the ridge would need to be several kilometres thick in order to
+  escape solidification \citep{turcotte02}.
+% see page 166-168 of Turcotte&Schubert second edition for equation
+% b=sqrt(t/(4*ka*lambda^2))  
+% b : half-width of intrusion
+%
+% With the values of Turcotte and Schubert this gives b=14 km for 6 Ma
+% - I am not really sure what rock these values pertain to but kappa
+% seems roughly in line with lithospheric mantle, T constrast is
+% a little too large:
+% Thermal diffusivity kappa=  0.5 mm^2/s
+% Latent heat of melting  L=  320 kJ/kg
+% Temp excess of melt     Tmelt-T0= 1000 K
+% Specific heat           c=  12.kJ
+% b=sqrt(t/(4*ka*lambda^2))
+
+\item Water. As the minerals within the oceanic lithosphere experience
+  no significant pressure change on approach to the outer rise area,
+  it is not clear how water could be sourced from dehydration
+  reactions.  It is thus necessary to transport water throughout the
+  seismically active region.   One possibility is that seawater is
+  penetrating along major faults as proposed by \citet{ranero03} and
+  \citet{peacock01}.   In order for this mechanism to be feasible,
+  some basement outcrops are required to serve as inflow sites,
+ as the sedimentary blanket tends to be relatively
+ impermeable. 
+Basement is clearly exposed widely in the southern area
+(Figure~\ref{fig:epimaps}a), but only isolated outcrops can be seen in
+the northern area (Figure~\ref{fig:epimaps}a).  However,
+\citet{fisher03} had demonstrated that circulation cells can span
+surprisingly large lateral distances with up to 50~km between in- and
+outflow sites.  Heat flow measurements have been collected in the
+northern area along a trench-perpendicular profile \citep{heesemann07abs}. The
+heat flow matches the expectation from a purely conductive model at
+the westernmost measuring point but is much lower than expected (by 
+$\sim$60 mW/m$^2$) at the easternmost point; the heat flow
+measurements are well explained if the basement is cooled to near
+seabottom temperatures, proving that water enters the crust, similarly
+to what is observed in other outer rise areas with exposed
+basement in Nicaragua and Central Chile \citep{grevemeyer05}.
+
+  However,
+they cannot tell us how deep the water penetrates.  
+A 250~km long
+trench-perpendicular  refraction
+profile, approximately passing through obs03, obh06 and obh11, has
+been shot through the array \citep{contreras-reyes07}. $P_n$
+velocities in the western part of this profile are 8.1 km/s and above
+as expected for oceanic upper mantle, but decrease to 7.8~km/s below
+the outer rise region.
+The decrease of mantle seismic velocities below the outer rise can be
+explained by a partial hydration (serpentinisation) of the mantle lithosphere 
+\citep{contreras-reyes07}, an independent indicator that fluids can
+circulate down to mantle depths.   We note that similar reductions of $P_n$
+velocities in the outer rise region have been observed in Northern
+Chile \citep{ranero04} and in Middle
+America \citep{grevemeyer07}.  In the latter example, a small outer
+rise passive network (4 hydrophones) recorded a number of earthquakes, whose best fit
+solution was in the mantle but because of the small number of stations
+and the lack of S wave observations, depth error bars were generally
+too large to be certain, and it is not known whether the earthquakes
+should similar clustering behaviour and prevalence of small
+earthquakes. 
+ Whereas we in accordance with most of these papers
+prefer an interpretation where seawater percolates from the seafloor,
+an alternative scenario envisages a deep source of water. The water
+released from the downgoing slab crust by dehydration reaction could
+partly remain in the slab and hydrate it \citep{abers03,robin07abs},
+rather than percolating into the overriding plate, as is usually
+assumed.  However, for this mechanism to serve as an effective source
+of mantle hydration the deep hydration front must move all the up to
+the surface, which would require the subduction zone to have been
+active for a very long time.  It can also not explain the apparent
+coincidence of outer rise faulting and the onset of reduced Pn
+velocities, which is more clearly seen in Middle
+America \citep{grevemeyer07} than in Southern Chile.
+\end{enumerate}
+If our interpretation is correct, it implies that hydration.
+
+
+
+
+\remark{
+Next points:
+
+source of fluids 
+ a. melt (observed small amounts of magmatism on outer rise offshore
+ Japan due to decompression melting but unlikely here because young
+ plate age implies small elastic thickness and the absence of an
+ identifiable bulge, hence no decompression takes place).
+ b. water (evidence for rehydration in Contreras data (reduction of
+ crust and mantle velocities). Likewise, the slab has not started
+ descending so dehydration unlikely;  water supplied from the top
+ through hydrothermal circulation.
+
+ In STA2, a large number of outcropping ridges available for water inflow.  In STA1, blanketing by sediments
+ at first sight makes this explanation problematic but Fisher(Nature,
+ 2003) paper shows discharge cna happen across 50~km guided by
+ seamount - need to read this paper)
+
+ Cluster earthquakes occur both in the crust and mantle: indicates
+ that fluids penetrate mantle.
+
+ Interpretation of stress direction: compressional stress from
+ convergence: small elastic thickness implies bending stresses are
+ relatively small
+
+Max Earthquake depth similar to max depth of large EQ (within +- 100 C)
+}
+
+
+%\begin{acknowledgments}
+\ack
+We thank  
+Capts. Kull and Mallon and their crews for excellent suppport of the deployment.
+The SO181 shipboard scientific crew carried out initial processing of
+the data.  We thank ... for processing the bathymetric data
+from the study region, and .. for picking part of the data. 
+\remark{Please enter names or let me know if you think it unnecessary}
+This is publication no GEOTECH-xxx of the GEOTECHNOLOGIEN program funded by
+the German Ministry of Education\&Research and ...,  \remark{get number} and Cambridge Department of Earth Sciences Publication xxxx. 
+%\end{acknowledgments}
+
+
+\bibliography{lit-base}
+
+% Tables
+%\end{article}
+
+% Figures
+\begin{figure}
+\centering
+\includegraphics[width=0.74\textwidth]{tipteq-abb2-paper}
+\caption{Seismicity around and north of Chile triple junction. Focal
+  mechanisms from Harvard catalogue are plotted at the centroid location \citep{dziewonski81a}. Circles show Engdahl
+  solutions \citep{engdahl98}, with thin lines connecting CMT and Engdahl locations.  Red contour lines show co- and
+  postseismic slip of the 1960 Chile earthquake based on geodetic data
+  \citep{barrientos90}, contour spacing 5~m except for outermost
+  contour, which corresponds to slip of 1~m.  White squares correspond
+to station locations of the two outer rise arrays.}
+\label{fig:overview-map}
+
+\end{figure}
+
+
+\begin{figure}
+\begin{minipage}[t]{0.49\textwidth}
+{\sffamily {\bfseries a} Age at trench = 14 Ma} \\
+\includegraphics[width=\textwidth]{STA1-map/STA1-map}
+\end{minipage}\hfill%
+\begin{minipage}[t]{0.49\textwidth}
+{\sffamily {\bfseries  b}  Age at trench = 6 Ma} \\
+\includegraphics[width=\textwidth]{STA2-map/STA2-map}
+\end{minipage}
+
+\caption{Epicentral map of events located within the northern array
+  (a) (recording period: 13 Dec 2004 - 22 Jan 2005) and southern array
+  (b)  (recording period: 14 Dec 2004 - 27 Jan 2005). Where available, locations resulting
+  from double difference relocation are shown (circles with thick
+  borders), otherwise maximum likelihood locations from the non-linear
+   algorithm are used (circles with thin borders).  
+  The earthquake depth color scale is defined relative to sealevel but
+  the color scales for a and b were chosen in such a way that the same depths
+  below the seafloor will approximately correspond to the same color
+  for both arrays.    Events
+  with poor depth determination are shown in white. Events recorded by
+  only three or four stations, or where one phase type was missing (P
+  or S) have large epicentral errors and are shown as black dots; no
+  magnitude was determined for these poorly located events.
+  The shaded bathymetry is derived from shipboard
+soundings during Sonne cruise SO181. \remark{Is this correct for this
+  area, or does it contain merged bathymetry from previous
+  cruises. Also I don't think I have the final version, there seem to
+  be a lot of trackline artifacts} Dashed lines show the ``swarm
+region'' in a (see text), and the profile line for
+Figure~\protect\ref{fig:profiles} in b.}
+\label{fig:epimaps}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+{\sffamily {\bfseries a} event depth $<$4~km below sea floor}\\
+\includegraphics[width=0.45\textwidth]{nl-restr-shallow-ctr-minimum-focmec}
+\\
+{\sffamily {\bfseries b} event depth $>$4~km below sea floor}\\
+\includegraphics[width=0.45\textwidth]{nl-restr-deep-ctr-minimum-focmec}
+\\
+{\sffamily {\bfseries c} }\\
+\includegraphics[width=0.35\textwidth]{nl-restr-shallow-deep-ctr-minimum-focmec-map}
+\end{center}
+
+\caption{Upper hemisphere regional pressure and tension axis
+  directions derived from first motions using the \citet{robinson00}
+  method. The black circle shows the the pressure direction
+  ($\sigma_1$) and the gray circle the tension direction ($\sigma_3$), with noughts and
+  crosses indicating the 95\% confidence region. Small beachballs show
+ the expected focal mechanisms for the two optimal fault planes
+ (assuming a coefficient of friction $\mu=0.75$ in the Coulomb
+ fracture criterion), with the numbers above signifying its strike, dip and rake, and the proportion of first motions consistent with
+it. (c) Map of cluster locations used in  the shallow (light gray
+circles) and deep (dark gray circles) stress inversions.}
+\label{fig:focmec}
+\end{figure}
+
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{STA121nsw-GR-mc90}
+\remark{Change this over to moment on x axis and $\beta$ value instead
+  of b}
+\caption{Frequency-magnitude plots ($M_W$). The b values were estimated using the maximum
+likelihood method \citep{aki65} where the magnitude of completeness
+was determined using the goodness-of-fit criterion at the 90\% level,
+ \citep{wiemer02}.  The southern array is characterized by a larger
+ $b$ value and lower magnitude of completeness $M_c$ but the
+ difference between the $b$ values of the two arrays is not significant according to the
+ \citet{utsu92} test. The figure also shows the frequency-magnitude
+ plot for the northern array, when all events within the area of the
+ suspected swarm are excluded.  The difference between the b value for
+ this set and the southern array is marginally significant (94\%
+ confidence).}
+% utsutest(45,1.25,220,1.69)  n1,b1,n2,b2
+
+% even though the seismicity rate for events $M_W>1.5$ was
+%actually larger at the northern array.
+% NB note that there was a rate change within STA1 with the cluster
+% having some swarm characteristics
+ 
+\label{fig:freq-mag}
+\end{figure}
+
+\begin{figure}
+
+\begin{minipage}[t]{0.49\textwidth}
+{\sffamily {\bfseries a} North: age at trench = 14 Ma} \\
+\includegraphics[width=\textwidth]{dephisto-inarray-sgl-ingo-STA1}
+\end{minipage}\hfill%
+\begin{minipage}[t]{0.49\textwidth}
+{\sffamily {\bfseries  b} South: age at trench = 6 Ma} \\
+\includegraphics[width=\textwidth]{dephisto-inarray-sgl-s20-minimum-Rset}
+\end{minipage}
+
+
+\caption{Depth distribution of events with
+  Gap$<$200\dg after  joint
+  hypocenter determination in the north (a), and minimum 1-D model
+inversion in the south (b). The
+  dashed line shows the approximate Moho depth based on refraction
+profiles. 
+%Note the different scale on the
+%  x-axis (counts).  
+Not all individual earthquakes represented in the
+  histograms are necessarily well constrained, as is apparent from the
+  bundling of events at 3km in (a) but nearly identical depth distributions were
+  obtained for a large variety of initial models and trial depths in
+  the south
+  (b).  As the number of earthquakes in the north is insufficient for
+  a minimum 1D model inversion, the resulting depth distribution is
+  somewhat dependent on the input model.  However, the actual input model
+  is well constrained from active source data, and the increased
+  incidence of deeper earthquakes in the north is found for all
+  reasonable models. 
+} 
+\label{fig:dephistos}
+\end{figure}
+
+
+\begin{figure}
+\centering
+% [width=\textwidth]
+% no re-scaling should be necessary for this figure -> preserves
+% sensible scale
+%\includegraphics{profile-true-nl-minimum}
+\includegraphics{STA2-map/STA2-profile}
+\caption{True-scale cross-section of events with robust depth determinations along
+  profile line through the southern array. (The profile is
+  approximately perpendicular to the spreading direction, see Fig.~\ref{fig:epimaps}). Contours show 100\dg C increments; the temperature field is derived
+  from the cooling plate model of \citet{mckenzie05} with the
+  asthenospheric potential temperature adjusted to 1280\dg C, which is
+  required to produce the observed 5~km thick crust. Gray circles
+  indicate earthquakes within 10 km of the profile line, open circles
+  correspond to earthquakes to the south of this swath, and black circles to
+  earthquakes to the north. Circles with thicker borders indicate
+  events which are parts of clusters relocated by the
+  double-difference method.
+\remark{Need to add Moho line to this plot}
+}
+\label{fig:profiles}
+\end{figure}
+
+\begin{figure}
+{\sf \bf a}
+\includegraphics[angle=-90,width=0.5\textwidth]{total-talk/clust0547-waveform}\\[1cm]
+
+\parbox{0.5\textwidth}{{\sf \bf b} North array \\
+\includegraphics[width=0.4\textwidth]{clustnr-histo-STA1}}
+\parbox{0.5\textwidth}{{\sf \bf c} South array \\
+\includegraphics[width=0.4\textwidth]{clustnr-histo-STA2}}
+
+
+\remark{redo waveform example with date, time and rel magnitude label} 
+\caption{(a) Waveform example for 8-event cluster in the southern
+  array.  Each trace shows the pressure trace from obs23 and is labelled with the origin time of the event and
+  the event magnitude, determined relative to the $M_W$ estimate of
+  the largest event of the
+cluster. (b), (c) Histograms of number of events per cluster for the northern
+(b) and southern (c) array. Additionally, the southern array had one
+cluster consisting of 27 events.}
+\label{fig:clust-waveform-histo}
+\end{figure}
+
+\begin{figure}
+\parbox{0.5\textwidth}{{\sf \bf a} North array \\
+\includegraphics[width=0.45\textwidth]{STA1-clust/STA1-clust}}
+\parbox{0.5\textwidth}{{\sf \bf b} South array \\
+\includegraphics[width=0.45\textwidth]{STA2-clust/STA2-clust}}
+{\sf \bf c}
+\includegraphics[width=0.45\textwidth]{STA2-clust/STA2-clust-prof}
+
+\caption{(a),(b) Epicentral distribution of clusters centres
+  (circles) for clusters with three or more 2 events. The cluster centres
+  are determined from the median of the manual picks in stacked
+  waveforms; for a few clusters, these procedure failed because there
+  were not a sufficient number of common picks between the cluster
+  member events.   For these events and all doublets, the
+  individual events are shown as grey dots.  Where cluster centre
+  depth is well determined, the circles are filled appropriately.
+ (c) Profile of clusters and events for the southern array. Only those events and
+ clusters with well-constrained depths are shown.}
+\label{fig:clust-location}
+\end{figure}
+
+
+\begin{figure}
+{\sf \bf a}
+\includegraphics[width=0.5\textwidth]{interevent/interevent-mod}
+
+\remark{Need to fix figure such that it can work in black and white -
+  also might have to reduce line weight again slightly. Need to do
+  time-magnitude plots for selected clusters}
+\caption{(a) Probability density distribution of waiting  times for all clustered events.  Events are binned by
+inter-event times within the same cluster with logarithmically scaled
+bin edges; each doublet
+contributes one waiting time. One standard deviation error bounds are
+estimated to be proportional $\sqrt(n)$ where $n$ is the number of
+waiting times in the bin; this variance estimate is only strictly
+correct if the underlying distribution is Poissonian.  The continuous
+line shows the Poisson distribution for a hypothetical cumulative
+event rate equal to the combination of all clustered events; i.e. the
+total number of events per day, equivalent to the total area underneath the
+curve (as it would appear with linear axes), is the same for the
+actual distribution and hypothetical Poisson distribution. (b)
+Magnitude-time plot of the swarm area marked in
+Figure~\ref{fig:epimaps}. (c),(d) Normalised magnitude vs event number
+plots for all clusters with 6 or more events. The magnitude of the
+largest event is set to 1, with the other magnitudes being shifted appropriately.}
+\label{fig:clust-statistics}
+\end{figure}
+
+
+\clearpage
+
+\appendix
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{A\arabic{figure}}
+
+
+%The following material will not form part of the published article but
+%instead be deposited as supplementary online material
+
+\section{Timing corrections and relocations}
+
+\begin{enumerate}
+\item 
+The internal clocks of the dataloggers were synchronized with GPS time
+just before deployment and just after recovery. The internal time was
+then corrected assuming linear drift.  Although there is no way to
+directly check the linearity assumption it is believed to be a good
+one, as for any particular clock the deviation from the nominal rate
+is primarily dependent on temperature which is nearly constant at the
+seafloor, and the time spent on deck and sinking or rising is short
+compared to the time on the seafloor.
+
+ Typical total drift was less than
+100 ms although a few stations had larger drift values.  One station
+(OBS20) had experienced a time jump of over 7~s; 
+the drift of this
+station was determined from the slope of a plot of double-difference
+times of highly correlated events against the inter-event time
+(Figure~\ref{figa:obs20timing}).  After correction, this slope is
+nearly zero; and inspection shows that the jump occurred before any
+events had been recorded. 
+ 
+\item The stations were relocated by fitting the water wave arrival
+times from airgun shots near the station. \remark{Is this true for all
+the stations (e.g. obs20).  Were stations relocated in 3-D or just
+along a profile.  What were typical relocations?}
+\end{enumerate}
+
+\section{Stress directions from first motions}
+
+\section{Earthquake magnitude determination}
+\label{sec:magnitude}
+
+Because of the low gain of the seismometer components, and the fact
+that both vertical and horizontal seismometer components are dominated
+by shear waves (or p-converted S-waves), whose amplitudes are stronly
+dependent on site resonance effects (as can be seen from the `ringy'
+waveform), we based all our magnitude estimates on hydrophone data.
+We removed the nominal hydrophone response
+(Table~\ref{tbl:hyd-response}), and multiplied the resulting trace by
+$v_P \rho$ where $v_P$ and $\rho$ are the sound velocity and density
+of water, respectively. The resulting trace would be identical to the
+displacement for a vertically incident wave and zero impedance contrast
+between water and seafloor.  These assumptions are not exactly
+fulfilled but are not violated too badly because velocities and
+densities of the uppermost sediments are only slightly larger than in
+the water, and the low velocities cause most earthquake arrivals to
+have steep raypaths below the receiver.  
+
+'Pseudo-displacement' spectra were then calculated from the converted traces for 2~s windows
+centred on the P wave arrival time.  Following standard seismological
+procedure we assume the \citep{brune70} source model, which predicts
+the frequency-dependent theoretical displacement spectrum $d(f)$ for a circular source at
+station $i$:
+\begin{equation}
+d(f)=\frac{K G(r_i,h) A_i(f)}{4 \pi \rho v^3} S_i \frac{M_0}{1+f^2/f_0^2} 
+\end{equation}
+where $\rho$ and $v$ are the density and velocity of the medium
+($\rho=2.8$g/cm$^3$, $v_p=6.2$km/s), $G(r_i,h)$ the geometrical 
+spreading factor for a source at epicentral distance $r_i$ and depth
+$h$ ($G(r,h)=\sqrt{r^2+h2^2}$, i.e. body wave spreading is assumed),
+$A(f)=\exp[-\pi f Q (\kappa + T / Q)]$ is the attenuation factor with 
+$\kappa$ parameterising the near-receiver attenuation ($\kappa=0.015$),
+$T$ being the travel time and $Q$ the quality factor ($Q_P=400$ with a
+slight assumed frequency dependence). $K$ is a factor correcting for the
+radiation pattern and free surface effect; usually this is set to
+$2*0.6$ where 0.6 is the radiation pattern effect averaged over the
+focal sphere, and 2 corrects for the free surface effect.  Instead, we
+set $K$ to 0.6 as the seismic stations are effectively imbedded in the
+media. $S_i$ is a station term to account for site specific
+amplification or differences in media properties; initially all
+station terms are set to 0. 
+
+Moment magnitude estimates for each station are
+ then automatically by a genetic
+ algorithm which searches for the combination of seismic moment $M_0$
+ and corner frequency $f_0$ that best
+ fits the observed spectrum corrected for attenuation, geometric
+ spreading, and radiation pattern using the method and code of
+ \citet{ottemoeller03}.
+We only make use of frequencies
+band above 4~Hz; as lower frequencies were dominated by noise for all
+but the largest events, and the
+lower limit is still likely to be above the corner frequency of all events.  
+\remark{ought to check this statement}  
+Corner frequency measurements
+are discarded as corner frequencies of most events are close to or
+larger than the Nyquist frequency, and moment magnitudes derived from
+the moments according to \citet{kanamori77}.   Finally, the individual station
+moment magnitudes estimates are combined in order to estimate the
+station terms and final earthquake moment magnitudes under the
+constraint that the geometric average of the station terms $s_i$ be
+1 (equivalently ($\sum_i \log_{10}s_i=0$).  
+The standard deviation of
+log$_{10}s_i$ is 0.43 for the southern array and 0.27 for the northern
+array (except obh10, see table~\ref{tbl:hyd-response}, where this variation is likely due to be
+dominated by site effects, e.g. site resonances variations in actual impedance
+contrast. Formal uncertainties of individual log$_{10}s_i$ values are
+around 0.05 and formal uncertainties of average event moment
+magnitudes are around 0.1 magnitude units. 
+% Mw station term std.dev.0.29*1.5 (STA2) and 0.18*1.5
+A total of four events located by the northern array were also located
+by a contemporary land deployment \citep{lange07}.
+ The land magnitudes, which are based on the Richter magnitude
+formula and are generally close to magnitudes in the NEIC catalogue, are on average 0.35 magnitude units larger
+than the ocean bottom magnitudes but because this comparison is based
+on two different magnitude scales and involves  events located far
+from the array, for which the geometrical 
+spreading and attenuation functions might no longer be appropriate, we
+did not correct the ocean bottom magnitudes for this potential bias.
+No events in the catalogue of the southern array  have been recorded
+on land, and only two events have magnitude determinations from
+stations of both arrays; these two events appear to be 0.4-0.5
+magnitudes larger in the northern array.  Invariably these events are
+far away from one of the arrays such that it cannot be determined whether the
+difference can be attributed to differences in the average station
+terms of both arrays, or to inappropriate spreading/attenuation
+assumptions for more distant events, and any conclusion based on a
+comparison of two events must remain highly uncertain in any case. 
+
+
+\begin{table}
+\caption{List of stations}
+\end{table}
+
+\begin{table}
+\caption{Hydrophone reponse in angular frequency convention for obs
+  20,22, 23, 29 and 29, and obh 28 (southern array), and obs01, 02,
+  03, 06 and 07, and obh 10, 11, 14, 16 (northern array)$^1$. }
+\label{tbl:hyd-response}
+\begin{center}
+\begin{tabular}{lrr}
+\hline
+ & Real  & Im \\
+\hline
+Poles & 0.0   & 0.0 \\
+Zeros & -20.0 & 0.0 \\
+Gain (cnt/Pa) & 1050 & 
+\end{tabular}
+\end{center}
+\footnotesize
+$^1$ Subsequent analysis of magnitudes and amplitudes showed that at obh10 amplitudes
+were larger than expected by a factor of approximately 1000.  The
+amplitude estimates for this station were accordingly corrected by
+this factor to be more compatible with the remainding stations. 
+\end{table}
+
+\begin{figure}
+% velocity models
+\centering
+%\includegraphics[width=\textwidth]{}
+\caption{Waveform example.}
+\label{figa:waveform}
+\end{figure}
+
+
+\begin{figure}
+% velocity models
+\centering
+\includegraphics[width=0.49\textwidth]{obs20-drift-before-correction}
+\caption{Double-difference times for similar earthquakes of uncorrected obs20 picks
+with corrected picks from all other stations.  The double difference
+times are determined by waveform cross-correlation with a window
+length of 9.5 s.  Because the plot of double-difference time versus
+inter-even times appear to have the same slope for double differences
+of obs20 with all other stations we think it is unlikely that the slope
+represents a spatial trend, and but rather is indicative of the clock
+drift at obs20.  This conclusion is
+supported by the fact that similar plots with other reference stations
+all appear flat.}
+\label{figa:obs20timing}
+\end{figure}
+
+
+\begin{figure}
+% velocity models
+\centering
+%\includegraphics[width=\textwidth]{}
+\caption{}
+\label{}
+\end{figure}
+
+% The Appendices part is started with the command \appendix;
+% appendix sections are then done as normal sections
+% \appendix
+
+% \section{}
+% \label{}
+
+\end{document}
+
