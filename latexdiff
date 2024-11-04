@@ -40,6 +40,7 @@
 #  - Commands/RegExs explicitly defined as not safe with --exclude-safecmd are now also considered unsafe in COARSE and WHOLE math markup (Fixes #311)
 #  - add directive pair  %BEGIN DIFNOMARKUP, %END DIFNOMARKUP that can suppress markup locally 
 #  - add directive pairs %BEGIN DIF(ADD|DEL), %END DIF(ADD|DEL) that causes blocks to be marked up as a whole
+#  - --no-del now also removes deleted comments
 # 
 # Version 1.3.4:
 # New features:
@@ -2049,11 +2050,11 @@ sub bodydiff {
 
   ### print STDERR "(",exetime()," s)\n","tokenizeblocks:  " if $verbose;
   
+  
+  print STDERR "(",exetime()," s)\n","Pass 2: inserting DIF tokens and mark up.  " if $verbose;
   # make blocks enclosed by %BEGIN|END DIFFadd|DIFdel into a single token (for markup they will be split again in marktags() ) 
   tokenizeblocks(\@oldwords,"DIFDEL");
   tokenizeblocks(\@newwords,"DIFADD");
-
-  print STDERR "(",exetime()," s)\n","Pass 2: inserting DIF tokens and mark up.  " if $verbose;
   if ( $debug ) {
     open(TOKENOLD,">","latexdiff.debug.tokenold2");
     print TOKENOLD join("***\n",@oldwords);
@@ -2062,6 +2063,7 @@ sub bodydiff {
     print TOKENNEW join("***\n",@newwords);
     close(TOKENNEW);
   }
+  
 
   @retwords=pass2(\@oldwords, \@newwords);
 
@@ -2446,10 +2448,51 @@ sub tokenizeblocks {
   my @new_seq=();
   my @accumulate=();
   my ($token);
+  my @midtokens;
+  my @matches ;
+  my ($i,$cmd,$opening,$mid,$closing);
   my $mode;     # 0: copy mode, 1: accumulate mode (inside block)
 
-  $mode = 0;
-  foreach $token ( @$seq ) {
+
+  $mode = 0; 
+  $i=0;
+  while ($i<=$#$seq) {
+    $token = $seq->[$i];
+    # check if BEGIN/END and block directive is present in the argument of any textcmd. This will be in an 
+    # unchanged block. (textcmds in changed blocks would have already been expanded in pass1)
+    if  ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat_n\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}?\s*)$/so ) {
+      ($cmd,$opening,$mid,$closing) = ($2,$1,$3,$4);
+      #print STDERR "DEBUG tokenizeblocks  Match $i: |$1|$2|$3|$4|\n";
+      if ( iscmd($cmd,\@TEXTCMDLIST,\@TEXTCMDEXCL) )  {
+        # command is a text command 
+        if ( $mid =~ m/%(?:BEGIN|END) DIF(?:ADD|DEL|NOMARKUP)/ ) {
+          # if it contains a directive 
+          # => we expand the interior of the text command and continue processing
+          @midtokens=splitlatex($mid);
+          ###print STDERR "DEBUG tokenizeblocks: midtokens $#$seq $#midtokens|\n";
+          #$closing =~ s/\}/\\RIGHTBRACE/ ;
+          splice(@$seq,$i,1, $opening,@midtokens,$closing );
+          ####print STDERR "DEBUG tokenizeblocks: $#$seq|\n";    
+          next;   # the next will cause the freshly expanded tokens to be parsed again
+        }
+      } 
+      if ( @matches=( $token =~ m/(%(?:BEGIN|END) DIF(?:ADD|DEL|NOMARKUP).*)/g ) ) {
+        # any directive in non-text command or earlier arguments
+        # neuter the directives, so that they do not appear again in the next iteration  
+        $token =~ s/%BEGIN DIF(ADD|DEL|NOMARKUP)/%begin DIF$1/g;
+        $token =~ s/%END DIF(ADD|DEL|NOMARKUP)/%end DIF$1/g;
+        ### print STDERR "DEBUG command : Match $i, ",scalar @matches," |$token|",join("-",@matches),"\n";
+        if (scalar @matches > 1 || $matches[0] =~ m/%END/) {
+          splice(@$seq,$i,0, shift(@matches)." AUX\n" );
+          splice(@$seq,$i+1,1, $token, map { "$_ AUX\n" } @matches);  # append the directives as separate tokens
+        } else {
+          splice(@$seq,$i,1, $token, map { "$_ AUX\n" } @matches);  # append the directives as separate tokens
+        }
+        next;
+      } 
+    }
+    $i++;
+  #foreach $token ( @$seq ) {  
     if ( $token =~ m/^%BEGIN $blocktype/ ) {
       if ($mode == 1 ) {
         print STDERR "WARNING: Two consecutive %BEGIN $blocktype directive detected. Maybe the preceding %END $blocktype was placed in a command argument and overlooked?\n";
@@ -3119,6 +3162,8 @@ sub postprocess {
     # Optional: Remove deleted block entirely
     if ($onlyadditions) {
         s/\\DIFdelbegin.*?\\DIFdelend//sg ;
+        #remove deleted comments
+        s/%$DELCOMMENT.*\n//g;
     }
 
 ###    # change citation commands within comments to protect from processing
@@ -5110,11 +5155,13 @@ latexdiff some hints to control the markup by placing some special
 comments, termed I<directives> into the tex file. Directives mark
 blocks by paired C<BEGIN> and C<END> directives. It is important that
 the directives are written exactly as specified below,i.e., all
-letter need to be capitalised and there has to be exactly one space
+letters need to be capitalised and there has to be exactly one space
 between BEGIN/END and the block type. However, after the directive
 arbitrary comments can be added. Nesting of blocks or overlapping
 blocks are not parsed correctly and will cause undefined behaviour.
-Blocks can be spanning across scope boundaries, but avoid using those directives in the arguments of commands; the only exception are text commands, when the block is fully included in the argument. 
+Blocks can be spanning across scope boundaries; they can also be used in the last argument of text commands.
+If they appear in the arguments of other commands, then latexdiff will assume they were placed before or after 
+the command; it is best to avoid this. 
 
 =over 10 
 
@@ -5169,7 +5216,7 @@ a C<DIFADD> block and latexdiff will take care of the rest.
  ...
 
 The text between the markers will be included in the diff  algorithm
-but no actual markup will be included in this part of the text. It
+but no actual markup will be made in this part of the text. It
 will show the new text only and suppress the old text. If the text
 immediately above the DIFNOMARKUP block has been added a
 C<\DIFaddend> will be placed directly above the C<%BEGIN DIFNOMARKUP>
@@ -5181,7 +5228,7 @@ unacceptable output - markup in the offending passage can be
 suppressed by surrounding it with C<DIFNOMARKUP> directives and
 rerunning latexdiff, thus enabling markup of the rest of the document. 
 This pair of directives must be placed in the new file and will be
-=ignored in the old file (or the preambles of either file). 
+ignored in the old file (or the preambles of either file). 
 
 
 
