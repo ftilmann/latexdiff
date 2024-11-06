@@ -34,13 +34,23 @@
 # Note references to issue numbers are for the github repository of latexdiff: https://github.com/ftilmann/latexdiff
 #
 # Version 1.3.5a: [ bump to 1.4.0 at release!]
+#
+#  New features:
+#  - add directive pairs %BEGIN DIF(ADD|DEL), %END DIF(ADD|DEL) that causes blocks to be marked up as a whole
+#  - add directive pair  %BEGIN DIFNOMARKUP, %END DIFNOMARKUP that can suppress markup locally 
+#
+#  Bug fixes:
 #  - Fix a bug in pre-/postprocessing that led to odd behaviour if some characters with special meaning, like _,^ were used in particular contexts in verbatim environments. Fixes #305
 #  - Fix a bug in the preprocessing that detects \[ \] as math expression (it was interpreting \\] as \+ \] instead of correctly \\ + ]
 #  - Commands that were both in the safecmd and textcmd list, and which have additional arguments beyond the last textual one (optional or non-optional) could lead to errors, if there was a change in those earlier arguments  (fixes #306, first reported through debian bug report)
+#  - super- and subscripts without enclosing curly braces were assumed to be a simple expression, while in reality they could be commands with complicated (nested) arguments. These cases are not processed correctly. Fixes #279
+#
+#  Modified behaviour:
 #  - Commands/RegExs explicitly defined as not safe with --exclude-safecmd are now also considered unsafe in COARSE and WHOLE math markup (Fixes #311)
-#  - add directive pair  %BEGIN DIFNOMARKUP, %END DIFNOMARKUP that can suppress markup locally 
-#  - add directive pairs %BEGIN DIF(ADD|DEL), %END DIF(ADD|DEL) that causes blocks to be marked up as a whole
 #  - --no-del now also removes deleted comments
+#
+#
+#
 # 
 # Version 1.3.4:
 # New features:
@@ -3659,13 +3669,14 @@ sub postprocess {
     s/\\begin\{DOLLARDOLLAR\}(.*?)\\end\{DOLLARDOLLAR\}/\$\$$1\$\$/sg;
 # 5. Convert  \SUPERSCRIPTNB{n} into ^n  and  \SUPERSCRIPT{nn} into ^{nnn}
     1 while s/\\SUPERSCRIPT(\s*\{($pat_n)\})/^$1/g ;
-    1 while s/\\SUPERSCRIPTNB\{(\s*$pat0)\}/^$1/g ;
+#    1 while s/\\SUPERSCRIPTNB\{(\s*$pat0)\}/^$1/g ;
+    1 while s/\\SUPERSCRIPTNB\{(\s*$pat_n)\}/^$1/g ;
     # Convert  \SUBSCRIPNB{n} into _n  and  \SUBCRIPT{nn} into _{nnn}
     1 while s/\\SUBSCRIPT(\s*\{($pat_n)\})/_$1/g ;
-    1 while s/\\SUBSCRIPTNB\{(\s*$pat0)\}/_$1/g ;
+    1 while s/\\SUBSCRIPTNB\{(\s*$pat_n)\}/_$1/g ;
     # Convert  \SQRT{n} into \sqrt{n}  and  \SQRTNB{nn} into \sqrt nn
     1 while s/\\SQRT(\s*\{($pat_n)\})/\\sqrt$1/g ;
-    1 while s/\\SQRTNB\{(\s*$pat0)\}/\\sqrt$1/g ;
+    1 while s/\\SQRTNB\{(\s*$pat_n)\}/\\sqrt$1/g ;
 
 
 ###    1 while s/(%.*)\\CCARET (.*)$/$1^$2/mg ;
@@ -5161,7 +5172,7 @@ arbitrary comments can be added. Nesting of blocks or overlapping
 blocks are not parsed correctly and will cause undefined behaviour.
 Blocks can be spanning across scope boundaries; they can also be used in the last argument of text commands.
 If they appear in the arguments of other commands, then latexdiff will assume they were placed before or after 
-the command; it is best to avoid this. 
+the command; it is best to avoid this, though. 
 
 =over 10 
 
@@ -5226,7 +5237,8 @@ C<%BEGIN DIFNOMARKUP>. The main purpose of this command is to salvage
 the situation if latexdiff has produced invalid  or visually
 unacceptable output - markup in the offending passage can be
 suppressed by surrounding it with C<DIFNOMARKUP> directives and
-rerunning latexdiff, thus enabling markup of the rest of the document. 
+rerunning latexdiff, thus enabling markup of the rest of the document (but please
+continue to report such failures of latexdiff as described below, so that latexdiff can be improved). 
 This pair of directives must be placed in the new file and will be
 ignored in the old file (or the preambles of either file). 
 
