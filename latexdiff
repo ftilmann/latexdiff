@@ -48,7 +48,7 @@
 #  Modified behaviour:
 #  - Commands/RegExs explicitly defined as not safe with --exclude-safecmd are now also considered unsafe in COARSE and WHOLE math markup (Fixes #311)
 #  - --no-del now also removes deleted comments
-#
+#  - --show-...  commands now have different behaviour dependent on whether old.tex and new.tex are specified. If they are not not then the initial setup is shown. If they are specified, then the full configuration is shown, which includes some additions of internal commands, and modifications based on what packages are present on the system, or are used in the .tex files. Either way, no differencing takes place.
 #
 #
 # 
@@ -787,9 +787,15 @@ foreach $pkg ( @packagelist ) {
 
 
 if ($showconfig || $showtext || $showsafe || $showpreamble) {
+  # only quit here if no other argument is given
+  # otherwse delay showing the coniguration as it can be modified depending on what is found in the input files
+  if ( @ARGV == 0 ) {
+    print "Simple configuration with standard pre-set parameters only:\n";
+    print "   [Provide sample input and output files with the --show... option to get full configuration:]\n";
 
-  show_configuration();
-  exit 0;
+    show_configuration();
+    exit 0;
+  }
 }
 
 
@@ -807,6 +813,8 @@ if ($allowspaces) {
 }
 
 # append context lists to text lists (as text property is implied)
+push @TEXTCMDLIST, qr/^(SUPER|SUB)SCRIPT$/;
+
 push @TEXTCMDLIST, @CONTEXT1CMDLIST;
 push @TEXTCMDLIST, @CONTEXT2CMDLIST;
 
@@ -1242,6 +1250,16 @@ if ( defined($packages{"listings"}) or `kpsewhich listings.sty` ne "" ) {
   $VERBATIMENV = liststringtoregex($CONFIG{VERBATIMENV}.";".$CONFIG{VERBATIMLINEENV});
   $VERBATIMLINEENV = "";
 }
+
+
+if ($showconfig || $showtext || $showsafe || $showpreamble) {
+  # only quit here if no other argument is given
+  # otherwse delay showing the coniguration as it can be modified depending on what is found in the input files
+  print "Full configuration after parsing input files and adding internal commands:\n";
+  show_configuration();
+  exit(0);
+}
+
 
 # adding begin and end marker lines to preamble
 $latexdiffpreamble = "%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF\n" . $ latexdiffpreamble . "%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF\n";
@@ -1894,8 +1912,18 @@ sub flatten {
 # prints regex array without x-ism expansion put in by pearl to stdout
 sub print_regex_arr {
   my $dumstring;
+
+  $dumstring="";
+  foreach ( @_ ) {
+    s/\(\?\^u?:\^(.*?)\$\)/$1/g;
+    next unless /[a-z]/;   
+    $dumstring .= "$_ ";
+  }
   $dumstring = join(" ",@_);     # PERL generates string (?-xism:^ref$) for quoted refex ^ref$
-  $dumstring =~ s/\(\?-xism:\^(.*?)\$\)/$1/g;   # remove string and ^,$ marks before output
+  #$dumstring =~ s/\(\?-xism:\^(.*?)\$\)/$1/g;   # remove string and ^,$ marks before output
+  #$dumstring =~ s/\(\^\?u:\^(.*?)\$\)/$1/g;   # remove string and ^,$ marks before output
+  #(?^u:^title$)
+  #$dumstring =~ s/\(\?\^u:\^(.*?)\$\)/$1/g;   # remove string and ^,$ marks before output
   print $dumstring,"\n";
 }
 
@@ -4586,11 +4614,6 @@ Treat C<\ch> as a safe command outside equations, i.e. it will be highlighted (n
   loaded packages. ]
 
 
-
-=item B<--show-preamble>
-
-Print generated or included preamble commands to stdout.
-
 =back
 
 =head2 Configuration
@@ -4718,6 +4741,11 @@ expression as argument, and pattern is any regular expression (which might need 
 protected from the shell by quotation). Several patterns can be added at once by using semi-colons
 to separate them, e.g. C<--add-to-config "LISTENV=myitemize;myenumerate,COUNTERCMD=endnote">
 
+
+=item B<--show-preamble>
+
+Print generated or included preamble commands.
+
 =item B<--show-safecmd>
 
 Print list of RegEx matching and excluding safe commands.
@@ -4734,8 +4762,7 @@ Show values of configuration variables.
 
 Combine all --show commands.
 
-NB For all --show commands, no C<old.tex> or C<new.tex> file needs to be specified, and no
-differencing takes place.
+NB For all --show commands, the behaviour is different dependent whether C<old.tex> or C<new.tex> files are specified. If they are not not then the initial setup is shown. If they are specified, then the full configuration is shown, which includes some additions of internal commands, and modifications based on what packages are present on the system, or are used in the .tex files. Either way, no differencing takes place.
 
 =back
 
@@ -5606,7 +5633,6 @@ text.*
 value
 underline
 sqrt
-(SUPER|SUB)SCRIPT
 %%END TEXT COMMANDS
 
 %%BEGIN CONTEXT1 COMMANDS
