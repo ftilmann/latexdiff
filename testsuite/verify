@@ -38,7 +38,7 @@ DIFDELCMDBUG eqnarray eqnarray2 subscriptm delequ2 schneider gennady umesh under
 delequ3 delequ4 "simplefrac --allow-spaces" "master --flatten" "subfile --flatten" "import --flatten" titlediffTest2 exampleDiff bornd2 split \
 "rolla --math-markup=2" mini "complex-maths --math-markup=1" margalit oubmath circonflex mwe-comment "apacite-test --flatten" quoteddollarunderscore units complicated-math move-equation2 lists "figures --graphics-markup=both" alignat "safecmd --append-safecmd=remark" verbatim-v2 verbatim2-is143 embedded-math-array "verbatim-input --flatten" anchordemo 'customdiffcmdtest --add-to-config "CUSTOMDIFCMD=blindtext;mypar;donothing;cmd"' description frac_w_space_comments multicolumn tikz-dependency-test \
 "href-in-bibliography --append-safecmd=path" revtex-bibliography biblatex 'txtcmd-with-multiple-arguments --append-textcmd=cmd' \
-"no-del --no-del" raisebox \
+"no-del --no-del" raisebox  mwe \
 ) # siunitx
 #set testroots=( test rapine_et_al gershwin12)
 # Note that siunitx test will only run on newer (>~2020) versions of siunitx)
