@@ -44,6 +44,10 @@
 #  - Fix a bug in the preprocessing that detects \[ \] as math expression (it was interpreting \\] as \+ \] instead of correctly \\ + ]
 #  - Commands that were both in the safecmd and textcmd list, and which have additional arguments beyond the last textual one (optional or non-optional) could lead to errors, if there was a change in those earlier arguments  (fixes #306, first reported through debian bug report)
 #  - super- and subscripts without enclosing curly braces were assumed to be a simple expression, while in reality they could be commands with complicated (nested) arguments. These cases are not processed correctly. Fixes #279
+#  - in show-textcmd and show-safecmd some extra regex characters are now properly removed
+#  - special preamble additions for highlighting graphics or lines in verbatim text no longer overwrite the definitions in a user-included
+#    preamble file (vie --preamble option). If the user-included preamble file does not define important commands, then they continue to be added (some simple
+#    heuristics are used to decide whether to add or not are used, so this decision might not be perfect). Fixes #310 .
 #
 #  Modified behaviour:
 #  - Commands/RegExs explicitly defined as not safe with --exclude-safecmd are now also considered unsafe in COARSE and WHOLE math markup (Fixes #311)
@@ -607,9 +611,12 @@ if (defined($preamblefile)) {
   $latexdiffpreamble=join "\n",(extrapream($type,$subtype,$floattype),"");
 }
 
+my $preamble_no_comments = $latexdiffpreamble;
+$preamble_no_comments =~ s/(?<!\\)%.*$//mg;   # version of preamble stripped of all comments
+
 if ( defined($driver) ) {
   # for changebar only
-  $latexdiffpreamble=~s/\[pdftex\]/[$driver]/sg;
+  $latexdiffpreamble=~s/\[pdftex\]/[$driver]/sg  unless defined($preamblefile);
 }
 # setting up @SAFECMDLIST and @SAFECMDEXCL
 if (defined($replacesafe)) {
@@ -790,8 +797,8 @@ if ($showconfig || $showtext || $showsafe || $showpreamble) {
   # only quit here if no other argument is given
   # otherwse delay showing the coniguration as it can be modified depending on what is found in the input files
   if ( @ARGV == 0 ) {
-    print "Simple configuration with standard pre-set parameters only:\n";
-    print "   [Provide sample input and output files with the --show... option to get full configuration:]\n";
+    print "%Simple configuration with standard pre-set parameters only:\n";
+    print "%   [Provide sample input and output files with the --show... option to get full configuration:]\n";
 
     show_configuration();
     exit 0;
@@ -1185,7 +1192,9 @@ if ($graphicsmarkup != NONE ) {
     exit 10;
   }
   ###}
-  $latexdiffpreamble .= join "\n",("\\newcommand{\\DIFscaledelfig}{$SCALEDELGRAPHICS}",extrapream("HIGHLIGHTGRAPHICS"),"");
+  $latexdiffpreamble .= join "\n",("\\providecommand{\\DIFscaledelfig}{$SCALEDELGRAPHICS}",extrapream("HIGHLIGHTGRAPHICS"),"")
+#      unless $preamble_no_comments =~ m/\{\\DIFdelgraphicsbox\}/ ;
+      unless $preamble_no_comments =~ m/\{\\(?:DIFdelgraphicsbox|DIFdelgraphicswidth|DIFdelgraphicsheight)\}/ ;
 
   # only change required for highlighting both is to declare \includegraphics safe, as preamble already contains commands for deleted environment
   if ( $graphicsmarkup == BOTH ) {
@@ -1243,7 +1252,7 @@ if ( defined($packages{"listings"}) or `kpsewhich listings.sty` ne "" ) {
     }
   } @listingpreamble;
   ###  print STDERR "DEBUG: listingpreamble @listingpreamble\n";
-  $latexdiffpreamble .= join "\n",(@listingpreamble,"");
+  $latexdiffpreamble .= join "\n",(@listingpreamble,"")   unless $preamble_no_comments =~ m/\\lstnewenvironment\{DIFverbatim\}/ ;
 } else {
   print STDERR "WARNING: listings package not detected. Disabling mark-up in verbatim environments \n" ;
   # if listings does not exist disable line-by-line markup and treat all verbatim environments as opaque
@@ -1255,7 +1264,7 @@ if ( defined($packages{"listings"}) or `kpsewhich listings.sty` ne "" ) {
 if ($showconfig || $showtext || $showsafe || $showpreamble) {
   # only quit here if no other argument is given
   # otherwse delay showing the coniguration as it can be modified depending on what is found in the input files
-  print "Full configuration after parsing input files and adding internal commands:\n";
+  print "%Full configuration after parsing input files and adding internal commands:\n";
   show_configuration();
   exit(0);
 }
@@ -1516,7 +1525,7 @@ sub liststringtoregex {
 # whether or not additional files are provided
 sub show_configuration {
   if ($showpreamble) {
-    print "\nPreamble commands:\n";
+    print "\n%Preamble commands:\n";
     print $latexdiffpreamble ;
   }
 
@@ -5990,8 +5999,8 @@ verbatim[*]?
 \newlength{\DIFdelgraphicsheight}
 % store original definition of \includegraphics
 \LetLtxMacro{\DIFOincludegraphics}{\includegraphics}
-\newcommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}}
-\newcommand{\DIFdelincludegraphics}[2][]{%
+\providecommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}}
+\providecommand{\DIFdelincludegraphics}[2][]{%
 \sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}%
 \settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox}
 \settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox}
