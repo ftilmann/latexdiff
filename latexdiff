@@ -48,6 +48,7 @@
 #  - special preamble additions for highlighting graphics or lines in verbatim text no longer overwrite the definitions in a user-included
 #    preamble file (vie --preamble option). If the user-included preamble file does not define important commands, then they continue to be added (some simple
 #    heuristics are used to decide whether to add or not are used, so this decision might not be perfect). Fixes #310 .
+#  - array blocks can now be nested (fixes #287)
 #
 #  Modified behaviour:
 #  - Commands/RegExs explicitly defined as not safe with --exclude-safecmd are now also considered unsafe in COARSE and WHOLE math markup (Fixes #311)
@@ -2997,7 +2998,10 @@ sub preprocess {
       # The anchors are removed in post-processing again. (note that they are simple text to cause least amount of complications
       # Admittedly, this is something of a hack and will not always work. If it does not, then one needs to
       # resort to WHOLE or FINE, or NONE math mode processing.
-      s/\\begin\{($ARRENV)}(.*?)\\end\{\1}/\\ARRAYBLOCK$1\{$2\\DIFANCHORARRB \}\\DIFANCHORARRE /sg;
+###      s/\\begin\{($ARRENV)}(.*?)\\end\{\1}/\\ARRAYBLOCK$1\{$2\\DIFANCHORARRB \}\\DIFANCHORARRE /sg;
+      # Previous construction had problems with nested \begin{array} ... \end{array} constructions, so we convert the inner ones
+      # first, and then iterate with the "1 while" construction to take care of the outer ones
+      1 while s/\\begin\{($ARRENV)\}((?:.(?!\\begin\{\1\}))*?)\\end\{\1}/\\ARRAYBLOCK$1\{$2\\DIFANCHORARRB \}\\DIFANCHORARRE /sg;
 ###      print STDERR "vvvvvvvvvvvvvvvvvv\n$_\nvvvvvvvvvvvvvvvv\n" if $debug;
 
       take_comments_and_newline_from_frac();
@@ -3377,7 +3381,7 @@ sub postprocess {
 	$len2=length($&);
 	$begin2=pos($delblock) - $len2;
 	$mathblock="%\n\\mbox{$AUXCMD\n$1\n}$AUXCMD\n";
-        next unless ( $mathblock =~ /ARRAYBLOCK/ or $mathblock =~ m/\{$ARRENV\}/ );
+  next unless ( $mathblock =~ /ARRAYBLOCK/ or $mathblock =~ m/\{$ARRENV\}/ );
 	substr($delblock,$begin2,$len2)=$mathblock;
 	pos($delblock) = $begin2 + length($mathblock);
       }
@@ -3560,8 +3564,8 @@ sub postprocess {
       s/\\MATHBLOCK($MATHENV|$MATHARRENV\*?|SQUAREBRACKET)\[($brat0)\]\{($pat_n)\}/\\begin{$1}$2$3\\end{$1}/sg;
       # without optional argument e.g \MATHBLOCKalign{ ...}
       s/\\MATHBLOCK($MATHENV|$MATHARRENV\*?|SQUAREBRACKET)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
-      # convert ARRAYBLOCK.. commands back to environments
-      s/\\ARRAYBLOCK($ARRENV)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
+      # convert ARRAYBLOCK.. commands back to environments  (1 while construct allows nesting)
+      1 while s/\\ARRAYBLOCK($ARRENV)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
       # get rid of the DIFANCHOR markers, first the delete comments, then everywhere
       s/%DIFDELCMD < \\DIFANCHOR(?:MATH|ARR)[BE] (?:\n%DIFDELCMD < )?%%%\n//g ;
       s/\\DIFANCHOR(?:MATH|ARR)[BE] //g;
