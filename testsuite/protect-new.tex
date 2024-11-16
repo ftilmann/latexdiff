@@ -1,0 +1,31 @@
+\documentclass{article}
+\usepackage{subfig}
+\usepackage{graphicx}
+
+\begin{document}
+
+\begin{figure}[htp]
+    \subfloat{\label{fig:6a}}
+    \subfloat{\label{fig:6b}}
+    \subfloat{\label{fig:6c}}
+    \subfloat{\label{fig:6d}}
+    \centering
+    \includegraphics[width=\columnwidth]{example-image-a}
+    % use of protect on caption is not needed or recommended, but it still compiles and test some specific functionality of latexdiff
+    \protect\caption{
+        \protect\subref{fig:6a}
+        Distribution of the aging rate $B_a = \Delta \mu_a / \ln (T_a / T_0)$ for all events on the interface $a=1$ and all $n$.
+        \protect\subref{fig:6b}
+        Baz.
+        \protect\subref{fig:6c}
+        For $n=5$, a typical time evolution displaying slow slip of the relative position $R_a(t)-R_a(t_0)$, of the layer $a=2$.
+        The total relative displacement $\Delta R$ is categorized as slip events of amplitude $\Delta R_a$, and slow slip.
+        The fraction of slow slip is defined by $R_\mathrm{slow} = 1 - \sum \Delta R_a /\Delta R$.
+        \protect\subref{fig:6d}
+        Foo
+    }
+    \label{fig:6}
+\end{figure}
+
+\end{document}
+

@@ -48,7 +48,8 @@
 #  - special preamble additions for highlighting graphics or lines in verbatim text no longer overwrite the definitions in a user-included
 #    preamble file (vie --preamble option). If the user-included preamble file does not define important commands, then they continue to be added (some simple
 #    heuristics are used to decide whether to add or not are used, so this decision might not be perfect). Fixes #310 .
-#  - array blocks can now be nested (fixes #287)
+#  - nested array blocks now no longer lead to errors, even when nothing is changed in them (fixes #287).
+#  - sometimes, \protect commands would become separated from the commands they are supposed to apply, too. They are now kept together in the same token. Fixes #284
 #
 #  Modified behaviour:
 #  - Commands/RegExs explicitly defined as not safe with --exclude-safecmd are now also considered unsafe in COARSE and WHOLE math markup (Fixes #311)
@@ -904,7 +905,7 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 
   # standard $cmdoptseq (default: no intrevening spaces, controlled by extraspcae) - a final open parentheses is merged to the commend if it exists to deal properly with multi-argument text command
   my $coords= '[\-.,\s\d]*';
-  my $cmdoptseq='\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*\{?';
+  my $cmdoptseq='(?:\\\\protect)?\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*\{?';
 
   # inline math $....$ or \(..\)
   ### the commented out version is simpler but for some reason cannot cope with newline (in spite of s option) - need to include \newline explicitly
@@ -2228,7 +2229,7 @@ sub pass1 {
 #			print STDERR "Unchanged block $cnt, $last1,$last2 \n";
                         if ($cnt < $MINWORDSBLOCK
 			    && $cnt==scalar (
-				     grep { /^$wpat/ || ( /^\\((?:[`'^"~=.]|[\w\d@*]+))((?:\[$brat_n\]|\{$pat_n\})*)/o
+				     grep { /^$wpat/ || ( /^(?:\\protect)?\\((?:[`'^"~=.]|[\w\d@*]+))((?:\[$brat_n\]|\{$pat_n\})*)/o
 							   && iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)
 							   && scalar(@dummy=split(" ",$2))<3 ) }
 					     @$block) )  {
@@ -2387,7 +2388,7 @@ sub extracttextblocks {
     ($token,$index)=@{ $block->[$i] };
     # store pure text blocks
 ### pre-0.3    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d*]+)((?:\[$brat_n\]|\{$pat_n\})*)/o
-    if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat_n\]${extraspace}|${extraspace}\{$pat_n\})*)/
+    if ($token =~ /$wpat/ ||  ( $token =~/^(?:\\protect)?\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat_n\]${extraspace}|${extraspace}\{$pat_n\})*)/
 				&& iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)
 				&& !iscmd($1,\@TEXTCMDLIST,\@TEXTCMDEXCL))) {
       # we have text or a command which can be treated as text
@@ -2447,7 +2448,7 @@ sub extractcommands {
     # $3: last argument
     # $4: }  + trailing spaces
 ### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat_n\})*\{)($pat_n)(\}\s*)$/so )
-    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat_n\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
+    if ( ( $token =~ m/^((?:\\protect)?\\([\w\d\*]+)(?:${extraspace}\[$brat_n\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
 	 && iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL) ) {
       print STDERR "DEBUG EXTRACTCOMMANDS Match |$1|$2|$3|$4|$index \n" if $debug;
       #      push(@$retval,[ $2,$index,$1,$3,$4 ]);
@@ -2508,7 +2509,7 @@ sub tokenizeblocks {
     $token = $seq->[$i];
     # check if BEGIN/END and block directive is present in the argument of any textcmd. This will be in an 
     # unchanged block. (textcmds in changed blocks would have already been expanded in pass1)
-    if  ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat_n\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}?\s*)$/so ) {
+    if  ( $token =~ m/^((?:\\protect)?\\([\w\d\*]+)(?:${extraspace}\[$brat_n\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}?\s*)$/so ) {
       ($cmd,$opening,$mid,$closing) = ($2,$1,$3,$4);
       #print STDERR "DEBUG tokenizeblocks  Match $i: |$1|$2|$3|$4|\n";
       if ( iscmd($cmd,\@TEXTCMDLIST,\@TEXTCMDEXCL) )  {
@@ -2750,7 +2751,7 @@ sub marktags {
     # negative lookahead pattern (?!) in second clause is put in to avoid matching \( .. \) patterns
     # also note that second pattern will match \\
 ###    print STDERR "DEBUG marktags: Considering word |$word|\n" if $debug;
-    if (  $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
+    if (  $word =~ /^[&{}\[\]]/ || ( $word =~ /^(?:\\protect)?\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
 ###      print STDERR "DEBUG MARKTAGS is a non-safe command\n" if $debug;
       ###    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\([\w*@\\% ]+)/ && !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
       # word is a command or other significant token (not in SAFECMDLIST)
@@ -2763,7 +2764,7 @@ sub marktags {
 	# $3: last argument
 	# $4: }  + trailing spaces
 	### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat_n\})*\{)($pat_n)(\}\s*)$/so )
-      if ( ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace_mt}\[$brat_n\]|${extraspace_mt}\{$pat_n\})*${extraspace_mt}\{)($pat_n)(\}\s*)$/so )
+      if ( ( $word =~ m/^((?:\\protect)?\\([\w\d\*]+)(?:${extraspace_mt}\[$brat_n\]|${extraspace_mt}\{$pat_n\})*${extraspace_mt}\{)($pat_n)(\}\s*)$/so )
 	   && (iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL)|| iscmd($2,\@MATHTEXTCMDLIST,\@MATHTEXTCMDEXCL))
            && ( !$cmdcomment || !iscmd($2,\@CONTEXT2CMDLIST, \@CONTEXT2CMDEXCL) )  ) {
 	# Condition 1: word is a command? - if yes, $1,$2,.. will be set as above
@@ -2835,7 +2836,7 @@ sub marktags {
       ###TODO:  check here if it is a command in MBOXCMD list, and surround it with \mbox{...}
       ### $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL))
       ### but actually this check has been carried out already so can simply check if word begins with backslash
-      if ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)(.*?)(\s*)$/s &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL)) {
+      if ( $word =~ /^(?:\\protect)?\\(?!\()(\\|[`'^"~=.]|[\w*@]+)(.*?)(\s*)$/s &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL)) {
 	# $word is a safe command in MBOXCMDLIST
 	###print STDERR "DEBUG Mboxsafecmd detected:$word:\n" if $debug ;
 	push(@$retval,"\\mbox{$AUXCMD\n\\" . $1 . $2 . $3 ."}\\hskip0pt$AUXCMD\n" );

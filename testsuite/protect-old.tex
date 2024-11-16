@@ -1,0 +1,24 @@
+\documentclass{article}
+\usepackage{subfig}
+\usepackage{graphicx}
+
+\begin{document}
+
+\begin{figure}[htp]
+    \subfloat{\label{fig:6a}}
+    \subfloat{\label{fig:6b}}
+    \centering
+    \includegraphics[width=\columnwidth]{example-image-a}
+    % use of protect on caption is not needed or recommended, but it still compiles and test some specific functionality of latexdiff
+    \protect\caption{
+        Foo
+        \protect\subref{fig:6a}
+        Standard deviation of the distribution of the aging rate $B_a \equiv \Delta \mu_a / \ln T_a$ of individual events, normalized by that quantity for $n=1$.
+        \protect\subref{fig:6b}
+        Bar.
+    }
+    \label{fig:6}
+\end{figure}
+
+\end{document}
+
