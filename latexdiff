@@ -75,6 +75,9 @@
 #  - when tikz-dependency package is used, \& is no longer a safe command as it has special meaning inside dependency environment.  The fix is a bit of a hack as really it should only be considered unsafe within dependency environment (fixes (mostly) issue #303 )
 #  - the listings package has trouble with non-ASCII chars. The encoding is now set (thanks to github user anka-213 for finding this). Fixes #304
 #
+#  Refactor:
+#  - Use perltidy for uniform formatting, and removing tab indents
+#
 # Version 1.3.3:
 # New features:
 #  - Option --no-del to remove all deleted text (merge contributed by github user tdegeus PR #252, fixing issue #66
@@ -321,8 +324,7 @@ my %CONFIG=(
    MATHARRENV => undef ,           # Environments turning on eqnarray math mode
    MATHARRREPL => 'eqnarray*',  # Environment introducing deleted maths blocks (note that now the starred varieties are being used, so this is only used to replace MATHMODE environments (where original environment is unknown)
    ARRENV => undef , # Environments making arrays in math mode.  The underlining style does not cope well with those - as a result in-text math environments are surrounded by \mbox{ } if any of these commands is used in an inline math block
-   COUNTERCMD => undef,
-                                        # COUNTERCMD textcmds which are associated with a counter
+   COUNTERCMD => undef,                 # COUNTERCMD textcmds which are associated with a counter
                                         # If any of these commands occur in a deleted block
                                         # they will be followed by an \addtocounter{...}{-1}
                                         # for the associated counter such that the overall numbers
@@ -445,6 +447,7 @@ my ($latexdiffpreamble);
 my ($oldbody, $newbody, $diffbo);
 my ($oldpost, $newpost);
 my ($diffall);
+#<<<  format skipping: do not let perltidy change my formatting
 # Option names
 my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblelabel,
     $filterscript,$ignorefilterstderr,
@@ -456,6 +459,7 @@ my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblel
     $help,$verbose,$driver,$version,$ignorewarnings,
     $onlyadditions,
     $enablecitmark,$disablecitmark,$allowspaces,$flatten,$nolinks,$debug,$earlylatexdiffpreamble);  ###$disablemathmark,
+#>>>
 my ($mboxsafe);
 # MNEMNONICS for mathmarkup
 my $mathmarkup;
@@ -474,13 +478,14 @@ use constant {
 };
 
 my ($mboxcmd);
-
+#<<<  format skipping: do not let perltidy change my formatting
 my (@configlist,@addtoconfiglist,@labels,
     @appendsafelist,@excludesafelist,
     @appendmboxsafelist,@excludemboxsafelist,
     @appendtextlist,@excludetextlist,
     @appendcontext1list,@appendcontext2list,
     @packagelist);
+#>>>
 my ($assign,@config);
 # Hash where keys corresponds to the names of  all included packages (including the documentclass as another package
 # the optional arguments to the package are the values of the hash elements
@@ -765,15 +770,15 @@ foreach  ( keys(%CONFIG) ) {
   elsif ( $_ eq "MATHENV" ) { $MATHENV = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "MATHREPL" ) { $MATHREPL = $CONFIG{$_} ; }
   elsif ( $_ eq "MATHARRENV" ) { $MATHARRENV = liststringtoregex($CONFIG{$_}) ; }
-  elsif ( $_ eq "MATHARRREPL" ) { $MATHARRREPL = $CONFIG{$_} ;
-				  print STDERR "WARNING: Setting MATHARRREPL is depracated. Generally deleted math array environments will be set to their starred varieties and the setting of MATHARREPL is ignored.\n\n" unless $MATHARRREPL =~ /eqnarray\*/ ;
-				}
   elsif ( $_ eq "ARRENV" ) { $ARRENV = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "VERBATIMENV" ) { $VERBATIMENV = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "VERBATIMLINEENV" ) { $VERBATIMLINEENV = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "CUSTOMDIFCMD" ) { $CUSTOMDIFCMD = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "COUNTERCMD" ) { $COUNTERCMD = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "SCALEDELGRAPHICS" ) { $SCALEDELGRAPHICS = $CONFIG{$_} ; }
+  elsif ( $_ eq "MATHARRREPL" ) { $MATHARRREPL = $CONFIG{$_} ;
+				  print STDERR "WARNING: Setting MATHARRREPL is depracated. Generally deleted math array environments will be set to their starred varieties and the setting of MATHARREPL is ignored.\n\n" unless $MATHARRREPL =~ /eqnarray\*/ ;
+				}
   else { die "Unknown configuration variable $_.";}
 }
 
@@ -905,7 +910,10 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 
   # standard $cmdoptseq (default: no intrevening spaces, controlled by extraspcae) - a final open parentheses is merged to the commend if it exists to deal properly with multi-argument text command
   my $coords= '[\-.,\s\d]*';
-  my $cmdoptseq='(?:\\\\protect)?\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*\{?';
+#<<<  format skipping: do not let perltidy change my formatting
+my $cmdoptseq='(?:\\\\protect)?\\\\[\w\d@\*]+'.$extraspace.
+      '(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*\{?';
+#>>>
 
   # inline math $....$ or \(..\)
   ### the commented out version is simpler but for some reason cannot cope with newline (in spite of s option) - need to include \newline explicitly
