@@ -124,7 +124,7 @@ dist/contrib: contrib
 clean:
 	\rm *.aux *.pdf *.log latexdiff.debug.* example-diff.tex latexdiff.tex latexdiff-vc.tex latexrevise.tex
 
-cleantest:
+cleantest:perltidy -i=2 -l=120 --cuddled-else --noblanks-before-comments --ignore-side-comment-lengths --nooutdent-long-lines -dop
 	\rm testsuite/*-diff.tex  testsuite/*.{aux,log,pdf}
 
 cleanall: clean cleantest
@@ -132,6 +132,10 @@ cleanall: clean cleantest
 
 test:
 	cd testsuite; ./verify --run
+
+## perltidy setup
+.perltidyrc:
+	perltidy -i=2 -l=120 --cuddled-else --noblanks-before-comments --ignore-side-comment-lengths --nooutdent-long-lines -dop | grep -v dump > .perltidyrc
 
 
 
