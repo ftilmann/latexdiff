@@ -21,26 +21,26 @@
 #
 # Detailed usage information at the end of the file
 # Note: version number now keeping up with latexdiff
-# Version 1.3.2 
+# Version 1.3.2
 #   - Functionality -c option: if comment to be deleted is the last in the line replace new line by space character. This is done to avoid errors or unintended line breaks from empty lines after deletion (which are implicit \par)
 #   - Introduce option -r / --replace which removes markup of the form \replaced{new text}{old text} in the changes package
-# Version 1.3.1  (Bug fix) Remove some deprecation warnings due to uncommented left parentheses 
+# Version 1.3.1  (Bug fix) Remove some deprecation warnings due to uncommented left parentheses
 # Version 1.0.2  Option --version
 # Version 1.0.1   no changes to latexrevise
 # Version 0.3   Updated for compatibility with latexdiff 0.3 output (DIFAUXCMD removal)
 # Version 0.1   First public release
 
 ### NB Lines starting with three hashes should be removed before release
-use Getopt::Long ;
+use Getopt::Long;
 use strict;
 use warnings;
 
-my $versionstring=<<EOF ;
+my $versionstring = <<EOF ;
 This is LATEXREVISE 1.3.2
   (c) 2005-2021 F J Tilmann
 EOF
 
-# Markup strings (make sure that this are set to the same value as in 
+# Markup strings (make sure that this are set to the same value as in
 # latexdiff)
 # If at all possible, do not change these as parts of the program
 # depend on the actual name.
@@ -48,24 +48,23 @@ EOF
 
 # note: have to use three backslashes to mean one literal one (reason
 # unknown
-my $ADDMARKOPEN='\\\DIFaddbegin(?:FL)? ';   # Token to mark begin of appended text
-my $ADDMARKCLOSE='\\\DIFaddend(?:FL)?(?: |\z)';   # Token to mark end of appended text (|\z only deals with the case of \DIFaddend right before \end{document}
-my $ADDOPEN='\\\DIFadd(?:FL)?{';  # To mark begin of added text passage
-my $ADDCLOSE='}';        # To mark end of added text passage
-my $ADDCOMMENT='DIF > ';   # To mark added comment line
-my $DELMARKOPEN='\\\DIFdelbegin(?:FL)? ';   # Token to mark begin of deleted text
-my $DELMARKCLOSE='\\\DIFdelend(?:FL)?(?: |\z)';   # Token to mark end of deleted text
-my $DELOPEN='\\\DIFdel(?:FL)?{';  # To mark begin of deleted text passage
-my $DELCLOSE='}';        # To mark end of deleted text passage
-my $ALTEXT='FL';         # string which might be appended to above commands
-my $DELCMDOPEN='%DIFDELCMD < ';  # To mark begin of deleted commands (must begin with %, i.e., be a comment
-my $DELCMDCLOSE="%%%\n";    # To mark end of deleted commands (must end with a new line)
-my $AUXCMD='%DIFAUXCMD' ; #  follows auxiliary commands put in by latexdiff to make difference file legal
-my $DELCOMMENT='DIF < ';   # To mark deleted comment line
+my $ADDMARKOPEN = '\\\DIFaddbegin(?:FL)? ';    # Token to mark begin of appended text
+my $ADDMARKCLOSE = '\\\DIFaddend(?:FL)?(?: |\z)'; # Token to mark end of appended text (|\z only deals with the case of \DIFaddend right before \end{document}
+my $ADDOPEN      = '\\\DIFadd(?:FL)?{';           # To mark begin of added text passage
+my $ADDCLOSE     = '}';                           # To mark end of added text passage
+my $ADDCOMMENT   = 'DIF > ';                      # To mark added comment line
+my $DELMARKOPEN  = '\\\DIFdelbegin(?:FL)? ';      # Token to mark begin of deleted text
+my $DELMARKCLOSE = '\\\DIFdelend(?:FL)?(?: |\z)'; # Token to mark end of deleted text
+my $DELOPEN      = '\\\DIFdel(?:FL)?{';           # To mark begin of deleted text passage
+my $DELCLOSE     = '}';                           # To mark end of deleted text passage
+my $ALTEXT       = 'FL';                          # string which might be appended to above commands
+my $DELCMDOPEN  = '%DIFDELCMD < ';    # To mark begin of deleted commands (must begin with %, i.e., be a comment
+my $DELCMDCLOSE = "%%%\n";            # To mark end of deleted commands (must end with a new line)
+my $AUXCMD      = '%DIFAUXCMD';       #  follows auxiliary commands put in by latexdiff to make difference file legal
+my $DELCOMMENT  = 'DIF < ';           # To mark deleted comment line
 
-my $PREAMBLEXTBEG='^%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF$';
-my $PREAMBLEXTEND='^%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF$';
-
+my $PREAMBLEXTBEG = '^%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF$';
+my $PREAMBLEXTEND = '^%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF$';
 
 #my $pat0 = '(?:[^{}]|\\\{|\\\})*';
 #my $pat1 = '(?:[^{}]|\\\{|\\\}|\{'.$pat0.'\})*';
@@ -73,59 +72,56 @@ my $PREAMBLEXTEND='^%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF$';
 #my $pat3 = '(?:[^{}]|\\\{|\\\}|\{'.$pat2.'\})*';
 #my $pat4 = '(?:[^{}]|\\\{|\\\}|\{'.$pat3.'\})*';
 
-my $pat0 = '(?:[^{}])*';
+my $pat0  = '(?:[^{}])*';
 my $pat_n = $pat0;
 # if you get "undefined control sequence MATHBLOCKmath" error, increase the maximum value in this loop
-for (my $i_pat = 0; $i_pat < 20; ++$i_pat){
-  $pat_n = '(?:[^{}]|\{'.$pat_n.'\}|\\\\\{|\\\\\})*';
-  # Actually within the text body, quoted braces are replaced in pre-processing. The only place where 
+for ( my $i_pat = 0 ; $i_pat < 20 ; ++$i_pat ) {
+  $pat_n = '(?:[^{}]|\{' . $pat_n . '\}|\\\\\{|\\\\\})*';
+  # Actually within the text body, quoted braces are replaced in pre-processing. The only place where
   # the last part of the pattern matters is when processing the arguments of context2cmds in the preamble
   # and these contain a \{ or \} combination, probably rare.
   # It should thus be fine to use the simpler version below.
   ###  $pat_n = '(?:[^{}]|\{'.$pat_n.'\})*';
 }
 
+my $brat0 = '(?:[^\[\]]|\\\[|\\\])*';
 
-my $brat0 = '(?:[^\[\]]|\\\[|\\\])*'; 
-
-
-
-
-my ($input,$preamble,$body,$post);
+my ( $input, $preamble, $body, $post );
 my (@matches);
-my ($cnt,$prematch,$postmatch);
-my ($help,$version);
-my ($verbose,$quiet,$accept,$decline,$simplify)=(0,0,0,0,0);
-my ($comment,$comenv,$markup,$markenv,$replace);
+my ( $cnt, $prematch, $postmatch );
+my ( $help, $version );
+my ( $verbose, $quiet, $accept, $decline, $simplify ) = ( 0, 0, 0, 0, 0 );
+my ( $comment, $comenv, $markup, $markenv, $replace );
 
 # A word unlikely ever to be used in a real latex file
-my $someword='gobbledegooksygook';
+my $someword = 'gobbledegooksygook';
 
 Getopt::Long::Configure('bundling');
-GetOptions('accept|a' => \$accept,
-	   'decline|d'=> \$decline,
-	   'simplify|s' => \$simplify,
-	   'comment|c=s' => \$comment,
-	   'comment-environment|e=s' => \$comenv,
-	   'markup|m=s' => \$markup,
-	   'markup-environment|n=s' => \$markenv,
-	   'replace|r=s' => \$replace,
-	   'no-warnings|q' => \$verbose,
-           'version' => \$version,
-	   'verbose|V' => \$verbose,
-	   'help|h|H' => \$help);
+GetOptions(
+  'accept|a'                => \$accept,
+  'decline|d'               => \$decline,
+  'simplify|s'              => \$simplify,
+  'comment|c=s'             => \$comment,
+  'comment-environment|e=s' => \$comenv,
+  'markup|m=s'              => \$markup,
+  'markup-environment|n=s'  => \$markenv,
+  'replace|r=s'             => \$replace,
+  'no-warnings|q'           => \$verbose,
+  'version'                 => \$version,
+  'verbose|V'               => \$verbose,
+  'help|h|H'                => \$help
+);
 
-if ( $help ) {
-  usage() ;
+if ($help) {
+  usage();
 }
 
-if ( $version ) {
-  print STDERR $versionstring ; 
+if ($version) {
+  print STDERR $versionstring;
   exit 0;
 }
 
-
-if ( ($accept &&  $decline) || ($accept && $simplify) || ($decline && $simplify) ) {
+if ( ( $accept && $decline ) || ( $accept && $simplify ) || ( $decline && $simplify ) ) {
   die '-a,-d and -s options are mutually exclusive. Type latexrevise -h to get more help.';
 }
 
@@ -133,42 +129,41 @@ if ( ($accept &&  $decline) || ($accept && $simplify) || ($decline && $simplify)
 ###  die 'One of -a, -d or -s option required. Type latexrevise -h to get more help.';
 ###}
 
-
-print STDERR "ACCEPT mode\n" if $verbose && $accept;
-print STDERR "DECLINE mode\n" if $verbose && $decline;
+print STDERR "ACCEPT mode\n"                                                           if $verbose && $accept;
+print STDERR "DECLINE mode\n"                                                          if $verbose && $decline;
 print STDERR "SIMPLIFY mode.  WARNING: The output will not normally be valid latex,\n" if $verbose && $simplify;
 
 # Slurp old and new files
-{ 
-  local $/ ; # locally set record operator to undefined, ie. enable whole-file mode
-  $input=<>;
+{
+  local $/;    # locally set record operator to undefined, ie. enable whole-file mode
+  $input = <>;
 }
 
 # split into parts
-($preamble,$body,$post)=splitdoc($input,'\begin{document}','\end{document}');
+( $preamble, $body, $post ) = splitdoc( $input, '\begin{document}', '\end{document}' );
 
-if (length $preamble && ( $accept || $decline ) ) {
+if ( length $preamble && ( $accept || $decline ) ) {
   #
   # WORK ON PREAMBLE
   #
   # (compare subroutine linediff in latexdiff to make sure correct strings are used)
-  
-  # remove extra commands added to preamble by latexdiff 
-  $preamble =~ s/${PREAMBLEXTBEG}.*?${PREAMBLEXTEND}\n{0,1}//smg ;
 
-  if ( $accept ) {
+  # remove extra commands added to preamble by latexdiff
+  $preamble =~ s/${PREAMBLEXTBEG}.*?${PREAMBLEXTEND}\n{0,1}//smg;
+
+  if ($accept) {
     # delete mark up in appended lines
-    $preamble =~ s/^(.*) %DIF > $/$1/mg ;
-  } elsif ( $decline ) {
+    $preamble =~ s/^(.*) %DIF > $/$1/mg;
+  } elsif ($decline) {
     # delete appended lines
     #  $preamble =~ s/^(.*) %DIF > $//mg ;
-    $preamble =~ s/^(.*) %DIF > \n//mg ;
+    $preamble =~ s/^(.*) %DIF > \n//mg;
     # delete markup in deleted lines
-    $preamble =~ s/^%DIF < //mg ;
+    $preamble =~ s/^%DIF < //mg;
   }
   # remove any remaining DIF markups
   #$preamble =~ s/%DIF.*$//mg ;
-  $preamble =~ s/%DIF.*?\n//sg ;
+  $preamble =~ s/%DIF.*?\n//sg;
 }
 #print $preamble ;
 
@@ -177,25 +172,24 @@ if (length $preamble && ( $accept || $decline ) ) {
 #
 if ($accept) {
   # remove ADDMARKOPEN, ADDMARKCLOSE tokens
-  @matches= $body =~ m/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/sg;
+  @matches = $body =~ m/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/sg;
 ###  print STDERR "DEBUG: ",scalar @matches,"|||$body|||\n";
 ###  print STDERR "DEBUG: $ADDMARKCLOSE matches: ",scalar ($body =~ m/${ADDMARKCLOSE}/sg ),"\n";
   checkpure(@matches);
   $body =~ s/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/$1/sg;
   # remove text flanked by DELMARKOPEN, DELMARKCLOSE tokens
-  @matches= $body =~ m/${DELMARKOPEN}(.*?)${DELMARKCLOSE}/sg;
+  @matches = $body =~ m/${DELMARKOPEN}(.*?)${DELMARKCLOSE}/sg;
   checkpure(@matches);
   $body =~ s/${DELMARKOPEN}(.*?)${DELMARKCLOSE}//sg;
   # remove markup of added comments
-  $body =~ s/%${ADDCOMMENT}(.*?)$/%$1/mg ;
+  $body =~ s/%${ADDCOMMENT}(.*?)$/%$1/mg;
   # remove deleted comments (full line)
-  $body =~ s/^%${DELCOMMENT}.*?\n//mg ;
+  $body =~ s/^%${DELCOMMENT}.*?\n//mg;
   # remove deleted comments (part of line)
-  $body =~ s/%${DELCOMMENT}.*?$//mg ;
-} 
-elsif ( $decline) {
+  $body =~ s/%${DELCOMMENT}.*?$//mg;
+} elsif ($decline) {
   # remove DELMARKOPEN, DELMARKCLOSE tokens
-  @matches= $body =~ m/${DELMARKOPEN}(.*?)${DELMARKCLOSE}/sg;
+  @matches = $body =~ m/${DELMARKOPEN}(.*?)${DELMARKCLOSE}/sg;
   checkpure(@matches);
   $body =~ s/${DELMARKOPEN}(.*?)${DELMARKCLOSE}/$1/sg;
   # remove text flanked by ADDMARKOPEN, ADDMARKCLOSE tokens
@@ -204,18 +198,19 @@ elsif ( $decline) {
   # removed inappropriately.  We try to guess whether this has
   # happened
 
-  # Mop up tokens. This must be done already now as otherwise 
+  # Mop up tokens. This must be done already now as otherwise
   # detection of white-space problems does not work
   $cnt = $body =~ s/${DELOPEN}($pat_n)${DELCLOSE}/$1/sg;
-  # remove markup of deleted commands 
-  $cnt +=   $body =~ s/${DELCMDOPEN}(.*?)${DELCMDCLOSE}/$1/sg ;
-  $cnt +=   $body =~ s/${DELCMDOPEN}//g ;
+  # remove markup of deleted commands
+  $cnt += $body =~ s/${DELCMDOPEN}(.*?)${DELCMDCLOSE}/$1/sg;
+  $cnt += $body =~ s/${DELCMDOPEN}//g;
   # remove aux commands
-  $cnt +=   $body =~ s/^.*${AUXCMD}$/${someword}/mg; $body =~ s/${someword}\n//g;
+  $cnt += $body =~ s/^.*${AUXCMD}$/${someword}/mg;
+  $body =~ s/${someword}\n//g;
 
   while ( $body =~ m/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/s ) {
-    $prematch=$`;
-    $postmatch=$';
+    $prematch  = $`;
+    $postmatch = $';
 ###    print STDERR "PRE: |",substr($prematch,-20),"|\n";
 ###    print STDERR "MATC:|",$&,"|\n";
 ###    print STDERR "POST:|",substr($postmatch,0,20),"|\n";
@@ -223,28 +218,26 @@ elsif ( $decline) {
     if ( $prematch =~ /\w$/s && $postmatch =~ /^\w/ ) {
 ###      print STDERR "Insert space!\n";
       # apparently no white-space between word=>Insert white space
-      $body =~ s/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/ /s ;
-    }
-    elsif ( $prematch =~ /\s$/s && $postmatch =~ /^[.,;:]/ ) {
+      $body =~ s/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/ /s;
+    } elsif ( $prematch =~ /\s$/s && $postmatch =~ /^[.,;:]/ ) {
 ###      print STDERR "Remove space!\n";
       # space immediately before one of ".,:;" => remove this space
-      $body =~ s/\s${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}//s ;
-    }
-    else {
+      $body =~ s/\s${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}//s;
+    } else {
       # do not insert or remove any extras
       $body =~ s/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}//s;
     }
   }
-# Alternative without special cases treatment
-#  @matches= $body =~ m/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/sg;
-#  checkpure(@matches);
-#  $body =~ s/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}//sg;
+  # Alternative without special cases treatment
+  #  @matches= $body =~ m/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}/sg;
+  #  checkpure(@matches);
+  #  $body =~ s/${ADDMARKOPEN}(.*?)${ADDMARKCLOSE}//sg;
   # remove markup of deleted comments
-  $body =~ s/%${DELCOMMENT}(.*?)$/%$1/mg ;
+  $body =~ s/%${DELCOMMENT}(.*?)$/%$1/mg;
   # remove added comments (full line)
-  $body =~ s/^%${ADDCOMMENT}.*?\n//mg ;
+  $body =~ s/^%${ADDCOMMENT}.*?\n//mg;
   # remove added comments (part of line)
-  $body =~ s/%${ADDCOMMENT}.*?$//mg ;
+  $body =~ s/%${ADDCOMMENT}.*?$//mg;
 }
 
 # remove any remaining tokens
@@ -252,74 +245,75 @@ if ( $accept || $decline || $simplify ) {
   # first substitution command deals with special case of added paragraph
   $cnt = $body =~ s/${ADDOPEN}($pat_n)\n${ADDCLOSE}\n/$1\n/sg;
   $cnt += $body =~ s/${ADDOPEN}($pat_n)${ADDCLOSE}/$1/sg;
-  $cnt==0 || warn 'Remaining $ADDOPEN tokens in DECLINE mode\n' unless ( $quiet || $accept || $simplify );
+  $cnt == 0 || warn 'Remaining $ADDOPEN tokens in DECLINE mode\n' unless ( $quiet || $accept || $simplify );
 }
-if ($accept || $simplify ) {
+if ( $accept || $simplify ) {
   # Note: in decline mode these commands have already been removed above
   $cnt = $body =~ s/${DELOPEN}($pat_n)${DELCLOSE}/$1/sg;
-  #### remove markup of deleted commands 
-  $cnt +=   $body =~ s/${DELCMDOPEN}(.*?)${DELCMDCLOSE}/$1/sg ;
-  $cnt +=   $body =~ s/${DELCMDOPEN}//g ;
+  #### remove markup of deleted commands
+  $cnt += $body =~ s/${DELCMDOPEN}(.*?)${DELCMDCLOSE}/$1/sg;
+  $cnt += $body =~ s/${DELCMDOPEN}//g;
   # remove aux commands
-  # $cnt +=   
-  $body =~ s/^.*${AUXCMD}$/${someword}/mg; $body =~ s/${someword}\n//g;
+  # $cnt +=
+  $body =~ s/^.*${AUXCMD}$/${someword}/mg;
+  $body =~ s/${someword}\n//g;
 
-  #### remove deleted comments 
+  #### remove deleted comments
   ###$cnt += $body =~ s/${DIFDELCMD}.*?$//mg ;
-  $cnt==0 || warn 'Remaining $DELOPEN or $DIFDELCMD tokens in ACCEPT mode\n' unless ( $quiet || $simplify );
+  $cnt == 0 || warn 'Remaining $DELOPEN or $DIFDELCMD tokens in ACCEPT mode\n' unless ( $quiet || $simplify );
 }
 
 # Remove comment commands
-if (defined($comment)) {
+if ( defined($comment) ) {
   print STDERR "Removing \\$comment\{..\} sequences (incl. argument)..." if $verbose;
   # protect $comments in comments by making them look different
-  $body =~ s/(%.*)${comment}(.*)$/$1${someword}$2/mg ;
+  $body =~ s/(%.*)${comment}(.*)$/$1${someword}$2/mg;
   # carry out the substitution
-  $cnt = 0 + $body =~ s/\\${comment}(?:\[${brat0}\])?\{${pat_n}\}(?: *\n)?//sg ;
+  $cnt = 0 + $body =~ s/\\${comment}(?:\[${brat0}\])?\{${pat_n}\}(?: *\n)?//sg;
   print STDERR "$cnt matches found and removed.\n" if $verbose;
 ###  $body =~ s/${comment}//sg;
   # and undo the protection substitution
-  $body =~ s/(%.*)${someword}(.*)$/$1${comment}$2/mg ;
+  $body =~ s/(%.*)${someword}(.*)$/$1${comment}$2/mg;
 }
-if (defined($comenv)) {
+if ( defined($comenv) ) {
   print STDERR "Removing $comenv environments ..." if $verbose;
-  $body =~ s/(%.*)${comenv}/$1${someword}/mg ;
+  $body =~ s/(%.*)${comenv}/$1${someword}/mg;
 ##  $cnt = 0 + $body =~ s/\\begin(?:\[${brat0}\])?\{\$comenv\}.*?\\end\{\$comenv\}//sg ;
-    $cnt = 0 + $body =~ s/\\begin(?:\[${brat0}\])?\{${comenv}\}.*?\\end\{${comenv}\}\s*?\n//sg ;
+  $cnt = 0 + $body =~ s/\\begin(?:\[${brat0}\])?\{${comenv}\}.*?\\end\{${comenv}\}\s*?\n//sg;
   print STDERR "$cnt matches found and removed.\n" if $verbose;
-  $body =~ s/(%.*)${someword}/$1${comenv}/mg ;
+  $body =~ s/(%.*)${someword}/$1${comenv}/mg;
 }
 
-if (defined($markup)) {
+if ( defined($markup) ) {
   print STDERR "Removing \\$markup\{..\} commands (leaving argument)..." if $verbose;
   # protect $markups in comments by making them look different
-  $body =~ s/(%.*)${markup}(.*)$/$1${someword}$2/mg ;
+  $body =~ s/(%.*)${markup}(.*)$/$1${someword}$2/mg;
   # carry out the substitution
-  $cnt = 0 + $body =~ s/\\${markup}(?:\[${brat0}\])?\{(${pat_n})\}/$1/sg ;
+  $cnt = 0 + $body =~ s/\\${markup}(?:\[${brat0}\])?\{(${pat_n})\}/$1/sg;
   print STDERR "$cnt matches found and removed.\n" if $verbose;
 ###  $body =~ s/${markup}//sg;
   # and undo the protection substitution
-  $body =~ s/(%.*)${someword}(.*)$/$1${markup}$2/mg ;
+  $body =~ s/(%.*)${someword}(.*)$/$1${markup}$2/mg;
 }
-if (defined($markenv)) {
+if ( defined($markenv) ) {
   print STDERR "Removing $markenv environments ..." if $verbose;
-  $body =~ s/(%.*)${markenv}/$1${someword}/mg ;
+  $body =~ s/(%.*)${markenv}/$1${someword}/mg;
   $cnt = 0 + $body =~ s/\\begin(?:\[${brat0}\])?\{${markenv}\}\n?//sg;
   $cnt += 0 + $body =~ s/\\end\{${markenv}\}\n?//sg;
-  print STDERR $cnt/2, " matches found and removed.\n" if $verbose;
-  $body =~ s/(%.*)${someword}/$1${markenv}/mg ;
+  print STDERR $cnt / 2, " matches found and removed.\n" if $verbose;
+  $body =~ s/(%.*)${someword}/$1${markenv}/mg;
 }
 
-if (defined($replace)) {
+if ( defined($replace) ) {
   print STDERR "Removing \\$replace\{..\}\{..\} commands (leaving 1st and discarding 2nd argument))..." if $verbose;
   # protect $markups in comments by making them look different
-  $body =~ s/(%.*)${replace}(.*)$/$1${someword}$2/mg ;
+  $body =~ s/(%.*)${replace}(.*)$/$1${someword}$2/mg;
   # carry out the substitution
-  $cnt = 0 + $body =~ s/\\${replace}(?:\[${brat0}\])?\{(${pat_n})\}\s?\{(${pat_n})\}/$1/sg ;
+  $cnt = 0 + $body =~ s/\\${replace}(?:\[${brat0}\])?\{(${pat_n})\}\s?\{(${pat_n})\}/$1/sg;
   print STDERR "$cnt matches found and removed.\n" if $verbose;
 ###  $body =~ s/${markup}//sg;
   # and undo the protection substitution
-  $body =~ s/(%.*)${someword}(.*)$/$1${replace}$2/mg ;
+  $body =~ s/(%.*)${someword}(.*)$/$1${replace}$2/mg;
 }
 
 if ( length $preamble ) {
@@ -334,16 +328,19 @@ if ( length $preamble ) {
 # If so, die reporting nesting problems, otherwise return to caller
 sub checkpure {
 ###  print STDERR "Checkpure : ",scalar(@matches)," tokens\n.";
-  while (defined($_=shift)) {
+  while ( defined( $_ = shift ) ) {
 ###    print STDERR "$_\n";
-    if (  /$ADDMARKOPEN/ || /$ADDMARKCLOSE/
-	  || /$DELMARKOPEN/ || /$DELMARKCLOSE/ ) {
+    if ( /$ADDMARKOPEN/
+      || /$ADDMARKCLOSE/
+      || /$DELMARKOPEN/
+      || /$DELMARKCLOSE/ )
+    {
       die <<EOF ;
 There is a problem with nesting of  $ADDMARKOPEN, $ADDMARKCLOSE,
 $DELMARKOPEN, and $DELMARKCLOSE tokens that prevents me from 
 processing the file.  Exiting ...
 EOF
-     }
+    }
   }
 }
 
@@ -354,33 +351,31 @@ EOF
 #
 # same subroutine as in latexdiff
 sub splitdoc {
-  my ($text,$word1,$word2)=@_;
-  my $l1 = length $word1 ;
-  my $l2 = length $word2 ;
+  my ( $text, $word1, $word2 ) = @_;
+  my $l1 = length $word1;
+  my $l2 = length $word2;
 
-  my $i = index($text,$word1);
-  my $j = index($text,$word2);
+  my $i = index( $text, $word1 );
+  my $j = index( $text, $word2 );
 
-  my ($part1,$part2,$part3)=("","","");
+  my ( $part1, $part2, $part3 ) = ( "", "", "" );
 
-  if ( $i<0 && $j<0) {
+  if ( $i < 0 && $j < 0 ) {
     # no $word1 or $word2
     print STDERR "Old Document not a complete latex file. Assuming it is a tex file with no preamble.\n";
     $part2 = $text;
-  } elsif ( $i>=0 && $j>$i ) {
-    $part1 = substr($text,0,$i) ; 
-    $part2 = substr($text,$i+$l1,$j-$i-$l1);
-    $part3 = substr($text,$j+$l2) unless $j+$l2 >= length $text;
+  } elsif ( $i >= 0 && $j > $i ) {
+    $part1 = substr( $text, 0,        $i );
+    $part2 = substr( $text, $i + $l1, $j - $i - $l1 );
+    $part3 = substr( $text, $j + $l2 ) unless $j + $l2 >= length $text;
   } else {
-    die "$word1 or $word2 not in the correct order or not present as a pair."
+    die "$word1 or $word2 not in the correct order or not present as a pair.";
   }
-  return ($part1,$part2,$part3);
+  return ( $part1, $part2, $part3 );
 }
 
-
-
 sub usage {
-  print STDERR <<"EOF"; 
+  print STDERR <<"EOF";
 Usage: $0 [OPTIONS] [diff.tex] > revised.tex
 
 Read a file diff.tex (output of latexdiff), and remove its markup. 
