@@ -122,6 +122,10 @@ https://github.com/twilsonco/latexdiffcite
 GIT-LATEXDIFF (lead author: Matthieu Moy) is a wrapper (bash script) around latexdiff that allows using it to diff two revisions of a LaTeX file under git revision control (similar functionality is provided by latexdiff-vc --git with --flatten option included with this distribution but git-latexdiff allows more fine-grained control on (not to be confused with latexdiff-git, which is normally installed as a soft link to latexdiff-vc) 
 https://gitorious.org/git-latexdiff/
 
+WISHING TO CONTRIBUTE
+---------------------
+Pull requests are welcome. Please see the Wiki page: https://github.com/ftilmann/latexdiff/wiki  for some more detailed information.
+
 LICENSE
 -------
 This program is free software; you can redistribute it and/or modify
