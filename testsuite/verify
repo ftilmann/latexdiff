@@ -40,7 +40,7 @@ delequ3 delequ4 "simplefrac --allow-spaces" "master --flatten" "subfile --flatte
 "href-in-bibliography --append-safecmd=path" revtex-bibliography biblatex 'txtcmd-with-multiple-arguments --append-textcmd=cmd' \
 "no-del --no-del" raisebox  protect mwe \
 ) # siunitx
-set testroots=( protect mw )
+# set testroots=( protect mw )
 # Note that siunitx test will only run on newer (>~2020) versions of siunitx)
 #set testroots= ( test subscript )
 # ttest-siunitx ttest-glossaries ttest-chem ttest-cleveref
