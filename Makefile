@@ -98,8 +98,8 @@ latexdiff-vc.tex: latexdiff-vc
 example-diff.pdf: example-diff.tex
 	pdflatex example-diff.tex
 
-example-diff.tex: example-draft.tex example-rev.tex latexdiff
-	latexdiff -t UNDERLINE example-draft.tex example-rev.tex > example-diff.tex
+example-diff.tex: example-draft.tex example-rev.tex dist/latexdiff
+	./dist/latexdiff -t UNDERLINE example-draft.tex example-rev.tex > example-diff.tex
 
 dist/example/example-draft.tex: example-draft.tex
 	cp $< $@
