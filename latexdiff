@@ -50,6 +50,7 @@
 #    heuristics are used to decide whether to add or not are used, so this decision might not be perfect). Fixes #310 .
 #  - nested array blocks now no longer lead to errors, even when nothing is changed in them (fixes #287).
 #  - sometimes, \protect commands would become separated from the commands they are supposed to apply, too. They are now kept together in the same token. Fixes #284
+#   - Improper definition of the DIFverbatim environment led to warnings. This has been corrected now. Fixes #320.
 #
 #  Modified behaviour:
 #  - Commands/RegExs explicitly defined as not safe with --exclude-safecmd are now also considered unsafe in COARSE and WHOLE math markup (Fixes #311)
@@ -69,7 +70,7 @@
 #  - sometimes the introduction of aux commands to show deleted lists or descriptions leaves in place empty auxiliary
 #    list environments, which would cause error messages (though skipping messages would result in a correct output pdf).
 #    These are now removed.
-#  - add more mboxsafecmd and safecmd commands for SIunitx to stay compatible with newer versionsof SIunitx (PR #283, fixing issue #282, contributed by github user joe6302413)
+#  - add more mboxsafecmd and safecmd commands for SIunitx to stay compatible with newer versionsof SIunitx (PR #283, fixing issue #282, including reopened #282, contributed by github user joe6302413)
 #  - File added via --preamble option is no longer assumed to be ASCII, but read either with encoding as defined by --encoding option or using the encoding of the LOCALE (fixes issue #285 )
 #  - multicolumn argument is now treated as text
 #  - when tikz-dependency package is used, \& is no longer a safe command as it has special meaning inside dependency environment.  The fix is a bit of a hack as really it should only be considered unsafe within dependency environment (fixes (mostly) issue #303 )
@@ -417,7 +418,7 @@ our @SAFECMDEXCL = ();
 my @MBOXCMDLIST = ();    # patterns for commands which are in principle safe but which need to be surrounded by an \mbox
 my @MBOXCMDEXCL = ();    # all the patterns in MBOXCMDLIST will be appended to SAFECMDLIST
 
-my @KEEPCMDLIST = (qr/^bibitem$/); # patterns for commands which should not be deleted in nominally delete text passages
+my @KEEPCMDLIST = (qr/^bibitem$/); # patterns for commands which should not be deleted in nominally deleted text passages
 my @KEEPCMDEXCL = ();
 
 my ( $i, $j, $l );
@@ -2193,7 +2194,10 @@ sub pass1 {
 
   my $len1 = scalar @$seq1;
   my $len2 = scalar @$seq2;
-  my $wpat = qr/^(?:[a-zA-Z.,'`:;?()!]*)[\s~]*$/;    #'
+  # Note: I tried to include range 0-9 as acceptable characters, but in 2 cases in the testsuite, this led to
+  # arguably worse outcomes, and for 3 it was neutral (5 changes in total in 3 files). This is not representative
+  # but based on this evidence I skip
+  my $wpat = qr/^(?:[a-zA-Z.,'`:;?()!\/]*)[\s~]*$/;    #'
 
   my ( $last1, $last2 ) = ( -1, -1 );
   my $cnt         = 0;
@@ -6124,8 +6128,8 @@ verbatim[*]?
 	columns=fullflexible,
 	keepspaces=true
 }
-\lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{}
-\lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{}
+\lstnewenvironment{DIFverbatim}[1][]{\lstset{style=DIFverbatimstyle,#1}}{}
+\lstnewenvironment{DIFverbatim*}[1][]{\lstset{style=DIFverbatimstyle,showspaces=true,#1}}{}
 %DIF END LISTINGS PREAMBLE
 
 %DIF COLORLISTINGS PREAMBLE
@@ -6142,8 +6146,8 @@ verbatim[*]?
 	columns=fullflexible,
 	keepspaces=true
 }
-\lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{}
-\lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{}
+\lstnewenvironment{DIFverbatim}[1][]{\lstset{style=DIFverbatimstyle}}{}
+\lstnewenvironment{DIFverbatim*}[1][]{\lstset{style=DIFverbatimstyle,showspaces=true}}{}
 %DIF END COLORLISTINGS PREAMBLE
 
 %DIF DIFCODE_UNDERLINE
