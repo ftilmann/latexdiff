@@ -38,6 +38,7 @@
 #  New features:
 #  - add directive pairs %BEGIN DIF(ADD|DEL), %END DIF(ADD|DEL) that causes blocks to be marked up as a whole
 #  - add directive pair  %BEGIN DIFNOMARKUP, %END DIFNOMARKUP that can suppress markup locally
+#  - add option for letter-level markup for single substituted words, controlled by configuration variable MAXCHANGESLETTER, which limits this behaviour to a small number of changes. By default this is set to 1 - other sensible settings are 0 and 2.
 #
 #  Bug fixes:
 #  - Fix a bug in pre-/postprocessing that led to odd behaviour if some characters with special meaning, like _,^ were used in particular contexts in verbatim environments. Fixes #305
@@ -312,6 +313,8 @@ EOF
 my %CONFIG = (
   MINWORDSBLOCK => 3,    # minimum number of tokens to form an independent block
                          # shorter identical blocks will be merged to the previous word
+  MAXCHANGESLETTER => 1, # maximum number of changes in a letter for letter-level markup 
+                         # (rather than standard word level) to be used 
   SCALEDELGRAPHICS => 0.5, # factor with which deleted figures will be scaled down (i.e. 0.5 implies they are shown at half linear size)
                            # this is only used for --dgraphics-markup=BOTH option
   FLOATENV   => undef,            # Environments in which FL variants of defined commands are used
@@ -335,8 +338,9 @@ my %CONFIG = (
 # Configuration variables: these have to be visible from the subroutines
 my (
   $ARRENV,     $COUNTERCMD,       $FLOATENV,    $ITEMCMD,         $LISTENV,
-  $MATHARRENV, $MATHARRREPL,      $MATHENV,     $MATHREPL,        $MINWORDSBLOCK,
-  $PICTUREENV, $SCALEDELGRAPHICS, $VERBATIMENV, $VERBATIMLINEENV, $CUSTOMDIFCMD
+  $MATHARRENV, $MATHARRREPL,      $MATHENV,     $MATHREPL,        $MAXCHANGESLETTER, 
+  $MINWORDSBLOCK,
+  $PICTUREENV, $SCALEDELGRAPHICS, $VERBATIMENV, $VERBATIMLINEENV, $CUSTOMDIFCMD,
 );
 
 # my $MINWORDSBLOCK=3; # minimum number of tokens to form an independent block
@@ -744,6 +748,7 @@ foreach $assign (@addtoconfig) {
 # Map from hash to variables (we do this to have more concise code later, change from comma-separated list)
 foreach ( keys(%CONFIG) ) {
   if    ( $_ eq "MINWORDSBLOCK" )    { $MINWORDSBLOCK    = $CONFIG{$_}; }
+  elsif ( $_ eq "MAXCHANGESLETTER" ) { $MAXCHANGESLETTER          = $CONFIG{$_}; }
   elsif ( $_ eq "FLOATENV" )         { $FLOATENV         = liststringtoregex( $CONFIG{$_} ); }
   elsif ( $_ eq "ITEMCMD" )          { $ITEMCMD          = $CONFIG{$_}; }
   elsif ( $_ eq "LISTENV" )          { $LISTENV          = liststringtoregex( $CONFIG{$_} ); }
@@ -1553,6 +1558,7 @@ sub show_configuration {
     #    print "MATHARRREPL=$MATHARRREPL\n";     # this is not deprecated and thus no longer shown
     print "MATHENV=$MATHENV\n";
     print "MATHREPL=$MATHREPL\n";
+    print "MAXCHANGESLETTER=$MAXCHANGESLETTER\n";
     print "MINWORDSBLOCK=$MINWORDSBLOCK\n";
     print "PICTUREENV=$PICTUREENV\n";
     print "SCALEDELGRAPHICS=$SCALEDELGRAPHICS\n";
@@ -3675,6 +3681,28 @@ sub postprocess {
     # remove empty DIFCMD < lines
     s/^\Q${DELCMDOPEN}\E\n//msg;
 
+    # Look for paired \DIFdel{word} and \DIFadd{anotherword} commands and 
+    # check if a letter level diff is preferable
+
+    #while ( m/\\DIFdelbegin \\DIFdel\{(${word})\}\\DIFdelend \\DIFaddbegin \\DIFadd\{(${word})\}\\DIFaddend/g) {
+    while ( m/\\DIFdelbegin \\DIFdel\{($word\s*)\}\\DIFdelend \\DIFaddbegin \\DIFadd\{(${word}\s*)\}\\DIFaddend/g) {      
+      $len = length($&);
+      $begin = pos($_) - $len;
+      my @oldletters = split( //, $1);
+      my @newletters = split( //, $2);
+      my @lettersdiff = pass2( \@oldletters, \@newletters );
+      ###print STDERR "DEBUG: Word detection. Found \\DIFdel{$1}\\DIFadd{$2} at ",pos,". Replaced with ".join("",@lettersdiff) . "\n" ;
+      ###print STDERR "Grep count: ", (scalar grep { $_ =~ /\\DIF(del|add)begin/} @lettersdiff),"\n";
+      if ( ( grep { $_ =~ /\\DIF(del|add)begin/} @lettersdiff ) <= $MAXCHANGESLETTER ) {
+        # only make the change if there are at most 2 changes (up to 2 additions or deletions, or one substitution)
+        my $repl = join("",@lettersdiff);
+        # if the string ends with spaces, then add '{}' after the last command to ensure there are not ignored
+        $repl =~ s/(?<=\\DIF(?:add|del)end) (\s+)$/\{\}$1/sg;
+        ###print STDERR "DEBUG: Replacing with |$repl|\n";
+        substr( $_, $begin, $len ) = $repl ;
+        pos = $begin + length($repl);
+      }
+    }
     # Expand hashes of verb and verbatim environments
     s/${DELCMDOPEN}\\($VERBATIMENV)\{([-\d]*?)\}/"${DELCMDOPEN}\\begin{${1}}".fromhash(\%verbhash,$2,$DELCMDOPEN)."${DELCMDOPEN}\\end{${1}}"/esg;
     # revert changes to verbatim environments for line diffs (and add code to mark up changes) (note negative look behind assertions to not leak out of DIFDELCMD comments)
@@ -4258,6 +4286,7 @@ be real files (not pipes or similar) as they are opened twice.
                           MATHARRENV (RegEx)
                           MATHENV (RegEx)
                           MATHREPL (String)
+                          MAXCHANGESLETTER (Integer)
                           MINWORDSBLOCK (Integer)
                           PICTUREENV (RegEx)
                           SCALEDELGRAPHICS (Float)
@@ -4797,6 +4826,8 @@ C<MATHENV> (RegEx)
 
 C<MATHREPL> (String)
 
+C<MAXCHANGESLETTER> (Integer)
+
 C<MINWORDSBLOCK> (Integer)
 
 C<PICTUREENV> (RegEx)
@@ -5216,6 +5247,11 @@ are within the same deleted block, they are replaced by a \begin and \end comman
 rather than being commented out.
 
 [ Default: C<MATHENV>=S<C<(?:displaymath|equation)> >, C<MATHREPL>=S<C<displaymath> >]
+
+=item C<MAXCHANGESLETTER>
+When latexdiff detects a replacement of a single word, it will attempt to identify the changes at letter level. If there are many changes, it is likely that the word was replaced wholesale, and the letter-level changes would be confusing rather than helpful. In this case, latexdiff will fall back to display the replacement at word level. The approach to distinguish both cases is to simply count the number of distinct additions and deletions (not the number of letter changed!), and only if they are less than or equal to MAXCHANGESLETTER the letter-level markup is used. Sensible values are 0, 1, or 2. 0 will disable the letter-level markup completely. 1 will only allow a single addition or deletion, e.g., for a typo correction or change singular/plural of a verb, but no substitution. 2 will allow one substitution (or two additions or deletions)---this will sometimes result in different words being marked up on letter level, e.g. they-> there will show deleted "y" and added "re", which is often not desirable.
+
+[ Default: 1 ]
 
 =item C<MINWORDSBLOCK>
 
