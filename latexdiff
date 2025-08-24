@@ -51,7 +51,8 @@
 #    heuristics are used to decide whether to add or not are used, so this decision might not be perfect). Fixes #310 .
 #  - nested array blocks now no longer lead to errors, even when nothing is changed in them (fixes #287).
 #  - sometimes, \protect commands would become separated from the commands they are supposed to apply, too. They are now kept together in the same token. Fixes #284
-#   - Improper definition of the DIFverbatim environment led to warnings. This has been corrected now. Fixes #320.
+#  - Improper definition of the DIFverbatim environment led to warnings. This has been corrected now. Fixes #320.
+#  - In --flatten mode, input commands in verbatim environments were erroneously expanded. This is now suppressed. Fixes #321
 #
 #  Modified behaviour:
 #  - Commands/RegExs explicitly defined as not safe with --exclude-safecmd are now also considered unsafe in COARSE and WHOLE math markup (Fixes #311)
@@ -1749,6 +1750,8 @@ sub remove_endinput {
 # expands \import etc commands (from import package - not part of standard text distribution)
 # preamble is scanned for includeonly commands
 # encoding is the encoding
+# Does not expand codes if they are in the argument of verbatim commands \verb or \listinline
+
 sub flatten {
   my ( $text, $preamble, $filename, $encoding ) = @_;
   my (
@@ -1757,6 +1760,7 @@ sub flatten {
   );
   my ( $subpreamble, $subbody,    $subpost );
   my ( $subdir,      $subdirfull, $importfilepath );
+  my %verbhash ;  # shadows global %verbhash - here it is used only within flatten 
   require File::Basename;
   ###  require File::Spec ;    # now this is needed even if flatten option not given
   $filename = File::Spec->rel2abs($filename);
@@ -1771,10 +1775,21 @@ sub flatten {
     $includeonly = '.*?';
   }
 
+  #print STDERR "DEBUG: VERBATIMENV |$VERBATIMENV| VERBATIMLINEENV |$VERBATIMLINEENV|\n";
   print STDERR "DEBUG: includeonly $includeonly\n" if $debug;
 
   # Run through filter, to let filterscript have a pass if it was set
   $text = filter($text);
+
+  #turn verbatim environments into hashes
+  $text =~  s/^((?:[^%\n]|\\%)*)\\begin\{($VERBATIMENV|$VERBATIMLINEENV)\}(.*?)\\end\{\2\}/"${1}\\DIF${2}{". tohash(\%verbhash,"${3}") . "}"/esgm;
+  
+  #turn verbatim commands into hashes (but not if they are themselves in comments)
+  $text =~  s/^((?:[^%\n]|\\%)*)\\lstinline((?:\[$brat_n\])?)(\{(?:.*?)\})/"${1}\\DIFlstinline". $2 ."{". tohash(\%verbhash,"${3}") ."}"/esgm;
+  $text =~  s/^((?:[^%\n]|\\%)*)\\lstinline((?:\[$brat_n\])?)(([^\s\w]).*?\4)/"${1}\\DIFlstinline". $2 ."{". tohash(\%verbhash,"${3}") ."}"/esgm;
+  ### $text =~  s/\\(verb\*?|lstinline)([^\s\w])(.*?)\2/"\\DIF${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
+  $text =~  s/^((?:[^\n%]|\\%)*)\\(verb\*?|lstinline)([^\s\w])(.*?)\3/"${1}\\DIF${2}{". tohash(\%verbhash,"${3}${4}${3}") ."}"/esgm;
+  
 
   # Recursively replace \\import, \\subimport, and related import commands
   $text =~ s/(^(?:[^%\n]|\\%)*)(\\(sub)?(?:import|inputfrom|includefrom))\{(.*?)\}(?:[\s]*)\{(.*?)\}/{
@@ -1908,7 +1923,12 @@ sub flatten {
      $replacement .= "\n" unless  $replacement =~ m(\n$)  ;
      "$begline\\begin{$verbenv}$verboptions\n$replacement\\end{$verbenv}\n";
     }/exgm;
-
+ 
+  # recover original text from hashed verbatim commands
+  $text =~ s/\\DIF((?:verb\*?|lstinline(?:\[$brat_n\])?))\{([-\d]*?)\}/"\\${1}". fromhash(\%verbhash,${2})/esg;
+  # recover original text from hashed verbatim environments
+  $text =~ s/\\DIF((?:$VERBATIMENV|$VERBATIMLINEENV)(?:\[$brat_n\])?)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
+  ###print STDERR $text . "THE END";
   return ($text);
 }
 

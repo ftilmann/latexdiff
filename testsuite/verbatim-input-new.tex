@@ -21,6 +21,20 @@
 \noindent With syntax highlighting:
 \lstinputlisting[language=C]{testg.c}
 
+% But we should not expand expand any commands if they are in a verb command
+\verb|\verbatiminput{testg.c}|
+
+\lstinline|\lstinputlisting[language=C]{testg.c}|
+
+\begin{verbatim}
+ENV: \verbatiminput{testg.c}
+\end{verbatim}
+
+\begin{lstlisting}[language=tex]
+ENV: \verbatiminput{testg.c}
+\end{lstlisting}
+
+
 \end{document}
 
 
