@@ -23,7 +23,7 @@ set reportfile=report$nameext.txt
 
 #setenv INTERACTIVE
 alias latexdiff ../latexdiff
-#alias latexdiff /home/tilmann/src/latexdiff/git/svn/latexdiff-1.3.4/latexdiff
+#alias latexdiff /home/tilmann/src/latexdiff/git/svn/latexdiff-1.4.0/latexdiff
 
 #alias latexdiff ../latexdiff-1.3.2/latexdiff
 #alias latexdiff ../dist/latexdiff-fast
