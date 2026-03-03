@@ -996,6 +996,16 @@ sub filter {
       use IPC::Open2;
       $pid = open2( \*CHLD_OUT, \*CHLD_IN, $filterscript ) or die "open2() failed $!";
     }
+    # Ensure that filter handles use the same encoding as the LaTeX input.
+    if ( lc($encoding) eq "utf8" ) {
+      binmode( CHLD_IN,  ":utf8" );
+      binmode( CHLD_OUT, ":utf8" );
+      binmode( CHLD_ERR, ":utf8" ) if $ignorefilterstderr;
+    } elsif ( lc($encoding) ne "ascii" ) {
+      binmode( CHLD_IN,  ":encoding($encoding)" );
+      binmode( CHLD_OUT, ":encoding($encoding)" );
+      binmode( CHLD_ERR, ":encoding($encoding)" ) if $ignorefilterstderr;
+    }
     # Send in $text
     print CHLD_IN $text . "\n";    # Adding a newline just to make sure there is one.
     close CHLD_IN;
