@@ -447,7 +447,7 @@ while ( $infile = $file2 = shift @files ) {
       if ( greptex( '^[^%]*\\\\bibliography\\{', $infile ) == 0 ) {
         my ( $filebase, $filedir ) = fileparse( $infile, ".tex" );
         if ( !-e "$filedir$filebase.bbl" ) {
-          system("$CFG{LATEX} -draftmode -interaction=batchmode '$infile'; $CFG{BIBTEX} '$filedir$filebase'")
+          system("$CFG{LATEX} -draftmode -interaction=batchmode '$infile'; $CFG{BIBTEX} '$filedir$filebase'") == 0
             or die
             "Something went wrong in executing:  $CFG{LATEX} -draftmode -interaction=batchmode '$infile'; $CFG{BIBTEX} '$filedir$filebase'";
         }
