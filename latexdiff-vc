@@ -96,7 +96,7 @@ my $debug = 0;
 my (
   $version, $help,    $fast,    $showconfig, $so,   $postscript, $pdf, $onlychanges,
   $flatten, $force,   $dir,     $cvs,        $rcs,  $svn,        $git, $hg,
-  $run,     $rundvi2, $diffcmd, $patchcmd,   @revs, @configlist
+  $run,     $rundvi2, $diffcmd, $patchcmd,   @revs, @configlist, $oldfile
 );
 # for passing through config options to latexdiff:
 my ( $configlatexdiff, @config, $config, $assign );
@@ -139,6 +139,7 @@ GetOptions(
   'force'         => \$force,
   'only-changes'  => \$onlychanges,
   'flatten:s'     => \$flatten,
+  'old-file=s'    => \$oldfile,
   'config|c=s'    => \@configlist,
   'show-config'   => \$showconfig,
   'version'       => \$version,
@@ -354,6 +355,13 @@ if ( defined($flatten) ) {
   push @ldoptions, "--flatten";
 }
 
+if ( defined($oldfile) ) {
+  pod2usage("--old-file can only be used with --flatten and revision control")
+    unless defined($flatten) && scalar(@revs) > 0;
+  pod2usage("--old-file can only be used with exactly one root file")
+    unless @files == 1;
+}
+
 if ( defined($debug) && $debug ) {
   push @ldoptions, "--debug";
 }
@@ -434,14 +442,15 @@ while ( $infile = $file2 = shift @files ) {
   print STDERR "Working on  $infile \n";
   if ( scalar(@revs) == 1 ) {
     if ( defined($flatten) ) {
+      my $oldinfile = defined($oldfile) ? $oldfile : $infile;
       my $olddir = $tempdir . "/latexdiff-vc-$revs[0]";
       print STDERR "Checking out old dir into: $olddir (rev: $revs[0])\n";
-      checkout_dir( $revs[0], $olddir, $infile );
+      checkout_dir( $revs[0], $olddir, $oldinfile );
 ###       print STDERR "DEBUG olddir $olddir";
 ###       unless (-e $olddir) { mkdir $olddir or die "Cannot mkdir $olddir ." ;}
 ###       print STDERR "DEBUG svn checkout -r $revs[0] $rootdir $olddir";
 ###       system("svn checkout -r $revs[0] $rootdir $olddir")==0 or die "Something went wrong in executing:  svn checkout -r $revs[0] $rootdir";
-      $file1 = $olddir . "/" . $infile;
+      $file1 = $olddir . "/" . $oldinfile;
 
       # generate bibliography for new file if
       if ( greptex( '^[^%]*\\\\bibliography\\{', $infile ) == 0 ) {
@@ -464,10 +473,11 @@ while ( $infile = $file2 = shift @files ) {
     }
   } elsif ( scalar(@revs) == 2 ) {
     if ( defined($flatten) ) {
+      my $oldinfile = defined($oldfile) ? $oldfile : $infile;
       my $olddir = $tempdir . "/latexdiff-vc-$revs[0]";
       print STDERR "Checking out old dir into: $olddir (rev: $revs[0])\n";
-      checkout_dir( $revs[0], $olddir, $infile );
-      $file1 = $olddir . "/" . $infile;
+      checkout_dir( $revs[0], $olddir, $oldinfile );
+      $file1 = $olddir . "/" . $oldinfile;
 
       my $newdir = $tempdir . "/latexdiff-vc-$revs[1]";
       print STDERR "Checking out new dir into: $newdir\n";
@@ -711,9 +721,10 @@ sub checkout_dir {
     die "checkout_dir: only works with SVN, HG and GIT VCS system (selected: $vc)";
   }
   # Check if the main file needs a bbl generated
-  if ( defined($file) and greptex( '^[^%]*\\\\bibliography\\{', $file ) == 0 ) {
+  my $checkoutfile = defined($file) ? "$dirname/$file" : undef;
+  if ( defined($checkoutfile) and greptex( '^[^%]*\\\\bibliography\\{', $checkoutfile ) == 0 ) {
     ( $filebase, $filedir ) = fileparse( $file, ".tex" );
-    if ( !-e "$filedir$filebase.bbl" ) {
+    if ( !-e "$dirname/$filedir$filebase.bbl" ) {
       printf STDERR "Running $CFG{BIBTEX} to generate $filedir$filebase.bbl.\n";
       system("cd '$dirname'; $CFG{LATEX} -draftmode -interaction=batchmode '$file'; $CFG{BIBTEX} '$filedir$filebase'")
         == 0
