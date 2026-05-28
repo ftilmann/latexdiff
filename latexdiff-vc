@@ -768,6 +768,10 @@ B<latexdiff-vc> [ F<latexdiff-options> ] [ F<latexdiff-vc-options> ]  B<-r> [F<r
 
  or
 
+B<latexdiff-vc> [ F<latexdiff-options> ] B<--flatten> B<--old-file> F<foo.tex> B<-r> F<rev1> [B<-r> F<rev2>] F<bar.tex>
+
+ or
+
 B<latexdiff-vc> [ F<latexdiff-options> ]  [ F<latexdiff-vc-options> ][ B<--postscript> | B<--pdf> ]  F<old.tex> F<new.tex>
 
 =head1 DESCRIPTION
@@ -840,6 +844,12 @@ Note that if additional files are needed which are not included in the flatten p
 The generic usage of this function is : C<latexdiff-vc --flatten -r rev1 [-r rev2] master.tex> where master.tex is the project file containing the highest level of includes etc.
 
 With C<--flatten=keep-intermediate>, the intermediate revision snapshots are kept in the current directory (Default is to store them in a temporary directory and delete them after generating the diff file.)
+
+=item B<--old-file> F<path>
+
+Use F<path> as the root document name in the old revision when C<--flatten> is used with version control. This is useful if the root document was renamed. C<--old-file> can only be used with C<--flatten>, one or two C<-r> options, and exactly one current root file argument.
+
+For example, if C<foo.tex> was renamed to C<bar.tex>, use C<latexdiff-vc --git --flatten --old-file foo.tex -r HEAD~1 bar.tex>. With two revisions, C<--old-file> names the root in the first revision and the command-line root names the root in the second revision.
 
 
 =item B<--only-changes>
