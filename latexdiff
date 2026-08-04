@@ -34,6 +34,10 @@
 # Note references to issue numbers are for the github repository of latexdiff: https://github.com/ftilmann/latexdiff
 #
 # Version 1.4.1: 
+#
+# New features:
+# - add type COLOR, which is the same as UNDERLINE but without wavy underlining of added text
+#
 # Bug fixes:
 # - For commands that were both in safecmd and textcmd lists, and which have optional arguments before the last textual argument, changes in those optional arguments would 
 #   lead to incomplete commands being marked up, leading to errors. The check for safe commands now is amended with a check for incomplete commands, whose token ends with {.
@@ -4225,7 +4229,7 @@ be real files (not pipes or similar) as they are opened twice.
 
 --type=markupstyle
 -t markupstyle         Add code to preamble for selected markup style
-                       Available styles: UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE
+                       Available styles: UNDERLINE COLOR CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE
                                          CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCHBAR BOLD PDFCOMMENT
                                          LUAUNDERLINE
                        [ Default: UNDERLINE ]
@@ -4421,7 +4425,7 @@ Other configuration options:
 
 --disable-citation-markup
 --disable-auto-mbox    Suppress citation markup and markup of other vulnerable commands in styles
-                       using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR)
+                       using ulem (UNDERLINE, FONTSTRIKE, CULINECHBAR)
                        (the two options are identical and are simply aliases)
 
 --enable-citation-markup
@@ -4655,7 +4659,7 @@ Add code to preamble for selected markup style. This option defines
 C<\DIFadd> and C<\DIFdel> commands.
 Available styles:
 
-C<UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE
+C<UNDERLINE COLOR CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE
 CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCHBAR BOLD PDFCOMMENT
 LUAUNDERLINE>
 
@@ -4986,7 +4990,7 @@ This can be more robust than just making it invisible.
 =item B<--disable-citation-markup> or B<--disable-auto-mbox>
 
 Suppress citation markup and markup of other vulnerable commands in styles
-using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR)
+using ulem (UNDERLINE, FONTSTRIKE, CULINECHBAR)
 (the two options are identical and are simply aliases)
 
 =item B<--enable-citation-markup> or B<--enforce-auto-mbox>
@@ -5106,6 +5110,11 @@ The major type determine the markup of plain text and some selected latex comman
 =item C<UNDERLINE>
 
 Added text is wavy-underlined and blue, discarded text is struck out and red
+(Requires color and ulem packages).  Overstriking does not work in displayed math equations such that deleted parts of equation are underlined, not struck out (this is a shortcoming inherent to the ulem package).
+
+=item C<COLOR>
+
+Added text is blue, discarded text is struck out and red
 (Requires color and ulem packages).  Overstriking does not work in displayed math equations such that deleted parts of equation are underlined, not struck out (this is a shortcoming inherent to the ulem package).
 
 =item C<LUAUNDERLINE>
@@ -5888,6 +5897,13 @@ verbatim[*]?
 \providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}
 %DIF END UNDERLINE PREAMBLE
 
+%DIF COLOR PREAMBLE
+\RequirePackage[normalem]{ulem}
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
+\providecommand{\DIFadd}[1]{{\protect\color{blue}#1}}
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}
+%DIF END COLOR PREAMBLE
+
 %DIF LUAUNDERLINE PREAMBLE
 \RequirePackage{lua-ul}
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
@@ -6240,6 +6256,11 @@ verbatim[*]?
   moredelim=[il][\color{red}\sout]{\%DIF\ <\ },
   moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ }
 %DIF END DIFCODE_UNDERLINE
+
+%DIF DIFCODE_COLOR
+  moredelim=[il][\color{red}\sout]{\%DIF\ <\ },
+  moredelim=[il][\color{blue}]{\%DIF\ >\ }
+%DIF END DIFCODE_COLOR
 
 %DIF DIFCODE_CTRADITIONAL
   moredelim=[il][\color{red}\scriptsize]{\%DIF\ <\ },
