@@ -5307,6 +5307,7 @@ rather than being commented out.
 [ Default: C<MATHENV>=S<C<(?:displaymath|equation)> >, C<MATHREPL>=S<C<displaymath> >]
 
 =item C<MAXCHANGESLETTER>
+
 When latexdiff detects a replacement of a single word, it will attempt to identify the changes at letter level. If there are many changes, it is likely that the word was replaced wholesale, and the letter-level changes would be confusing rather than helpful. In this case, latexdiff will fall back to display the replacement at word level. The approach to distinguish both cases is to simply count the number of distinct additions and deletions (not the number of letter changed!), and only if they are less than or equal to MAXCHANGESLETTER the letter-level markup is used. Sensible values are 0, 1, or 2. 0 will disable the letter-level markup completely. 1 will only allow a single addition or deletion, e.g., for a typo correction or change singular/plural of a verb, but no substitution. 2 will allow one substitution (or two additions or deletions)---this will sometimes result in different words being marked up on letter level, e.g. they-> there will show deleted "y" and added "re", which is often not desirable.
 
 [ Default: 1 ]

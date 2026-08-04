@@ -1,6 +1,6 @@
 # Makefile for preparing files for distribution
 #VERSION=$(shell git describe --abbrev=4 --dirty --always --tags)
-VERSION=1.4.0
+VERSION=1.4.1a
 
 .PHONY: distribution release test mkdirs clean cleanall cleantest webmanual
 
@@ -43,19 +43,19 @@ latexdiff-$(VERSION).tar.gz: distribution
 	rm -r prep-release-tmp
 
 dist/latexdiff: latexdiff
-	grep -v '^###' latexdiff > dist/latexdiff ; chmod a+x dist/latexdiff
+	grep -v '^###' latexdiff > dist/latexdiff && chmod a+x dist/latexdiff
 
 dist/latexrevise: latexrevise
-	grep -v '^###' latexrevise > dist/latexrevise ; chmod a+x dist/latexrevise
+	grep -v '^###' latexrevise > dist/latexrevise && chmod a+x dist/latexrevise
 
 dist/latexdiff-vc: latexdiff-vc
-	grep -v '^###' latexdiff-vc > dist/latexdiff-vc ; chmod a+x dist/latexdiff-vc
+	grep -v '^###' latexdiff-vc > dist/latexdiff-vc && chmod a+x dist/latexdiff-vc
 
 dist/latexdiff-so: latexdiff Algorithm-Diff-Block
-	awk '/use Algorithm::Diff qw\(traverse_sequences\);/ { system("cat Algorithm-Diff-Block") ; next } { print }' latexdiff | grep -v '^###' > dist/latexdiff-so ; chmod a+x dist/latexdiff-so
+	awk '/use Algorithm::Diff qw\(traverse_sequences\);/ { system("cat Algorithm-Diff-Block") ; next } { print }' latexdiff | grep -v '^###' > dist/latexdiff-so && chmod a+x dist/latexdiff-so
 
 dist/latexdiff-fast: latexdiff Algorithm-Diff-Fast
-	awk '/use Algorithm::Diff qw\(traverse_sequences\);/ { system("cat Algorithm-Diff-Fast") ; next } { print }' latexdiff | grep -v '^###' > dist/latexdiff-fast ; chmod a+x dist/latexdiff-fast
+	awk '/use Algorithm::Diff qw\(traverse_sequences\);/ { system("cat Algorithm-Diff-Fast") ; next } { print }' latexdiff | grep -v '^###' > dist/latexdiff-fast && chmod a+x dist/latexdiff-fast
 
 dist/latexdiff.1: latexdiff
 	pod2man -center=" " latexdiff > dist/latexdiff.1
@@ -87,13 +87,13 @@ dist/doc/latexdiff-vc.tex: latexrevise.tex
 	cp $^ $@
 
 latexdiff.tex: latexdiff
-	pod2latex latexdiff; sed 's/--/-{}-/g' latexdiff.tex > tmp$$$$.tex ; mv tmp$$$$.tex latexdiff.tex
+	pod2latex -modify latexdiff && sed 's/--/-{}-/g ; s/\\subsection\*/\\subsection/g' latexdiff.tex > tmp$$$$.tex && mv tmp$$$$.tex latexdiff.tex
 
 latexrevise.tex: latexrevise
-	pod2latex latexrevise ; sed 's/--/-{}-/g' latexrevise.tex > tmp$$$$.tex ; mv tmp$$$$.tex latexrevise.tex
+	pod2latex -modify latexrevise && sed 's/--/-{}-/g ; s/\\subsection\*/\\subsection/g' latexrevise.tex > tmp$$$$.tex && mv tmp$$$$.tex latexrevise.tex
 
 latexdiff-vc.tex: latexdiff-vc
-	pod2latex latexdiff-vc; sed 's/--/-{}-/g' latexdiff-vc.tex > tmp$$$$.tex ; mv tmp$$$$.tex latexdiff-vc.tex
+	pod2latex -modify latexdiff-vc && sed 's/--/-{}-/g ; s/\\subsection\*/\\subsection/g' latexdiff-vc.tex > tmp$$$$.tex && mv tmp$$$$.tex latexdiff-vc.tex
 
 example-diff.pdf: example-diff.tex
 	pdflatex example-diff.tex
