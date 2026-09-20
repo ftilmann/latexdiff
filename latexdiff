@@ -4450,11 +4450,10 @@ Miscellaneous options
 
 --flatten              Replace \\input and \\include commands within body by the content
                        of the files in their argument.  If \\includeonly is present in the
-                       preamble, only those files are expanded into the document. However,
-                       no recursion is done, i.e. \\input and \\include commands within
-                       included sections are not expanded.  The included files are assumed to
-                       be located in the same directories as the old and new master files,
-                       respectively, making it possible to organise files into old and new directories.
+                       preamble, only those files are expanded into the document. The 
+					   included files are assumed to be located in the same directories
+					   as the old and new master files, respectively, making it possible
+                       to organise files into old and new directories.
                        --flatten is applied recursively, so inputted files can contain further
                        \\input statements.  Also handles files included by the import package
                        (\\import and \\subimport), and \\subfile command.
