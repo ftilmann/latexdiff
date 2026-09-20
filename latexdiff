@@ -925,7 +925,7 @@ my $math = '\$(?:[^$]|\\\$)*?\$|\\\\[(](?:.|\n)*?\\\\[)]';
 my $backslashnl = '\\\\\n';
 my $oneletcmd   = '\\\\.\*?(?:\[' . $brat_n . '\]|\{' . $pat_n . '\})*';
 my $comment     = '%[^\n]*\n';
-my $punct       = '[0.,\/\'\`:;\"\?\(\)\[\]!~\p{IsNonAsciiPunct}\p{IsNonAsciiS}]';
+my $punct       = '[0.,\/\'\`:;\"\?\(\)\[\]!~\p{IsNonAsciiPunct}\p{IsNonAsciiS}\p{No}]';   # also includes things like fractions, Symbols
 my $mathpunct   = '[+=<>\-\|]';
 
 # Assembled pattern
@@ -5047,10 +5047,8 @@ visible output.
 
 Replace C<\input> and C<\include> commands within body by the content
 of the files in their argument.  If C<\includeonly> is present in the
-preamble, only those files are expanded into the document. However,
-no recursion is done, i.e. C<\input> and C<\include> commands within
-included sections are not expanded.  The included files are assumed to
- be located in the same directories as the old and new master files,
+preamble, only those files are expanded into the document. The included files 
+are assumed to be located in the same directories as the old and new master files,
 respectively, making it possible to organise files into old and new directories.
 --flatten is applied recursively, so inputted files can contain further
 C<\input> statements.  Also handles files included by the import package
