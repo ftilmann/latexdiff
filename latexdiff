@@ -4492,8 +4492,8 @@ the API should be considered less stable than for the other options.
 Directives:
 Special comments in the latex source that modify latexdiff behaviour.
 In the new file, those directives can be used:
-%BEGIN DIFNOMRKUP
-%END DIFNOMRKUP
+%BEGIN DIFNOMARKUP
+%END DIFNOMARKUP
   Tell latexdiff to not mark up the enclosed text.
 
 %BEGIN DIFADD
